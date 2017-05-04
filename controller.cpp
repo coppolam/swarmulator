@@ -108,6 +108,8 @@ void circlemotion(const int &dim, const float &v_b, const float &bdes, float &v)
 	}
 }
 
+vector<bool> stuckonce(100);
+
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
 	float v_r   = 0.0;
@@ -154,7 +156,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 		if (i < knearest)
 		{
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i])/knearest) + getrand_float(-0.2, 0.2);
+			v_b += wrapToPi_f(o->request_bearing(ID, closest[i])/knearest);// + getrand_float(-0.2, 0.2);
 			v_r += get_individual_command(sqrt(u),v_b)/knearest;
 		}
 		b_i = o->request_bearing(ID, closest[i]);
@@ -166,12 +168,12 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			cnt++;
 			for (int j = 0; j < lbdes*2; j++)
 			{
-				if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.2 ) )
+				if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.4 ) )
 				{
 					q[j] = true;
 					nbs++;
 				}
-				else if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.2 )
+				else if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.4 )
 				{				
 					q[j] = true;
 					nbs++;
@@ -262,20 +264,20 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		}
 
 
-		if (!happy && !stuck )
+		if (!happy && !stuck && !stuckonce[ID])
 			circlemotion(dim, v_b, bdes[minindex], v);
-		else if (happy && !stuck)//if (cnt > 2)// std::all_of(q.begin(), q.end(), [](bool p){return !p;}))// && // not 3 links//if (simtime_seconds < 500)
+		else if ( (stuckonce[ID] && stuck) || happy)// && !stuck)//if (cnt > 2)// std::all_of(q.begin(), q.end(), [](bool p){return !p;}))// && // not 3 links//if (simtime_seconds < 500)
 			latticemotion    (dim,v_b,bdes[minindex],v); //cout << ID << " happy " << endl;
-
+		if (stuck)
+			stuckonce[ID] = true;
 				
 		// else
 
 
-	// if (simtime_seconds > 500)
-	// }
-	// #endif
-
-	return v;
+	// if (!stuckonce[ID])
+		return v;
+	// else
+	// 	return 0;
 
 }
 
