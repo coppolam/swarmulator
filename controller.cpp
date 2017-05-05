@@ -108,7 +108,7 @@ void circlemotion(const int &dim, const float &v_b, const float &bdes, float &v)
 	}
 }
 
-vector<bool> stuckonce(100);
+vector<bool> superhappyonce(100);
 
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
@@ -135,6 +135,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	int lbdes = bdes.size();
 
 	vector<bool> q(lbdes*2,false);
+	vector<bool> qs(lbdes*2,false);
 	bool happy,stuck;
 
 	float u, v, b_i;
@@ -163,19 +164,24 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		wrapTo2Pi(b_i);
 
 		// calculate link type
-		if (sqrt(u) < 1.3)
+		if (sqrt(u) < 1.4)
 		{
 			cnt++;
 			for (int j = 0; j < lbdes*2; j++)
 			{
-				if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.4 ) )
+				if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.7 ) )
 				{
 					q[j] = true;
+					if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.1 ) )
+						qs[j] = true;
+
 					nbs++;
 				}
-				else if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.4 )
+				else if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.7 )
 				{				
 					q[j] = true;
+					if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.1 )
+						qs[j] = true;
 					nbs++;
 				}
 			}
@@ -208,7 +214,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     	minindex -= lbdes;
 
 	attractionmotion (dim,v_r,v_b,v);
-
+	bool superhappy = false;
 	// #ifdef ROGUE
 	// if (ID == rogueID)
 	// {
@@ -224,30 +230,27 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 		if(simtime_seconds > 5.0 )// && simtime_seconds<50.0)
 		{
-		if  (   // list here all the things that make happy with its position in the lattice.
-				// !( std::any_of(q.begin(), q.end(), [](bool p){return p;})) && // not 0 links
-				// cnt!
-				// (sum == 1) || 
-				(
+			if (
+				((  qs[0] &&  qs[1] && !qs[2] && !qs[3] )) || // not link 1
+				(( !qs[0] && !qs[1] &&  qs[2] &&  qs[3] )) || // not link 2
+				((  qs[0] && !qs[1] && !qs[2] &&  qs[3] )) || // not link 3
+				(( !qs[0] &&  qs[1] &&  qs[2] && !qs[3] ))  // not link 4
+				)
+			{
+				superhappy = true;
+			}
+			else if  (   // list here all the things that make happy with its position in the lattice.
 				((  q[0] &&  q[1] && !q[2] && !q[3] )) || // not link 1
 				(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // not link 2
 				((  q[0] && !q[1] && !q[2] &&  q[3] )) || // not link 3
 				(( !q[0] &&  q[1] &&  q[2] && !q[3] ))  // not link 4
-				// (!(  q[0] &&  q[1] )) && // not link 1
-				// (!(  q[2] &&  q[3] )) && // not link 2
-				// (!(  q[0] &&  q[3] )) && // not link 3
-				// (!(  q[1] &&  q[2] )) //&& // not link 4
-				// (!(  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) && // not link 1
-				// (!( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) && // not link 2
-				// (!( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))    // not link 3
 			)
-				)
 			{
 				happy = true;
 				cout << ID << " happy " << endl;
 			}
 			else if (
-				nbs	 > 1 ||
+				sum	 > 1 ||
 				((  q[0] && !q[1] &&  q[2] && !q[3] ) || // not stuck 1
 				 ( !q[0] &&  q[1] && !q[2] &&  q[3] ))    // not stuck 2)
 				)
@@ -263,22 +266,23 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 }
 		}
 
-
-		if (!happy && !stuck && !stuckonce[ID])
-			circlemotion(dim, v_b, bdes[minindex], v);
-		else if ( (stuckonce[ID] && stuck) || happy)// && !stuck)//if (cnt > 2)// std::all_of(q.begin(), q.end(), [](bool p){return !p;}))// && // not 3 links//if (simtime_seconds < 500)
-			latticemotion    (dim,v_b,bdes[minindex],v); //cout << ID << " happy " << endl;
-		if (stuck)
-			stuckonce[ID] = true;
-				
-		// else
+		if (!happy && !stuck )
+			circlemotion  ( dim, v_b, bdes[minindex], v );
+		
+		else if ((stuck) || happy)
+			latticemotion ( dim, v_b, bdes[minindex], v ); //cout << ID << " happy " << endl;
 
 
-	// if (!stuckonce[ID])
+		if (superhappy)
+			superhappyonce[ID] = true;
+		// if (!stuck)
+		// 	stuckonce[ID] = false;
+		
+	if (superhappyonce[ID] && happy)
+		return 0;
+	else
 		return v;
-	// else
-	// 	return 0;
-
+	
 }
 
 
