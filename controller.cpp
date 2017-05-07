@@ -159,7 +159,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 		if (i < knearest)
 		{
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i])/knearest);// + getrand_float(-0.2, 0.2);
+			v_b += wrapToPi_f(o->request_bearing(ID, closest[i])/knearest) + getrand_float(-0.2, 0.2);
 			v_r += get_individual_command(sqrt(u) ,v_b)/knearest;// + getrand_float(-0.2, 0.2);
 		}
 		b_i = o->request_bearing(ID, closest[i]);
@@ -269,55 +269,23 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 				stuck = false;
 				cout << ID << " unhappy " << endl;
 			}
-		// }
-
-		// if (!happy && !stuck )
-		// 	circlemotion  ( dim, v_b, bdes[minindex], v );
-		
-		// else if ((stuck) || happy || stuckonce[ID])
-		// 	latticemotion ( dim, v_b, bdes[minindex], v ); //cout << ID << " happy " << endl;
-
-		// if (stuck)
-		// 	stuckonce[ID] = true;
-		
-		// if (simulation_time < 100)
-		// {
-			// if (!happy && !stuck && !stuckonce[ID] )//&& ID > closest[0])// && !superhappyonce[ID])
-			// 	// attractionmotion (dim,-0.01,v_b,v);
-			// 	circlemotion  ( dim, v_b, bdes[minindex], v);
-			// else if (stuck|| happy || superhappyonce[ID])// || stuck || stuckonce[ID] )// || stuck || stuckonce[ID] || superhappyonce[ID] )//(stuckonce[ID] && stuck) || happy)// && !stuck)//if (cnt > 2)// std::all_of(q.begin(), q.end(), [](bool p){return !p;}))// && // not 3 links//if (simtime_seconds < 500)
-			// 	latticemotion ( dim, v_b, bdes[minindex], v);
-			// if (!happy && !stuck)// && ID < closest[0])// && !stuckonce[ID] )//&& ID > closest[0])// && !superhappyonce[ID])
-			// 	// attractionmotion (dim,-0.01,v_b,v);
-			// 	circlemotion  ( dim, v_b, bdes[minindex], v);
-			// else 
-			// 	latticemotion ( dim, v_b, bdes[minindex], v);
-
-			// if (superhappyonce[ID])
-			// 	// latticemotion ( dim, v_b, bdes[minindex], v);
-			// else 
 
 			if ( !happy && !stuck )
 				circlemotion  ( dim, v_b, bdes[minindex], v);
-			// if (v_b < 0.05)
-			// 	v = 0;
 
-			if ( stuck && !happy && !superhappy)
-				latticemotion ( dim, v_b, bdes[minindex], v);
+			if ( stuck && !happy )//&& !superhappy)
+				latticemotion (dim, v_b, bdes[minindex], v);
 
-			// if (superhappy)// || sum > 2)
-			// 	v = 0;
-
-			if (stuck && !stuckonce[ID]){
-				stuckonce[ID] = true;
-				twait[ID] = simulation_time;
-			}
+			// if (stuck && !stuckonce[ID]){
+			// 	stuckonce[ID] = true;
+			// 	twait[ID] = simulation_time;
+			// }
 	
-			if (stuckonce[ID] && (simulation_time - twait[ID]) > 50.0)
-				stuckonce[ID] = false;
+			// if (stuckonce[ID] && (simulation_time - twait[ID]) > 50.0)
+			// 	stuckonce[ID] = false;
 
-			if (superhappy)
-				superhappyonce[ID] = true;
+			// if (superhappy)
+			// 	superhappyonce[ID] = true;
 		// }
 
 		return v;

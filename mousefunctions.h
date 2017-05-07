@@ -25,11 +25,16 @@ float zscale = 0;
 float px, py;
 void keyboard_callback(unsigned char key, int x, int y){
 	cout << key << endl;
+	stringstream ss;
 	switch(key){
 		case 'c':
 			mx = 0;
 			my = 0;
 			cout << endl << "Recentering Animation." << endl;
+			break;
+		case 'n':
+			ss << "pkill swarmulator && ./swarmulator " << nagents << " " << knearest;
+			system(ss.str().c_str());
 			break;
 		case 'z':
 			zms = 0;

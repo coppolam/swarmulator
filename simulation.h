@@ -47,7 +47,8 @@ float vector_std(const vector<float> &v)
 	double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
 	return sqrt(sq_sum / v.size());
 }
-/* Start the simulation! */
+
+void start_simulation(int argc, char* argv[]);
 
 void simulation_start()
 {
