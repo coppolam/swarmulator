@@ -112,7 +112,7 @@ void start_simulation(int argc, char* argv[]){
     // TODO: Make this code a bit more elegant.
 	void randomgen_init();
 	srand ( time ( NULL ) );
-	normal_distribution<float> rn(0.0, 1.0); // Noise on velocity + attitude measurements
+	normal_distribution<float> rn(0.0, 1.0);
 	random_device rd1; // Initialize x
 	static mt19937 e2(rd1());
 	random_device rd2; // Initialize y

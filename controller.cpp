@@ -10,7 +10,7 @@
 #include <numeric> 
 #include "omniscient_observer.h"
 #include "parameters.h"
-
+#include <unistd.h>
 OmniscientObserver *o = new OmniscientObserver();
 
 Controller::Controller(){};
@@ -19,7 +19,7 @@ Controller::~Controller(){};
 
 float Controller::f_attraction(float u)
 {
-	return 1/(1+exp(-5*(u-0.7783))) + 1/(1+exp(-5*(u+0.7783))) -1 ; //% sigmoid function -- long-range attraction
+	return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
 }
 
 
@@ -28,7 +28,7 @@ float Controller::f_attraction_bearing(float u, float b)
 	// if ( (b > (2*M_PI-0.5)) || (b < 0.5 ) || ((b > (M_PI-0.5)) && (b< (M_PI+0.5) ) ) )
 	// 	return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
 	// else
-	return 1/(1+exp(-5*(u-1.3))) + 1/(1+exp(-5*(u+1.3))) -1 ; //% sigmoid function -- long-range attraction
+	return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
 }
 
 /*
@@ -109,6 +109,8 @@ void circlemotion(const int &dim, const float &v_b, const float &bdes, float &v)
 }
 
 vector<bool> stuckonce(100);
+std::vector<bool> superhappyonce(100);
+vector<time_t> twait(100);
 
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
@@ -158,31 +160,32 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		if (i < knearest)
 		{
 			v_b += wrapToPi_f(o->request_bearing(ID, closest[i])/knearest);// + getrand_float(-0.2, 0.2);
-			v_r += get_individual_command(sqrt(u),v_b)/knearest;
+			v_r += get_individual_command(sqrt(u) ,v_b)/knearest;// + getrand_float(-0.2, 0.2);
 		}
 		b_i = o->request_bearing(ID, closest[i]);
 		wrapTo2Pi(b_i);
 
 		// calculate link type
-		if (sqrt(u) < 1.4)
+		if (sqrt(u) < 0.6)
 		{
 			cnt++;
+	
 			for (int j = 0; j < lbdes*2; j++)
 			{
-				if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.7 ) )
+				if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.3 ) )
 				{
 					q[j] = true;
+
 					if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.1 ) )
 						qs[j] = true;
-
-					nbs++;
+						nbs++;
 				}
-				else if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.7 )
+				else if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.3 )
 				{				
 					q[j] = true;
 					if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.1 )
 						qs[j] = true;
-					nbs++;
+						nbs++;
 				}
 			}
 		}
@@ -228,8 +231,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	// if (ID == 3)
 		cout << ID << ": "<< nbs << " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
 
-		if(simtime_seconds > 5.0 )// && simtime_seconds<50.0)
-		{
+		// if(simtime_seconds > 5.0 )// && simtime_seconds<50.0)
+		// {
 			if (
 				((  qs[0] &&  qs[1] && !qs[2] && !qs[3] )) || // not link 1
 				(( !qs[0] && !qs[1] &&  qs[2] &&  qs[3] )) || // not link 2
@@ -238,21 +241,22 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 				)
 			{
 				superhappy = true;
+				happy = true;
+				cout << ID << " superhappy " << endl;
 			}
 			else if  (   // list here all the things that make happy with its position in the lattice.
-				((  q[0] &&  q[1] && !q[2] && !q[3] )) || // not link 1
-				(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // not link 2
-				((  q[0] && !q[1] && !q[2] &&  q[3] )) || // not link 3
-				(( !q[0] &&  q[1] &&  q[2] && !q[3] ))  // not link 4
+				((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
+				(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
+				((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
+				(( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
 			)	
 			{
 				happy = true;
 				cout << ID << " happy " << endl;
 			}
 			else if (
-				sum	 > 1 ||
-				((  q[0] && !q[1] &&  q[2] && !q[3] ) || // not stuck 1
-				 ( !q[0] &&  q[1] && !q[2] &&  q[3] ))    // not stuck 2)
+				((  q[0] && q[2] ) || // stuck 1
+				 (  q[1] && q[3] ))   // stuck 2)
 				)
 			{
 				happy = false;
@@ -260,29 +264,65 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 				cout << ID << " stuck " << endl;
 			}
 			else
-{				happy = false;
+			{				
+				happy = false;
 				stuck = false;
 				cout << ID << " unhappy " << endl;
-}
-		}
+			}
+		// }
 
-		if (!happy && !stuck )
-			circlemotion  ( dim, v_b, bdes[minindex], v );
+		// if (!happy && !stuck )
+		// 	circlemotion  ( dim, v_b, bdes[minindex], v );
 		
-		else if ((stuck) || happy || stuckonce[ID])
-			latticemotion ( dim, v_b, bdes[minindex], v ); //cout << ID << " happy " << endl;
+		// else if ((stuck) || happy || stuckonce[ID])
+		// 	latticemotion ( dim, v_b, bdes[minindex], v ); //cout << ID << " happy " << endl;
 
-		if (stuck)
-			stuckonce[ID] = true;
-		// if (!stuck)
-		// 	stuckonce[ID] = false;
+		// if (stuck)
+		// 	stuckonce[ID] = true;
 		
-	// if (superhappyonce[ID] && happy)
-	// 	return 0;
-	// else
+		// if (simulation_time < 100)
+		// {
+			// if (!happy && !stuck && !stuckonce[ID] )//&& ID > closest[0])// && !superhappyonce[ID])
+			// 	// attractionmotion (dim,-0.01,v_b,v);
+			// 	circlemotion  ( dim, v_b, bdes[minindex], v);
+			// else if (stuck|| happy || superhappyonce[ID])// || stuck || stuckonce[ID] )// || stuck || stuckonce[ID] || superhappyonce[ID] )//(stuckonce[ID] && stuck) || happy)// && !stuck)//if (cnt > 2)// std::all_of(q.begin(), q.end(), [](bool p){return !p;}))// && // not 3 links//if (simtime_seconds < 500)
+			// 	latticemotion ( dim, v_b, bdes[minindex], v);
+			// if (!happy && !stuck)// && ID < closest[0])// && !stuckonce[ID] )//&& ID > closest[0])// && !superhappyonce[ID])
+			// 	// attractionmotion (dim,-0.01,v_b,v);
+			// 	circlemotion  ( dim, v_b, bdes[minindex], v);
+			// else 
+			// 	latticemotion ( dim, v_b, bdes[minindex], v);
+
+			// if (superhappyonce[ID])
+			// 	// latticemotion ( dim, v_b, bdes[minindex], v);
+			// else 
+
+			if ( !happy && !stuck )
+				circlemotion  ( dim, v_b, bdes[minindex], v);
+			// if (v_b < 0.05)
+			// 	v = 0;
+
+			if ( stuck && !happy && !superhappy)
+				latticemotion ( dim, v_b, bdes[minindex], v);
+
+			// if (superhappy)// || sum > 2)
+			// 	v = 0;
+
+			if (stuck && !stuckonce[ID]){
+				stuckonce[ID] = true;
+				twait[ID] = simulation_time;
+			}
+	
+			if (stuckonce[ID] && (simulation_time - twait[ID]) > 50.0)
+				stuckonce[ID] = false;
+
+			if (superhappy)
+				superhappyonce[ID] = true;
+		// }
+
 		return v;
 	
-}
+	}
 
 
 

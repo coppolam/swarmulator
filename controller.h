@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdio.h>
 #include <iostream>
+#include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
 using namespace std;
 
@@ -18,6 +19,7 @@ private:
 	float saturation_limits;
 	int   k = 0;
 	bool  set = true;
+    time_t timer;
 public:
 	vector<float> weights;
 	Controller();
