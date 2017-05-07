@@ -108,7 +108,7 @@ void circlemotion(const int &dim, const float &v_b, const float &bdes, float &v)
 	}
 }
 
-vector<bool> superhappyonce(100);
+vector<bool> stuckonce(100);
 
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
@@ -244,7 +244,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 				(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // not link 2
 				((  q[0] && !q[1] && !q[2] &&  q[3] )) || // not link 3
 				(( !q[0] &&  q[1] &&  q[2] && !q[3] ))  // not link 4
-			)
+			)	
 			{
 				happy = true;
 				cout << ID << " happy " << endl;
@@ -269,18 +269,17 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		if (!happy && !stuck )
 			circlemotion  ( dim, v_b, bdes[minindex], v );
 		
-		else if ((stuck) || happy)
+		else if ((stuck) || happy || stuckonce[ID])
 			latticemotion ( dim, v_b, bdes[minindex], v ); //cout << ID << " happy " << endl;
 
-
-		if (superhappy)
-			superhappyonce[ID] = true;
+		if (stuck)
+			stuckonce[ID] = true;
 		// if (!stuck)
 		// 	stuckonce[ID] = false;
 		
-	if (superhappyonce[ID] && happy)
-		return 0;
-	else
+	// if (superhappyonce[ID] && happy)
+	// 	return 0;
+	// else
 		return v;
 	
 }

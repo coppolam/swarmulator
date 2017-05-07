@@ -6,6 +6,7 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
+#include <assert.h>     /* assert */
 
 // A bit of a hack for compatibility with old GLUT
 // http://iihm.imag.fr/blanch/software/glut-macosx/
@@ -39,7 +40,7 @@ void keyboard_callback(unsigned char key, int x, int y){
 			exit(1);
 		case 'p':
 			cout << endl << "Pause. Press arrow keys to step forward " << endl;
-			mtx.lock();
+			mtx.try_lock();
 			break;
 		case 'r':
 			cout << endl << "Resume." << endl;
@@ -47,6 +48,7 @@ void keyboard_callback(unsigned char key, int x, int y){
 			break;
 		case 's':
 			cout << endl << "Stepping through." << endl;
+			mtx.try_lock();
 			mtx.unlock();
 			this_thread::sleep_for(chrono::microseconds( 1000 ));
 			mtx.lock();
