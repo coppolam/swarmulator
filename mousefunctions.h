@@ -33,6 +33,7 @@ void keyboard_callback(unsigned char key, int x, int y){
 			cout << endl << "Recentering Animation." << endl;
 			break;
 		case 'n':
+			cout << endl << "Restarting." << endl;
 			ss << "pkill swarmulator && ./swarmulator " << nagents << " " << knearest;
 			system(ss.str().c_str());
 			break;

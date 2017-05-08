@@ -65,7 +65,7 @@ vector<float> generate_random_vector(const int &length, mt19937 e2,normal_distri
 	std::vector<float> v(length);
 	for (int i = 0; i < length; i++)
 	{
-    	    v[i] = getrand_float(-0.3, 0.3);
+    	    v[i] = getrand_float(-2.0, 2.0);
     }
 
     // Adjust to zero mean

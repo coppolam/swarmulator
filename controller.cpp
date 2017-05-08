@@ -122,7 +122,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		{
 			bdes.push_back(deg2rad(  0));
 			// bdes.push_back(deg2rad( 45));
-			bdes.push_back(deg2rad( 90));
+			bdes.push_back(deg2rad( 120));
 			// bdes.push_back(deg2rad(135));
 
 			blink.push_back(deg2rad(  0));
@@ -137,7 +137,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		}
 		bv.push_back(deg2rad(  0));
 		// bv.push_back(deg2rad( 45));
-		bv.push_back(deg2rad( 90));
+		bv.push_back(deg2rad( 120));
 		// bv.push_back(deg2rad(135));
 	}
 	int lbdes = bdes.size();
