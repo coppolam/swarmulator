@@ -216,32 +216,32 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     	minindex -= lbdes;
 
 	attractionmotion (dim,v_r,v_b,v);
-	// int sum=0;
-	// for (int i = 0; i < 8; i++)
-	// {
-	// 	sum +=q[i];
-	// }
+	int sum=0;
+	for (int i = 0; i < 8; i++)
+	{
+		sum +=q[i];
+	}
 
-	// if  (   // list here all the things that make happy with its position in the lattice.
-	// 	((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
-	// 	(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
-	// 	((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
-	// 	(( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
-	// )	
-	// {
-	// 	happy = true;
-	// }
-	// else if (sum > 2 ||
-	// 		 (  q[0] && q[2] ) || // stuck 1
-	// 	     (  q[1] && q[3] ) )
-	// {
-	// 	stuck = true;
-	// }
+	if  (   // list here all the things that make happy with its position in the lattice.
+		((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
+		(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
+		((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
+		(( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
+	)	
+	{
+		happy = true;
+	}
+	else if (sum > 2 ||
+			 (  q[0] && q[2] ) || // stuck 1
+		     (  q[1] && q[3] ) )
+	{
+		stuck = true;
+	}
 
-	// if ( !happy && !stuck )
-	// 	circlemotion  ( dim, v_adj, v_b, bdes[minindex], v);
-	// else 
-	// 	latticemotion ( dim, v_adj, v_b, bdes[minindex], v);
+	if ( !happy && !stuck )
+		circlemotion  ( dim, v_adj, v_b, bdes[minindex], v);
+	else 
+		latticemotion ( dim, v_adj, v_b, bdes[minindex], v);
 
 	return v;
 
