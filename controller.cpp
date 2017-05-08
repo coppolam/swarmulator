@@ -164,8 +164,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 		if (i < knearest)
 		{
-			v_r += get_individual_command(sqrt(u));///knearest;// + getrand_float(-0.2, 0.2);
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));// + getrand_float(-0.2, 0.2);
+			v_r += get_individual_command(sqrt(u) + getrand_float(-0.2, 0.2));///knearest;// ;
+			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
 		}
 
 		b_i = o->request_bearing(ID, closest[i]);
