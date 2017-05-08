@@ -25,7 +25,7 @@ public:
 	Controller();
 	~Controller();
 	
-	float get_individual_command(float u,float b);
+	float get_individual_command(float u);
 	float get_velocity_command_radial(int ID, int dim);
 	float get_velocity_command_cartesian(int ID, int dim);
 	float saturate(float f);

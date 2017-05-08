@@ -53,12 +53,12 @@ float Controller::f_extra(float u)
 	Get a velocity command along an axis based on knowledge of 
 	position with respect to another agent.
 */
-float Controller::get_individual_command(float u, float b)
+float Controller::get_individual_command(float u)
 {
 	float d;
 	if (set)
 	{
-		d = saturate( f_attraction_bearing(u,b) + f_repulsion(u) + f_extra(u) ); 
+		d = saturate( f_attraction(u) + f_repulsion(u) + f_extra(u) ); 
 		return d;
 	}
 
@@ -78,10 +78,8 @@ void attractionmotion(const int &dim, const float &v_r, const float &v_b, float 
 	}
 }
 
-void latticemotion(const int &dim, const float &v_b, const float &bdes, float &v)
+void latticemotion(const int &dim, const float &v_adj, const float &v_b, const float &bdes, float &v)
 {
-	float v_adj = 0.2;
-
 	// Back to Cartesian
 	if (dim == 0)
 	{
@@ -93,33 +91,31 @@ void latticemotion(const int &dim, const float &v_b, const float &bdes, float &v
 	}
 }
 
-void circlemotion(const int &dim, const float &v_b, const float &bdes, float &v)
+void circlemotion(const int &dim, const float &v_adj, const float &v_b, const float &bdes, float &v)
 {
-	float v_adj = 0.2;
-
 	if (dim == 0)
 	{
-		    v += v_adj* cos(M_PI/2-v_b) ; // use for rotation
+		v += v_adj * cos(M_PI/2-v_b); // use for rotation
 	}
 
 	else if (dim == 1)
 	{
-			v += -v_adj * sin(M_PI/2-v_b) ; // use for rotation
+		v += -v_adj * sin(M_PI/2-v_b); // use for rotation
 	}
 }
 
-vector<bool> stuckonce(100);
-std::vector<bool> superhappyonce(100);
-vector<time_t> twait(100);
+vector<int> mode(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
 	float v_r   = 0.0;
 	float v_b   = 0.0;
+	float v_adj = 0.2;
 
 	vector<float> bdes;
+	vector<float> bv;
+	vector<float> blink;
 
-	std::vector<float> bv;
 	for (int i = 0; i < 5; i++)
 	{
 		if (i < 1)
@@ -128,6 +124,16 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			// bdes.push_back(deg2rad( 45));
 			bdes.push_back(deg2rad( 90));
 			// bdes.push_back(deg2rad(135));
+
+			blink.push_back(deg2rad(  0));
+			// blink.push_back(deg2rad(  45));
+			blink.push_back(deg2rad(  90));
+			// blink.push_back(deg2rad(  135));
+			blink.push_back(deg2rad(  180));
+			// blink.push_back(deg2rad(  225));
+			blink.push_back(deg2rad(  270));
+			// blink.push_back(deg2rad(  315));
+
 		}
 		bv.push_back(deg2rad(  0));
 		// bv.push_back(deg2rad( 45));
@@ -137,14 +143,13 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	int lbdes = bdes.size();
 
 	vector<bool> q(lbdes*2,false);
-	vector<bool> qs(lbdes*2,false);
-	bool happy,stuck;
+	bool happy = false;
+	bool stuck = false;
 
 	float u, v, b_i;
 	int i = 0;
 
 	int cnt = 0;
-	int nbs = 0;
 	vector<int> closest = o->request_closest(ID);
 
 	for (i = 0; i < nagents-1; i++)
@@ -159,33 +164,23 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 		if (i < knearest)
 		{
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i])/knearest) + getrand_float(-0.2, 0.2);
-			v_r += get_individual_command(sqrt(u) ,v_b)/knearest;// + getrand_float(-0.2, 0.2);
+			v_r += get_individual_command(sqrt(u));///knearest;// + getrand_float(-0.2, 0.2);
+			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));// + getrand_float(-0.2, 0.2);
 		}
+
 		b_i = o->request_bearing(ID, closest[i]);
 		wrapTo2Pi(b_i);
 
 		// calculate link type
-		if (sqrt(u) < 0.6)
+		if (sqrt(u) < 0.8)
 		{
 			cnt++;
 	
 			for (int j = 0; j < lbdes*2; j++)
 			{
-				if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.3 ) )
+				if ( abs(b_i - blink[j]) < 0.4 ) 
 				{
 					q[j] = true;
-
-					if (      j <lbdes  && ( abs(b_i - bdes[j]) < 0.1 ) )
-						qs[j] = true;
-						nbs++;
-				}
-				else if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.3 )
-				{				
-					q[j] = true;
-					if ( j>=lbdes && abs(b_i - (bdes[j-lbdes] + M_PI) ) < 0.1 )
-						qs[j] = true;
-						nbs++;
 				}
 			}
 		}
@@ -217,34 +212,13 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     	minindex -= lbdes;
 
 	attractionmotion (dim,v_r,v_b,v);
-	bool superhappy = false;
-	// #ifdef ROGUE
-	// if (ID == rogueID)
-	// {
-	// int sum = std::accumulate(q.begin(), q.end(), 0);
 	int sum=0;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		sum +=q[i];
 	}
-	// cout << ID << " " << sum << endl;
-	// if (ID == 3)
-		cout << ID << ": "<< nbs << " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
 
-		// if(simtime_seconds > 5.0 )// && simtime_seconds<50.0)
-		// {
-			if (
-				((  qs[0] &&  qs[1] && !qs[2] && !qs[3] )) || // not link 1
-				(( !qs[0] && !qs[1] &&  qs[2] &&  qs[3] )) || // not link 2
-				((  qs[0] && !qs[1] && !qs[2] &&  qs[3] )) || // not link 3
-				(( !qs[0] &&  qs[1] &&  qs[2] && !qs[3] ))  // not link 4
-				)
-			{
-				superhappy = true;
-				happy = true;
-				cout << ID << " superhappy " << endl;
-			}
-			else if  (   // list here all the things that make happy with its position in the lattice.
+			if  (   // list here all the things that make happy with its position in the lattice.
 				((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
 				(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
 				((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
@@ -252,46 +226,58 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			)	
 			{
 				happy = true;
-				cout << ID << " happy " << endl;
+				cout << ID << " happy " << mode[ID] <<endl;
 			}
-			else if (
-				((  q[0] && q[2] ) || // stuck 1
-				 (  q[1] && q[3] ))   // stuck 2)
-				)
+			else if (sum >2 ||
+					 (  q[0] && q[2] ) || // stuck 1
+				     (  q[1] && q[3] ) )
 			{
-				happy = false;
 				stuck = true;
-				cout << ID << " stuck " << endl;
+				cout << ID << " stuck " << mode[ID] << endl;	
 			}
 			else
-			{				
-				happy = false;
-				stuck = false;
-				cout << ID << " unhappy " << endl;
+			{
+				cout << ID << " unhappy " << mode[ID] << endl;
 			}
 
-			if ( !happy && !stuck )
-				circlemotion  ( dim, v_b, bdes[minindex], v);
+			if ( !happy && !stuck && ( mode[closest[0]] == 0))
+			{
+				circlemotion  ( dim, 0.4, v_b, bdes[minindex], v);
+			}
+			else if ( mode[closest[0]] == 0)
+			{
+				latticemotion ( dim, v_adj, v_b, bdes[minindex], v);
+			}
+			else {
+				mode[ID] = 0;
+			}
 
-			if ( stuck && !happy )//&& !superhappy)
-				latticemotion (dim, v_b, bdes[minindex], v);
 
-			// if (stuck && !stuckonce[ID]){
-			// 	stuckonce[ID] = true;
-			// 	twait[ID] = simulation_time;
-			// }
-	
-			// if (stuckonce[ID] && (simulation_time - twait[ID]) > 50.0)
-			// 	stuckonce[ID] = false;
-
-			// if (superhappy)
-			// 	superhappyonce[ID] = true;
+		// 	// if (simtime_seconds < 10 ){
+		// 		latticemotion ( dim, v_b, bdes[minindex], v);
+		// 		mode[ID] = 1;
+		// 	}
+		// 	else
+		// 	{
+		// 	if (mode[closest[0]] != 1)
+		// 	{
+		// 		circlemotion  ( dim, v_b, bdes[minindex], v);
+		// 	}
 		// }
+				
+// 			if (simtime_seconds > 60 && simtime_seconds < 140)
+// {
+// 			if ( !happy && !stuck )
+// 				circlemotion  ( dim, v_b, bdes[minindex], v);
+
+// 			else if ( !happy || stuck )
+// 				latticemotion ( dim, v_b, bdes[minindex], v);
+// }
+// else
 
 		return v;
-	
-	}
 
+	}
 
 
 float Controller::get_velocity_command_cartesian(int ID, int dim)
@@ -306,7 +292,7 @@ float Controller::get_velocity_command_cartesian(int ID, int dim)
 	for (i = 0; i < knearest; i++)
 	{
 			u = o->request_distance(ID, closest[i], dim);
-			v += get_individual_command(u,u);
+			v += get_individual_command(u);
 	}
 
 	#endif
@@ -321,7 +307,7 @@ float Controller::get_velocity_command_cartesian(int ID, int dim)
 		i++;
 	}
 
-	for (i =/ 0; i < nagents; i++)
+	for (i = 0; i < nagents; i++)
 	{
 		if (i!=ID)
 		{

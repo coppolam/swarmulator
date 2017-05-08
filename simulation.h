@@ -12,7 +12,7 @@
 
 void run_simulation()
 {
-	static OmniscientObserver *obs = new OmniscientObserver();
+	// static OmniscientObserver *obs = new OmniscientObserver();
 
 	mtx.lock();
 	for (int i = 0; i < nagents; i++)
@@ -20,7 +20,7 @@ void run_simulation()
 		s[i].update_position();
 	}
 
-	obs->adjacency_matrix(); // Calculate the adjacency matrix
+	// obs->adjacency_matrix(); // Calculate the adjacency matrix
 	mtx.unlock();
 
 	int t_wait = (int) 1000000.0*(1.0/(simulation_updatefreq*simulation_realtimefactor));
@@ -65,14 +65,14 @@ vector<float> generate_random_vector(const int &length, mt19937 e2,normal_distri
 	std::vector<float> v(length);
 	for (int i = 0; i < length; i++)
 	{
-    	    v[i] = getrand_float(-1, 1);
+    	    v[i] = getrand_float(-0.3, 0.3);
     }
 
     // Adjust to zero mean
     vector<float> temp = v;
     for (int i = 0; i < length; i++)
     {
-    	v[i] = ((v[i]-vector_mean(temp))/vector_std(temp));
+    	v[i] = ((v[i]-vector_mean(temp)));
     }
     
     return v;
