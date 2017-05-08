@@ -28,7 +28,7 @@ float Controller::f_attraction_bearing(float u, float b)
 	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
 	// 	return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
 	// else
-		return 1/(1+exp(-5*(u-0.5))) + 1/(1+exp(-5*(u+0.5))) -1 ; //% sigmoid function -- long-range attraction
+		return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
 }
 
 /*
@@ -122,7 +122,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		{
 			bdes.push_back(deg2rad(  0));
 			// bdes.push_back(deg2rad( 45));
-			// bdes.push_back(deg2rad( 120));
+			bdes.push_back(deg2rad( 90));
 			// bdes.push_back(deg2rad(135));
 
 			blink.push_back(deg2rad(  0));
@@ -137,7 +137,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		}
 		bv.push_back(deg2rad(  0));
 		// bv.push_back(deg2rad( 45));
-		// bv.push_back(deg2rad( 120));
+		bv.push_back(deg2rad( 90));
 		// bv.push_back(deg2rad(135));
 	}
 	int lbdes = bdes.size();
@@ -222,66 +222,30 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	// 	sum +=q[i];
 	// }
 
-	// 		if  (   // list here all the things that make happy with its position in the lattice.
-	// 			((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
-	// 			(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
-	// 			((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
-	// 			(( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
-	// 		)	
-	// 		{
-	// 			happy = true;
-	// 			cout << ID << " happy " << mode[ID] <<endl;
-	// 		}
-	// 		else if (sum >2 ||
-	// 				 (  q[0] && q[2] ) || // stuck 1
-	// 			     (  q[1] && q[3] ) )
-	// 		{
-	// 			stuck = true;
-	// 			cout << ID << " stuck " << mode[ID] << endl;	
-	// 		}
-	// 		else
-	// 		{
-	// 			cout << ID << " unhappy " << mode[ID] << endl;
-	// 		}
+	// if  (   // list here all the things that make happy with its position in the lattice.
+	// 	((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
+	// 	(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
+	// 	((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
+	// 	(( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
+	// )	
+	// {
+	// 	happy = true;
+	// }
+	// else if (sum > 2 ||
+	// 		 (  q[0] && q[2] ) || // stuck 1
+	// 	     (  q[1] && q[3] ) )
+	// {
+	// 	stuck = true;
+	// }
 
-			// if ( !happy && !stuck && ( mode[closest[0]] == 0))
-			// {
-			// 	circlemotion  ( dim, 0.4, v_b, bdes[minindex], v);
-			// }
-			// else if ( mode[closest[0]] == 0)
-			// {
-				latticemotion ( dim, v_adj, v_b, bdes[minindex], v);
-			// }
-			// else {
-			// 	mode[ID] = 0;
-			// }
+	// if ( !happy && !stuck )
+	// 	circlemotion  ( dim, v_adj, v_b, bdes[minindex], v);
+	// else 
+	// 	latticemotion ( dim, v_adj, v_b, bdes[minindex], v);
 
+	return v;
 
-		// 	// if (simtime_seconds < 10 ){
-		// 		latticemotion ( dim, v_b, bdes[minindex], v);
-		// 		mode[ID] = 1;
-		// 	}
-		// 	else
-		// 	{
-		// 	if (mode[closest[0]] != 1)
-		// 	{
-		// 		circlemotion  ( dim, v_b, bdes[minindex], v);
-		// 	}
-		// }
-				
-// 			if (simtime_seconds > 60 && simtime_seconds < 140)
-// {
-// 			if ( !happy && !stuck )
-// 				circlemotion  ( dim, v_b, bdes[minindex], v);
-
-// 			else if ( !happy || stuck )
-// 				latticemotion ( dim, v_b, bdes[minindex], v);
-// }
-// else
-
-		return v;
-
-	}
+}
 
 
 float Controller::get_velocity_command_cartesian(int ID, int dim)
