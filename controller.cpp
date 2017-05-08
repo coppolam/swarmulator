@@ -25,10 +25,10 @@ float Controller::f_attraction(float u)
 
 float Controller::f_attraction_bearing(float u, float b)
 {
-	// if ( (b > (2*M_PI-0.5)) || (b < 0.5 ) || ((b > (M_PI-0.5)) && (b< (M_PI+0.5) ) ) )
-	// 	return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
-	// else
-	return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
+	if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
+		return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
+	else
+		return 1/(1+exp(-5*(u-1.3))) + 1/(1+exp(-5*(u+1.3))) -1 ; //% sigmoid function -- long-range attraction
 }
 
 /*
@@ -53,12 +53,12 @@ float Controller::f_extra(float u)
 	Get a velocity command along an axis based on knowledge of 
 	position with respect to another agent.
 */
-float Controller::get_individual_command(float u)
+float Controller::get_individual_command(float u, float b)
 {
 	float d;
 	if (set)
 	{
-		d = saturate( f_attraction(u) + f_repulsion(u) + f_extra(u) ); 
+		d = saturate( f_attraction_bearing(u,b) + f_repulsion(u) + f_extra(u) ); 
 		return d;
 	}
 
@@ -162,14 +162,21 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			u += pow(dd,2);
 		}
 
-		if (i < knearest)
-		{
-			v_r += get_individual_command(sqrt(u) + getrand_float(-0.2, 0.2));///knearest;// ;
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
-		}
-
 		b_i = o->request_bearing(ID, closest[i]);
 		wrapTo2Pi(b_i);
+
+		if (i < knearest)
+		{
+			// v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
+			// v_r += get_individual_command(sqrt(u) + getrand_float(-0.2, 0.2),v_b);
+
+			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
+			v_r += get_individual_command(sqrt(u),b_i);
+
+			if (ID == 3)
+				cout << b_i << endl;
+		}
+
 
 		// calculate link type
 		if (sqrt(u) < 0.8)
@@ -212,45 +219,45 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     	minindex -= lbdes;
 
 	attractionmotion (dim,v_r,v_b,v);
-	int sum=0;
-	for (int i = 0; i < 8; i++)
-	{
-		sum +=q[i];
-	}
+	// int sum=0;
+	// for (int i = 0; i < 8; i++)
+	// {
+	// 	sum +=q[i];
+	// }
 
-			if  (   // list here all the things that make happy with its position in the lattice.
-				((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
-				(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
-				((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
-				(( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
-			)	
-			{
-				happy = true;
-				cout << ID << " happy " << mode[ID] <<endl;
-			}
-			else if (sum >2 ||
-					 (  q[0] && q[2] ) || // stuck 1
-				     (  q[1] && q[3] ) )
-			{
-				stuck = true;
-				cout << ID << " stuck " << mode[ID] << endl;	
-			}
-			else
-			{
-				cout << ID << " unhappy " << mode[ID] << endl;
-			}
+	// 		if  (   // list here all the things that make happy with its position in the lattice.
+	// 			((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
+	// 			(( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
+	// 			((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
+	// 			(( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
+	// 		)	
+	// 		{
+	// 			happy = true;
+	// 			cout << ID << " happy " << mode[ID] <<endl;
+	// 		}
+	// 		else if (sum >2 ||
+	// 				 (  q[0] && q[2] ) || // stuck 1
+	// 			     (  q[1] && q[3] ) )
+	// 		{
+	// 			stuck = true;
+	// 			cout << ID << " stuck " << mode[ID] << endl;	
+	// 		}
+	// 		else
+	// 		{
+	// 			cout << ID << " unhappy " << mode[ID] << endl;
+	// 		}
 
-			if ( !happy && !stuck && ( mode[closest[0]] == 0))
-			{
-				circlemotion  ( dim, 0.4, v_b, bdes[minindex], v);
-			}
-			else if ( mode[closest[0]] == 0)
-			{
+			// if ( !happy && !stuck && ( mode[closest[0]] == 0))
+			// {
+			// 	circlemotion  ( dim, 0.4, v_b, bdes[minindex], v);
+			// }
+			// else if ( mode[closest[0]] == 0)
+			// {
 				latticemotion ( dim, v_adj, v_b, bdes[minindex], v);
-			}
-			else {
-				mode[ID] = 0;
-			}
+			// }
+			// else {
+			// 	mode[ID] = 0;
+			// }
 
 
 		// 	// if (simtime_seconds < 10 ){
@@ -292,7 +299,7 @@ float Controller::get_velocity_command_cartesian(int ID, int dim)
 	for (i = 0; i < knearest; i++)
 	{
 			u = o->request_distance(ID, closest[i], dim);
-			v += get_individual_command(u);
+			v += get_individual_command(u,u);
 	}
 
 	#endif
