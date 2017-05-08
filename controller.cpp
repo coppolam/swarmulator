@@ -25,10 +25,10 @@ float Controller::f_attraction(float u)
 
 float Controller::f_attraction_bearing(float u, float b)
 {
-	if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-		return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
-	else
-		return 1/(1+exp(-5*(u-1.3))) + 1/(1+exp(-5*(u+1.3))) -1 ; //% sigmoid function -- long-range attraction
+	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
+	// 	return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
+	// else
+		return 1/(1+exp(-5*(u-0.5))) + 1/(1+exp(-5*(u+0.5))) -1 ; //% sigmoid function -- long-range attraction
 }
 
 /*
@@ -122,7 +122,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		{
 			bdes.push_back(deg2rad(  0));
 			// bdes.push_back(deg2rad( 45));
-			bdes.push_back(deg2rad( 120));
+			// bdes.push_back(deg2rad( 120));
 			// bdes.push_back(deg2rad(135));
 
 			blink.push_back(deg2rad(  0));
@@ -137,7 +137,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		}
 		bv.push_back(deg2rad(  0));
 		// bv.push_back(deg2rad( 45));
-		bv.push_back(deg2rad( 120));
+		// bv.push_back(deg2rad( 120));
 		// bv.push_back(deg2rad(135));
 	}
 	int lbdes = bdes.size();
@@ -172,9 +172,6 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
 			v_r += get_individual_command(sqrt(u),b_i);
-
-			if (ID == 3)
-				cout << b_i << endl;
 		}
 
 
