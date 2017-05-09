@@ -4,7 +4,7 @@
 
 // Simulation Parameters
 #define simulation_updatefreq 30.0 	  // (Hz) Defines the simulation time step
-#define simulation_realtimefactor 10.0 // Real time factor of simulation
+#define simulation_realtimefactor 20.0 // Real time factor of simulation
 
 // Animation Parameters
 #define ANIMATE // Activate animation thread
