@@ -123,22 +123,22 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		{
 			bdes.push_back(deg2rad(  0));
 			// bdes.push_back(deg2rad( 45));
-			bdes.push_back(deg2rad( 90));
+			bdes.push_back(deg2rad( 70));
 			// bdes.push_back(deg2rad(135));
 
 			blink.push_back(deg2rad(  0));
 			// blink.push_back(deg2rad(  45));
-			blink.push_back(deg2rad(  90));
+			blink.push_back(deg2rad(  70));
 			// blink.push_back(deg2rad(  135));
 			blink.push_back(deg2rad(  180));
 			// blink.push_back(deg2rad(  180+45));
-			blink.push_back(deg2rad(  180+90));
+			blink.push_back(deg2rad(  180+70));
 			// blink.push_back(deg2rad(  315));
 
 		}
 		bv.push_back(deg2rad(  0));
 		// bv.push_back(deg2rad( 45));
-		bv.push_back(deg2rad( 90));
+		bv.push_back(deg2rad( 70));
 		// bv.push_back(deg2rad(135));
 	}
 	int lbdes = bdes.size();
@@ -177,7 +177,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 
 		// calculate link type
-		if (sqrt(u) < 0.8)
+		if (sqrt(u) < 0.6)
 		{
 			cnt++;
 	
