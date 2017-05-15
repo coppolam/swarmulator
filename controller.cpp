@@ -116,7 +116,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 {
 	float v_r   = 0.0;
 	float v_b   = 0.0;
-	float v_adj = 0.5;
+	float v_adj = 0.1;
 
 	vector<float> bdes;
 	vector<float> bv;
@@ -126,8 +126,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	{
 		if (i < 1)
 		{
-			bdes.push_back(deg2rad(  40));
-			// bdes.push_back(deg2rad( 45));
+			bdes.push_back(deg2rad(  0));
+			bdes.push_back(deg2rad( 90));
 			// bdes.push_back(deg2rad( 70));
 			// bdes.push_back(deg2rad(180));
 
@@ -143,8 +143,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			blink.push_back(deg2rad(  315));
 
 		}
-		bv.push_back(deg2rad(  40));
-		// bv.push_back(deg2rad( 70));
+		bv.push_back(deg2rad(  0));
+		bv.push_back(deg2rad( 90));
 		// bv.push_back(deg2rad( 180));
 		// bv.push_back(deg2rad(270));
 	}
@@ -180,19 +180,18 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
 			v_r += get_individual_command(sqrt(u),b_i);
-				cout << ID << " " << " " << sqrt(u) << endl;
 
 		}
 
 
 		// calculate link type
-		if (sqrt(u) < 0.8)
+		if (sqrt(u) < 1.5)
 		{
 			cnt++;
 	
 			for (int j = 0; j < lbdes*4; j++)
 			{
-				if ( abs(b_i - blink[j]) < deg2rad(20) ) 
+				if ( abs(b_i - blink[j]) < deg2rad(10) ) 
 				{
 					q[j] = true;
 				}
@@ -254,7 +253,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 				((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
 				(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
 				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
-				||   // not link 3
+				||   
 				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
 				(( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
 				((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
@@ -268,10 +267,10 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	{
 		happy = true;
 		happyonce[ID] = true;
-		// cout << ID << " happy" << endl;
+		cout << ID << " happy" << endl;
 	}
 
-	else if ( cnt > 2 ||
+	else if ( //cnt > 2 ||
 			 // (  q[0] && q[2] ) || // stuck 1
 		  //    (  q[1] && q[3] ) )
 		     (  q[0] && q[4] ) || // stuck 1
@@ -280,41 +279,40 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		     (  q[3] && q[7] ) )
 	{
 		stuck = true;
-		// cout << ID << " stuck" << endl;
+		cout << ID << " stuck" << endl;
 	}
 	else{
-		// cout << ID << " unhappy unstuck" << endl;
+		cout << ID << " unhappy unstuck" << endl;
 	}
 
-	attractionmotion (dim,v_r,v_b,v);
 
-	// int tw = 100;
-	// if ( !happy && !stuck && waiting[ID] < tw)
-	// {	
-	// 	if (dim == 0){waiting[ID]++;}
-	// 	cout << ID << " " << waiting[ID] << endl;
-	// 	v = 0;
-	// 	// latticemotion ( dim, v_adj , v_b, bdes[minindex], v);
-	// }
-	// // else 
-	// if ( (!happy && !stuck) )// || !happyonce[ID])
-	// {
-	// 	cout << ID << " circling"<< endl;
-	// 	circlemotion  ( dim, v_adj , v_b, bdes[minindex], v);
-	// }
-	// else {
-	// 	latticemotion ( dim, v_adj , v_b, bdes[minindex], v);
-	// 	waiting[ID] = 0;
-	// }
+	if (!happy && !stuck)
+	{
+		if (dim == 0){waiting[ID]++;}
+	}
+	else
+	{
+		waiting[ID] = 0;
+	}
 
+	int tw = 30*simulation_updatefreq;
 
-// 	if (ID == 0 )
-				// circlemotion  ( dim, v_adj , v_b, bdes[minindex], v);
-// else
-	// if( bv[minindex] < 0.05)
-	// 	bv[minindex] = 0;
-
-			latticemotion ( dim, v_adj , v_b, bdes[minindex], v);
+	if ( (!happy && !stuck) && waiting[ID] > tw )
+	{
+		attractionmotion ( dim, v_r  , v_b,  v);
+		circlemotion     ( dim, v_adj , v_b, bdes[minindex], v);
+	}
+	else 
+	{
+		// if (waiting[ID] > tw )
+		// {
+			attractionmotion ( dim, v_r + v_adj, v_b, v);
+			latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
+		// 	cout <<"lattice!" << endl;
+		// }
+		// else
+			// attractionmotion (dim,v_r,v_b,v);				
+	}
 
 	return v;
 
