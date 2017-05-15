@@ -7,6 +7,8 @@ CFLAGS  += -std=c++0x
 
 VPATH=animation:simulation
 
+$(info ************ SWARMULATOR V0.1 **********)
+
 # Build an executable named main from main.c
 all: 
 	g++ -g -Wall -std=gnu++0x \
