@@ -110,8 +110,7 @@ void circlemotion(const int &dim, const float &v_adj, const float &v_b, const fl
 }
 
 vector<int> waiting(100,0);
-vector<bool> happyonce(100,0);
-vector<int> mode(100,0);
+vector<bool> circling(100,0);
 vector<float> bstore(100,0);
 vector<int> cstore(100,0);
 
@@ -243,10 +242,10 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 				((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
 				(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
 				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
-				// ||   
-				// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
-				// (( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
-				// ((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
+				||   
+				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
+				(( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
+				((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
 
 		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
 
@@ -289,42 +288,42 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 	if ( (!happy && !stuck) && !q[0] && !q[1] && !q[2] && waiting[ID] >= tw  )//&& !q[0] && !q[7] && !q[1])// && ( mode[closest[0]] == 0))
 	{
+		circling[ID] = true; // lattice || static
 		
-		if( ( (wrapTo2Pi_f(v_b) < wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] >= tw*5 )
-{			attractionmotion ( dim, v_r  , v_b,  v);
-			circlemotion     ( dim, v_adj , v_b, bdes[minindex], v);
-			if (waiting[ID] > tw+2)
-				waiting[ID]--;
+		if( ( (wrapTo2Pi_f(v_b) < wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] > tw*3 )
+		{
+			attractionmotion ( dim, v_r   , v_b,  v                );
+			circlemotion     ( dim, v_adj , v_b,  bdes[minindex], v);
+			if (waiting[ID] > tw*3+300)
+				waiting[ID] = tw+10;
 		}
 		else
-{						attractionmotion ( dim, v_r + v_adj , v_b, v);
+		{			
+			attractionmotion ( dim, v_r + v_adj , v_b, v);
 			latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
-}
+		}
+		
+		if (waiting[ID] == tw+5)
+		{
+			bstore[ID] = wrapTo2Pi_f(v_b);
+			cstore[ID] = closest[0];
+		}
 
-		mode[ID] = 1;
-		// cout << ID << " circle" << endl;
-
-		 if (waiting[ID] == tw) // FIRST TIME
-{		 	bstore[ID] = wrapTo2Pi_f(v_b);
-		 	cstore[ID] = closest[0];
-		 }
-
-		 cout << ID << " " << waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
+		cout << ID << " " << waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
 	}
-	else if (  mode[closest[0]]  == 0)
+
+	else if ( !circling[closest[0]])
 	{
-		// if (waiting[ID] > tw )
-		// {
-			attractionmotion ( dim, v_r + v_adj, v_b, v);
-			latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
-			// cout <<ID  << " lattice!" << endl;
-			mode[ID] = 0;
-		// }
-		// else
+		circling[ID] = false; // lattice || static
+
+		attractionmotion ( dim, v_r + v_adj, v_b, v);
+		latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
+		
 	}
-	else {
+	else
+	{
+		circling[ID] = false; // lattice || static
 		attractionmotion (dim,v_r,v_b,v);
-		mode[ID] = 0;
 	}
 
 
