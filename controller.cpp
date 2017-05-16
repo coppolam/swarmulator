@@ -111,6 +111,9 @@ void circlemotion(const int &dim, const float &v_adj, const float &v_b, const fl
 
 vector<int> waiting(100,0);
 vector<bool> happyonce(100,0);
+vector<int> mode(100,0);
+vector<float> bstore(100,0);
+vector<int> cstore(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
@@ -191,7 +194,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	
 			for (int j = 0; j < lbdes*4; j++)
 			{
-				if ( abs(b_i - blink[j]) < deg2rad(10) ) 
+				if ( abs(b_i - blink[j]) < deg2rad(20) ) 
 				{
 					q[j] = true;
 				}
@@ -225,19 +228,6 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     while (minindex >= lbdes)
     	minindex -= lbdes;
 
-	// int sum=0;
-	// for (int i = 0; i < 8; i++)
-	// {
-	// 	sum +=q[i];
-	// }
-
-	// for (int i = 0; i < lbdes*5; i++)
-	// {
-	// 	if(bv[i]-v_b < bv[minindex]-v_b)
-	// 		minindex = i;
-	// }
-
-
 	// cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
 	// 			      << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
 
@@ -253,10 +243,10 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 				((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
 				(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
 				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
-				||   
-				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
-				(( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
-				((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
+				// ||   
+				// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
+				// (( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
+				// ((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
 
 		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
 
@@ -267,7 +257,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	{
 		happy = true;
 		happyonce[ID] = true;
-		cout << ID << " happy" << endl;
+		// cout << ID << " happy" << endl;
 	}
 
 	else if ( //cnt > 2 ||
@@ -279,14 +269,14 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		     (  q[3] && q[7] ) )
 	{
 		stuck = true;
-		cout << ID << " stuck" << endl;
+		// cout << ID << " stuck" << endl;
 	}
 	else{
-		cout << ID << " unhappy unstuck" << endl;
+		// cout << ID << " unhappy unstuck" << endl;
 	}
 
 
-	if (!happy && !stuck)
+	if ((!happy && !stuck) && !q[0] && !q[1] && !q[2] )
 	{
 		if (dim == 0){waiting[ID]++;}
 	}
@@ -297,22 +287,46 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 	int tw = 30*simulation_updatefreq;
 
-	if ( (!happy && !stuck) && waiting[ID] > tw )
+	if ( (!happy && !stuck) && !q[0] && !q[1] && !q[2] && waiting[ID] >= tw  )//&& !q[0] && !q[7] && !q[1])// && ( mode[closest[0]] == 0))
 	{
-		attractionmotion ( dim, v_r  , v_b,  v);
-		circlemotion     ( dim, v_adj , v_b, bdes[minindex], v);
+		
+		if( ( (wrapTo2Pi_f(v_b) < wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] >= tw*5 )
+{			attractionmotion ( dim, v_r  , v_b,  v);
+			circlemotion     ( dim, v_adj , v_b, bdes[minindex], v);
+			if (waiting[ID] > tw+2)
+				waiting[ID]--;
+		}
+		else
+{						attractionmotion ( dim, v_r + v_adj , v_b, v);
+			latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
+}
+
+		mode[ID] = 1;
+		// cout << ID << " circle" << endl;
+
+		 if (waiting[ID] == tw) // FIRST TIME
+{		 	bstore[ID] = wrapTo2Pi_f(v_b);
+		 	cstore[ID] = closest[0];
+		 }
+
+		 cout << ID << " " << waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
 	}
-	else 
+	else if (  mode[closest[0]]  == 0)
 	{
 		// if (waiting[ID] > tw )
 		// {
 			attractionmotion ( dim, v_r + v_adj, v_b, v);
 			latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
-		// 	cout <<"lattice!" << endl;
+			// cout <<ID  << " lattice!" << endl;
+			mode[ID] = 0;
 		// }
 		// else
-			// attractionmotion (dim,v_r,v_b,v);				
 	}
+	else {
+		attractionmotion (dim,v_r,v_b,v);
+		mode[ID] = 0;
+	}
+
 
 	return v;
 
