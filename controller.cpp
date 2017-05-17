@@ -239,41 +239,36 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		// (( !q[0] && !q[1] && !q[2] &&  q[3] )) || // link 2
 		// ((  q[0] && !q[1] && !q[2] && !q[3] ))
 
-				((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
-				(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
-				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
-				||   
-				(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
-				(( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
-				((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
+		// Triangle
+		((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
+		(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
+		(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
+		||   
+		(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
+		(( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
+		((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
 
+		// M
 		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
-
 		// ((!q[0] && !q[1] && !q[2] && !q[3] && !q[4] &&  q[5] && !q[6] && !q[7])) ||
-		
 		// ((!q[0] &&  q[1] && !q[2] && !q[3] &&  q[4] && !q[5] && !q[6] && !q[7]))
 	)	
 	{
 		happy = true;
-		happyonce[ID] = true;
-		// cout << ID << " happy" << endl;
+		// cout << ID << " HAPPY" << endl;
 	}
 
-	else if ( //cnt > 2 ||
-			 // (  q[0] && q[2] ) || // stuck 1
-		  //    (  q[1] && q[3] ) )
+	else if ( 
+		    // (  q[0] && q[2] ) || // stuck 1
+		    // (  q[1] && q[3] ) )
 		     (  q[0] && q[4] ) || // stuck 1
 		     (  q[1] && q[5] ) ||
 		     (  q[2] && q[6] ) || // stuck 1
 		     (  q[3] && q[7] ) )
 	{
 		stuck = true;
-		// cout << ID << " stuck" << endl;
+		// cout << ID << " STUCK" << endl;
 	}
-	else{
-		// cout << ID << " unhappy unstuck" << endl;
-	}
-
 
 	if ((!happy && !stuck) && !q[0] && !q[1] && !q[2] )
 	{
@@ -284,17 +279,18 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		waiting[ID] = 0;
 	}
 
-	int tw = 30*simulation_updatefreq;
-
-	if ( (!happy && !stuck) && !q[0] && !q[1] && !q[2] && waiting[ID] >= tw  )//&& !q[0] && !q[7] && !q[1])// && ( mode[closest[0]] == 0))
+	int waittime = 30;
+	int tw = waittime*simulation_updatefreq;
+	// cout << waiting[ID] << endl;
+	if ( (!happy && !stuck) && !q[0] && !q[1] && !q[2] && waiting[ID] >= tw  )
 	{
-		circling[ID] = true; // lattice || static
+		circling[ID] = true; // !lattice && !static
 		
 		if( ( (wrapTo2Pi_f(v_b) < wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] > tw*3 )
 		{
 			attractionmotion ( dim, v_r   , v_b,  v                );
 			circlemotion     ( dim, v_adj , v_b,  bdes[minindex], v);
-			if (waiting[ID] > tw*3+300)
+			if (waiting[ID] > tw*3+(waittime/v_adj))
 				waiting[ID] = tw+10;
 		}
 		else
