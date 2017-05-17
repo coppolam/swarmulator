@@ -243,15 +243,18 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
 		(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
 		(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
-		||   
-		(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
-		(( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
-		((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
+		// ||   
+		// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
+		// (( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
+		// ((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
 
 		// M
-		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
-		// ((!q[0] && !q[1] && !q[2] && !q[3] && !q[4] &&  q[5] && !q[6] && !q[7])) ||
-		// ((!q[0] &&  q[1] && !q[2] && !q[3] &&  q[4] && !q[5] && !q[6] && !q[7]))
+
+		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] && !q[7])) || // not link 1 
+		// (( q[0] && !q[1] &&  q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
+		// ((!q[0] && !q[1] && !q[2] && !q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) ||
+		// ((!q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] && !q[5] && !q[6] && !q[7])) ||
+		// ((!q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))
 	)	
 	{
 		happy = true;
@@ -270,7 +273,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		// cout << ID << " STUCK" << endl;
 	}
 
-	if ((!happy && !stuck) && !q[0] && !q[1] && !q[2] )
+	if ((!happy && !stuck) &&  ( (!q[0] && !q[1] && !q[2]) || (!q[4] && !q[5] && !q[6]) ) )
 	{
 		if (dim == 0){waiting[ID]++;}
 	}
@@ -281,8 +284,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 	int waittime = 30;
 	int tw = waittime*simulation_updatefreq;
-	// cout << waiting[ID] << endl;
-	if ( (!happy && !stuck) && !q[0] && !q[1] && !q[2] && waiting[ID] >= tw  )
+
+	if ( (!happy && !stuck) && ( (!q[0] && !q[1] && !q[2]) ) && waiting[ID] >= tw  )
 	{
 		circling[ID] = true; // !lattice && !static
 		
@@ -290,8 +293,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		{
 			attractionmotion ( dim, v_r   , v_b,  v                );
 			circlemotion     ( dim, v_adj , v_b,  bdes[minindex], v);
-			if (waiting[ID] > tw*3+(waittime/v_adj))
-				waiting[ID] = tw+10;
+			if (waiting[ID] > tw*3+300)
+				waiting[ID] = tw+30;
 		}
 		else
 		{			
@@ -306,6 +309,51 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		}
 
 		cout << ID << " " << waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
+	}
+
+	else if ( !circling[closest[0]] && 
+		(
+		((  q[0] && !q[1] && !q[2] &&  q[3] && !q[4] && !q[5] && !q[6] && !q[7])) ||   // not link 3
+		((  q[0] && !q[1] && !q[2] && !q[3] && !q[4] &&  q[5] && !q[6] && !q[7]))    // not link 3
+		)
+		)
+	{
+		if (dim == 0)
+			v += 0.1;
+	}
+
+
+	else if ( !circling[closest[0]] && 
+		(
+		(( !q[0] && !q[1] &&  q[2] && !q[3] && !q[4] && !q[5] && !q[6] &&  q[7])) ||   // not link 3
+		(( !q[0] && !q[1] &&  q[2] && !q[3] && !q[4] &&  q[5] && !q[6] && !q[7]))    // not link 3
+		)
+		)
+	{
+		if (dim == 1)
+			v += -0.1;
+	}
+
+	else if ( !circling[closest[0]] && 
+		(
+		(( !q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] && !q[7])) ||   // not link 3
+		(( !q[0] && !q[1] && !q[2] &&  q[3] && !q[4] && !q[5] &&  q[6] && !q[7]))    // not link 3
+		)
+		)
+	{
+		if (dim == 1)
+			v += 0.1;
+	}
+
+	else if ( !circling[closest[0]] && 
+		(
+		(( !q[0] &&  q[1] && !q[2] && !q[3] &&  q[4] && !q[5] && !q[6] && !q[7])) ||   // not link 3
+		(( !q[0] && !q[1] && !q[2] && !q[3] &&  q[4] && !q[5] && !q[6] &&  q[7]))    // not link 3
+		)
+		)
+	{
+		if (dim == 0)
+			v += 0.1;
 	}
 
 	else if ( !circling[closest[0]])
