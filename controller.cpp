@@ -116,6 +116,7 @@ vector<bool> masterlink(100,0);
 vector<bool> alreadydone(100,0);
 vector<float> bstore(100,0);
 vector<int> cstore(100,0);
+vector<int> neg(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
@@ -244,7 +245,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		// ||   
 		// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) || // not link 3
 		// (( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) || // not link 3
-		// ((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
+		// ((  q[0] && !q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] && !q[7])) || // not link 3
+		// ((  q[0] && !q[1] && !q[2] &&  q[3] && !q[4] && !q[5] &&  q[6] && !q[7]))    // not link 3
 
 		// M
 		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] && !q[7])) || // not link 1 
@@ -270,7 +272,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		// cout << ID << " STUCK" << endl;
 	}
 
-	if ((!happy && !stuck) &&  ((!q[0] && !q[1] && !q[2])  ))
+	if ((!happy && !stuck) &&  !q[0] )// && !q[1] && !q[2]) ))
 	{
 		if (dim == 0){waiting[ID]++;}
 	}
@@ -279,24 +281,22 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		waiting[ID] = 0;
 	}
 
-
-	// if ((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7]) )
-	// 	masterlink[ID] = true;
-
 	int waittime = 30;
 	int tw = waittime*simulation_updatefreq;
 
-	if ( !circling[closest[0]] && (!happy && !stuck) && ((!q[0] && !q[1] && !q[2]) ) && waiting[ID] >= tw  )
+	if ( !circling[closest[0]] && (!happy && !stuck) && ((!q[0]) ) && waiting[ID] >= tw  )
 	{
 		circling[ID] = true; // !lattice && !static
 		
-		if( ( (wrapTo2Pi_f(v_b) < wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] > tw*2 )
+		if( ( (wrapTo2Pi_f(v_b) <= wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] > tw*3 )
 		{
 			attractionmotion ( dim, v_r   , v_b,  v                );
-			circlemotion     ( dim, -v_adj , v_b,  bdes[minindex], v);
-			if (waiting[ID] > tw*2+400)
+			circlemotion     ( dim,  v_adj , v_b,  bdes[minindex], v);
+
+		if (waiting[ID] > tw*3+400)
 				waiting[ID] = tw+30;
 		}
+		
 		else
 		{			
 			attractionmotion ( dim, v_r + v_adj , v_b, v);
@@ -310,54 +310,62 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			cstore[ID] = closest[0];
 		}
 
-		cout << ID << " " << waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
+		cout << ID << " " << neg[ID] << endl;//waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
 	}
 
 
-	else if ( !circling[closest[0]] && 
-		(
-		((  q[0] &&  !q[2] &&  q[3] && !q[4] && !q[5] && !q[6]  )) ||   // not link 3
-		((  q[0] &&  !q[2] && !q[3] && !q[4] &&  q[5] && !q[6]  ))    // not link 3
-		)
-		)
-	{
-		if (dim == 0)
-			v += -0.1;
-	}
+	// else if ( !circling[closest[0]] && 
+	// 	(
+	// 	((  q[0] &&  !q[2] &&  q[3] && !q[4] && !q[5] && !q[6]  )) ||   // not link 3
+	// 	((  q[0] &&  !q[2] && !q[3] && !q[4] &&  q[5] && !q[6]  ))    // not link 3
+	// 	)
+	// 	)
+	// {
+	// 	if (dim == 0)
+	// 		v += -0.1;
+	// 			alreadydone[ID] = false;
+
+	// }
 
 
-	else if ( !circling[closest[0]] && 
-		(
-		(( !q[0] &&  q[2] &&  !q[4] && !q[5] && !q[6] &&  q[7])) ||   // not link 3
-		(( !q[0] &&  q[2] &&  !q[4] &&  q[5] && !q[6] && !q[7]))    // not link 3
-		)
-		)
-	{
-		if (dim == 1)
-			v += -0.1;
-	}
+	// else if ( !circling[closest[0]] && 
+	// 	(
+	// 	(( !q[0] &&  q[2] &&  !q[4] && !q[5] && !q[6] &&  q[7])) ||   // not link 3
+	// 	(( !q[0] &&  q[2] &&  !q[4] &&  q[5] && !q[6] && !q[7]))    // not link 3
+	// 	)
+	// 	)
+	// {
+	// 	if (dim == 1)
+	// 		v += -0.1;
+	// 			alreadydone[ID] = false;
 
-	else if ( !circling[closest[0]] && 
-		(
-		(( !q[0] &&  q[1] && !q[2] && !q[3] && !q[4] &&  q[6] )) ||   // not link 3
-		(( !q[0] && !q[1] && !q[2] &&  q[3] && !q[4] &&  q[6] ))    // not link 3
-		)
-		)
-	{
-		if (dim == 1)
-			v += 0.1;
-	}
+	// }
 
-	else if ( !circling[closest[0]] && 
-		(
-		(( !q[0] &&  q[1] && !q[2] &&   q[4] && !q[6] && !q[7])) ||   // not link 3
-		(( !q[0] && !q[1] && !q[2] &&   q[4] && !q[6] &&  q[7]))    // not link 3
-		)
-		)
-	{
-		if (dim == 0)
-			v += 0.1;
-	}
+	// else if ( !circling[closest[0]] && 
+	// 	(
+	// 	(( !q[0] &&  q[1] && !q[2] && !q[3] && !q[4] &&  q[6] )) ||   // not link 3
+	// 	(( !q[0] && !q[1] && !q[2] &&  q[3] && !q[4] &&  q[6] ))    // not link 3
+	// 	)
+	// 	)
+	// {
+	// 	if (dim == 1)
+	// 		v += 0.1;
+	// 			alreadydone[ID] = false;
+
+	// }
+
+	// else if ( !circling[closest[0]] && 
+	// 	(
+	// 	(( !q[0] &&  q[1] && !q[2] &&   q[4] && !q[6] && !q[7])) ||   // not link 3
+	// 	(( !q[0] && !q[1] && !q[2] &&   q[4] && !q[6] &&  q[7]))    // not link 3
+	// 	)
+	// 	)
+	// {
+	// 	if (dim == 0)
+	// 		v += 0.1;
+	// 			alreadydone[ID] = false;
+
+	// }
 
 	else if ( !circling[closest[0]])
 	{
@@ -365,13 +373,14 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 		attractionmotion ( dim, v_r + v_adj, v_b, v);
 		latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
-					alreadydone[ID] = false;
+		alreadydone[ID] = false;
 		
 	}
 	else	
 	{
 		circling[ID] = false; // lattice || static
 		attractionmotion (dim,v_r,v_b,v);
+		alreadydone[ID] = false;
 	}
 
 	return v;

@@ -8,8 +8,8 @@
 
 // Animation Parameters
 #define ANIMATE // Activate animation thread
-#define window_width  800 	 // Native window width  (px)
-#define window_height 800 	 // Native window height (px) 
+#define window_width  1920	 // Native window width  (px)
+#define window_height 1080	 // Native window height (px) 
 #define scale 0.2 			 // Scale of agent size
 #define mouse_drag_speed 1.0 // Speed of mouse to drag animation
 #define mouse_zoom_speed 0.5 // Zoom speed of scroll wheel
