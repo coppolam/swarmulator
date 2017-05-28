@@ -16,6 +16,10 @@ void main_loop_function()
 	static draw drawer; // Drawer object 
 	static OmniscientObserver *obs = new OmniscientObserver(); // Observer object
 
+	#ifdef whitebackground
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
+	#endif
+
 	// And depth (used internally to block obstructed objects)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
@@ -43,7 +47,7 @@ void main_loop_function()
 	}
 
 	// Draw point at the center of mass of the swarm
-	drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
+	// drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
 
 	// Swap buffers (color buffers, makes previous render visible)
 	glutSwapBuffers();
@@ -73,8 +77,8 @@ void start_animation(int argc, char* argv[])
 	// Start simulation window
 	glutInit(&argc, argv);
 	glutInitWindowSize(window_width, window_height);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-	glutCreateWindow("Swarmulator"); // Window name (TODO: make varible name)
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE );
+	glutCreateWindow("Swarmulator"); 	   // Window name (TODO: make varible name)
 	glutIdleFunc(main_loop_function);
 	GL_Setup(window_width, window_height); // Set up window parameters
 

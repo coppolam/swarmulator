@@ -133,7 +133,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		if (i < 1)
 		{
 			bdes.push_back(deg2rad(  0));
-			bdes.push_back(deg2rad( 90));
+			// bdes.push_back(deg2rad( 90));
 
 			blink.push_back(deg2rad(  0));
 			blink.push_back(deg2rad(  45));
@@ -145,8 +145,8 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			blink.push_back(deg2rad(  180+135));
 		}
 
-		bv.push_back(deg2rad(  0));
-		bv.push_back(deg2rad( 90));
+		bv.push_back(deg2rad( 0));
+		// bv.push_back(deg2rad( 90));
 
 	}
 	int lbdes = bdes.size();
@@ -367,21 +367,21 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 	// }
 
-	else if ( !circling[closest[0]])
-	{
-		circling[ID] = false; // lattice || static
+	// else if ( !circling[closest[0]])
+	// {
+	// 	circling[ID] = false; // lattice || static
 
 		attractionmotion ( dim, v_r + v_adj, v_b, v);
 		latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
-		alreadydone[ID] = false;
+	// 	alreadydone[ID] = false;
 		
-	}
-	else	
-	{
-		circling[ID] = false; // lattice || static
-		attractionmotion (dim,v_r,v_b,v);
-		alreadydone[ID] = false;
-	}
+	// }
+	// else	
+	// {
+		// circling[ID] = false; // lattice || static
+		// attractionmotion (dim,v_r,v_b,v);
+	// 	alreadydone[ID] = false;
+	// }
 
 	return v;
 

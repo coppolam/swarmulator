@@ -42,7 +42,12 @@ void draw::draw_axes_text(int dim) {
 void draw::draw_agent_number(int ID) {
 
 	glRasterPos2f(-0.01, 0.035);
-	glColor3f(1.0,1.0,1.0); // Red 
+	#ifdef whitebackground
+	glColor3f(0.0,0.0,0.0); // Black 
+	#else
+	glColor3f(1.0,1.0,1.0); // White
+	#endif
+
 	stringstream ss;
 	ss << ID;
 	glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char*)ss.str().c_str());
@@ -93,15 +98,28 @@ void draw::draw_point(){
 
 
 void draw::draw_axes() {
+	#ifndef whitebackground
 	float lineintensity = 0.9;
+	#endif
+	
 	glLineWidth(2.5); 
 	glBegin(GL_LINES); 
-	glColor3ub(255*lineintensity, 255*lineintensity, 255*lineintensity); // Red 
+	#ifdef whitebackground
+	glColor3ub(0, 0, 0); // black 
+	#else
+	glColor3ub(255*lineintensity, 255*lineintensity, 255*lineintensity); // white 
+	#endif
+
 	glVertex3f(-1000,  0.0, 0.0);
 	glVertex3f(1000.0,  0.0, 0.0);
 	glEnd();
 	glBegin(GL_LINES); 
-	glColor3ub(255*lineintensity, 255*lineintensity, 255*lineintensity); // Red 
+	#ifdef whitebackground
+	glColor3ub(0, 0, 0); // black 
+	#else
+	glColor3ub(255*lineintensity, 255*lineintensity, 255*lineintensity); // white 
+	#endif
+
 	glVertex3f(0.0, -1000.0, 0.0);
 	glVertex3f(0.0,  1000.0, 0.0);
 	glEnd();
