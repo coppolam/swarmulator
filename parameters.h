@@ -4,13 +4,13 @@
 
 // Simulation Parameters
 #define simulation_updatefreq 30.0 	  // (Hz) Defines the simulation time step
-#define simulation_realtimefactor 3.0 // Real time factor of simulation
+#define simulation_realtimefactor 10.0 // Real time factor of simulation
 
 // Animation Parameters
 #define ANIMATE // Activate animation thread
-#define window_width  500	 // Native window width  (px)
-#define window_height 500	 // Native window height (px) 
-#define scale 0.4 			 // Scale of agent size
+#define window_width  600//1920	 // Native window width  (px)
+#define window_height 600//1080	 // Native window height (px) 
+#define scale 0.3			 // Scale of agent size
 #define mouse_drag_speed 1.0 // Speed of mouse to drag animation
 #define mouse_zoom_speed 0.5 // Zoom speed of scroll wheel
 #define animation_updatefreq  30.0  // Animation fps

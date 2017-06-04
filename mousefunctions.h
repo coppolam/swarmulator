@@ -20,7 +20,7 @@
 float mx, my;
 float sx = 0;
 float sy = 0;
-float zms = 0;
+float zms = 3;
 float zscale = 0;
 float px, py;
 void keyboard_callback(unsigned char key, int x, int y){

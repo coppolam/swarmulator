@@ -16,22 +16,38 @@ OmniscientObserver *o = new OmniscientObserver();
 Controller::Controller(){};
 Controller::~Controller(){};
 
-
 float Controller::f_attraction(float u)
 {
-	return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
+	// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
+		return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
+
 }
 
 
 float Controller::f_attraction_bearing(float u, float b)
 {
-	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-	// 	return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
-	// else
-		return 1/(1+exp(-5*(u-1.4391
-))) + 1/(1+exp(-5*(u+1.4391
-))) -1 ; //% sigmoid function -- long-range attraction
+	if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
+		return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
+	else
+		return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
 }
+
+
+// float Controller::f_attraction(float u)
+// {
+// 	return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
+// }
+
+
+// float Controller::f_attraction_bearing(float u, float b)
+// {
+// 	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
+// 	// 	return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
+// 	// else
+// 		return 1/(1+exp(-5*(u-1.4391
+// ))) + 1/(1+exp(-5*(u+1.4391
+// ))) -1 ; //% sigmoid function -- long-range attraction
+// }
 
 /*
 	Repulsion function 
@@ -120,7 +136,272 @@ vector<int> neg(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
-	float v_r   = 0.0;
+	// float v_r   = 0.0;
+	// float v_b   = 0.0;
+	// float v_adj = 0.1;
+
+	// vector<float> bdes;
+	// vector<float> bv;
+	// vector<float> blink;
+
+	// for (int i = 0; i < 5; i++)
+	// {
+	// 	if (i < 1)
+	// 	{
+	// 		bdes.push_back(deg2rad(  0));
+	// 		bdes.push_back(deg2rad( 110));
+
+	// 		blink.push_back(deg2rad(  0));
+	// 		blink.push_back(deg2rad(  45));
+	// 		blink.push_back(deg2rad(  90));
+	// 		blink.push_back(deg2rad(  135));
+	// 		blink.push_back(deg2rad(  180));
+	// 		blink.push_back(deg2rad(  180+45));
+	// 		blink.push_back(deg2rad(  180+90));
+	// 		blink.push_back(deg2rad(  180+135));
+	// 	}
+
+	// 	bv.push_back(deg2rad( 0));
+	// 	bv.push_back(deg2rad( 110));
+
+	// }
+	// int lbdes = bdes.size();
+
+	// vector<bool> q(lbdes*4,false);
+	// bool happy = false;
+	// bool stuck = false;
+
+	// float u, v, b_i;
+	// int i = 0;
+
+	// int cnt = 0;
+	// vector<int> closest = o->request_closest(ID);
+
+	// for (i = 0; i < nagents-1; i++)
+	// {
+	// 	// Normal attraction
+	// 	u = 0;
+	// 	for (int d = 0; d < 2; d++) // Distance to closest
+	// 	{
+	// 		float dd = o->request_distance(ID, closest[i], d);
+	// 		u += pow(dd,2);
+	// 	}
+
+	// 	b_i = o->request_bearing(ID, closest[i]);
+	// 	wrapTo2Pi(b_i);
+
+	// 	if (i < knearest)
+	// 	{
+	// 		// v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
+	// 		// v_r += get_individual_command(sqrt(u) + getrand_float(-0.2, 0.2),v_b);
+
+	// 		v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
+	// 		v_r += get_individual_command(sqrt(u),b_i);
+
+	// 	}
+
+
+	// 	// calculate link type
+	// 	if (sqrt(u) < 1.5)
+	// 	{
+	// 		cnt++;
+	
+	// 		for (int j = 0; j < lbdes*4; j++)
+	// 		{
+	// 			if ( abs(b_i - blink[j]) < deg2rad(20) ) 
+	// 			{
+	// 				q[j] = true;
+	// 			}
+	// 		}
+	// 	}
+
+	// }
+
+	// // // Find angle of interest
+	// for (int i = 0; i < lbdes*5; i++)
+	// {
+	// 	if (i < 2)
+	// 		bv[i] = abs(bv[i]-2*M_PI-v_b);
+	// 	else if (i < 4)
+	// 		bv[i] = abs(bv[i]-M_PI-v_b);
+	// 	else if (i < 6)
+	// 		bv[i] = abs(bv[i]-v_b);
+	// 	else if (i < 8)
+	// 		bv[i] = abs(bv[i]+M_PI-v_b);
+	// 	else if (i < 10)
+	// 		bv[i] = abs(bv[i]+2*M_PI-v_b);
+	// }
+
+ //    int minindex = 0;
+ //    for(int i = 1; i < lbdes*5; i++)
+ //    {
+ //        if(bv[i] < bv[minindex])
+ //            minindex = i;          
+ //    }
+
+ //    while (minindex >= lbdes)
+ //    	minindex -= lbdes;
+
+	// // cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
+	// // 			      << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
+
+	// if  (   // list here all the things that make happy with its position in the lattice.
+	// 	// ((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
+	// 	// (( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
+	// 	// ((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
+	// 	// (( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
+	// 	// (( !q[0] &&  q[1] &&  q[2] && !q[3] )) || // link 1
+	// 	// (( !q[0] && !q[1] && !q[2] &&  q[3] )) || // link 2
+	// 	// ((  q[0] && !q[1] && !q[2] && !q[3] ))
+
+	// 	// Triangle
+	// 	((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
+	// 	(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
+	// 	(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
+	// 	// ||   
+	// 	// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) || // not link 3
+	// 	// (( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) || // not link 3
+	// 	// ((  q[0] && !q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] && !q[7])) || // not link 3
+	// 	// ((  q[0] && !q[1] && !q[2] &&  q[3] && !q[4] && !q[5] &&  q[6] && !q[7]))    // not link 3
+
+	// 	// M
+	// 	// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] && !q[7])) || // not link 1 
+	// 	// (( q[0] && !q[1] &&  q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
+	// 	// ((!q[0] && !q[1] && !q[2] && !q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) ||
+	// 	// ((!q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] && !q[5] && !q[6] && !q[7])) ||
+	// 	// ((!q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))
+	// )	
+	// {
+	// 	happy = true;
+	// 	// cout << ID << " HAPPY" << endl;
+	// }
+
+	// else if ( 
+	// 	    // (  q[0] && q[2] ) || // stuck 1
+	// 	    // (  q[1] && q[3] ) )
+	// 	     (  q[0] && q[4] ) || // stuck 1
+	// 	     (  q[1] && q[5] ) ||
+	// 	     (  q[2] && q[6] ) || // stuck 1
+	// 	     (  q[3] && q[7] ) )
+	// {
+	// 	stuck = true;
+	// 	// cout << ID << " STUCK" << endl;
+	// }
+
+	// if ((!happy && !stuck) &&  !q[0] )// && !q[1] && !q[2]) ))
+	// {
+	// 	if (dim == 0){waiting[ID]++;}
+	// }
+	// else
+	// {
+	// 	waiting[ID] = 0;
+	// }
+
+	// int waittime = 30;
+	// int tw = waittime*simulation_updatefreq;
+
+	// if ( !circling[closest[0]] && (!happy && !stuck) && ((!q[0]) ) && waiting[ID] >= tw  )
+	// {
+	// 	circling[ID] = true; // !lattice && !static
+		
+	// 	if( ( (wrapTo2Pi_f(v_b) <= wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] > tw*3 )
+	// 	{
+	// 		attractionmotion ( dim, v_r   , v_b,  v                );
+	// 		circlemotion     ( dim,  v_adj , v_b,  bdes[minindex], v);
+
+	// 	if (waiting[ID] > tw*3+400)
+	// 			waiting[ID] = tw+30;
+	// 	}
+		
+	// 	else
+	// 	{			
+	// 		attractionmotion ( dim, v_r + v_adj , v_b, v);
+	// 		latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
+	// 	}
+		
+	// 	if (cstore[ID] != closest[0] && alreadydone[ID])
+	// 	{
+	// 		alreadydone[ID] = true;
+	// 		bstore[ID] = wrapTo2Pi_f(v_b);
+	// 		cstore[ID] = closest[0];
+	// 	}
+
+	// 	cout << ID << " " << neg[ID] << endl;//waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
+	// }
+
+
+	// // else if ( !circling[closest[0]] && 
+	// // 	(
+	// // 	((  q[0] &&  !q[2] &&  q[3] && !q[4] && !q[5] && !q[6]  )) ||   // not link 3
+	// // 	((  q[0] &&  !q[2] && !q[3] && !q[4] &&  q[5] && !q[6]  ))    // not link 3
+	// // 	)
+	// // 	)
+	// // {
+	// // 	if (dim == 0)
+	// // 		v += -0.1;
+	// // 			alreadydone[ID] = false;
+
+	// // }
+
+
+	// // else if ( !circling[closest[0]] && 
+	// // 	(
+	// // 	(( !q[0] &&  q[2] &&  !q[4] && !q[5] && !q[6] &&  q[7])) ||   // not link 3
+	// // 	(( !q[0] &&  q[2] &&  !q[4] &&  q[5] && !q[6] && !q[7]))    // not link 3
+	// // 	)
+	// // 	)
+	// // {
+	// // 	if (dim == 1)
+	// // 		v += -0.1;
+	// // 			alreadydone[ID] = false;
+
+	// // }
+
+	// // else if ( !circling[closest[0]] && 
+	// // 	(
+	// // 	(( !q[0] &&  q[1] && !q[2] && !q[3] && !q[4] &&  q[6] )) ||   // not link 3
+	// // 	(( !q[0] && !q[1] && !q[2] &&  q[3] && !q[4] &&  q[6] ))    // not link 3
+	// // 	)
+	// // 	)
+	// // {
+	// // 	if (dim == 1)
+	// // 		v += 0.1;
+	// // 			alreadydone[ID] = false;
+
+	// // }
+
+	// // else if ( !circling[closest[0]] && 
+	// // 	(
+	// // 	(( !q[0] &&  q[1] && !q[2] &&   q[4] && !q[6] && !q[7])) ||   // not link 3
+	// // 	(( !q[0] && !q[1] && !q[2] &&   q[4] && !q[6] &&  q[7]))    // not link 3
+	// // 	)
+	// // 	)
+	// // {
+	// // 	if (dim == 0)
+	// // 		v += 0.1;
+	// // 			alreadydone[ID] = false;
+
+	// // }
+
+	// // else if ( !circling[closest[0]])
+	// // {
+	// // 	circling[ID] = false; // lattice || static
+
+	// 	attractionmotion ( dim, v_r + v_adj, v_b, v);
+	// 	latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
+	// // 	alreadydone[ID] = false;
+		
+	// // }
+	// // else	
+	// // {
+	// 	// circling[ID] = false; // lattice || static
+	// 	// attractionmotion (dim,v_r,v_b,v);
+	// // 	alreadydone[ID] = false;
+	// // }
+
+	// return v;
+
+		float v_r   = 0.0;
 	float v_b   = 0.0;
 	float v_adj = 0.1;
 
@@ -133,25 +414,28 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		if (i < 1)
 		{
 			bdes.push_back(deg2rad(  0));
-			// bdes.push_back(deg2rad( 90));
+			// bdes.push_back(deg2rad( 45));
+			bdes.push_back(deg2rad( 70));
+			// bdes.push_back(deg2rad(135));
 
 			blink.push_back(deg2rad(  0));
-			blink.push_back(deg2rad(  45));
-			blink.push_back(deg2rad(  90));
-			blink.push_back(deg2rad(  135));
+			// blink.push_back(deg2rad(  45));
+			blink.push_back(deg2rad(  70));
+			// blink.push_back(deg2rad(  135));
 			blink.push_back(deg2rad(  180));
-			blink.push_back(deg2rad(  180+45));
-			blink.push_back(deg2rad(  180+90));
-			blink.push_back(deg2rad(  180+135));
+			// blink.push_back(deg2rad(  180+45));
+			blink.push_back(deg2rad(  180+70));
+			// blink.push_back(deg2rad(  315));
+
 		}
-
-		bv.push_back(deg2rad( 0));
-		// bv.push_back(deg2rad( 90));
-
+		bv.push_back(deg2rad(  0));
+		// bv.push_back(deg2rad( 45));
+		bv.push_back(deg2rad( 70));
+		// bv.push_back(deg2rad(135));
 	}
 	int lbdes = bdes.size();
 
-	vector<bool> q(lbdes*4,false);
+	vector<bool> q(lbdes*2,false);
 	bool happy = false;
 	bool stuck = false;
 
@@ -181,18 +465,17 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
 			v_r += get_individual_command(sqrt(u),b_i);
-
 		}
 
 
 		// calculate link type
-		if (sqrt(u) < 1.5)
+		if (sqrt(u) < 0.6)
 		{
 			cnt++;
 	
-			for (int j = 0; j < lbdes*4; j++)
+			for (int j = 0; j < lbdes*2; j++)
 			{
-				if ( abs(b_i - blink[j]) < deg2rad(20) ) 
+				if ( abs(b_i - blink[j]) < deg2rad(40) ) 
 				{
 					q[j] = true;
 				}
@@ -201,7 +484,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 	}
 
-	// // Find angle of interest
+	// Find angle of interest
 	for (int i = 0; i < lbdes*5; i++)
 	{
 		if (i < 2)
@@ -226,162 +509,80 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     while (minindex >= lbdes)
     	minindex -= lbdes;
 
-	// cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
-	// 			      << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
+	attractionmotion (dim,v_r,v_b,v);
+	int sum=0;
+	for (int i = 0; i < 8; i++)
+	{
+		sum +=q[i];
+	}
+
+	cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
+				      << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
 
 	if  (   // list here all the things that make happy with its position in the lattice.
 		// ((  q[0] &&  q[1] && !q[2] && !q[3] )) || // link 1
 		// (( !q[0] && !q[1] &&  q[2] &&  q[3] )) || // link 2
 		// ((  q[0] && !q[1] && !q[2] &&  q[3] )) || // link 3
 		// (( !q[0] &&  q[1] &&  q[2] && !q[3] ))    // link 4
-		// (( !q[0] &&  q[1] &&  q[2] && !q[3] )) || // link 1
-		// (( !q[0] && !q[1] && !q[2] &&  q[3] )) || // link 2
-		// ((  q[0] && !q[1] && !q[2] && !q[3] ))
+		(( !q[0] &&  q[1] &&  q[2] && !q[3] )) || // link 1
+		(( !q[0] && !q[1] && !q[2] &&  q[3] )) || // link 2
+		((  q[0] && !q[1] && !q[2] && !q[3] ))
 
-		// Triangle
-		((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
-		(( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
-		(( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
-		// ||   
-		// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) || // not link 3
-		// (( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) || // not link 3
-		// ((  q[0] && !q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] && !q[7])) || // not link 3
-		// ((  q[0] && !q[1] && !q[2] &&  q[3] && !q[4] && !q[5] &&  q[6] && !q[7]))    // not link 3
+				// ((  q[0] &&  q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1
+				// (( !q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7])) || // not link 2
+				// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) 
+				// ||   // not link 3
+				// (( !q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] &&  q[5] &&  q[6] &&  q[7])) ||   // not link 3
+				// (( !q[0] &&  q[1] &&  q[2] &&  q[3] &&  q[4] &&  q[5] && !q[6] && !q[7]))  ||   // not link 3
+				// ((  q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))    // not link 3
 
-		// M
-		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] &&  q[6] && !q[7])) || // not link 1 
-		// (( q[0] && !q[1] &&  q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
-		// ((!q[0] && !q[1] && !q[2] && !q[3] &&  q[4] &&  q[5] && !q[6] && !q[7])) ||
-		// ((!q[0] && !q[1] && !q[2] &&  q[3] &&  q[4] && !q[5] && !q[6] && !q[7])) ||
-		// ((!q[0] &&  q[1] &&  q[2] && !q[3] && !q[4] && !q[5] &&  q[6] &&  q[7]))
+		// (( q[0] && !q[1] && !q[2] && !q[3] && !q[4] && !q[5] && !q[6] && !q[7])) || // not link 1 
+
+		// ((!q[0] && !q[1] && !q[2] && !q[3] && !q[4] &&  q[5] && !q[6] && !q[7])) ||
+		
+		// ((!q[0] &&  q[1] && !q[2] && !q[3] &&  q[4] && !q[5] && !q[6] && !q[7]))
 	)	
 	{
 		happy = true;
-		// cout << ID << " HAPPY" << endl;
+		// happyonce[ID] = true;
+		// cout << ID << " happy" << endl;
 	}
 
-	else if ( 
-		    // (  q[0] && q[2] ) || // stuck 1
-		    // (  q[1] && q[3] ) )
-		     (  q[0] && q[4] ) || // stuck 1
-		     (  q[1] && q[5] ) ||
-		     (  q[2] && q[6] ) || // stuck 1
-		     (  q[3] && q[7] ) )
+	else if ( cnt > 2 ||
+			 (  q[0] && q[2] ) || // stuck 1
+		     (  q[1] && q[3] ) )
+		     // (  q[0] && q[4] ) || // stuck 1
+		     // (  q[1] && q[5] ) ||
+		     // (  q[2] && q[6] ) || // stuck 1
+		     // (  q[3] && q[7] ) )
 	{
 		stuck = true;
-		// cout << ID << " STUCK" << endl;
+		// cout << ID << " stuck" << endl;
+	}
+	else{
+		// cout << ID << " unhappy unstuck" << endl;
 	}
 
-	if ((!happy && !stuck) &&  !q[0] )// && !q[1] && !q[2]) ))
+
+
+	// int tw = 100;
+	// if ( !happy && !stuck && waiting[ID] < tw)
+	// {	
+	// 	if (dim == 0){waiting[ID]++;}
+	// 	cout << ID << " " << waiting[ID] << endl;
+	// 	v = 0;
+	// 	// latticemotion ( dim, v_adj , v_b, bdes[minindex], v);
+	// }
+	// else 
+	if ( (!happy && !stuck) )// || !happyonce[ID])
 	{
-		if (dim == 0){waiting[ID]++;}
+		cout << ID << " circling"<< endl;
+		circlemotion  ( dim, v_adj , v_b, bdes[minindex], v);
 	}
-	else
-	{
+	else {
+		latticemotion ( dim, v_adj , v_b, bdes[minindex], v);
 		waiting[ID] = 0;
 	}
-
-	int waittime = 30;
-	int tw = waittime*simulation_updatefreq;
-
-	if ( !circling[closest[0]] && (!happy && !stuck) && ((!q[0]) ) && waiting[ID] >= tw  )
-	{
-		circling[ID] = true; // !lattice && !static
-		
-		if( ( (wrapTo2Pi_f(v_b) <= wrapTo2Pi_f(bstore[ID]+M_PI/2)) && closest[0] == cstore[ID]) || waiting[ID] > tw*3 )
-		{
-			attractionmotion ( dim, v_r   , v_b,  v                );
-			circlemotion     ( dim,  v_adj , v_b,  bdes[minindex], v);
-
-		if (waiting[ID] > tw*3+400)
-				waiting[ID] = tw+30;
-		}
-		
-		else
-		{			
-			attractionmotion ( dim, v_r + v_adj , v_b, v);
-			latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
-		}
-		
-		if (cstore[ID] != closest[0] && alreadydone[ID])
-		{
-			alreadydone[ID] = true;
-			bstore[ID] = wrapTo2Pi_f(v_b);
-			cstore[ID] = closest[0];
-		}
-
-		cout << ID << " " << neg[ID] << endl;//waiting[ID] <<" " << cstore[ID] << " " << wrapTo2Pi_f(bstore[ID]+M_PI/2) << " " << wrapTo2Pi_f(v_b) << endl;
-	}
-
-
-	// else if ( !circling[closest[0]] && 
-	// 	(
-	// 	((  q[0] &&  !q[2] &&  q[3] && !q[4] && !q[5] && !q[6]  )) ||   // not link 3
-	// 	((  q[0] &&  !q[2] && !q[3] && !q[4] &&  q[5] && !q[6]  ))    // not link 3
-	// 	)
-	// 	)
-	// {
-	// 	if (dim == 0)
-	// 		v += -0.1;
-	// 			alreadydone[ID] = false;
-
-	// }
-
-
-	// else if ( !circling[closest[0]] && 
-	// 	(
-	// 	(( !q[0] &&  q[2] &&  !q[4] && !q[5] && !q[6] &&  q[7])) ||   // not link 3
-	// 	(( !q[0] &&  q[2] &&  !q[4] &&  q[5] && !q[6] && !q[7]))    // not link 3
-	// 	)
-	// 	)
-	// {
-	// 	if (dim == 1)
-	// 		v += -0.1;
-	// 			alreadydone[ID] = false;
-
-	// }
-
-	// else if ( !circling[closest[0]] && 
-	// 	(
-	// 	(( !q[0] &&  q[1] && !q[2] && !q[3] && !q[4] &&  q[6] )) ||   // not link 3
-	// 	(( !q[0] && !q[1] && !q[2] &&  q[3] && !q[4] &&  q[6] ))    // not link 3
-	// 	)
-	// 	)
-	// {
-	// 	if (dim == 1)
-	// 		v += 0.1;
-	// 			alreadydone[ID] = false;
-
-	// }
-
-	// else if ( !circling[closest[0]] && 
-	// 	(
-	// 	(( !q[0] &&  q[1] && !q[2] &&   q[4] && !q[6] && !q[7])) ||   // not link 3
-	// 	(( !q[0] && !q[1] && !q[2] &&   q[4] && !q[6] &&  q[7]))    // not link 3
-	// 	)
-	// 	)
-	// {
-	// 	if (dim == 0)
-	// 		v += 0.1;
-	// 			alreadydone[ID] = false;
-
-	// }
-
-	// else if ( !circling[closest[0]])
-	// {
-	// 	circling[ID] = false; // lattice || static
-
-		attractionmotion ( dim, v_r + v_adj, v_b, v);
-		latticemotion    ( dim, v_adj      , v_b, bdes[minindex], v);
-	// 	alreadydone[ID] = false;
-		
-	// }
-	// else	
-	// {
-		// circling[ID] = false; // lattice || static
-		// attractionmotion (dim,v_r,v_b,v);
-	// 	alreadydone[ID] = false;
-	// }
 
 	return v;
 
