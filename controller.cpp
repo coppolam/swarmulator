@@ -20,16 +20,15 @@ float Controller::f_attraction(float u)
 {
 	// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
 		return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
-
 }
 
 
 float Controller::f_attraction_bearing(float u, float b)
 {
 	if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-		return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
+		return 1/(1+exp(-5*(u-0.3502))) + 1/(1+exp(-5*(u+0.3502))) - 1 ; //% sigmoid function -- long-range attraction
 	else
-		return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
+		return 1/(1+exp(-5*(u-0.8022))) + 1/(1+exp(-5*(u+0.8022))) -1 ; //% sigmoid function -- long-range attraction
 }
 
 
