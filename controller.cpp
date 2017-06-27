@@ -11,6 +11,7 @@
 #include "omniscient_observer.h"
 #include "parameters.h"
 #include <unistd.h>
+
 OmniscientObserver *o = new OmniscientObserver();
 
 Controller::Controller(){};
@@ -25,9 +26,9 @@ float Controller::f_attraction(float u)
 
 float Controller::f_attraction_bearing(float u, float b)
 {
-	if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-		return 1/(1+exp(-5*(u-0.3502))) + 1/(1+exp(-5*(u+0.3502))) - 1 ; //% sigmoid function -- long-range attraction
-	else
+	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
+	// 	return 1/(1+exp(-5*(u-0.3502))) + 1/(1+exp(-5*(u+0.3502))) - 1 ; //% sigmoid function -- long-range attraction
+	// else
 		return 1/(1+exp(-5*(u-0.8022))) + 1/(1+exp(-5*(u+0.8022))) -1 ; //% sigmoid function -- long-range attraction
 }
 
