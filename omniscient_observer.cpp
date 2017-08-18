@@ -31,9 +31,9 @@ vector<int> OmniscientObserver::request_closest(int ID)
 {
 	indexed_array dm[nagents-1];
 	vector<int> ind;
-
 	for (int i = 0; i < nagents; i++)
 	{
+
 		dm[i].values = (sqrt(
 			  pow(s[i].get_position(0) - s[ID].get_position(0),2.0) 
 			+ pow(s[i].get_position(1) - s[ID].get_position(1),2.0)
@@ -43,6 +43,7 @@ vector<int> OmniscientObserver::request_closest(int ID)
 
 	array_sortmintomax_index(nagents, dm);
 
+	// Start from one to eliminate youself from the list (because you are 0 distance)
 	for (int i = 1 ; i < nagents ; i++) {
 	    ind.push_back(dm[i].index);
 	}

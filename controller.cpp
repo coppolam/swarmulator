@@ -27,27 +27,10 @@ float Controller::f_attraction(float u)
 float Controller::f_attraction_bearing(float u, float b)
 {
 	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-		// return 1/(1+exp(-5*(u-0.3502))) ; //% sigmoid function -- long-range attraction
+		return 1/(1+exp(-5*(u-0.3502))) ; //% sigmoid function -- long-range attraction
 	// else
 		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 }
-
-
-// float Controller::f_attraction(float u)
-// {
-// 	return 1/(1+exp(-5*(u-0.719))) + 1/(1+exp(-5*(u+0.719))) -1 ; //% sigmoid function -- long-range attraction
-// }
-
-
-// float Controller::f_attraction_bearing(float u, float b)
-// {
-// 	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-// 	// 	return 1/(1+exp(-5*(u-0.4))) + 1/(1+exp(-5*(u+0.4))) -1 ; //% sigmoid function -- long-range attraction
-// 	// else
-// 		return 1/(1+exp(-5*(u-1.4391
-// ))) + 1/(1+exp(-5*(u+1.4391
-// ))) -1 ; //% sigmoid function -- long-range attraction
-// }
 
 /*
 	Repulsion function 
@@ -86,104 +69,76 @@ float Controller::get_individual_command(float u, float b)
 void attractionmotion(const int &dim, const float &v_r, const float &v_b, float &v)
 {	
 	if (dim == 0)
-	{
 		v = v_r * cos(v_b);
-	}
-
 	else if (dim == 1)
-	{
 		v = v_r * sin(v_b);
-	}
-
-
 }
 
 void latticemotion(const int &dim, const float &v_adj, const float &v_b, const float &bdes, float &v)
 {
 	// Back to Cartesian
 	if (dim == 0)
-	{
 		v += -v_adj * cos(bdes*2-v_b) ; // use for reciprocal alignment
-	}
 	else if (dim == 1)
-	{	
 		v += -v_adj * sin(bdes*2-v_b) ; // use for reciprocal alignment
-	}
-
 }
 
 void circlemotion(const int &dim, const float &v_adj, const float &v_b, const float &bdes, float &v)
 {
 	if (dim == 0)
-	{
 		v += v_adj * cos(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
-	}
-
 	else if (dim == 1)
-	{
 		v += v_adj * sin(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
-	}
 }
 
 vector<int> waiting(100,0);
 vector<bool> circling(100,0);
-vector<bool> masterlink(100,0);
-
-vector<bool> alreadydone(100,0);
-vector<float> bstore(100,0);
-
-vector<float> rv(100,0);
-vector<int> cstore(100,0);
-
 float Controller::get_velocity_command_radial(int ID, int dim)
 {
+	float u, v, b_i;
+	v = 0;
+	
+	// Initialize some stuff
 	float v_r   = 0.0;
 	float v_b   = 0.0;
 	float v_adj = 0.1;
+	int cnt = 0;
+	
+	bool happy = false; // null assumption on happiness of the agent
 
 	vector<float> bdes;
 	vector<float> bv;
 	vector<float> blink;
+			
+	// Desired angles, so as to create a matrix
+	bdes.push_back(deg2rad(  0));
+	bdes.push_back(deg2rad( 90));
+
+	// Angles to check for neighboring links
+	blink.push_back(0);
+	blink.push_back(M_PI/4.0);
+	blink.push_back(M_PI/2.0);
+	blink.push_back(3*M_PI/4.0);
+	blink.push_back(M_PI);
+	blink.push_back(deg2rad(  180+45));
+	blink.push_back(deg2rad(  180+90));
+	blink.push_back(deg2rad(  180+135));
+	blink.push_back(2*M_PI);
 
 	for (int i = 0; i < 5; i++)
 	{
-		if (i < 1)
-		{	
-			// Desired angles, so as to create a matrix
-			bdes.push_back(deg2rad(  0));
-			bdes.push_back(deg2rad( 90));
-
-			// Angles to check for neighboring links
-			blink.push_back(0);
-			blink.push_back(M_PI/4.0);
-			blink.push_back(M_PI/2.0);
-			blink.push_back(3*M_PI/4.0);
-			blink.push_back(M_PI);
-			blink.push_back(deg2rad(  180+45));
-			blink.push_back(deg2rad(  180+90));
-			blink.push_back(deg2rad(  180+135));
-			blink.push_back(2*M_PI);
-		}
-
 		bv.push_back(deg2rad( 0));
 		bv.push_back(deg2rad( 90));
-
 	}
+
 	int lbdes = bdes.size(); // = 2 (0 and 90);
-	vector<bool> q(lbdes*4,false); // = 8, the 8 positions we go around
-	bool happy = false; // null assumption on happiness of the agent
-
-	// Initialize some stuff
-	float u, v, b_i;
-	int i = 0;
-	v = 0;
-	int cnt = 0;
-
+	vector<bool> q(8,false); // = 8, the 8 positions we go around
+	
 	// Get vector of all neighbors from closest to furthest
 	vector<int> closest = o->request_closest(ID);
-
+	
 	// For all neighbors detected (in simulation all agents) determine the 
-	for (i = 0; i < nagents-1; i++)
+	for (int i = 0; i < nagents-1; i++)
 	{
 		// Normal attraction
 		u = 0;
@@ -216,15 +171,10 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 			cnt++;
 			for (int j = 0; j < lbdes*4+1; j++)
 			{
-				if (ID == 0)
-					cout << b_i << " " << blink[j] << " " << abs(b_i - blink[j]) <<" " << deg2rad(22.49) << endl;
 				if ( abs(b_i - blink[j]) < deg2rad(22.49) ) 
 				{
-					if (j == 8)
-					{
+					if (j == 8) // last element is back to 0
 						q[0] = true;
-						cout << "q0true" << endl;
-					}
 					else
 						q[j] = true;
 				}
@@ -258,43 +208,43 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     while (minindex >= lbdes)
     	minindex -= lbdes;
 
-	cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
-				         << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
+	// cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
+	// 			         << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
 
-	vector<vector<bool>> links(4);
-	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-
-	// vector<vector<bool>> links(9);
+	// vector<vector<bool>> links(4);
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
 
-	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	vector<vector<bool>> links(9);
+	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
 
-	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+
+	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
 
 	// Check if happy
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 9; i++)
 	{
-		// int s = 0;
+	// 	int s = 0;
 
-		// // for (int j = 0; j < 8; j++)
-		// // {
-		// // 	if (q[j] == links[i][j] && q[j]==1)
-		// // 		s = s+1;
-		// // }
-		// // if (s > 7)
-		// // {
-		// // 	happy = true;
-		// // 	break;
-		// // }
+	// 	for (int j = 0; j < 8; j++)
+	// 	{
+	// 		if (q[j] == links[i][j] && q[j]==1)
+	// 			s = s+1;
+	// 	}
+	// 	if (s > 5)
+	// 	{
+	// 		happy = true;
+	// 		break;
+	// 	}
 
 		if (q == links[i])
 			happy = true;
@@ -305,12 +255,13 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 	// int waittime = 30;
 	// int tw = simulation_updatefreq;
-	if (happy && ~circling[closest[ID]])//|| alreadydone[ID]) // If happy, do what you gotta do
+	if (happy && ~circling[closest[0]])//|| alreadydone[ID]) // If happy, do what you gotta do
 	{
+		cout << ID << " happy " << endl ;
+
 		// Action
 		attractionmotion ( dim, v_r + v_adj , v_b, v);
 		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
-		cout << ID << " happy " << endl ;
 
 		// Outflow
 		circling[ID] = false;
@@ -324,8 +275,10 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	// 		waiting[ID]++;
 	// }
 	}
-	else if ( circling[ID] ) // In circling mode, circle around
+	else if ( circling[ID] && ~circling[closest[0]]) // In circling mode, circle around
 	{
+																
+
 		// Action
 		attractionmotion ( dim,  v_r  , v_b,  v  );
 		// latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
@@ -346,6 +299,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	}
 	else // In waiting mode
 	{
+
 		// Action
 		attractionmotion ( dim, v_r , v_b, v);
 
