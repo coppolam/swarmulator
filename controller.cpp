@@ -27,9 +27,9 @@ float Controller::f_attraction(float u)
 float Controller::f_attraction_bearing(float u, float b)
 {
 	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-	// 	return 1/(1+exp(-5*(u-0.3502))) ; //% sigmoid function -- long-range attraction
+		// return 1/(1+exp(-5*(u-0.3502))) ; //% sigmoid function -- long-range attraction
 	// else
-		return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
+		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 }
 
 
@@ -148,41 +148,47 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	for (int i = 0; i < 5; i++)
 	{
 		if (i < 1)
-		{
+		{	
+			// Desired angles, so as to create a matrix
 			bdes.push_back(deg2rad(  0));
 			bdes.push_back(deg2rad( 90));
 
-			blink.push_back(deg2rad(  0));
-			blink.push_back(deg2rad(  45));
-			blink.push_back(deg2rad(  90));
-			blink.push_back(deg2rad(  135));
-			blink.push_back(deg2rad(  180));
+			// Angles to check for neighboring links
+			blink.push_back(0);
+			blink.push_back(M_PI/4.0);
+			blink.push_back(M_PI/2.0);
+			blink.push_back(3*M_PI/4.0);
+			blink.push_back(M_PI);
 			blink.push_back(deg2rad(  180+45));
 			blink.push_back(deg2rad(  180+90));
 			blink.push_back(deg2rad(  180+135));
+			blink.push_back(2*M_PI);
 		}
 
 		bv.push_back(deg2rad( 0));
 		bv.push_back(deg2rad( 90));
 
 	}
-	int lbdes = bdes.size();
+	int lbdes = bdes.size(); // = 2 (0 and 90);
+	vector<bool> q(lbdes*4,false); // = 8, the 8 positions we go around
+	bool happy = false; // null assumption on happiness of the agent
 
-	vector<bool> q(lbdes*4,false);
-	bool happy = false;
-
+	// Initialize some stuff
 	float u, v, b_i;
 	int i = 0;
 	v = 0;
-
 	int cnt = 0;
+
+	// Get vector of all neighbors from closest to furthest
 	vector<int> closest = o->request_closest(ID);
 
+	// For all neighbors detected (in simulation all agents) determine the 
 	for (i = 0; i < nagents-1; i++)
 	{
 		// Normal attraction
 		u = 0;
-		for (int d = 0; d < 2; d++) // Distance to closest
+		// Determine the distance to all neighbors
+		for (int d = 0; d < 2; d++) // Distance to closest, dimensions 0 (x) and 1 (y)
 		{
 			float dd = o->request_distance(ID, closest[i], d);
 			u += pow(dd,2);
@@ -191,10 +197,12 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		b_i = o->request_bearing(ID, closest[i]);
 		wrapTo2Pi(b_i);
 
+		// For the number of knearest neighbors, get desirer radial and bearing attraction
 		if (i < knearest)
 		{
+			// Uncomment this to simulate to simulate noise
 			// v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
-			// v_r += get_individual_command(sqrt(u) + getrand_float(-0.2, 0.2),v_b);
+			// v_r += get_individual_command(sqrt(u) + getrand_float(-0.1, 0.1),v_b);
 
 			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
 			v_r += get_individual_command(sqrt(u),b_i);
@@ -202,16 +210,23 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		}
 
 
-		// calculate link type
-		if (sqrt(u) < 1)
+		// Determine link
+		if (sqrt(u) < 1.0)
 		{
 			cnt++;
-	
-			for (int j = 0; j < lbdes*4; j++)
+			for (int j = 0; j < lbdes*4+1; j++)
 			{
+				if (ID == 0)
+					cout << b_i << " " << blink[j] << " " << abs(b_i - blink[j]) <<" " << deg2rad(22.49) << endl;
 				if ( abs(b_i - blink[j]) < deg2rad(22.49) ) 
 				{
-					q[j] = true;
+					if (j == 8)
+					{
+						q[0] = true;
+						cout << "q0true" << endl;
+					}
+					else
+						q[j] = true;
 				}
 			}
 		}
@@ -243,17 +258,14 @@ float Controller::get_velocity_command_radial(int ID, int dim)
     while (minindex >= lbdes)
     	minindex -= lbdes;
 
-	// cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
-	// 			         << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
+	cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
+				         << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
 
-
-	// cout << "testw";
 	vector<vector<bool>> links(4);
 	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
 	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-
 
 	// vector<vector<bool>> links(9);
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
@@ -269,22 +281,38 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
 
 	// Check if happy
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 4; i++)
 	{
+		// int s = 0;
+
+		// // for (int j = 0; j < 8; j++)
+		// // {
+		// // 	if (q[j] == links[i][j] && q[j]==1)
+		// // 		s = s+1;
+		// // }
+		// // if (s > 7)
+		// // {
+		// // 	happy = true;
+		// // 	break;
+		// // }
+
 		if (q == links[i])
 			happy = true;
 	}
 
-	// if ( (q[0] && q[4]) || (q[1] && q[5]) || (q[2] && q[6]) || (q[3] && q[7]) )
-	// 	happy = true;
+	if ( (q[0] && q[4]) || (q[1] && q[5]) || (q[2] && q[6]) || (q[3] && q[7]) )
+		happy = true;
 
 	// int waittime = 30;
 	// int tw = simulation_updatefreq;
 	if (happy && ~circling[closest[ID]])//|| alreadydone[ID]) // If happy, do what you gotta do
 	{
-		cout << ID << " happy " << endl;
-		attractionmotion ( dim, v_r+v_adj , v_b, v);
+		// Action
+		attractionmotion ( dim, v_r + v_adj , v_b, v);
 		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		cout << ID << " happy " << endl ;
+
+		// Outflow
 		circling[ID] = false;
 
 	// 	if (waiting[ID] > 100)
@@ -298,36 +326,39 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		attractionmotion ( dim,  v_r   , v_b,  v  );
+		// Action
+		attractionmotion ( dim,  v_r  , v_b,  v  );
+		// latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
 		circlemotion     ( dim, -v_adj , v_b,  bdes[minindex], v);
 
+		// Outflow
 		float random = ((float) rand()) / (float) RAND_MAX;
-		cout << random << endl;
-
-		if ( random > (float)1/(waiting[ID]/simulation_updatefreq))
+		if ( random > (float) 1 / (waiting[ID]) )
 		{
 			circling[ID] = false;
-			waiting[ID]=0;
+			waiting[ID]  = 0;
 		}
 		else
+		{
 			waiting[ID]++;
+		}
+
 	}
 	else // In waiting mode
 	{
-
+		// Action
 		attractionmotion ( dim, v_r , v_b, v);
 
+		// Outflow criteria to "circling behavior"
 		float random = ((float) rand()) / (float) RAND_MAX;
-		cout << random << endl;
-
-		if ( 1*random > (float)1/waiting[ID])
+		if ( random > (float) 1 / (waiting[ID]) )
 		{
-			circling[ID] = true;
-			waiting[ID] = 0;
+			circling[ID] = true; // Switch to circling mode at next time-step
+			waiting [ID] = 0;    // Reset counter
 		}
-		else
+		else // Wait
 		{
-			waiting[ID]++;
+			waiting[ID]++; 		 // Increase counter
 			cout << ID << " waiting "<< waiting[ID] << endl;
 		}
 
@@ -350,7 +381,7 @@ float Controller::get_velocity_command_cartesian(int ID, int dim)
 	for (i = 0; i < knearest; i++)
 	{
 			u = o->request_distance(ID, closest[i], dim);
-			v += get_individual_command(u,u);
+			v += get_individual_command(u,0);
 	}
 
 	#endif
@@ -391,11 +422,10 @@ float Controller::get_velocity_command_cartesian(int ID, int dim)
 // Otherwise it has no effect
 float Controller::saturate(float f)
 {
-	// TODO: FIX
-	// if (saturation) 
-	// {
-	// 	keepbounded(f,-saturation_limits,saturation_limits);
-	// }
+	if (saturation) 
+	{
+		keepbounded(f,-saturation_limits,saturation_limits);
+	}
 	return f;
 }
 

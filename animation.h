@@ -14,7 +14,7 @@
 void main_loop_function()
 {
 	static draw drawer; // Drawer object 
-	static OmniscientObserver *obs = new OmniscientObserver(); // Observer object
+	// static OmniscientObserver *obs = new OmniscientObserver(); // Observer object
 
 	#ifdef whitebackground
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background

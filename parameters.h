@@ -24,8 +24,8 @@
 #define KNEAREST // Use a k-nearest topology according to the second argument
 
 // Bonus functions
-#define ROGUE     // Would you like an agent to go rogue?
-#define rogueID 0 // ID of agent that goes rogue.
+// #define ROGUE     // Would you like an agent to go rogue?
+// #define rogueID 0 // ID of agent that goes rogue.
 
 // TODO: Add environmet
 // #define ENVIRONMENT
