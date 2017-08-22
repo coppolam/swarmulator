@@ -28,3 +28,7 @@ void Agent::select_action(){};
 int Agent::get_ID(){
 	return ID;
 };
+
+// void Agent::set_situation(const vector<bool> &q){
+// 	this->situation = q;
+// };

@@ -24,12 +24,14 @@ public:
 	vector<float> weights;
 	Controller();
 	~Controller();
-	
-	float get_individual_command(float u, float b);
+
+	int get_bearing_velocity(const vector<float> &bdes, const float v_b);
+	float get_attraction_velocity(float u, float b);
 	float get_velocity_command_radial(int ID, int dim);
 	float get_velocity_command_cartesian(int ID, int dim);
 	float saturate(float f);
 
+	void  filltemplate(vector<bool> &q, const float b_i, const float u, const float dmax);
 	void  set_weights(const vector<float> &w);
 	void  set_saturation(const float &lim);
 	void  remove_saturation()	{saturation = false;};

@@ -119,9 +119,21 @@ float OmniscientObserver::get_centroid(int dim)
 	return c;
 }
 
-float OmniscientObserver::request_distance(int ID, int ID_tracked, int dim)
+float OmniscientObserver::request_distance_dim(int ID, int ID_tracked, int dim)
 {
 	return s[ID_tracked].get_position(dim) - s[ID].get_position(dim);
+}
+
+float OmniscientObserver::request_distance(int ID, int ID_tracked)
+{
+	float u = 0;
+	for (int i = 0; i < 2; i++)
+	{
+		float dd = s[ID_tracked].get_position(i) - s[ID].get_position(i);
+		u += pow(dd,2);
+	}
+	return sqrt(u);
+
 }
 
 float OmniscientObserver::request_bearing(int ID, int ID_tracked)

@@ -16,6 +16,7 @@ public:
 	Controller controller;
 	vector<float> outputs;
 	vector<float> state;
+	// vector<bool> situation; // vector of happiness situation
 	Agent(int i, const vector<float> &s); // Make two versions for random initialization
 	~Agent();
 	vector<float> get_states();
