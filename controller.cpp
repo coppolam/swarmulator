@@ -133,7 +133,7 @@ int Controller::get_bearing_velocity(const vector<float> &bdes, const float v_b)
 	vector<float> bv;
 	for (int i = 0; i < (int)bdes.size()*5; i++)
 	{
-		for (int k = 0; k < (int)bdes.size(); i++)
+		for (int k = 0; k < (int)bdes.size(); k++)
 		{
 			bv.push_back(deg2rad( k));
 		}
