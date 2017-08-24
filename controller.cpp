@@ -195,7 +195,7 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 
 vector<bool> circling(100,0);
 vector<bool> done(100,0);
-vector<bool> hlvec(100,0);
+vector<int> hlvec(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 {
@@ -210,7 +210,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	// Initialize some stuff
 	float v_r   = 0.0;
 	float v_b   = 0.0;
-	float v_adj = 0.1;
+	float v_adj = 0.5;
 
 	bool happy = false; // null assumption on happiness of the agent
 
@@ -236,30 +236,30 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	}
 
 	int minindex = get_bearing_velocity(bdes, v_b);
-	// vector<vector<bool>> links(4);
-	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-
-	vector<vector<bool>> links(9);
+	vector<vector<bool>> links(4);
 	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
 
-	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	// vector<vector<bool>> links(9);
+	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
 
-	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
 
-	int hl = 8;
+	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+
+	int hl = 0;
 	int th = 20;
 
 	// Check if happy cycling through the links
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		// Quantify happiness level
 		int s = 0;
@@ -282,7 +282,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			// AND: 1 only if match in correct places
 			// s+= t && links[i][j];
 		}
-		if (s < hl)
+		if (s > hl)
 		{
 			hl = s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
 		}
@@ -294,66 +294,57 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 	// Did the situation improve?
 	bool improved = false;
-	if (hl < hlvec[ID])
+	if (hl > hlvec[ID])
 	{
-		improved = true;
-	}
-	hlvec[ID] = hl;
 
+		improved = true;
+		cout <<  hlvec[ID] << " " << hl << "improved";
+	}
 	// Is the agent stuck?
 	// if ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) )
 	// 	happy = true;
 
-	if ( hl == 0 || happy || done[ID] )//|| alreadydone[ID]) // If happy, do what you gotta do
+	if ( ( happy || done[ID] ) )//|| alreadydone[ID]) // If happy, do what you gotta do
 	{
 		if (dim == 1)
 			cout << " \t happy";
 
-		// Action
-		// Outflow
 		circling[ID] = false;
 
-		int finalNum = rand()%(1000-100+1)+100; // Generate the number, assign to variable.
-		if (waiting[ID] > finalNum)
-		{
+		// if (waiting[ID] > 100)
+		// {
 			done[ID] = true;
 			attractionmotion ( dim, v_r + v_adj, v_b, v);
 			latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
-			// waiting[ID]  = 0;
-		}
-		else
-		{
-
-			done[ID] = false;
-			// attractionmotion ( dim, v_r, v_b, v);
-
-			attractionmotion ( dim, v_r + v_adj, v_b, v);
-			latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
-			if (dim == 0)	
-				waiting[ID]++;
-		}
+		// }
+		// else
+		// {
+		// 	done[ID] = false;
+		// 	attractionmotion ( dim, v_r, v_b, v);
+		// 	if (dim == 0)	
+		// 		waiting[ID]++;
+		// }
 
 	}
-	else if ( circling[ID] ) // In circling mode, circle around
+	else if ( circling[ID] && circling[closest[0]] ) // In circling mode, circle around
 	{
-		// attractionmotion ( dim,  v_r   , v_b,  v  );
-		// circlemotion     ( dim,  v_adj , v_b,  bdes[minindex], v);
-	
-		attractionmotion ( dim, v_r + v_adj, v_b, v);
-		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		attractionmotion ( dim,  v_r   , v_b,  v  );
+		circlemotion     ( dim,  v_adj , v_b,  bdes[minindex], v);
 		if (dim == 1)
-			cout << " \t circling";
+			cout << " \t circling " << hlvec[ID] << " " << hl;
 
 		// float random = ((float) rand()) / (float) RAND_MAX;
 		// cout << random << endl;
 		// int finalNum = rand()%(300-100+1)+100; // Generate the number, assign to variable.
 
-		if (waiting[ID] > 100)
+		// if (waiting[ID] > finalNum)
+		if (improved)
 		{
 			circling[ID] = false;
-			waiting[ID] = 0;
+			waiting [ID] = 0;
 		}
-		else{
+		else
+		{
 			if (dim == 0)	
 				waiting[ID]++;
 		}
@@ -361,16 +352,19 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	else // In waiting mode
 	{		
 		// Action
+		cout << "\t waiting";
 		attractionmotion ( dim, v_r + v_adj, v_b, v);
 		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
 
+		hlvec[ID] = hl;
+		cout << endl << hlvec[ID] ;
 		int finalNum = rand()%(1000-100+1)+100; // Generate the number, assign to variable.
 
 		// if ( 1*random > (float)1/waiting[ID])
 		if (waiting[ID] > finalNum)
 		{
 			circling[ID] = true;
-			waiting[ID] = 0;
+			waiting [ID] = 0;
 		}
 		else
 		{
