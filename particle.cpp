@@ -26,7 +26,7 @@ void Particle::update_position()
 
 	state[2] = controller.get_velocity_command_radial(ID,0,situation); // velocity x
 	state[3] = controller.get_velocity_command_radial(ID,1,situation); // velocity y
-
+	
 	cout << endl;
 
 };
