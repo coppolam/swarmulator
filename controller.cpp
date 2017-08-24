@@ -310,7 +310,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	// if ( (q[3]>th && !q[7]>th) || (q[7]>th && q[8]>th) || (q[7]>th && q[3]>th)) // || (q[3]>th && q[7]>th) )
 	// 	happy = true;
 
-	if ( ( happy || done[ID] ) )//|| alreadydone[ID]) // If happy, do what you gotta do
+	if ( ( happy ) )//|| alreadydone[ID]) // If happy, do what you gotta do
 	{
 		if (dim == 1)
 			cout << " \t happy";
@@ -357,7 +357,8 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
 		attractionmotion ( dim, v_r, v_b, v);
-		
+					latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+
 		hlvec[ID] = hl;
 		int finalNum = rand()%(3000-100+1)+100; // Generate the number, assign to variable.
 
