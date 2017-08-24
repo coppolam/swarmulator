@@ -225,46 +225,45 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		// For the number of knearest neighbors, get desirer radial and bearing attraction
 		if (i < knearest)
 		{
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
 			v_r += get_attraction_velocity(u,b_i);
-
+			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
 			// Uncomment this to simulate to simulate noise
 			// v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
 			// v_r += get_attraction_velocity(sqrt(u) + getrand_float(-0.1, 0.1),v_b);
 
 		}
 	}
-
+	v_r = v_r/3.0;
 	int minindex = get_bearing_velocity(bdes, v_b);
-	vector<vector<bool>> links(4);
-	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-
+	// vector<vector<bool>> links(4);
+	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
+	
 	// empathy links
 	// links[4] = {1, 0, 1, 0, 0, 0, 0, 0};
 	// links[5] = {0, 0, 0, 1, 1, 0, 0, 0};
 	// links[6] = {0, 0, 0, 0, 1, 1, 0, 0};
 
-	// vector<vector<bool>> links(9);
-	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	vector<vector<bool>> links(9);
+	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
 
-	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
 
-	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
 
 	int hl = 0;
 	int th = 20;
 
 	// Check if happy cycling through the links
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		// Quantify happiness level
 		int s = 0;
@@ -303,8 +302,8 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		improved = true;
 	}
 	// Is the agent stuck?
-	// if ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) )
-	// 	happy = true;
+	if ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) )
+		happy = true;
 
 
 	// if ( (q[3]>th && !q[7]>th) || (q[7]>th && q[8]>th) || (q[7]>th && q[3]>th)) // || (q[3]>th && q[7]>th) )
@@ -318,7 +317,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		circling[ID] = false;
 
 		hlvec[ID] = hl;
-		if (waiting[ID] > 100)
+		if (waiting[ID] > 100 && !circling[closest[0]])
 		{
 			done[ID] = true;
 			attractionmotion ( dim, v_r + v_adj, v_b, v);
@@ -356,8 +355,8 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		if (dim == 1)
 			cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
-		attractionmotion ( dim, v_r, v_b, v);
-					latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		attractionmotion ( dim, v_r + v_adj, v_b, v);
+		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
 
 		hlvec[ID] = hl;
 		int finalNum = rand()%(3000-100+1)+100; // Generate the number, assign to variable.
