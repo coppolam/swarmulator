@@ -11,10 +11,13 @@
 #include "omniscient_observer.h"
 #include "parameters.h"
 #include <unistd.h>
+#include <random>
 
 OmniscientObserver *o = new OmniscientObserver();
 
-Controller::Controller(){};
+Controller::Controller(): waiting(100,0){
+		srand(time(NULL)); // Seed the time
+};
 Controller::~Controller(){};
 
 float Controller::f_attraction(float u)
@@ -91,12 +94,8 @@ void circlemotion(const int &dim, const float &v_adj, const float &v_b, const fl
 		v += v_adj * sin(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
 }
 
-vector<int> waiting(100,0);
-vector<bool> circling(100,0);
-vector<bool> hlvec(100,0);
-vector<bool> qavg(100,0);
 
-void Controller::filltemplate(vector<bool> &q, const float b_i, const float u, const float dmax)
+void Controller::fill_template(vector<float> &q, const float b_i, const float u, float dmax)
 {
 	vector<float> blink;
 			
@@ -119,9 +118,9 @@ void Controller::filltemplate(vector<bool> &q, const float b_i, const float u, c
 			if ( abs(b_i - blink[j]) < deg2rad(22.49) ) 
 			{
 				if (j == (int)blink.size()-1) // last element is back to 0
-					q[0] = true;
+					q[0] = 1;
 				else
-					q[j] = true;
+					q[j] = 1;
 			}
 		}
 	}
@@ -131,12 +130,10 @@ int Controller::get_bearing_velocity(const vector<float> &bdes, const float v_b)
 {
 
 	vector<float> bv;
-	for (int i = 0; i < (int)bdes.size()*5; i++)
+	for (int i = 0; i < 5; i++)
 	{
-		for (int k = 0; k < (int)bdes.size(); k++)
-		{
-			bv.push_back(deg2rad( k));
-		}
+		bv.push_back( deg2rad(0));
+		bv.push_back( deg2rad(90));
 	}
 
 	// Find what the desired angle is in bdes
@@ -167,13 +164,46 @@ int Controller::get_bearing_velocity(const vector<float> &bdes, const float v_b)
     return minindex;
 }
 
-float Controller::get_velocity_command_radial(int ID, int dim)
+void Controller::assess_situation(int ID, vector<float> &q_old)
+{	
+	// Get new q
+	vector<float> q(8,0);
+	float u, b_i;
+	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
+	for (int i = 0; i < nagents-1; i++)
+	{
+		u   = o->request_distance(ID, closest[i]);
+		b_i = o->request_bearing (ID, closest[i]);
+		wrapTo2Pi(b_i);
+		fill_template(q, b_i, u, 0.8);
+	}
+
+	// if (waiting[ID] < 1)
+	// {	
+	// 	q_old.assign(q.begin(),q.end());
+	// }
+	// else
+	// {
+		std::transform (q.begin(), q.end(), q_old.begin(), q_old.begin(), std::plus<float>()); // sum
+		for (int i = 0; i < 8; i++)
+		{
+			if (q[i] == 0)
+				q_old[i] = 0;
+		}
+	// }
+}
+
+vector<bool> circling(100,0);
+vector<bool> done(100,0);
+vector<bool> hlvec(100,0);
+
+float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 {
 	float u, v, b_i;
 	v = 0;
 	
-	vector<float> bdes;
 	// Desired angles, so as to create a matrix
+	vector<float> bdes;
 	bdes.push_back(deg2rad(  0));
 	bdes.push_back(deg2rad( 90));
 
@@ -184,11 +214,7 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 
 	bool happy = false; // null assumption on happiness of the agent
 
-	vector<bool> q(8,false); // = 8, the 8 positions we go around
-	
-	// Get vector of all neighbors from closest to furthest
-	vector<int> closest = o->request_closest(ID);
-	
+	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 	// For all neighbors detected (in simulation all agents) determine the 
 	for (int i = 0; i < nagents-1; i++)
 	{
@@ -199,55 +225,62 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		// For the number of knearest neighbors, get desirer radial and bearing attraction
 		if (i < knearest)
 		{
+			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
+			v_r += get_attraction_velocity(u,b_i);
+
 			// Uncomment this to simulate to simulate noise
 			// v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
 			// v_r += get_attraction_velocity(sqrt(u) + getrand_float(-0.1, 0.1),v_b);
 
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
-			v_r += get_attraction_velocity(u,b_i);
-
 		}
-		filltemplate(q, b_i, u, 0.8);
 	}
+
 	int minindex = get_bearing_velocity(bdes, v_b);
-
-	// cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
-	// 			         << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
-
-	vector<vector<bool>> links(4);
-	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-
-	// vector<vector<bool>> links(9);
+	// vector<vector<bool>> links(4);
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
 
-	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	vector<vector<bool>> links(9);
+	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
 
-	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
 
+	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
 
-	// Implement averaging method for q
+	int hl = 8;
+	int th = 20;
 
-
-
-	int hl=8;
 	// Check if happy cycling through the links
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		// Quantify happiness level
 		int s = 0;
 
-		for (int j = 0; j < 8; j++){
-			s+= q[j]^links[i][j]; // ^ = xor, it tells us if there is a match, so we measure the number of mistakes
-			// On top of this, we could xor s with a 1 or a 0 so we can only measure errors in 1s and 0s rather than mistakes.
+		for (int j = 0; j < 8; j++)
+		{ 
+			// Classifying threshold
+			bool t = false;
+			if (q[j] > th)
+				t = true;
+
+			// (XOR)
+			s+= (!t^!links[i][j]); // ^ = xor, it tells us if there is a match, so we measure the number of mistakes
+
+			// (XOR)XOR Number of correct parts
+			// On top of normal XOR, we could xor s with a 1 or a 0 so we can only measure errors in 1s and 0s rather than mistakes.
+			// 1 for correct, 0 for mistakes
+			// s+= (t^links[i][j])^1; // ^ = xor, it tells us if there is a match, so we measure the number of mistakes
+
+			// AND: 1 only if match in correct places
+			// s+= t && links[i][j];
 		}
 		if (s < hl)
 		{
@@ -255,109 +288,95 @@ float Controller::get_velocity_command_radial(int ID, int dim)
 		}
 
 		// Binary happy not happy
-		if (q == links[i])
+		if (s == 8)
 			happy = true;
 	}
 
 	// Did the situation improve?
 	bool improved = false;
 	if (hl < hlvec[ID])
-	{	
+	{
 		improved = true;
 	}
 	hlvec[ID] = hl;
 
 	// Is the agent stuck?
-	// if ( (q[0] && q[4]) || (q[1] && q[5]) || (q[2] && q[6]) || (q[3] && q[7]) )
+	// if ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) )
 	// 	happy = true;
 
-	if (hl == 0 || happy )//|| alreadydone[ID]) // If happy, do what you gotta do
+	if ( hl == 0 || happy || done[ID] )//|| alreadydone[ID]) // If happy, do what you gotta do
 	{
-		cout << ID << " happy " << endl ;
-		// happyonce[ID] = true;
-		// Action
-		attractionmotion ( dim, v_r + v_adj , v_b, v);
-		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		if (dim == 1)
+			cout << " \t happy";
 
+		// Action
 		// Outflow
 		circling[ID] = false;
-		waiting[ID]  = 0;
-	// 	if (waiting[ID] > 100)
-	// 	{
-	// 		circling[ID] = false;
-	// 		waiting[ID]=0;
-	// 	}
-	// 	else
-	// 		waiting[ID]++;
-	// }
+
+		int finalNum = rand()%(1000-100+1)+100; // Generate the number, assign to variable.
+		if (waiting[ID] > finalNum)
+		{
+			done[ID] = true;
+			attractionmotion ( dim, v_r + v_adj, v_b, v);
+			latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+			// waiting[ID]  = 0;
+		}
+		else
+		{
+
+			done[ID] = false;
+			// attractionmotion ( dim, v_r, v_b, v);
+
+			attractionmotion ( dim, v_r + v_adj, v_b, v);
+			latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+			if (dim == 0)	
+				waiting[ID]++;
+		}
+
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		attractionmotion ( dim,  v_r   , v_b,  v  );
-		circlemotion     ( dim, -v_adj*hl , v_b,  bdes[minindex], v);
+		// attractionmotion ( dim,  v_r   , v_b,  v  );
+		// circlemotion     ( dim,  v_adj , v_b,  bdes[minindex], v);
+	
+		attractionmotion ( dim, v_r + v_adj, v_b, v);
+		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		if (dim == 1)
+			cout << " \t circling";
 
-		float random = ((float) rand()) / (float) RAND_MAX;
+		// float random = ((float) rand()) / (float) RAND_MAX;
 		// cout << random << endl;
+		// int finalNum = rand()%(300-100+1)+100; // Generate the number, assign to variable.
 
-		if ( random > (float)1/(waiting[ID]))
+		if (waiting[ID] > 100)
 		{
 			circling[ID] = false;
-			waiting[ID]=0;
+			waiting[ID] = 0;
 		}
-		else
-			waiting[ID]++;
-		// cout << ID << "circling" << endl;
-		// // Action
-		// attractionmotion ( dim,  v_r , v_b,  v  );
-		// circlemotion     ( dim,  -v_adj , v_b,  bdes[minindex], v);
-
-		// // // Outflow
-		// // float random = ((float) rand()) / (float) RAND_MAX;
-		// // if ( random > (float) hl / (waiting[ID]) )
-		// if (improved)
-		// {
-		// 	cout << ID << " improved" << endl;
-		// 	circling[ID] = false;
-		// 	waiting[ID]  = 0;
-		// }
-		// else
-		// {
-		// 	waiting[ID]++;
-		// }
-
+		else{
+			if (dim == 0)	
+				waiting[ID]++;
+		}
 	}
 	else // In waiting mode
-	{
-		cout << ID << " waiting "<< waiting[ID]/simulation_updatefreq << endl;
-		
+	{		
 		// Action
-		attractionmotion ( dim, v_r , v_b, v);
-		// latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
-	float random = ((float) rand()) / (float) RAND_MAX;
-		cout << random << endl;
+		attractionmotion ( dim, v_r + v_adj, v_b, v);
+		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
 
-		if ( 1*random > (float)1/waiting[ID])
+		int finalNum = rand()%(1000-100+1)+100; // Generate the number, assign to variable.
+
+		// if ( 1*random > (float)1/waiting[ID])
+		if (waiting[ID] > finalNum)
 		{
 			circling[ID] = true;
 			waiting[ID] = 0;
 		}
 		else
 		{
-			waiting[ID]++;
-			cout << ID << " waiting "<< waiting[ID] << endl;
+			if (dim == 0)	
+				waiting[ID]++;
 		}
-		// // Outflow criteria to "circling behavior"
-		// float random = ((float) rand()) / (float) RAND_MAX;
-		// float k = 1;
-		// if ( random > k*(8-hl) / (waiting[ID]/simulation_updatefreq + k*(8-hl)))
-		// {
-		// 	circling[ID] = true; // Switch to circling mode at next time-step
-		// 	waiting [ID] = 0;    // Reset counter
-		// }
-		// else // Wait
-		// {
-		// 	waiting[ID]++; 		 // Increase counter
-		// }
 
 	}
 
@@ -439,4 +458,9 @@ void Controller::set_weights(const vector<float> &w)
 {
 	set = true;
 	this->weights = w;
+}
+
+int Controller::get_waitingtime(int ID)
+{
+	return waiting[ID];
 } 

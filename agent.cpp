@@ -1,6 +1,6 @@
 #include "agent.h"
 
-Agent::Agent(int i, const vector<float> &s){
+Agent::Agent(int i, const vector<float> &s):situation(8,0){
 	cout << "Agent " << i << " created at position (" << s[0] << "," << s[1] << ")" << endl;
 	this->state = s;
 	ID = i;
@@ -28,7 +28,3 @@ void Agent::select_action(){};
 int Agent::get_ID(){
 	return ID;
 };
-
-// void Agent::set_situation(const vector<bool> &q){
-// 	this->situation = q;
-// };

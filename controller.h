@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
+#include <algorithm>
 
 using namespace std;
 
@@ -22,16 +23,23 @@ private:
     time_t timer;
 public:
 	vector<float> weights;
+	vector<int> waiting;
+
 	Controller();
 	~Controller();
 
 	int get_bearing_velocity(const vector<float> &bdes, const float v_b);
 	float get_attraction_velocity(float u, float b);
-	float get_velocity_command_radial(int ID, int dim);
+	float get_velocity_command_radial(int ID, int dim, vector<float> q);
 	float get_velocity_command_cartesian(int ID, int dim);
-	float saturate(float f);
 
-	void  filltemplate(vector<bool> &q, const float b_i, const float u, const float dmax);
+	int get_waitingtime(int ID);
+	float saturate(float f);
+	
+	void assess_situation(int ID, vector<float> &q_old);
+
+	void  fill_template(vector<float> &q, const float b_i, const float u, float dmax);
+
 	void  set_weights(const vector<float> &w);
 	void  set_saturation(const float &lim);
 	void  remove_saturation()	{saturation = false;};
