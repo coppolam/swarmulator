@@ -288,10 +288,11 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			// s+= t && links[i][j];
 		}
 
-		hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
+		if ( (8-s) > hl)
+			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
 
 		// Binary happy not happy
-		if (s ==8 )
+		if (hl == 8 )
 			happy = true;
 	}
 
@@ -339,7 +340,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		if (dim == 1)
 			cout << " \t circling " << hlvec[ID] << " " << hl;
 
-		if (improved || waiting[ID] > 200)
+		if (improved)
 		{
 			circling[ID] = false;
 			waiting [ID] = 0;
@@ -353,7 +354,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	else // In waiting mode
 	{		
 		if (dim == 1)
-			cout << "\t waiting";
+			cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
 		attractionmotion ( dim, v_r, v_b, v);
 		
