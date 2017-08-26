@@ -7,8 +7,8 @@ void Particle::update_position()
 	// y+ towards East
 
 	cout << ID << " "  << controller.get_waitingtime(ID) << " ";
-	state[0] += state[2]*dt; // position x
-	state[1] += state[3]*dt; // position y
+	state[0] += state[2]*dt + 0.5*state[4]*pow(dt,2); // position x
+	state[1] += state[3]*dt + 0.5*state[5]*pow(dt,2); // position y
 
 	controller.assess_situation(ID, situation);
 
@@ -24,9 +24,12 @@ void Particle::update_position()
 	// cout << ID << ": "<< " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
 	// 			      << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
 
-	state[2] = controller.get_velocity_command_radial(ID,0,situation); // velocity x
-	state[3] = controller.get_velocity_command_radial(ID,1,situation); // velocity y
+	state[2] = state[2] + state[4]*dt; // velocity x
+	state[3] = state[3] + state[5]*dt; // velocity y
 	
+	state[4] = -1*( state[2] - controller.get_velocity_command_radial(ID,0,situation) ) ;
+	state[5] = -1*( state[3] - controller.get_velocity_command_radial(ID,1,situation) ) ;
+
 	cout << endl;
 
 };
