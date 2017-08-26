@@ -27,8 +27,8 @@ void Particle::update_position()
 	state[2] = state[2] + state[4]*dt; // velocity x
 	state[3] = state[3] + state[5]*dt; // velocity y
 	
-	state[4] = -1*( state[2] - controller.get_velocity_command_radial(ID,0,situation) ) ;
-	state[5] = -1*( state[3] - controller.get_velocity_command_radial(ID,1,situation) ) ;
+	state[4] = -2*( state[2] - controller.get_velocity_command_radial(ID,0,situation) ) ;
+	state[5] = -2*( state[3] - controller.get_velocity_command_radial(ID,1,situation) ) ;
 
 	cout << endl;
 

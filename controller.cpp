@@ -235,28 +235,27 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	}
 
 	int minindex = get_bearing_velocity(bdes, v_b);
-	// vector<vector<bool>> links(4);
-	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-	// vector<int> trace = {0, 3, 1, 2};
-
-	vector<vector<bool>> links(9);
+	vector<vector<bool>> links(4);
 	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
-	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
-	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
-	vector<int> trace = {0, 7, 3, 8, 1, 5, 6, 4, 2};
+	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
+	vector<int> trace = {0, 3, 1, 2};
+
+	// vector<vector<bool>> links(9);
+	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+	// vector<int> trace = {0, 7, 3, 8, 1, 5, 6, 4, 2};
 
 	int hl = 0;
 	int th = 20;
-	cout << (int)links.size() << endl;
 
 	// Check if happy cycling through the links
 	for (int i = 0; i < (int)links.size(); i++)
@@ -311,17 +310,19 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		hlvec[ID] = hl;
 		// if ((float)waiting[ID]/(float)(trace[ID]+1) > 100 && !circling[closest[0]] )
 		// {
+		if ( !circling[closest[0]] )
+		{
 			done[ID] = true;
 			attractionmotion ( dim, v_r + v_adj, v_b, v);
 			latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
-		// }
-		// else
-		// {
+		}
+		else
+		{
 		// 	done[ID] = false;
-		// 	attractionmotion ( dim, v_r, v_b, v);
+			attractionmotion ( dim, v_r, v_b, v);
 		// 	if (dim == 0)	
 		// 		waiting[ID]++;
-		// }
+		}
 
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
@@ -350,7 +351,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
 		attractionmotion ( dim, v_r + v_adj, v_b, v);
-		latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		// latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
 
 		hlvec[ID] = hl;
 		int finalNum = rand()%(3000-100+1)+100; // Generate the number, assign to variable.
