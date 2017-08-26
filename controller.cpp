@@ -196,6 +196,7 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 vector<bool> circling(100,0);
 vector<bool> done(100,0);
 vector<int> hlvec(100,0);
+vector<int> tracenumber(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 {
@@ -235,27 +236,35 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	}
 
 	int minindex = get_bearing_velocity(bdes, v_b);
-	vector<vector<bool>> links(4);
-	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-	vector<int> trace = {0, 3, 1, 2};
-
-	// vector<vector<bool>> links(9);
+	// vector<vector<bool>> links(4);
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
-	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
-	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
-	// vector<int> trace = {0, 7, 3, 8, 1, 5, 6, 4, 2};
+	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
+					  // 0  1  2  3
+			 // trace = {0, 3, 1, 2};
+	//	--------------------------------------------------
+	// vector<int> trace = {0, 2, 3, 1};
 
+	vector<vector<bool>> links(9);
+	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+
+		// 				%0  1  2  3  4  5  6  7  8
+	 //            trace = {0, 7, 3, 8, 1, 5, 6, 4, 2};
+		// --------------------------------------------------
+	vector<int> trace = {0, 4, 8, 2, 7, 5, 6, 1, 3};
+	
 	int hl = 0;
 	int th = 20;
+	// int tracenumber = 1;
 
 	// Check if happy cycling through the links
 	for (int i = 0; i < (int)links.size(); i++)
@@ -286,8 +295,11 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
 
 		// Binary happy not happy
-		if (hl == 8 )
+		if (hl == 8)
+		{
 			happy = true;
+			tracenumber[ID] = trace[i];
+		}
 	}
 
 	// Did the situation improve?
@@ -297,14 +309,17 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		improved = true;
 	}
 	// Is the agent stuck?
-	// if ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) )
-	// 	happy = true;
-
+	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
+	{
+		happy = true;
+		tracenumber[ID] = 0;
+	}
+	
 	if ( happy )// If happy, do what you gotta do
 	{
 		if (dim == 1)
 			cout << " \t happy";
-
+		done[ID] = true;
 		circling[ID] = false;
 
 		hlvec[ID] = hl;
@@ -312,13 +327,13 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		// {
 		if ( !circling[closest[0]] )
 		{
-			done[ID] = true;
+			// done[ID] = true;
 			attractionmotion ( dim, v_r + v_adj, v_b, v);
 			latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
 		}
 		else
 		{
-		// 	done[ID] = false;
+			// done[ID] = false;
 			attractionmotion ( dim, v_r, v_b, v);
 		// 	if (dim == 0)	
 		// 		waiting[ID]++;
@@ -331,7 +346,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		circlemotion     ( dim,  v_adj , v_b,  bdes[minindex], v);
 		if (dim == 1)
 			cout << " \t circling " << hlvec[ID] << " " << hl;
-
+		done[ID] = false;
 		// there needs to be a time there to avoid two units spinning forever
 
 		if (improved || waiting[ID] > 2000)
@@ -350,13 +365,14 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		if (dim == 1)
 			cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
-		attractionmotion ( dim, v_r + v_adj, v_b, v);
-		// latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		// it might actually help to make the thing shorter
+		attractionmotion ( dim, v_r, v_b, v);
+		done[ID] = false;
 
 		hlvec[ID] = hl;
 		int finalNum = rand()%(3000-100+1)+100; // Generate the number, assign to variable.
-
-		if ((float)waiting[ID]/(float)(trace[ID]+1) > finalNum )
+		cout << "tracenumber" << tracenumber[ID] << endl;
+		if ((float)waiting[ID]/(float)(tracenumber[ID]+1) > finalNum )
 		{
 			circling[ID] = true;
 			waiting [ID] = 0;
