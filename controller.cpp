@@ -179,7 +179,7 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 		u   = o->request_distance(ID, closest[i]);
 		b_i = o->request_bearing (ID, closest[i]);
 		wrapTo2Pi(b_i);
-		fill_template(q, b_i, u, 1.0);
+		fill_template(q, b_i, u, sqrt(pow(0.7,2)+pow(0.7,2)));
 	}
 
 	// if (waiting[ID] < 1)
@@ -261,13 +261,15 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
 	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
 
-	// 	                 0  1  2  3  4  5  6  7  8
-	//         trace =  {0, 7, 3, 8, 1, 5, 6, 4, 2};
-
-	// 	                 0  1  2  3  4  5  6  7  8
-	//         trace =  {1, 5, 8, 2, 6, 3, 4, 7, 0};
-	// --------------------------------------------------
+	// 	                    0  1  2  3  4  5  6  7  8
+	//            trace =  {0, 7, 3, 8, 1, 5, 6, 4, 2};
 	vector<int> trace = {0, 4, 8, 2, 7, 5, 6, 1, 3};
+
+	// 	                    0  1  2  3  4  5  6  7  8
+	//            trace =  {1, 5, 8, 2, 6, 3, 4, 7, 0};
+	// --------------------------------------------------
+	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
+
 	
 	int hl = 0;
 	int th = 50;
@@ -294,12 +296,20 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		if ( (8-s) > hl)
 		{
 			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
-			tracenumber[ID] = trace[i]; // save this as the most similar link
 		}
 
 		// Binary happy not happy
 		if (hl == 8)
+		{
+			tracenumber[ID] = trace[i]; // save this as the most similar link
 			happy = true;
+		}
+	}
+
+	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
+	{
+		happy = true;
+		tracenumber[ID] = 8-0;
 	}
 
 	// Did the situation improve?
@@ -349,9 +359,8 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		else
 			attractionmotion ( dim, v_r, v_b, v);
 
-		hlvec[ID] = hl;
 		int finalNum = 200;
-		if ( (float)waiting[ID]/(float)(links.size() - tracenumber[ID]+1) > finalNum )
+		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
 		{
 			circling[ID] = true; // start circling
 			waiting [ID] = 0; // reset counter 
@@ -363,6 +372,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		}
 
 	}
+		hlvec[ID] = hl;
 
 	return v;
 
