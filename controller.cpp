@@ -236,34 +236,37 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	}
 
 	int minindex = get_bearing_velocity(bdes, v_b);
-	// vector<vector<bool>> links(4);
-	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-					  // 0  1  2  3
-			 // trace = {0, 3, 1, 2};
-	//	--------------------------------------------------
-	// vector<int> trace = {0, 2, 3, 1};
-
-	vector<vector<bool>> links(9);
+	vector<vector<bool>> links(4);
 	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
-	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
-	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+	links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
+					  // 0  1  2  3
+			 // trace = {0, 3, 1, 2};
+	//	--------------------------------------------------
+	vector<int> trace = {0, 2, 3, 1};
+// 
+	// vector<vector<bool>> links(9);
+	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
 
-		// 				%0  1  2  3  4  5  6  7  8
-	 //            trace = {0, 7, 3, 8, 1, 5, 6, 4, 2};
-		// --------------------------------------------------
-	vector<int> trace = {0, 4, 8, 2, 7, 5, 6, 1, 3};
+	// 	                 0  1  2  3  4  5  6  7  8
+	//         trace =  {0, 7, 3, 8, 1, 5, 6, 4, 2};
+
+	// 	                 0  1  2  3  4  5  6  7  8
+	//         trace =  {1, 5, 8, 2, 6, 3, 4, 7, 0};
+	// --------------------------------------------------
+	// vector<int> trace = {0, 4, 8, 2, 7, 5, 6, 1, 3};
 	
 	int hl = 0;
-	int th = 20;
+	int th = 50;
 	// int tracenumber = 1;
 
 	// Check if happy cycling through the links
@@ -292,14 +295,14 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		}
 
 		if ( (8-s) > hl)
+		{
 			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
+			tracenumber[ID] = trace[i]; // save this as the most similar link
+		}
 
 		// Binary happy not happy
 		if (hl == 8)
-		{
 			happy = true;
-			tracenumber[ID] = trace[i];
-		}
 	}
 
 	// Did the situation improve?
@@ -309,11 +312,11 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		improved = true;
 	}
 	// Is the agent stuck?
-	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
-	{
-		happy = true;
-		tracenumber[ID] = 0;
-	}
+	// if ( ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
+	// {
+	// 	happy = true;
+	// 	tracenumber[ID] = 0;
+	// }
 	
 	if ( happy )// If happy, do what you gotta do
 	{
@@ -349,7 +352,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		done[ID] = false;
 		// there needs to be a time there to avoid two units spinning forever
 
-		if (improved || waiting[ID] > 2000)
+		if (improved || waiting[ID] > 1000)
 		{
 			circling[ID] = false;
 			waiting [ID] = 0;
@@ -366,13 +369,27 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
 		// it might actually help to make the thing shorter
-		attractionmotion ( dim, v_r, v_b, v);
+
+		if ( !circling[closest[0]] )
+		{
+			// done[ID] = true;
+			attractionmotion ( dim, v_r + v_adj, v_b, v);
+			latticemotion    ( dim, v_adj , v_b, bdes[minindex], v);
+		}
+		else
+		{
+			// done[ID] = false;
+			attractionmotion ( dim, v_r, v_b, v);
+		// 	if (dim == 0)	
+		// 		waiting[ID]++;
+		}
+		
 		done[ID] = false;
 
 		hlvec[ID] = hl;
-		int finalNum = rand()%(3000-100+1)+100; // Generate the number, assign to variable.
+		int finalNum = 200;
 		cout << "tracenumber" << tracenumber[ID] << endl;
-		if ((float)waiting[ID]/(float)(tracenumber[ID]+1) > finalNum )
+		if ((float)waiting[ID]/(float)(links.size() - tracenumber[ID]+1) > finalNum )
 		{
 			circling[ID] = true;
 			waiting [ID] = 0;
