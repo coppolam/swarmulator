@@ -336,7 +336,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		if (dim == 1)
 			cout << " \t circling " << hlvec[ID] << " " << hl;
 
-		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v);
+		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
 		
 		if (improved || waiting[ID] > 1000)
 		{
