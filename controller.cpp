@@ -69,6 +69,22 @@ float Controller::get_attraction_velocity(float u, float b)
 	return 0;
 }
 
+int bool2int(vector<bool> t)
+{
+	int n = 0; //initialize
+
+	// cout << " string:[";
+	for (int i = 0; i < 8; i++)
+	{
+		// cout << t[i];
+		n += (int)t[i]*(int)pow(2,7-i);
+	}   	
+	// cout << "]";
+	return n;
+
+}
+
+
 void attractionmotion(const int &dim, const float &v_r, const float &v_b, float &v)
 {	
 	if (dim == 0)
@@ -273,8 +289,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	
 	int hl = 0;
 	int th = 50;
-	bool t;
-	// int tracenumber = 1;
+	vector<bool> t(8,0); //threshold holder with false assumption
 
 	// Check if happy cycling through the links
 	for (int i = 0; i < (int)links.size(); i++)
@@ -285,23 +300,22 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		for (int j = 0; j < 8; j++)
 		{ 
 			// Classifying threshold
-			t = false;
 			if (q[j] > th)
-				t = true;
+				t[j] = true;
 
 			// (XOR)
-			s+= (t^links[i][j]); // ^ = xor, it tells us if there is a match, so we measure the number of mistakes
+			s+= ( t[j]^links[i][j] ); // ^ = xor, it tells us if there is a match, so we measure the number of mistakes
 		}
 
-		if ( (8-s) > hl)
+		if ( (8-s) > hl )
 		{
+			tracenumber[ID] = trace[i]; // save this as the most similar link
 			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
 		}
 
 		// Binary happy not happy
 		if (hl == 8)
 		{
-			tracenumber[ID] = trace[i]; // save this as the most similar link
 			happy = true;
 		}
 	}
@@ -310,18 +324,27 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	{
 		happy = true;
 		tracenumber[ID] = 8-0;
+		hl = 8;
 	}
 
+	vector <int> action   = {1,5,5,5,1,5,5,4,1,4,4,4,1,4,4,5,1,1,1,3,1,5,5,3,1,3,3,3,1,3,3,5,5,1,1,1,1,1,5,6,6,1,1,7,1,1,1,5,5,1,5,5,5,1,5,6,6,1,1,7,1,1,1,1,1,5,5,1,5,5,5,1,4,4,4,1,4,4,4,1,5,1,5,1,1,5,5,1,6,1,3,1,1,1,3,5,5,1,1,1,5,5,5,6,6,1,1,7,4,1,1,5,5,5,5,5,5,5,5,6,6,1,1,7,7,1,1,2,2,2,2,2,2,5,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,5,2,2,8,2,5,5,6,6,2,2,8,2,2,2,5,5,5,5,5,5,5,5,6,6,2,2,8,2,2,2,7,3,5,5,5,5,5,5,4,4,4,4,4,4,4,4,5,5,5,5,8,5,5,5,6,6,6,6,8,3,8,3,5,5,5,5,8,5,5,5,6,6,4,4,8,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,8,7,8,1};
+	vector <int> maxscore = {7,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,6,7,7,7,7,7,6,7,6,7,6,8,8,7,7,7,7,7,7,7,7,7,6,7,6,7,6,7,6,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,6,6,7,6,7,7,7,7,6,6,7,6,6,6,7,7,6,6,6,6,7,7,7,7,6,6,7,6,6,6,8,8,7,7,7,7,7,7,7,7,6,6,7,6,6,6,7,7,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,7,6,7,7,7,7,6,6,7,6,6,6,8,8,7,7,7,7,7,7,7,7,6,6,7,6,6,6,7,6,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,6,6,7,6,7,7,7,7,6,6,7,5,6,5,7,7,6,6,7,6,7,7,7,7,6,6,7,6,6,6,8,8,7,7,7,7,7,7,7,7,6,6,7,5,6,0};
+	vector <int> ppx = {0,1,1, 1, 0,-1,-1,-1};
+	vector <int> ppy = {1,1,0,-1,-1,-1, 0, 1};
+	bool tried  = false;
 	// Did the situation improve?
 	bool improved = false;
-	if (hl > hlvec[ID])
-		improved = true;
+	if (hl > hlvec[ID]){
+			improved = true;
+			if (waiting[ID] > 200)
+			waiting[ID] = 0;
+			}
 	
 	if ( happy )// If happy, do what you gotta do
 	{
-		if (dim == 1)
-			cout << " \t happy";
-
+		// if (dim == 1)
+			// cout << " \t happy";
+		tried = false;
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
 
@@ -333,16 +356,32 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		if (dim == 1)
-			cout << " \t circling " << hlvec[ID] << " " << hl;
+		// if (dim == 1)
+			// cout << " \t circling " << hlvec[ID] << " " << hl;
 
+		// if (!circling[closest[0]])
 		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
-		
-		if (improved || waiting[ID] > 1000)
+
+		// if (hl < maxscore[bool2int(t)-1])
+		// {
+		// 	int	actid = action[bool2int(t)-1];
+		// 	cout << "ID " << ID << ": " << bool2int(t) << " hs:" << hl << " max:" << maxscore[bool2int(t)-1] << " act " << ppx[actid-1] << " " << ppy[actid-1] << endl;
+		// 	if (dim==0)
+		// 	{	v = ppy[actid-1]*v_adj;
+		// 		tried = true;
+		// 	}
+		// 	else if (dim==1){
+		// 		tried = true;
+		// 		v = ppx[actid-1]*v_adj;
+		// 	}
+		// }
+
+		if ((improved && waiting[ID]>200) || waiting[ID] > 1000)
 		{
 			circling[ID] = false; // stop circling
 			waiting [ID] = 0; // reset counter
 		}
+
 		else
 		{
 			if (dim == 0) // increase counter
@@ -351,8 +390,8 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	}
 	else // In waiting mode
 	{		
-		if (dim == 1)
-			cout << "\t waiting "<< hlvec[ID] << " " << hl;
+		// if (dim == 1)
+			// cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
 		if ( !circling[closest[0]] )
 			latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
@@ -361,6 +400,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 		int finalNum = 200;
 		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
+		// if ( (float)waiting[ID] > 200 )	
 		{
 			circling[ID] = true; // start circling
 			waiting [ID] = 0; // reset counter 
