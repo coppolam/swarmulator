@@ -360,7 +360,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			// cout << " \t circling " << hlvec[ID] << " " << hl;
 
 		// if (!circling[closest[0]])
-		circlemotion     ( dim,  v_r + 0.1, v_adj , v_b,  bdes[minindex], v );
+		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
 
 		// if (hl < maxscore[bool2int(t)-1])
 		// {
