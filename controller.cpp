@@ -279,12 +279,12 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 	// 	                    0  1  2  3  4  5  6  7  8
 	//            trace =  {0, 7, 3, 8, 1, 5, 6, 4, 2};
-	vector<int> trace = {0, 4, 8, 2, 7, 5, 6, 1, 3};
+	// vector<int> trace = {0, 4, 8, 2, 7, 5, 6, 1, 3};
 
 	// 	                    0  1  2  3  4  5  6  7  8
 	//            trace =  {1, 5, 8, 2, 6, 3, 4, 7, 0};
 	// --------------------------------------------------
-	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
+	vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
 
 	
 	int hl = 0;
@@ -323,7 +323,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
 	{
 		happy = true;
-		tracenumber[ID] = 8-0;
+		tracenumber[ID] = 0;
 		hl = 8;
 	}
 
@@ -360,7 +360,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 			// cout << " \t circling " << hlvec[ID] << " " << hl;
 
 		// if (!circling[closest[0]])
-		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
+		circlemotion     ( dim,  v_r + 0.1, v_adj , v_b,  bdes[minindex], v );
 
 		// if (hl < maxscore[bool2int(t)-1])
 		// {
