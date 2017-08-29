@@ -57,21 +57,22 @@ vector<int> OmniscientObserver::request_closest_inrange(int ID, float range)
 	vector<int> ind;
 	for (int i = 0; i < nagents; i++)
 	{
-
 		dm[i].values = (sqrt(
-			  pow(s[i].get_position(0) - s[ID].get_position(0),2.0) 
-			+ pow(s[i].get_position(1) - s[ID].get_position(1),2.0)
-			))*1000;
+			  pow( s[i].get_position(0) - s[ID].get_position(0), 2.0 ) 
+			+ pow( s[i].get_position(1) - s[ID].get_position(1), 2.0 )
+			));
 		dm[i].index = i;
 	}
 
 	array_sortmintomax_index(nagents, dm);
 
 	// Start from one to eliminate youself from the list (because you are 0 distance)
-	for (int i = 1 ; i < nagents ; i++) {
-		if (dm[i].values <= range)
+	for (int i = 1 ; i < nagents ; i++)
+	{
+		if (dm[i].values < range)
 		    ind.push_back(dm[i].index);
 	}
+	cout << "hello" << endl;
 
 	return ind;
 }

@@ -217,34 +217,32 @@ vector<bool> circling(100,0);
 vector<int> hlvec(100,0);
 vector<int> tracenumber(100,0);
 vector<int> tracking(100,0);
+vector<int> oldtracking(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 {
-	float u, v, b_i;
-	v = 0;
-	
+	// Initialize some stuff
+	float v = 0;
+	float v_adj = 0.1;
+	bool  happy = false; // null assumption on happiness of the agent
+
 	// Desired angles, so as to create a matrix
 	vector<float> bdes;
 	bdes.push_back(deg2rad(  0));
 	bdes.push_back(deg2rad( 90));
 
-	// Initialize some stuff
-	float v_r   = 0.0;
-	float v_b   = 0.0;
-	float v_adj = 0.1;
+	// Which neighbors can you sense within the range?
+	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
-	bool happy = false; // null assumption on happiness of the agent
-
-	vector<int> closest = o->request_closest_inrange(ID,sqrt(pow(0.7,2)+pow(0.7,2))); // Get vector of all neighbors from closest to furthest
-	
-	// For all neighbors detected (in simulation all agents) determine the 
-	v_r += get_attraction_velocity(o->request_distance(ID, closest[0]), wrapTo2Pi_f(o->request_bearing (ID, closest[0])));
-	v_b += wrapToPi_f(o->request_bearing(ID, closest[0]));
+	// tracking[ID] = rand() % closest.size();
+	// What commands does this give?
+	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), wrapTo2Pi_f(o->request_bearing (ID, closest[0])));
+	float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
+	int minindex = get_bearing_velocity(bdes, v_b);
 	// Uncomment this to simulate to simulate noise
 	// v_b += wrapToPi_f(o->request_bearing(ID, closest[0]))+ getrand_float(-0.2, 0.2);
 	// v_r += get_attraction_velocity(u + getrand_float(-0.1, 0.1),v_b);
 
-	int minindex = get_bearing_velocity(bdes, v_b);
 	// vector<vector<bool>> links(4);
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
@@ -255,16 +253,16 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	//	--------------------------------------------------
 	// vector<int> trace = {0, 2, 3, 1};
 // 
-	vector<vector<bool>> links(9);
-	links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
-	links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
-	links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
-	links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
-	links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
-	links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
-	links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
-	links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
-	links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
+	// vector<vector<bool>> links(9);
+	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
+	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
+	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
+	// links[3] = {1, 1, 1, 0, 0, 0, 1, 1};
+	// links[4] = {0, 1, 1, 1, 1, 1, 0, 0};
+	// links[5] = {0, 0, 0, 1, 1, 1, 1, 1};
+	// links[6] = {1, 0, 1, 1, 1, 1, 1, 0};
+	// links[7] = {1, 1, 1, 0, 0, 0, 1, 0};
+	// links[8] = {1, 0, 1, 0, 0, 0, 1, 1};
 
 	// 	                    0  1  2  3  4  5  6  7  8
 	//            trace =  {0, 7, 3, 8, 1, 5, 6, 4, 2};
@@ -273,11 +271,16 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	// 	                    0  1  2  3  4  5  6  7  8
 	//            trace =  {1, 5, 8, 2, 6, 3, 4, 7, 0};
 	// --------------------------------------------------
-	vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
+	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
+	vector<vector<bool>> links(4);
+	links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
+	links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
+	links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
+	links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
+	vector<int> trace = {0, 1, 2, 3};
 
-	
 	int hl = 0;
-	int th = 50;
+	int th = 0;
 	vector<bool> t(8,0); //LINK holder with false assumption
 
 	// Check if happy cycling through the links
@@ -311,7 +314,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
 	{
-		happy = true;
+		// happy = true;
 		tracenumber[ID] = 0;
 		hl = 8;
 	}
@@ -331,9 +334,10 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	
 	if ( happy )// If happy, do what you gotta do
 	{
+		tracking[ID] = closest[0];
 		// if (dim == 1)
 			// cout << " \t happy";
-		tried = false;
+		// tried = false;
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
 
@@ -350,7 +354,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 		// if (!circling[closest[0]])
 		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
-
+	
 		// if (hl < maxscore[bool2int(t)-1])
 		// {
 		// 	int	actid = action[bool2int(t)-1];
@@ -364,8 +368,12 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		// 		v = ppx[actid-1]*v_adj;
 		// 	}
 		// }
+	
+		// if (tracking[ID] !=closest [0])
+		// 	oldtracking[ID] = tracking[ID];
+		// if ( oldtracking[ID] ==closest [0] || (improved && waiting[ID]>200) || waiting[ID] > 1000 )
 
-		if ( (improved && waiting[ID]>200) || waiting[ID] > 1000 )
+		if ( (improved && waiting[ID] > 200) || waiting[ID] > 1000 )
 		{
 			circling[ID] = false; // stop circling
 			waiting [ID] = 0; // reset counter
@@ -379,6 +387,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	}
 	else // In waiting mode
 	{	
+		tracking[ID] = closest[0];
 		// if (dim == 1)
 			// cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
@@ -387,7 +396,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		else
 			attractionmotion ( dim, v_r, v_b, v);
 
-		int finalNum = 200;
+		int finalNum = 400;
 		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
 		{
 			circling[ID] = true; // start circling
