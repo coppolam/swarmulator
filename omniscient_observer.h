@@ -22,6 +22,7 @@ public:
 	OmniscientObserver(){};
 	~OmniscientObserver(){};
 	vector<int> request_closest(int ID); // request IDs of closest k neighbours and for your ID
+	vector<int> request_closest_inrange(int ID, float range);
 	float request_distance_dim(int ID, int ID_tracked, int dim);
 	float request_distance(int ID, int ID_tracked);
 	float request_bearing(int ID, int ID_tracked);

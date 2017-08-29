@@ -214,9 +214,9 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 }
 
 vector<bool> circling(100,0);
-vector<bool> done(100,0);
 vector<int> hlvec(100,0);
 vector<int> tracenumber(100,0);
+vector<int> tracking(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 {
@@ -235,25 +235,14 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 	bool happy = false; // null assumption on happiness of the agent
 
-	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
+	vector<int> closest = o->request_closest_inrange(ID,sqrt(pow(0.7,2)+pow(0.7,2))); // Get vector of all neighbors from closest to furthest
+	
 	// For all neighbors detected (in simulation all agents) determine the 
-	for (int i = 0; i < nagents-1; i++)
-	{
-		u   = o->request_distance(ID, closest[i]);
-		b_i = o->request_bearing (ID, closest[i]);
-		wrapTo2Pi(b_i);
-
-		// For the number of knearest neighbors, get desirer radial and bearing attraction
-		if (i < knearest)
-		{
-			v_r += get_attraction_velocity(u,b_i);
-			v_b += wrapToPi_f(o->request_bearing(ID, closest[i]));
-			// Uncomment this to simulate to simulate noise
-			// v_b += wrapToPi_f(o->request_bearing(ID, closest[i]))+ getrand_float(-0.2, 0.2);
-			// v_r += get_attraction_velocity(sqrt(u) + getrand_float(-0.1, 0.1),v_b);
-
-		}
-	}
+	v_r += get_attraction_velocity(o->request_distance(ID, closest[0]), wrapTo2Pi_f(o->request_bearing (ID, closest[0])));
+	v_b += wrapToPi_f(o->request_bearing(ID, closest[0]));
+	// Uncomment this to simulate to simulate noise
+	// v_b += wrapToPi_f(o->request_bearing(ID, closest[0]))+ getrand_float(-0.2, 0.2);
+	// v_r += get_attraction_velocity(u + getrand_float(-0.1, 0.1),v_b);
 
 	int minindex = get_bearing_velocity(bdes, v_b);
 	// vector<vector<bool>> links(4);
@@ -289,7 +278,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	
 	int hl = 0;
 	int th = 50;
-	vector<bool> t(8,0); //threshold holder with false assumption
+	vector<bool> t(8,0); //LINK holder with false assumption
 
 	// Check if happy cycling through the links
 	for (int i = 0; i < (int)links.size(); i++)
@@ -299,12 +288,12 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 		for (int j = 0; j < 8; j++)
 		{ 
-			// Classifying threshold
+			// Use classifying threshold and write it to Link holder
 			if (q[j] > th)
 				t[j] = true;
 
 			// (XOR)
-			s+= ( t[j]^links[i][j] ); // ^ = xor, it tells us if there is a match, so we measure the number of mistakes
+			s+= ( t[j]^links[i][j] ); // ^ = XOR, it tells us if there is a match, so we measure the number of "mistakes"
 		}
 
 		if ( (8-s) > hl )
@@ -376,7 +365,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		// 	}
 		// }
 
-		if ((improved && waiting[ID]>200) || waiting[ID] > 1000)
+		if ( (improved && waiting[ID]>200) || waiting[ID] > 1000 )
 		{
 			circling[ID] = false; // stop circling
 			waiting [ID] = 0; // reset counter
@@ -389,7 +378,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		}
 	}
 	else // In waiting mode
-	{		
+	{	
 		// if (dim == 1)
 			// cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
@@ -400,7 +389,6 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 		int finalNum = 200;
 		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
-		// if ( (float)waiting[ID] > 200 )	
 		{
 			circling[ID] = true; // start circling
 			waiting [ID] = 0; // reset counter 
@@ -412,7 +400,8 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		}
 
 	}
-		hlvec[ID] = hl;
+		
+	hlvec[ID] = hl;
 
 	return v;
 
