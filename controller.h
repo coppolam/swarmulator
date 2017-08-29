@@ -13,7 +13,7 @@ class Controller {
 private:
 	
 	float f_attraction(float u);	
-	float f_attraction_bearing(float u, float b);
+	float f_attraction_bearing(float u, int b);
 	float f_repulsion(float u);
 	float f_extra(float u);
 	bool  saturation;
@@ -29,7 +29,7 @@ public:
 	~Controller();
 
 	int get_bearing_velocity(const vector<float> &bdes, const float v_b);
-	float get_attraction_velocity(float u, float b);
+	float get_attraction_velocity(float u, int b);
 	float get_velocity_command_radial(int ID, int dim, vector<float> q);
 	float get_velocity_command_cartesian(int ID, int dim);
 

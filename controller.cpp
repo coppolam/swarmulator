@@ -27,10 +27,12 @@ float Controller::f_attraction(float u)
 }
 
 
-float Controller::f_attraction_bearing(float u, float b)
+float Controller::f_attraction_bearing(float u, int b)
 {
-	// if ( b > (2*M_PI-0.5) || b < 0.5 || (b > (M_PI-0.5) && b < (M_PI+0.5) ))
-		return 1/(1+exp(-5*(u-0.3502))) ; //% sigmoid function -- long-range attraction
+	if (b == 1 || b == 3)
+		return  1/(1+exp(-5*(u-  sqrt(pow(0.8022,2)+pow(0.8022,2))   ))); //% sigmoid function -- long-range attraction
+	else
+		return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 	// else
 		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 }
@@ -57,12 +59,12 @@ float Controller::f_extra(float u)
 	Get a velocity command along an axis based on knowledge of 
 	position with respect to another agent.
 */
-float Controller::get_attraction_velocity(float u, float b)
+float Controller::get_attraction_velocity(float u, int b)
 {
 	float d;
 	if (set)
 	{
-		d = saturate( f_attraction(u) + f_repulsion(u) + f_extra(u) ); 
+		d = saturate( f_attraction_bearing(u,b) + f_repulsion(u) + f_extra(u) ); 
 		return d;
 	}
 
@@ -152,22 +154,24 @@ int Controller::get_bearing_velocity(const vector<float> &bdes, const float v_b)
 	vector<float> bv;
 	for (int i = 0; i < 5; i++)
 	{
-		bv.push_back( deg2rad(0));
-		bv.push_back( deg2rad(90));
+		bv.push_back( deg2rad( 0));
+		bv.push_back( deg2rad( 45));
+		bv.push_back( deg2rad( 90));
+		bv.push_back( deg2rad( 135));
 	}
 
 	// Find what the desired angle is in bdes
 	for (int i = 0; i < (int)bv.size(); i++)
 	{
-		if (i < 2)
+		if (i < (int)bdes.size()*1)
 			bv[i] = abs(bv[i]-2*M_PI-v_b);
-		else if (i < 4)
+		else if (i < (int)bdes.size()*2)
 			bv[i] = abs(bv[i]-M_PI-v_b);
-		else if (i < 6)
+		else if (i < (int)bdes.size()*3)
 			bv[i] = abs(bv[i]-v_b);
-		else if (i < 8)
+		else if (i < (int)bdes.size()*4)
 			bv[i] = abs(bv[i]+M_PI-v_b);
-		else if (i < 10)
+		else if (i < (int)bdes.size()*5)
 			bv[i] = abs(bv[i]+2*M_PI-v_b);
 	}
 
@@ -216,8 +220,6 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 vector<bool> circling(100,0);
 vector<int> hlvec(100,0);
 vector<int> tracenumber(100,0);
-vector<int> tracking(100,0);
-vector<int> oldtracking(100,0);
 
 float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 {
@@ -229,19 +231,26 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	// Desired angles, so as to create a matrix
 	vector<float> bdes;
 	bdes.push_back(deg2rad(  0));
-	bdes.push_back(deg2rad( 90));
+	bdes.push_back(deg2rad(  45));
+	bdes.push_back(deg2rad(  90));
+	bdes.push_back(deg2rad(  135));
 
 	// Which neighbors can you sense within the range?
 	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
-	// tracking[ID] = rand() % closest.size();
 	// What commands does this give?
-	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), wrapTo2Pi_f(o->request_bearing (ID, closest[0])));
 	float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
 	int minindex = get_bearing_velocity(bdes, v_b);
+cout << ID << " " << minindex << endl;
+	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), minindex);
+
 	// Uncomment this to simulate to simulate noise
 	// v_b += wrapToPi_f(o->request_bearing(ID, closest[0]))+ getrand_float(-0.2, 0.2);
 	// v_r += get_attraction_velocity(u + getrand_float(-0.1, 0.1),v_b);
+
+
+	latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+	
 
 	// vector<vector<bool>> links(4);
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
@@ -272,145 +281,131 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	//            trace =  {1, 5, 8, 2, 6, 3, 4, 7, 0};
 	// --------------------------------------------------
 	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
-	vector<vector<bool>> links(4);
-	links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
-	links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
-	links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
-	links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
-	vector<int> trace = {0, 1, 2, 3};
 
-	int hl = 0;
-	int th = 0;
-	vector<bool> t(8,0); //LINK holder with false assumption
+	// vector<vector<bool>> links(4);
+	// links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
+	// links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
+	// links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
+	// links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
+	// vector<int> trace = {0, 1, 2, 3};
 
-	// Check if happy cycling through the links
-	for (int i = 0; i < (int)links.size(); i++)
-	{
-		// Quantify happiness level
-		int s = 0;
 
-		for (int j = 0; j < 8; j++)
-		{ 
-			// Use classifying threshold and write it to Link holder
-			if (q[j] > th)
-				t[j] = true;
+	// vector<vector<bool>> links(6);
+	// links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
+	// links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
+	// links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
+	// links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
+	// links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
+	// links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
+	// vector<int> trace = {0, 1, 2, 3, 4, 5};
 
-			// (XOR)
-			s+= ( t[j]^links[i][j] ); // ^ = XOR, it tells us if there is a match, so we measure the number of "mistakes"
-		}
 
-		if ( (8-s) > hl )
-		{
-			tracenumber[ID] = trace[i]; // save this as the most similar link
-			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
-		}
+	// int hl = 0;
+	// int th = 50;
+	// vector<bool> t(8,0); //LINK holder with false assumption
 
-		// Binary happy not happy
-		if (hl == 8)
-		{
-			happy = true;
-		}
-	}
+	// // Check if happy cycling through the links
+	// for (int i = 0; i < (int)links.size(); i++)
+	// {
+	// 	// Quantify happiness level
+	// 	int s = 0;
 
-	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
-	{
-		// happy = true;
-		tracenumber[ID] = 0;
-		hl = 8;
-	}
+	// 	for (int j = 0; j < 8; j++)
+	// 	{ 
+	// 		// Use classifying threshold and write it to Link holder
+	// 		if (q[j] > th)
+	// 			t[j] = true;
 
-	// vector <int> action   = {1,5,5,5,1,5,5,4,1,4,4,4,1,4,4,5,1,1,1,3,1,5,5,3,1,3,3,3,1,3,3,5,5,1,1,1,1,1,5,6,6,1,1,7,1,1,1,5,5,1,5,5,5,1,5,6,6,1,1,7,1,1,1,1,1,5,5,1,5,5,5,1,4,4,4,1,4,4,4,1,5,1,5,1,1,5,5,1,6,1,3,1,1,1,3,5,5,1,1,1,5,5,5,6,6,1,1,7,4,1,1,5,5,5,5,5,5,5,5,6,6,1,1,7,7,1,1,2,2,2,2,2,2,5,5,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,5,2,2,8,2,5,5,6,6,2,2,8,2,2,2,5,5,5,5,5,5,5,5,6,6,2,2,8,2,2,2,7,3,5,5,5,5,5,5,4,4,4,4,4,4,4,4,5,5,5,5,8,5,5,5,6,6,6,6,8,3,8,3,5,5,5,5,8,5,5,5,6,6,4,4,8,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,8,7,8,1};
-	// vector <int> maxscore = {7,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,6,7,7,7,7,7,6,7,6,7,6,8,8,7,7,7,7,7,7,7,7,7,6,7,6,7,6,7,6,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,6,6,7,6,7,7,7,7,6,6,7,6,6,6,7,7,6,6,6,6,7,7,7,7,6,6,7,6,6,6,8,8,7,7,7,7,7,7,7,7,6,6,7,6,6,6,7,7,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,6,6,7,6,7,7,7,7,6,6,7,6,6,6,8,8,7,7,7,7,7,7,7,7,6,6,7,6,6,6,7,6,7,7,7,7,8,8,7,7,7,7,7,7,7,7,7,7,6,6,7,6,7,7,7,7,6,6,7,5,6,5,7,7,6,6,7,6,7,7,7,7,6,6,7,6,6,6,8,8,7,7,7,7,7,7,7,7,6,6,7,5,6,0};
-	// vector <int> ppx = {0,1,1, 1, 0,-1,-1,-1};
-	// vector <int> ppy = {1,1,0,-1,-1,-1, 0, 1};
-	// bool tried  = false;
-	// Did the situation improve?
-	bool improved = false;
-	if (hl > hlvec[ID]){
-			improved = true;
-			if (waiting[ID] > 200)
-			waiting[ID] = 0;
-			}
-	
-	if ( happy )// If happy, do what you gotta do
-	{
-		tracking[ID] = closest[0];
-		// if (dim == 1)
-			// cout << " \t happy";
-		// tried = false;
-		circling[ID] = false; // flag you are not circling
-		hlvec[ID] = hl;
+	// 		// (XOR)
+	// 		s+= ( t[j]^links[i][j] ); // ^ = XOR, it tells us if there is a match, so we measure the number of "mistakes"
+	// 	}
 
-		if ( !circling[closest[0]] )
-			latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
-		else
-			attractionmotion ( dim, v_r, v_b, v);
+	// 	if ( (8-s) > hl )
+	// 	{
+	// 		tracenumber[ID] = trace[i]; // save this as the most similar link
+	// 		hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
+	// 	}
 
-	}
-	else if ( circling[ID] ) // In circling mode, circle around
-	{
-		// if (dim == 1)
-			// cout << " \t circling " << hlvec[ID] << " " << hl;
+	// 	// Binary happy not happy
+	// 	if (hl == 8)
+	// 	{
+	// 		happy = true;
+	// 	}
+	// }
 
-		// if (!circling[closest[0]])
-		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
-	
-		// if (hl < maxscore[bool2int(t)-1])
-		// {
-		// 	int	actid = action[bool2int(t)-1];
-		// 	cout << "ID " << ID << ": " << bool2int(t) << " hs:" << hl << " max:" << maxscore[bool2int(t)-1] << " act " << ppx[actid-1] << " " << ppy[actid-1] << endl;
-		// 	if (dim==0)
-		// 	{	v = ppy[actid-1]*v_adj;
-		// 		tried = true;
-		// 	}
-		// 	else if (dim==1){
-		// 		tried = true;
-		// 		v = ppx[actid-1]*v_adj;
-		// 	}
-		// }
-	
-		// if (tracking[ID] !=closest [0])
-		// 	oldtracking[ID] = tracking[ID];
-		// if ( oldtracking[ID] ==closest [0] || (improved && waiting[ID]>200) || waiting[ID] > 1000 )
+	// if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
+	// {
+	// 	// happy = true;
+	// 	tracenumber[ID] = 0;
+	// 	hl = 8;
+	// }
 
-		if ( (improved && waiting[ID] > 200) || waiting[ID] > 1000 )
-		{
-			circling[ID] = false; // stop circling
-			waiting [ID] = 0; // reset counter
-		}
-
-		else
-		{
-			if (dim == 0) // increase counter
-				waiting[ID]++;
-		}
-	}
-	else // In waiting mode
-	{	
-		tracking[ID] = closest[0];
-		// if (dim == 1)
-			// cout << "\t waiting "<< hlvec[ID] << " " << hl;
-
-		if ( !circling[closest[0]] )
-			latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
-		else
-			attractionmotion ( dim, v_r, v_b, v);
-
-		int finalNum = 400;
-		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
-		{
-			circling[ID] = true; // start circling
-			waiting [ID] = 0; // reset counter 
-		}
-		else
-		{
-			if (dim == 0)	// increase counter
-				waiting[ID]++;
-		}
-
-	}
+	// bool improved = false;
+	// if (hl > hlvec[ID])
+	// {
+	// 	improved = true;
+	// 	if (waiting[ID] > 200)
+	// 		waiting[ID] = 0;
+	// }
 		
-	hlvec[ID] = hl;
+	// int finalNum = 100; // THIS TUNING PARAMETER IS SUPER IMPORTANT
+
+	// if ( happy )// If happy, do what you gotta do
+	// {
+	// 	// if (dim == 1)
+	// 		// cout << " \t happy";
+		
+	// 	circling[ID] = false; // flag you are not circling
+	// 	hlvec[ID] = hl;
+
+	// 	if ( !circling[closest[0]] )
+	// 		latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+	// 	else
+	// 		attractionmotion ( dim, v_r, v_b, v);
+
+	// }
+	// else if ( circling[ID] ) // In circling mode, circle around
+	// {
+	// 	if (dim == 1)
+	// 		cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
+
+	// 	circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
+
+	// 	if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
+	// 	{
+	// 		circling[ID] = false; // stop circling
+	// 		waiting [ID] = 0; // reset counter
+	// 	}
+
+	// 	else
+	// 	{
+	// 		if (dim == 0) // increase counter
+	// 			waiting[ID]++;
+	// 	}
+	// }
+	// else // In waiting mode
+	// {
+	// 	// if (dim == 1)
+	// 		// cout << "\t waiting "<< hlvec[ID] << " " << hl;
+
+	// 	if ( !circling[closest[0]] )
+	// 		latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+	// 	else
+	// 		attractionmotion ( dim, v_r, v_b, v);
+
+	// 	if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
+	// 	{
+	// 		circling[ID] = true; // start circling
+	// 		waiting [ID] = 0; // reset counter 
+	// 	}
+	// 	else
+	// 	{
+	// 		if (dim == 0)	// increase counter
+	// 			waiting[ID]++;
+	// 	}
+	// }
+		
+	// hlvec[ID] = hl;
 
 	return v;
 
