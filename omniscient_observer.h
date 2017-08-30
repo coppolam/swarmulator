@@ -10,14 +10,15 @@
 
 using namespace std;
 
-struct indexed_array {
+struct indexed_array
+{
     float values;
     int index;
 };
 
 /* Collects data from all the agents and spits out the k-nearest for each one */
-class OmniscientObserver {
-	// void update(const int &ID, indexed_array &dm);
+class OmniscientObserver
+{
 public:
 	OmniscientObserver(){};
 	~OmniscientObserver(){};
@@ -29,8 +30,5 @@ public:
 	void adjacency_matrix();
 	float get_centroid(int dim);
 };
-
-
-
 
 #endif /*OMNISCIENT_OBSERVER_H*/

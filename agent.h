@@ -12,13 +12,15 @@ class Agent {
 	vector<float> inputs;
 	vector<float> actions;
 public:
+	Agent(int i, const vector<float> &s); // Make two versions for random initialization
+	~Agent();
+
 	int ID;
 	Controller controller;
 	vector<float> outputs;
 	vector<float> state;
 	vector<float> situation; // vector of happiness situation
-	Agent(int i, const vector<float> &s); // Make two versions for random initialization
-	~Agent();
+	
 	vector<float> get_states();
 	void select_action();
 	virtual void update_position()=0;
