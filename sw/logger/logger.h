@@ -7,6 +7,7 @@
 #include <functional>
 #include <cctype>
 #include <algorithm>
+#include <ctime>
 
 #include "parameters.h"
 #include "txtwrite.h"
@@ -28,9 +29,29 @@ void run_logger(ofstream &logfile)
 	this_thread::sleep_for(chrono::microseconds( t_wait ));
 }
 
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+const std::string currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
+
+    return buf;
+}
+
 void start_logger(int argc, char* argv[])
 {
-	string filename = "log.txt";
+	// time_t t = time(0);   // get time now
+ //    struct tm * now = localtime( & t );
+	string filename = "logs/log_" + currentDateTime() + ".txt";
+	// << (now->tm_year + 1900) << '-' 
+ //         << (now->tm_mon + 1) << '-'
+ //         <<  now->tm_mday
+ //         << endl
+
 	ofstream logfile;
 	logfile.open (filename.c_str());
 	logfile.precision(3);
