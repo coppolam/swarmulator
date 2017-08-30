@@ -12,8 +12,9 @@
 // GL_QUAD_STRIP, and
 // GL_POLYGON.
 
-void draw::draw_data() {
-
+// TODO: Make the position relative to zoom.
+void draw::draw_data()
+{
 	glRasterPos2f(-3.9, -3.9);
 	glColor3f(0,0,1); // Red 
 	stringstream ss;
@@ -22,11 +23,13 @@ void draw::draw_data() {
 
 }
 
+// TODO: Make the position relative to zoom.
 void draw::draw_axes_text(int dim) {
 
 	stringstream ss;
 
-	if (dim == 0){
+	if (dim == 0)
+	{
 		glRasterPos2f(3.9, 0.1);
 		ss << "y";
 		}
@@ -126,7 +129,8 @@ void draw::draw_axes() {
 }
 
 // TODO: Add different options dependending on agent type
-void draw::draw_agent(int ID, float x, float y, float z) {
+void draw::draw_agent(int ID, float x, float y, float z)
+{
 	glPushMatrix();
 	glTranslatef(y,x,z); // ENU to NED
 	// cout << ID << " " << x << " " << y << " " << endl;
@@ -137,7 +141,8 @@ void draw::draw_agent(int ID, float x, float y, float z) {
 }
 
 
-void draw::draw_centroid(float x, float y, float z) {
+void draw::draw_centroid(float x, float y, float z)
+{
 	glPushMatrix();
 	glTranslatef(y,x,z);
 	glRotatef(90, 0.0, 0, 1);
