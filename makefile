@@ -3,27 +3,30 @@
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
 
-APP = swarmulator
+APPNAME = swarmulator
 
-CFLAGS  += -std=c++0x
+CC = g++
+CFLAGS += -g -Wall -std=gnu++0x
 
-VPATH=animation:simulation
+INC=-I. -Isw -Isw/animation/ -Isw/simulation -Isw/logger -Isw/math
+OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw
 
 $(info ************ SWARMULATOR V0.1 **********)
 
-# Build an executable named main from main.c
+# Build the executable
 all: 
-	g++ -g -Wall -std=gnu++0x \
-	-o $(APP) \
-	main.cpp \
-	draw.cpp \
-	particle.cpp \
-	agent.cpp \
-	controller.cpp \
-	omniscient_observer.cpp \
-	txtwrite.cpp \
-	randomgenerator.c \
-	-lglut -lGLU -lGL -lXi -lXmu -lglfw
+	$(CC) $(CFLAGS) $(INC) \
+	-o \
+	$(APPNAME) \
+	sw/main.cpp \
+	sw/animation/draw.cpp \
+	sw/simulation/particle.cpp \
+	sw/simulation/agent.cpp \
+	sw/simulation/controller.cpp \
+	sw/simulation/omniscient_observer.cpp \
+	sw/logger/txtwrite.cpp \
+	sw/math/randomgenerator.c \
+	$(OPT)
 
 clean: 
-	$(RM) swarmulator
+	$(RM) $(APPNAME)
