@@ -30,7 +30,7 @@ float Controller::f_attraction(float u)
 float Controller::f_attraction_bearing(float u, int b)
 {
 	if (b == 1 || b == 3)
-		return  1/(1+exp(-5*(u-  sqrt(pow(0.8022,2)+pow(0.8022,2))   ))); //% sigmoid function -- long-range attraction
+		return  1/(1+exp(-5*(u-1.1080))); //% sigmoid function -- long-range attraction
 	else
 		return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 	// else
@@ -198,23 +198,16 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 	{
 		u   = o->request_distance(ID, closest[i]);
 		b_i = o->request_bearing (ID, closest[i]);
-		wrapTo2Pi(b_i);
-		fill_template(q, b_i, u, sqrt(pow(0.7,2)+pow(0.7,2)));
+		wrapTo2Pi_f(b_i);
+		fill_template(q, b_i, u, sqrt(pow(0.9,2)+pow(0.9,2)));
 	}
 
-	// if (waiting[ID] < 1)
-	// {	
-	// 	q_old.assign(q.begin(),q.end());
-	// }
-	// else
-	// {
-		std::transform (q.begin(), q.end(), q_old.begin(), q_old.begin(), std::plus<float>()); // sum
-		for (int i = 0; i < 8; i++)
-		{
-			if (q[i] == 0)
-				q_old[i] = 0;
-		}
-	// }
+	std::transform (q.begin(), q.end(), q_old.begin(), q_old.begin(), std::plus<float>()); // sum
+	for (int i = 0; i < 8; i++)
+	{
+		if (q[i] == 0)
+			q_old[i] = 0;
+	}
 }
 
 vector<bool> circling(100,0);
@@ -249,7 +242,7 @@ cout << ID << " " << minindex << endl;
 	// v_r += get_attraction_velocity(u + getrand_float(-0.1, 0.1),v_b);
 
 
-	latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+	// latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
 	
 
 	// vector<vector<bool>> links(4);
@@ -257,11 +250,11 @@ cout << ID << " " << minindex << endl;
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
 	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-					  // 0  1  2  3
-			 // trace = {0, 3, 1, 2};
-	//	--------------------------------------------------
+	// 				  0  1  2  3
+	// 		 trace = {0, 3, 1, 2};
+	// 	--------------------------------------------------
 	// vector<int> trace = {0, 2, 3, 1};
-// 
+
 	// vector<vector<bool>> links(9);
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
@@ -290,48 +283,48 @@ cout << ID << " " << minindex << endl;
 	// vector<int> trace = {0, 1, 2, 3};
 
 
-	// vector<vector<bool>> links(6);
-	// links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
-	// links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
-	// links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
-	// links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
-	// links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
-	// links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
-	// vector<int> trace = {0, 1, 2, 3, 4, 5};
+	vector<vector<bool>> links(6);
+	links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
+	links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
+	links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
+	links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
+	links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
+	links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
+	vector<int> trace = {0, 1, 2, 3, 4, 5};
 
 
-	// int hl = 0;
-	// int th = 50;
-	// vector<bool> t(8,0); //LINK holder with false assumption
+	int hl = 0;
+	int th = 50;
+	vector<bool> t(8,0); //LINK holder with false assumption
 
-	// // Check if happy cycling through the links
-	// for (int i = 0; i < (int)links.size(); i++)
-	// {
-	// 	// Quantify happiness level
-	// 	int s = 0;
+	// Check if happy cycling through the links
+	for (int i = 0; i < (int)links.size(); i++)
+	{
+		// Quantify happiness level
+		int s = 0;
 
-	// 	for (int j = 0; j < 8; j++)
-	// 	{ 
-	// 		// Use classifying threshold and write it to Link holder
-	// 		if (q[j] > th)
-	// 			t[j] = true;
+		for (int j = 0; j < 8; j++)
+		{ 
+			// Use classifying threshold and write it to Link holder
+			if (q[j] > th)
+				t[j] = true;
 
-	// 		// (XOR)
-	// 		s+= ( t[j]^links[i][j] ); // ^ = XOR, it tells us if there is a match, so we measure the number of "mistakes"
-	// 	}
+			// (XOR)
+			s+= ( t[j]^links[i][j] ); // ^ = XOR, it tells us if there is a match, so we measure the number of "mistakes"
+		}
 
-	// 	if ( (8-s) > hl )
-	// 	{
-	// 		tracenumber[ID] = trace[i]; // save this as the most similar link
-	// 		hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
-	// 	}
+		if ( (8-s) > hl )
+		{
+			tracenumber[ID] = trace[i]; // save this as the most similar link
+			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
+		}
 
-	// 	// Binary happy not happy
-	// 	if (hl == 8)
-	// 	{
-	// 		happy = true;
-	// 	}
-	// }
+		// Binary happy not happy
+		if (hl == 8)
+		{
+			happy = true;
+		}
+	}
 
 	// if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
 	// {
@@ -340,72 +333,72 @@ cout << ID << " " << minindex << endl;
 	// 	hl = 8;
 	// }
 
-	// bool improved = false;
-	// if (hl > hlvec[ID])
-	// {
-	// 	improved = true;
-	// 	if (waiting[ID] > 200)
-	// 		waiting[ID] = 0;
-	// }
+	bool improved = false;
+	if (hl > hlvec[ID])
+	{
+		improved = true;
+		if (waiting[ID] > 200)
+			waiting[ID] = 0;
+	}
 		
-	// int finalNum = 100; // THIS TUNING PARAMETER IS SUPER IMPORTANT
+	int finalNum = 400; // THIS TUNING PARAMETER IS SUPER IMPORTANT
 
-	// if ( happy )// If happy, do what you gotta do
-	// {
-	// 	// if (dim == 1)
-	// 		// cout << " \t happy";
+	if ( happy )// If happy, do what you gotta do
+	{
+		// if (dim == 1)
+			// cout << " \t happy";
 		
-	// 	circling[ID] = false; // flag you are not circling
-	// 	hlvec[ID] = hl;
+		circling[ID] = false; // flag you are not circling
+		hlvec[ID] = hl;
 
-	// 	if ( !circling[closest[0]] )
-	// 		latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
-	// 	else
-	// 		attractionmotion ( dim, v_r, v_b, v);
+		if ( !circling[closest[0]] )
+			latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+		else
+			attractionmotion ( dim, v_r, v_b, v);
 
-	// }
-	// else if ( circling[ID] ) // In circling mode, circle around
-	// {
-	// 	if (dim == 1)
-	// 		cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
+	}
+	else if ( circling[ID] ) // In circling mode, circle around
+	{
+		if (dim == 1)
+			cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
-	// 	circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
+		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
 
-	// 	if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
-	// 	{
-	// 		circling[ID] = false; // stop circling
-	// 		waiting [ID] = 0; // reset counter
-	// 	}
+		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
+		{
+			circling[ID] = false; // stop circling
+			waiting [ID] = 0; // reset counter
+		}
 
-	// 	else
-	// 	{
-	// 		if (dim == 0) // increase counter
-	// 			waiting[ID]++;
-	// 	}
-	// }
-	// else // In waiting mode
-	// {
-	// 	// if (dim == 1)
-	// 		// cout << "\t waiting "<< hlvec[ID] << " " << hl;
+		else
+		{
+			if (dim == 0) // increase counter
+				waiting[ID]++;
+		}
+	}
+	else // In waiting mode
+	{
+		// if (dim == 1)
+			// cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
-	// 	if ( !circling[closest[0]] )
-	// 		latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
-	// 	else
-	// 		attractionmotion ( dim, v_r, v_b, v);
+		if ( !circling[closest[0]] )
+			latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+		else
+			attractionmotion ( dim, v_r, v_b, v);
 
-	// 	if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
-	// 	{
-	// 		circling[ID] = true; // start circling
-	// 		waiting [ID] = 0; // reset counter 
-	// 	}
-	// 	else
-	// 	{
-	// 		if (dim == 0)	// increase counter
-	// 			waiting[ID]++;
-	// 	}
-	// }
+		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
+		{
+			circling[ID] = true; // start circling
+			waiting [ID] = 0; // reset counter 
+		}
+		else
+		{
+			if (dim == 0)	// increase counter
+				waiting[ID]++;
+		}
+	}
 		
-	// hlvec[ID] = hl;
+	hlvec[ID] = hl;
 
 	return v;
 
