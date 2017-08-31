@@ -31,8 +31,8 @@ public:
 
 	int get_bearing_velocity(const vector<float> &bdes, const float v_b);
 	float get_attraction_velocity(float u, int b);
-	float get_velocity_command_radial(const int &ID, const vector<float> &q, float &vx, float &vy);
-	float get_velocity_command_cartesian(int ID, int dim);
+	void get_velocity_command_radial(const int &ID, const vector<float> &q, float &vx, float &vy);
+	void get_velocity_command_cartesian(const int ID, float &v_x, float &v_y);
 
 	int get_waitingtime(int ID);
 	float saturate(float f);

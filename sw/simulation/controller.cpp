@@ -26,8 +26,8 @@ Controller::~Controller(){};
 
 float Controller::f_attraction(float u)
 {
-	// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
-	return  1/(1+exp(-5*(u-0.8022))); //% sigmoid function -- long-range attraction
+	return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
+	// return  1/(1+exp(-5*(u-0.8022))); //% sigmoid function -- long-range attraction
 }
 
 
@@ -193,10 +193,11 @@ vector<bool> circling(100,0);
 vector<int> hlvec(100,0);
 vector<int> tracenumber(100,0);
 
-float Controller::get_velocity_command_radial(const int &ID, const vector<float> &q, float &v_x, float &v_y)
+void Controller::get_velocity_command_radial(const int &ID, const vector<float> &q, float &v_x, float &v_y)
 {
 	// Initialize some stuff
-	float v = 0;
+	v_x = 0;
+	v_y = 0;
 	float v_adj = 0.1;
 	bool  happy = false; // Null assumption on happiness of the agent
 
@@ -308,7 +309,7 @@ float Controller::get_velocity_command_radial(const int &ID, const vector<float>
 	// if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
 	// {
 	// 	// happy = true;
-	// 	tracenumber[ID] = 0;
+	// 	tracenumber[ID] = 0;	
 	// 	hl = 8;
 	// }
 
@@ -373,31 +374,28 @@ float Controller::get_velocity_command_radial(const int &ID, const vector<float>
 	}
 		
 	hlvec[ID] = hl;
-
-	return v;
-
 }
 
 
-float Controller::get_velocity_command_cartesian(int ID, int dim)
+void Controller::get_velocity_command_cartesian(const int ID, float &v_x, float &v_y)
 {
-	float v = 0.0;
-	float u;
-	int i = 0;
+	v_x = 0;
+	v_y = 0;
 
 	#ifdef KNEAREST
 
 	vector<int> closest = o->request_closest(ID);
-	for (i = 0; i < knearest; i++)
+	for (int i = 0; i < knearest; i++)
 	{
-			u = o->request_distance_dim(ID, closest[i], dim);
-			v += get_attraction_velocity(u,0);
+		v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0),0);
+		v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1),0);
 	}
 
 	#endif
 
 	#ifdef FORCED
-	
+
+	int i = 0;
 	std::ifstream infile("adjacencymatrix.txt");
 	bool mat[nagents*nagents];
 	while (i<(nagents*nagents))
@@ -410,21 +408,16 @@ float Controller::get_velocity_command_cartesian(int ID, int dim)
 	{
 		if (i!=ID)
 		{
-			u = o->request_distance(ID, i, dim);
-			v += (get_attraction_velocity(u,u) * mat[ID*nagents+i]);
+			v_x += (get_attraction_velocity(o->request_distance(ID, i, 0),0) * mat[ID*nagents+i]);
+			v_y += (get_attraction_velocity(o->request_distance(ID, i, 0),0) * mat[ID*nagents+i]);				
 		}
 	}
 	#endif
 
 	#ifdef ROGUE
 	if (ID == rogueID && (simulation_realtimefactor*simulation_time/1000000.0)>5.0)
-	{
 		v += 0.5;
-	}
 	#endif
-
-	return v;
-
 }
 
  
