@@ -33,10 +33,12 @@ float Controller::f_attraction(float u)
 
 float Controller::f_attraction_bearing(float u, int b)
 {
-	if (b == 1 || b == 3)
-		return  1/(1+exp(-5*(u-1.1080))); //% sigmoid function -- long-range attraction
-	else
-		return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
+		return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
+
+	// if (b == 1 || b == 3)
+	// 	return  1/(1+exp(-5*(u-1.1080))); //% sigmoid function -- long-range attraction
+	// else
+		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 	// else
 		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 }
@@ -84,15 +86,19 @@ void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y
 void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
 	attractionmotion (v_r + v_adj, v_b, v_x, v_y);
-	v_x += -v_adj * cos(bdes*2-v_b) ; // use for reciprocal alignment
-	v_y += -v_adj * sin(bdes*2-v_b) ; // use for reciprocal alignment
+
+	// use for reciprocal alignment
+	v_x += -v_adj * cos(bdes*2-v_b);
+	v_y += -v_adj * sin(bdes*2-v_b);
 }
 
 void circlemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
 	attractionmotion ( v_r, v_b, v_x, v_y);
-	v_x += v_adj * cos(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
-	v_y += v_adj * sin(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
+
+	// use for rotation (- clockwise, + anti-clockwise )
+	v_x += v_adj * cos(v_b-M_PI/2);
+	v_y += v_adj * sin(v_b-M_PI/2);
 }
 
 
@@ -127,7 +133,7 @@ void Controller::fill_template(vector<float> &q, const float b_i, const float u,
 	}
 }
 
-int Controller::get_bearing_velocity(const vector<float> &bdes, const float v_b)
+int Controller::get_preferred_bearing(const vector<float> &bdes, const float v_b)
 {
 
 	vector<float> bv;
@@ -213,7 +219,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 
 	// What commands does this give?
 	float v_b    = wrapToPi_f(o->request_bearing(ID, closest[0]));
-	int minindex = get_bearing_velocity(bdes, v_b);
+	int minindex = get_preferred_bearing(bdes, v_b);
 
 	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), minindex);
 
@@ -338,7 +344,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
+		// cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
 		circlemotion     ( v_r, v_adj , v_b,  bdes[minindex], v_x, v_y);
 
@@ -387,8 +393,8 @@ void Controller::get_velocity_command_cartesian(const int ID, float &v_x, float 
 	vector<int> closest = o->request_closest(ID);
 	for (int i = 0; i < knearest; i++)
 	{
-		v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0),0);
-		v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1),0);
+		v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0), 0);
+		v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1), 0);
 	}
 
 	#endif

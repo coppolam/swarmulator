@@ -10,11 +10,9 @@ void Particle::update_position()
 	state[0] += state[2]*dt + 0.5*state[4]*pow(dt,2); // position x
 	state[1] += state[3]*dt + 0.5*state[5]*pow(dt,2); // position y
 
-	std::vector<float> q;
 	float v_x, v_y;
 	controller.assess_situation(ID, situation);
-	q.assign(situation.begin(),situation.end());
-	controller.get_velocity_command_cartesian(ID, v_x, v_y);
+	controller.get_velocity_command_radial(ID, situation, v_x, v_y);
 
 	// Velocity
 	state[2] = state[2] + state[4]*dt; // velocity x

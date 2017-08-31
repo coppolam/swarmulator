@@ -23,16 +23,18 @@ float sy = 0;
 float zms = 3;
 float zscale = 0;
 float px, py;
+bool paused = false;
 void keyboard_callback(unsigned char key, int x, int y)
 {
 	stringstream ss;
-	switch(key){
+	switch( key ){
 		case 'c':
 			mx = 0;
 			my = 0;
 			info_msg ("Recentering Animation." );
 			break;
 		case 'n':
+			mtx.try_lock();
 			info_msg ("Restarting." );
 			ss << "pkill swarmulator && ./swarmulator " << nagents << " " << knearest;
 			system(ss.str().c_str());
@@ -45,32 +47,43 @@ void keyboard_callback(unsigned char key, int x, int y)
 			info_msg ("Quitting." );
 			exit(1);
 		case 'p':
-			info_msg ("Pause. Press arrow keys to step forward " );
-			mtx.try_lock();
-			break;
+			if (!paused)
+			{
+				info_msg ("Pause. Press arrow keys to step forward " );
+				mtx.try_lock();
+				paused = true;
+				break;
+			}
 		case 'r':
-			info_msg ("Resume.");
-			mtx.unlock();
-			break;
+			if (paused)
+			{
+				info_msg ("Resume.");
+				mtx.unlock();
+				paused = false;
+				break;
+			}
 		case 's':
 			info_msg ("Stepping through.");
 			mtx.try_lock();
 			mtx.unlock();
-			this_thread::sleep_for(chrono::microseconds( 1000 ));
+			this_thread::sleep_for( chrono::microseconds( 1000 ));
 			mtx.lock();
+			paused = true;
 			break;
 		case 'a':
-			vector<float> ns = { py, px, 0.0, 0.0};  // Initial positions/states
-			
-			mtx.lock();
-			s.push_back(Particle(nagents,ns,1.0/simulation_updatefreq));
-			nagents++;
-			if ( knearest == nagents-2 )
+			if (!paused)
 			{
-				knearest++;
+				vector<float> ns = { py, px, 0.0, 0.0 };  // Initial positions/states		
+				mtx.lock();
+				s.push_back(Particle(nagents,ns,1.0/simulation_updatefreq));
+				nagents++;
+				if ( knearest == nagents-2 )
+				{
+					knearest++;
+				}
+				mtx.unlock();
+				break;
 			}
-			mtx.unlock();
-			break;
 	}
 }
 
