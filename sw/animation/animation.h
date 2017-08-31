@@ -74,6 +74,16 @@ void GL_Setup(int width, int height)
 */
 void start_animation(int argc, char* argv[])
 {
+	mx = 0;
+	my = 0;
+	sx = 0;
+	sy = 0;
+	zms = 0;
+	zscale = 0;
+	px = 0;
+	py = 0;
+	paused = false;
+
 	// Start simulation window
 	glutInit(&argc, argv);
 	glutInitWindowSize(window_width, window_height);

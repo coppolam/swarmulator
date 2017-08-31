@@ -15,7 +15,8 @@
 // TODO: Make the position relative to zoom.
 void draw::draw_data()
 {
-	glRasterPos2f(-3.9, -3.9);
+	glRasterPos2f((-3.9-mx), (-3.9-my));
+	cout << mx << endl;
 	glColor3f(0,0,1); // Red 
 	stringstream ss;
 	ss << "Time[s]:" << simulation_realtimefactor*simulation_time/1000000.0;
@@ -30,12 +31,12 @@ void draw::draw_axes_text(int dim) {
 
 	if (dim == 0)
 	{
-		glRasterPos2f(3.9, 0.1);
+		glRasterPos2f(3.9-mx, 0.1);
 		ss << "y";
-		}
+	}
 	else if (dim == 1)
 	{
-		glRasterPos2f(0.1, 3.9);
+		glRasterPos2f(0.1, 3.9-my);
 		ss << "x";
 	}
 	glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char*)ss.str().c_str());

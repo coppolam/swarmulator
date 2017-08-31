@@ -10,6 +10,7 @@
 #include "particle.h"
 #include "agent.h"
 #include "main.h"
+#include "drawingparams.h"
 
 using namespace std;
 

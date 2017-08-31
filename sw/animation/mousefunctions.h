@@ -17,13 +17,15 @@
 #  define GLUT_WHEEL_RIGHT 6
 #endif
 
-float mx, my;
+float mx = 0;
+float my = 0;
 float sx = 0;
 float sy = 0;
-float zms = 3;
+float zms = 0;
 float zscale = 0;
 float px, py;
 bool paused = false;
+
 void keyboard_callback(unsigned char key, int x, int y)
 {
 	stringstream ss;
@@ -88,28 +90,34 @@ void keyboard_callback(unsigned char key, int x, int y)
 }
 
 
-void mouse_motion_callback(int x, int y){
+void mouse_motion_callback(int x, int y)
+{
 	mx += mouse_drag_speed/zscale*( (float)x/window_width   - sx);
 	my += mouse_drag_speed/zscale*(-(float)y/window_height  - sy);
 }
 
-void mouse_motion_callback_passive(int x, int y){
+void mouse_motion_callback_passive(int x, int y)
+{
 	px = (   (((float)x/window_width  )*8/zscale)-4/zscale )  - mx;
-	py = ( -((((float)y/window_height )*8/zscale)-4/zscale )) - my;
+	py = ( - (((float)y/window_height )*8/zscale)-4/zscale )  - my;
 }
 
-void mouse_click_callback(int button, int state, int x, int y) {
-    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+void mouse_click_callback(int button, int state, int x, int y)
+{
+    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
         sx =  (float)x/window_width;
         sy = -(float)y/window_height;
     }
+
     if (button == GLUT_WHEEL_UP)
     	zms += mouse_zoom_speed;
     else if (button == GLUT_WHEEL_DOWN)
     	zms += -mouse_zoom_speed;
 }
 
-void mouse_draganddrop(){
+void mouse_draganddrop()
+{
 	glutMotionFunc(mouse_motion_callback);
 	glutPassiveMotionFunc(mouse_motion_callback_passive);
 	glutMouseFunc(mouse_click_callback);
