@@ -6,7 +6,7 @@
 APPNAME = swarmulator
 
 CC = g++
-CFLAGS += -g -Wall -std=gnu++0x
+CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO
 
 INC=-I. -Isw -Isw/animation/ -Isw/simulation -Isw/logger -Isw/math
 OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw

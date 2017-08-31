@@ -2,6 +2,7 @@
 #define MOUSEFUNCTIONS_H
 #include "main.h"
 #include "parameters.h"
+#include "terminalinfo.h"
 
 #include <thread>
 #include <mutex>
@@ -23,37 +24,37 @@ float sy = 0;
 float zms = 3;
 float zscale = 0;
 float px, py;
-void keyboard_callback(unsigned char key, int x, int y){
-	cout << key << endl;
+void keyboard_callback(unsigned char key, int x, int y)
+{
 	stringstream ss;
 	switch(key){
 		case 'c':
 			mx = 0;
 			my = 0;
-			cout << endl << "Recentering Animation." << endl;
+			info_msg ("Recentering Animation." );
 			break;
 		case 'n':
-			cout << endl << "Restarting." << endl;
+			info_msg ("Restarting." );
 			ss << "pkill swarmulator && ./swarmulator " << nagents << " " << knearest;
 			system(ss.str().c_str());
 			break;
 		case 'z':
 			zms = 0;
-			cout << endl << "Resetting zoom." << endl;
+			info_msg ("Resetting zoom." );
  			break;
 		case 'q':
-			cout << endl << "Quitting." << endl;
+			info_msg ("Quitting." );
 			exit(1);
 		case 'p':
-			cout << endl << "Pause. Press arrow keys to step forward " << endl;
+			info_msg ("Pause. Press arrow keys to step forward " );
 			mtx.try_lock();
 			break;
 		case 'r':
-			cout << endl << "Resume." << endl;
+			info_msg ("Resume.");
 			mtx.unlock();
 			break;
 		case 's':
-			cout << endl << "Stepping through." << endl;
+			info_msg ("Stepping through.");
 			mtx.try_lock();
 			mtx.unlock();
 			this_thread::sleep_for(chrono::microseconds( 1000 ));

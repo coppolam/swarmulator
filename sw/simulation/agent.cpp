@@ -2,7 +2,7 @@
 
 Agent::Agent(int i, const vector<float> &s):situation(8,0)
 {
-	cout << "Agent " << i << " created at position (" << s[0] << "," << s[1] << ")" << endl;
+	info_msg ("Agent " + std::to_string(i) + " created at position (" + std::to_string(s[0]) + "," + std::to_string(s[1]) + ")");
 	this->state = s;
 	ID = i;
 	controller.set_saturation(1.0);

@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 #include "controller.h"
+#include "terminalinfo.h"
 
 using namespace std;
 

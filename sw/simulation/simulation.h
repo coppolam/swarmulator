@@ -11,8 +11,16 @@
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 
+bool simulation_running = false;
+
 void run_simulation()
 {
+	if (!simulation_running)
+	{	
+		debug_msg("Simulation started.");
+		simulation_running = true;
+	}
+	
 	// The mutex ensures that while the positions are updated by the simulation thread, other threads are not trying to access the data.
 	mtx.lock();
 	for (int i = 0; i < nagents; i++)
@@ -82,7 +90,7 @@ void start_simulation(int argc, char* argv[]){
 	// Extract number of agents from the argument
     if(argc<=1)
     {
-        printf("Please specify the amount of agents.\n\n");
+        info_msg("Please specify the amount of agents.\n\n");
         exit(1);
     }
     else
@@ -94,7 +102,7 @@ void start_simulation(int argc, char* argv[]){
 
 	if (argc<=2)
 	{
-	    printf("No nearest-neighbor rule specified. Assuming full connectivity. \n\n");
+	    info_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
     	knearest = nagents-1;
     }
     else 
@@ -103,7 +111,7 @@ void start_simulation(int argc, char* argv[]){
     	
     	if (knearest > (nagents-1))
     	{
-		    printf("You can't have more nearest-neighbors that the number of observable agents. Fix. \n\n");
+		    info_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
         	exit(1);
     	}
 	}

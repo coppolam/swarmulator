@@ -29,6 +29,6 @@
 
 // TODO: Add environmet
 // #define ENVIRONMENT
-// #define arenasize 3
+// #define INFO
 
 #endif /*PARAMETERS_H*/

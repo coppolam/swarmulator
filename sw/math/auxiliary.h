@@ -3,6 +3,21 @@
 
 #include <stdlib.h>     /* qsort */
 #include <cmath>
+
+void debug_msg(string str)
+{
+	#ifdef DEBUG // To be defined in the makefile so as to be applicable globally.
+	cout << "\e[01;31m[DEBUG]: \e[0m" << str << endl;
+	#endif
+}
+
+void info_msg(string str)
+{
+	#ifdef INFO // To be defined in the makefile so as to be applicable globally.
+	cout << "\e[01;34m[INFO]: \e[0m" << str << endl;
+	#endif
+}
+
 /* Keeps a value between two bounds */
 void keepbounded(float &value, float min, float max)
 {

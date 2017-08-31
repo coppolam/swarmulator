@@ -133,7 +133,6 @@ void draw::draw_agent(int ID, float x, float y, float z)
 {
 	glPushMatrix();
 	glTranslatef(y,x,z); // ENU to NED
-	// cout << ID << " " << x << " " << y << " " << endl;
 	glRotatef(90.0, 0.0, 0, 1);
 	draw_circle(scale);
 	draw_agent_number(ID);

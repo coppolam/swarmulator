@@ -21,6 +21,7 @@ private:
 	int   k = 0;
 	bool  set = true;
     time_t timer;
+
 public:
 	vector<float> weights;
 	vector<int> waiting;

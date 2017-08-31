@@ -74,14 +74,10 @@ float Controller::get_attraction_velocity(float u, int b)
 int bool2int(vector<bool> t)
 {
 	int n = 0; //initialize
-
-	// cout << " string:[";
 	for (int i = 0; i < 8; i++)
 	{
-		// cout << t[i];
 		n += (int)t[i]*(int)pow(2,7-i);
 	}   	
-	// cout << "]";
 	return n;
 
 }
@@ -234,7 +230,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	// What commands does this give?
 	float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
 	int minindex = get_bearing_velocity(bdes, v_b);
-cout << ID << " " << minindex << endl;
+// cout << ID << " " << minindex << endl;
 	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), minindex);
 
 	// Uncomment this to simulate to simulate noise
