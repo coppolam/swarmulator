@@ -1,22 +1,25 @@
 #include "controller.h"
-#include "auxiliary.h"
+
 #include <cmath>
 #include <fstream>
 #include <mutex>
+#include <numeric> 
+#include <unistd.h>
+#include <random>
+
+#include "auxiliary.h"
 #include "agent.h"
 #include "particle.h"
 #include "main.h"
 #include "randomgenerator.h"
-#include <numeric> 
 #include "omniscient_observer.h"
 #include "parameters.h"
-#include <unistd.h>
-#include <random>
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
 
-Controller::Controller(): waiting(100,0){
+Controller::Controller(): waiting(100,0)
+{
 		srand(time(NULL)); // Seed the time random generator with time.
 };
 Controller::~Controller(){};
@@ -72,33 +75,24 @@ float Controller::get_attraction_velocity(float u, int b)
 	return 0;
 }
 
-void attractionmotion(const int &dim, const float &v_r, const float &v_b, float &v)
+void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
 {	
-	if (dim == 0)
-		v = v_r * cos(v_b);
-	else if (dim == 1)
-		v = v_r * sin(v_b);
+	v_x = v_r * cos(v_b);
+	v_y = v_r * sin(v_b);
 }
 
-void latticemotion(const int &dim, const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v)
+void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
-	attractionmotion ( dim, v_r + v_adj, v_b, v);
-
-	// Back to Cartesian
-	if (dim == 0)
-		v += -v_adj * cos(bdes*2-v_b) ; // use for reciprocal alignment
-	else if (dim == 1)
-		v += -v_adj * sin(bdes*2-v_b) ; // use for reciprocal alignment
+	attractionmotion (v_r + v_adj, v_b, v_x, v_y);
+	v_x += -v_adj * cos(bdes*2-v_b) ; // use for reciprocal alignment
+	v_y += -v_adj * sin(bdes*2-v_b) ; // use for reciprocal alignment
 }
 
-void circlemotion(const int &dim, const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v)
+void circlemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
-	attractionmotion ( dim, v_r, v_b, v );
-
-	if (dim == 0)
-		v += v_adj * cos(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
-	else if (dim == 1)
-		v += v_adj * sin(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
+	attractionmotion ( v_r, v_b, v_x, v_y);
+	v_x += v_adj * cos(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
+	v_y += v_adj * sin(v_b-M_PI/2); // use for rotation (- clockwise, + anti-clockwise )
 }
 
 
@@ -199,12 +193,12 @@ vector<bool> circling(100,0);
 vector<int> hlvec(100,0);
 vector<int> tracenumber(100,0);
 
-float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
+float Controller::get_velocity_command_radial(const int &ID, const vector<float> &q, float &v_x, float &v_y)
 {
 	// Initialize some stuff
 	float v = 0;
 	float v_adj = 0.1;
-	bool  happy = false; // null assumption on happiness of the agent
+	bool  happy = false; // Null assumption on happiness of the agent
 
 	// Desired angles, so as to create a matrix
 	vector<float> bdes;
@@ -217,9 +211,9 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
 	// What commands does this give?
-	float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
+	float v_b    = wrapToPi_f(o->request_bearing(ID, closest[0]));
 	int minindex = get_bearing_velocity(bdes, v_b);
-// cout << ID << " " << minindex << endl;
+
 	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), minindex);
 
 	// Uncomment this to simulate to simulate noise
@@ -227,7 +221,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 	// v_r += get_attraction_velocity(u + getrand_float(-0.1, 0.1),v_b);
 
 
-	// latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+	// latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y);
 	
 
 	// vector<vector<bool>> links(4);
@@ -330,24 +324,22 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 	if ( happy )// If happy, do what you gotta do
 	{
-		// if (dim == 1)
-			// cout << " \t happy";
+		// cout << " \t happy";
 		
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
 
 		if ( !circling[closest[0]] )
-			latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+			latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y );
 		else
-			attractionmotion ( dim, v_r, v_b, v);
+			attractionmotion ( v_r, v_b, v_x, v_y);
 
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		if (dim == 1)
-			cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
+		cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
-		circlemotion     ( dim,  v_r, v_adj , v_b,  bdes[minindex], v );
+		circlemotion     ( v_r, v_adj , v_b,  bdes[minindex], v_x, v_y);
 
 		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
 		{
@@ -357,19 +349,17 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 
 		else
 		{
-			if (dim == 0) // increase counter
-				waiting[ID]++;
+			waiting[ID]++;
 		}
 	}
 	else // In waiting mode
 	{
-		// if (dim == 1)
-			// cout << "\t waiting "<< hlvec[ID] << " " << hl;
+		// cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
 		if ( !circling[closest[0]] )
-			latticemotion    ( dim, v_r, v_adj , v_b, bdes[minindex], v);
+			latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y );
 		else
-			attractionmotion ( dim, v_r, v_b, v);
+			attractionmotion ( v_r, v_b, v_x, v_y);
 
 		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
 		{
@@ -378,8 +368,7 @@ float Controller::get_velocity_command_radial(int ID, int dim, vector<float> q)
 		}
 		else
 		{
-			if (dim == 0)	// increase counter
-				waiting[ID]++;
+			waiting[ID]++;
 		}
 	}
 		
