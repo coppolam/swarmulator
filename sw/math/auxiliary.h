@@ -4,6 +4,16 @@
 #include <stdlib.h>     /* qsort */
 #include <cmath>
 
+int bool2int(vector<bool> t)
+{
+	int n = 0; //initialize
+	for (int i = 0; i < 8; i++)
+	{
+		n += (int)t[i]*(int)pow(2,7-i);
+	}   	
+	return n;
+}
+
 void debug_msg(string str)
 {
 	#ifdef DEBUG // To be defined in the makefile so as to be applicable globally.

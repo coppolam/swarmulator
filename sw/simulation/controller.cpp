@@ -13,10 +13,11 @@
 #include <unistd.h>
 #include <random>
 
+// The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
 
 Controller::Controller(): waiting(100,0){
-		srand(time(NULL)); // Seed the time
+		srand(time(NULL)); // Seed the time random generator with time.
 };
 Controller::~Controller(){};
 
@@ -70,18 +71,6 @@ float Controller::get_attraction_velocity(float u, int b)
 
 	return 0;
 }
-
-int bool2int(vector<bool> t)
-{
-	int n = 0; //initialize
-	for (int i = 0; i < 8; i++)
-	{
-		n += (int)t[i]*(int)pow(2,7-i);
-	}   	
-	return n;
-
-}
-
 
 void attractionmotion(const int &dim, const float &v_r, const float &v_b, float &v)
 {	

@@ -2,7 +2,6 @@
 #define MOUSEFUNCTIONS_H
 #include "main.h"
 #include "parameters.h"
-#include "terminalinfo.h"
 
 #include <thread>
 #include <mutex>
