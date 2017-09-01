@@ -46,20 +46,28 @@ int main(int argc, char* argv[])
 	// Load XML file
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file("conf/parameters.xml");
-	
-	if (result.status) // false = No errors
+	if (result.status) // False (0) = No errors
 	{
 		debug_msg ("Could not load parameters file.");
 		return 0;
 	}
+		
+	pugi::xml_node node_sim = doc.child("simulation");
+	doc.child("simulation").attribute("name").value();
+	for (pugi::xml_node node_sim = node_sim.first_child(); node_sim; node_sim = node_sim.next_sibling())
+    {
+        std::cout << node_sim.name() << std::endl;
 
+        for (pugi::xml_attribute attr = node_sim.first_attribute(); attr; attr = attr.next_attribute())
+        {
+            std::cout << " " << attr.name() << "=" << attr.value() << std::endl;
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 
-	std::cout << "Load result: " << result.description() << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
 	// std::cout << "Load result: " <<  << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
 
-
-	// pugi::xml_node node;
-// 
 	/* Create a simulation thread */
 	thread simulation (start_simulation, argc, argv);
 
