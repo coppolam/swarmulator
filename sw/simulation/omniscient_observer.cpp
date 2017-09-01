@@ -33,18 +33,18 @@ vector<int> OmniscientObserver::request_closest(int ID)
 	vector<int> ind;
 	for (int i = 0; i < nagents; i++)
 	{
-
 		dm[i].values = (sqrt(
 			  pow(s[i].get_position(0) - s[ID].get_position(0),2.0) 
 			+ pow(s[i].get_position(1) - s[ID].get_position(1),2.0)
-			))*1000;
+			));
 		dm[i].index = i;
 	}
 
 	array_sortmintomax_index(nagents, dm);
 
 	// Start from one to eliminate youself from the list (because you are 0 distance)
-	for (int i = 1 ; i < nagents ; i++) {
+	for (int i = 1 ; i < nagents ; i++)
+	{
 	    ind.push_back(dm[i].index);
 	}
 
@@ -164,5 +164,5 @@ float OmniscientObserver::request_distance(int ID, int ID_tracked)
 
 float OmniscientObserver::request_bearing(int ID, int ID_tracked)
 {
-	return atan2(s[ID_tracked].get_position(1) - s[ID].get_position(1),s[ID_tracked].get_position(0) - s[ID].get_position(0));
+	return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0));
 }

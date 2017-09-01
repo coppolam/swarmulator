@@ -15,8 +15,8 @@ void Particle::update_position()
 	controller.get_velocity_command_radial(ID, situation, v_x, v_y);
 
 	// Velocity
-	state[2] = state[2] + state[4]*dt; // velocity x
-	state[3] = state[3] + state[5]*dt; // velocity y
+	state[2] += state[4]*dt; // velocity x
+	state[3] += state[5]*dt; // velocity y
 	
 	// Acceleration
 	state[4] = -2*( state[2] - v_x ) ;

@@ -119,6 +119,7 @@ void start_simulation(int argc, char* argv[]){
 
     // Generate random initial positions
 	void randomgen_init();
+	srand ( time ( NULL ) );
 	std::vector<float> x0 = generate_random_vector_zeromean(nagents);
  	std::vector<float> y0 = generate_random_vector_zeromean(nagents);
 
