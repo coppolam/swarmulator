@@ -116,7 +116,7 @@ void Controller::fill_template(vector<float> &q, const float b_i, const float u,
 	blink.push_back(deg2rad(  180+90));
 	blink.push_back(deg2rad(  180+135));
 	blink.push_back(2*M_PI);
-	// cout << u << endl;
+
 	// Determine link
 	if (u < dmax)
 	{
@@ -131,12 +131,6 @@ void Controller::fill_template(vector<float> &q, const float b_i, const float u,
 			}
 		}
 	}
-
-
-
-		// cout << " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
-		// 		      << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
-
 }
 
 int Controller::get_preferred_bearing(const vector<float> &bdes, const float v_b)
@@ -189,8 +183,7 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 	{
 		u   = o->request_distance(ID, closest[i]);
 		b_i = o->request_bearing (ID, closest[i]);
-		wrapTo2Pi_f(b_i);
-		fill_template(q, b_i, u, sqrt(pow(0.9,2)+pow(0.9,2)));
+		fill_template(q, wrapTo2Pi_f(b_i), u, sqrt(pow(0.7,2)+pow(0.7,2)));
 	}
 
 	std::transform (q.begin(), q.end(), q_old.begin(), q_old.begin(), std::plus<float>()); // sum

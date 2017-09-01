@@ -164,5 +164,5 @@ float OmniscientObserver::request_distance(int ID, int ID_tracked)
 
 float OmniscientObserver::request_bearing(int ID, int ID_tracked)
 {
-	return atan2(s[ID_tracked].get_position(1) - s[ID].get_position(1),s[ID_tracked].get_position(0) - s[ID].get_position(0));
+	return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0));
 }
