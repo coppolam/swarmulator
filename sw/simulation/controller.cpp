@@ -278,7 +278,6 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
 	vector<int> trace = {0, 1, 2, 3, 4, 5};
 
-
 	int hl = 0;
 	int th = 50;
 	vector<bool> t(8,0); //LINK holder with false assumption
