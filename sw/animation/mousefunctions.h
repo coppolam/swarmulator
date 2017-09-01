@@ -97,22 +97,22 @@ void keyboard_callback(unsigned char key, int x, int y)
 
 void mouse_motion_callback(int x, int y)
 {
-	mx += mouse_drag_speed/zscale*( (float)x/window_width   - sx);
-	my += mouse_drag_speed/zscale*(-(float)y/window_height  - sy);
+	mx += mouse_drag_speed/zscale*( (float)x/((float)window_width/xrat)   - sx);
+	my += mouse_drag_speed/zscale*(-(float)y/((float)window_height/yrat)  - sy);
 }
 
 void mouse_motion_callback_passive(int x, int y)
 {
-	px = (   (((float)x/(window_width/xrat)  )*8/zscale)-4/zscale )  - mx;
-	py = ( -((((float)y/(window_height/yrat) )*8/zscale)-4/zscale )) - my;
+	px = (   (((float)x/((float)window_width/xrat)  )*8/(zscale*xrat))-4/(zscale*xrat) )  - mx;
+	py = ( -((((float)y/((float)window_height/yrat) )*8/(zscale*yrat))-4/(zscale*yrat) )) - my;
 }
 
 void mouse_click_callback(int button, int state, int x, int y)
 {
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-        sx =  (float)x/window_width;
-        sy = -(float)y/window_height;
+        sx =  (float)x/((float)window_width/xrat);
+        sy = -(float)y/((float)window_height/yrat);
     }
 
     if (button == GLUT_WHEEL_UP)
