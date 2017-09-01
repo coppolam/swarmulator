@@ -80,8 +80,8 @@ void draw::draw_circle(double d)
 	for(int i =0; i <= 100; i++)
 	{
 		angle = 2 * M_PI * i / 100;
-		x = (d/xrat)/2.0*cos(angle);
-		y = (d/yrat)/2.0*sin(angle);
+		x = (d*yrat)/2.0*cos(angle);
+		y = (d*xrat)/2.0*sin(angle);
 		glVertex2d(x,y);
 	}
 	glEnd(); 
@@ -132,7 +132,7 @@ void draw::draw_axes() {
 void draw::draw_agent(int ID, float x, float y, float z)
 {
 	glPushMatrix();
-	glTranslatef(y,x,z); // ENU to NED
+	glTranslatef(y*xrat,x*yrat,z); // ENU to NED
 	glRotatef(90.0, 0.0, 0, 1);
 	draw_circle(scale);
 	draw_agent_number(ID);

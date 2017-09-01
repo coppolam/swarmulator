@@ -14,6 +14,7 @@ bool animation_running = false;
 	Main animation loop. 
 	Takes care of drawing the agents in their corrective location.
 */
+
 void main_loop_function()
 {
 	if (!animation_running)
@@ -23,10 +24,6 @@ void main_loop_function()
 	}
 
 	static draw drawer; // Drawer object 
-
-	#ifdef whitebackground
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
-	#endif
 
 	// And depth (used internally to block obstructed objects)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -105,6 +102,13 @@ void start_animation(int argc, char* argv[])
 	glutCreateWindow("Swarmulator"); 	   // Window name (TODO: make varible name)
 	glutIdleFunc(main_loop_function);
 	GL_Setup(window_width, window_height); // Set up window parameters
+
+	#ifdef whitebackground
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
+	#endif
+	
+	xrat = (float)window_width/(float)glutGet(GLUT_WINDOW_WIDTH);
+	yrat = (float)window_height/(float)glutGet(GLUT_WINDOW_HEIGHT);
 
    	glutMainLoop(); // Initiate main drawing loop
 }
