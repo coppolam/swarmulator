@@ -29,8 +29,8 @@ public:
 	Controller();
 	~Controller();
 
-	int get_preferred_bearing(const vector<float> &bdes, const float v_b);
-	float get_attraction_velocity(float u, int b);
+	float get_preferred_bearing(const vector<float> &bdes, const float v_b);
+	float get_attraction_velocity(float u, float b);
 	void get_velocity_command_radial(const int &ID, const vector<float> &q, float &vx, float &vy);
 	void get_velocity_command_cartesian(const int ID, float &v_x, float &v_y);
 

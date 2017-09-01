@@ -65,7 +65,7 @@ float Controller::f_extra(float u)
 	Get a velocity command along an axis based on knowledge of 
 	position with respect to another agent.
 */
-float Controller::get_attraction_velocity(float u, int b)
+float Controller::get_attraction_velocity(float u, float b)
 {
 	float d;
 	if (set)
@@ -87,7 +87,7 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
 {
 	attractionmotion (v_r + v_adj, v_b, v_x, v_y);
 
-	// use for reciprocal alignment
+	// Additiona force for for reciprocal alignment
 	v_x += -v_adj * cos(bdes*2-v_b);
 	v_y += -v_adj * sin(bdes*2-v_b);
 }
@@ -96,7 +96,7 @@ void circlemotion(const float &v_r, const float &v_adj, const float &v_b, const 
 {
 	attractionmotion ( v_r, v_b, v_x, v_y);
 
-	// use for rotation (- clockwise, + anti-clockwise )
+	// Additional force for rotation (- clockwise, + anti-clockwise )
 	v_x += v_adj * cos(v_b-M_PI/2);
 	v_y += v_adj * sin(v_b-M_PI/2);
 }
@@ -133,9 +133,12 @@ void Controller::fill_template(vector<float> &q, const float b_i, const float u,
 	}
 }
 
-int Controller::get_preferred_bearing(const vector<float> &bdes, const float v_b)
+float Controller::get_preferred_bearing(const vector<float> &bdes, const float v_b)
 {
-
+	/* 
+		Define in bv all equilibrium angles
+		at which the agents can organize themselves
+	*/
 	vector<float> bv;
 	for (int i = 0; i < 5; i++)
 	{
@@ -167,31 +170,38 @@ int Controller::get_preferred_bearing(const vector<float> &bdes, const float v_b
             minindex = i;          
     }
 
-    while (minindex >= (int)bdes.size()) // Reduce the index to 0 or 1
+	// Reduce the index for the angle of interest from bdes
+    while (minindex >= (int)bdes.size())
     	minindex -= (int)bdes.size();
 
-    return minindex;
+    // Returned the desired equilibrium bearing
+    return bdes[minindex];
 }
 
 void Controller::assess_situation(int ID, vector<float> &q_old)
 {	
-	// Get new q
-	vector<float> q(8,0);
-	float u, b_i;
+	vector<float> q(8,0); // Set up new q template
 	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
+	
+	// Fill the template for all agents
 	for (int i = 0; i < nagents-1; i++)
 	{
-		u   = o->request_distance(ID, closest[i]);
-		b_i = o->request_bearing (ID, closest[i]);
-		fill_template(q, wrapTo2Pi_f(b_i), u, sqrt(pow(0.7,2)+pow(0.7,2)));
+		fill_template(q,  // Vector to fill
+			wrapTo2Pi_f(o->request_bearing (ID, closest[i])),  // Bearing
+			o->request_distance(ID, closest[i]), // Distance
+			sqrt(pow(0.7,2)+pow(0.7,2)));
 	}
 
+	// Add the result to the previous template
 	std::transform (q.begin(), q.end(), q_old.begin(), q_old.begin(), std::plus<float>()); // sum
+
+	// Set to 0 any value that is not observable anymore
 	for (int i = 0; i < 8; i++)
 	{
 		if (q[i] == 0)
 			q_old[i] = 0;
 	}
+
 }
 
 vector<bool> circling(100,0);
@@ -218,9 +228,9 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 
 	// What commands does this give?
 	float v_b    = wrapToPi_f(o->request_bearing(ID, closest[0]));
-	int minindex = get_preferred_bearing(bdes, v_b);
+	float b_eq = get_preferred_bearing(bdes, v_b);
 
-	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), minindex);
+	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
 
 	// Uncomment this to simulate to simulate noise
 	// v_b += wrapToPi_f(o->request_bearing(ID, closest[0]))+ getrand_float(-0.2, 0.2);
@@ -260,6 +270,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// --------------------------------------------------
 	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
 
+	// Square with 4s
 	vector<vector<bool>> links(4);
 	links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
 	links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
@@ -278,7 +289,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// vector<int> trace = {0, 1, 2, 3, 4, 5};
 
 	int hl = 0;
-	int th = 50;
+	int th = 20;
 	vector<bool> t(8,0); //LINK holder with false assumption
 
 	// Check if happy cycling through the links
@@ -310,61 +321,61 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 		}
 	}
 
-	// if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
-	// {
-	// 	// happy = true;
-	// 	tracenumber[ID] = 0;	
-	// 	hl = 8;
-	// }
+	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
+	{
+		happy = true;
+		tracenumber[ID] = 0;	
+		hl = 8;
+	}
 
 	bool improved = false;
 	if (hl > hlvec[ID])
 	{
 		improved = true;
-		if (waiting[ID] > 200)
-			waiting[ID] = 0;
+		waiting[ID] = 0;
 	}
 		
-	int finalNum = 400; // THIS TUNING PARAMETER IS SUPER IMPORTANT
+	int finalNum = 400;
+	// THIS TUNING PARAMETER IS SUPER IMPORTANT --- the smaller shapes are ~100, bigger shapes are ~400.
+	// The bigger the shape the higher it should be because the agents need to wait for eachother.
 
 	if ( happy )// If happy, do what you gotta do
 	{
-		// cout << " ID " << ID << "\t happy";
+		cout << " ID " << ID << "\t happy";
 		
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
 
 		if ( !circling[closest[0]] )
-			latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y );
+			latticemotion    ( v_r, v_adj , v_b, b_eq, v_x, v_y );
 		else
 			attractionmotion ( v_r, v_b, v_x, v_y);
 
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		// cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
+		cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
-		circlemotion     ( v_r, v_adj , v_b,  bdes[minindex], v_x, v_y);
+		circlemotion     ( v_r, v_adj , v_b,  b_eq, v_x, v_y);
 
-		if ( (improved) || waiting[ID] > 1000 )
+		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
 		{
-			// cout << ID <<" stopping " << endl;
+			cout << ID << " stopping " << endl;
 			circling[ID] = false; // stop circling
-			waiting [ID] = 0; // reset counter
-			hlvec[ID] = hl;
+			// waiting [ID] = 0; // reset counter
 		}
 		else
 		{
 			waiting[ID]++;
 		}
 
-		// cout << ID <<  waiting[ID] << endl;
 	}
 	else // In waiting mode
 	{
+		cout << ID <<  " " << waiting[ID] << endl;
 
 		if ( !circling[closest[0]] )
-			latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y );
+			latticemotion    ( v_r, v_adj , v_b, b_eq, v_x, v_y );
 		else
 			attractionmotion ( v_r, v_b, v_x, v_y);
 
