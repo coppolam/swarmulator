@@ -14,6 +14,7 @@
 #include <vector>
 #include <thread>         // std::thread
 #include <mutex>
+#include <pugixml/pugixml.hpp>
 
 // Internal Includes
 #include "agent.h"
@@ -40,8 +41,25 @@ bool program_running;
 */
 int main(int argc, char* argv[])
 {	
-	program_running = true;
+	program_running = true; // Program is running
 
+	// Load XML file
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file("conf/parameters.xml");
+	
+	if (result.status) // false = No errors
+	{
+		debug_msg ("Could not load parameters file.");
+		return 0;
+	}
+
+
+	std::cout << "Load result: " << result.description() << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
+	// std::cout << "Load result: " <<  << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
+
+
+	// pugi::xml_node node;
+// 
 	/* Create a simulation thread */
 	thread simulation (start_simulation, argc, argv);
 
@@ -55,7 +73,7 @@ int main(int argc, char* argv[])
 	thread logger (start_logger, argc, argv);
 	#endif
 
-	while(program_running){};  // Keep the program running until terminated by a thread.
+	while(program_running){};  // Keep the program running until terminated by a thread somewhere.
 
 	return 0;
 }
