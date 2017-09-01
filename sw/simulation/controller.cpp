@@ -26,19 +26,19 @@ Controller::~Controller(){};
 
 float Controller::f_attraction(float u)
 {
-	return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
-	// return  1/(1+exp(-5*(u-0.8022))); //% sigmoid function -- long-range attraction
+	// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
+	return  1/(1+exp(-5*(u-0.8022))); //% sigmoid function -- long-range attraction
 }
 
 
 float Controller::f_attraction_bearing(float u, int b)
 {
-		return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
+		// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
 
 	// if (b == 1 || b == 3)
 	// 	return  1/(1+exp(-5*(u-1.1080))); //% sigmoid function -- long-range attraction
 	// else
-		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
+		return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 	// else
 		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 }
@@ -116,7 +116,7 @@ void Controller::fill_template(vector<float> &q, const float b_i, const float u,
 	blink.push_back(deg2rad(  180+90));
 	blink.push_back(deg2rad(  180+135));
 	blink.push_back(2*M_PI);
-
+	// cout << u << endl;
 	// Determine link
 	if (u < dmax)
 	{
@@ -131,6 +131,12 @@ void Controller::fill_template(vector<float> &q, const float b_i, const float u,
 			}
 		}
 	}
+
+
+
+		// cout << " "  << q[0] << " " << q[1] << " " << q[2] << " " << q[3]
+		// 		      << " "  << q[4] << " " << q[5] << " " << q[6] << " " << q[7] << endl;
+
 }
 
 int Controller::get_preferred_bearing(const vector<float> &bdes, const float v_b)
@@ -140,9 +146,9 @@ int Controller::get_preferred_bearing(const vector<float> &bdes, const float v_b
 	for (int i = 0; i < 5; i++)
 	{
 		bv.push_back( deg2rad( 0));
-		bv.push_back( deg2rad( 45));
+		// bv.push_back( deg2rad( 45));
 		bv.push_back( deg2rad( 90));
-		bv.push_back( deg2rad( 135));
+		// bv.push_back( deg2rad( 135));
 	}
 
 	// Find what the desired angle is in bdes
@@ -210,9 +216,9 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// Desired angles, so as to create a matrix
 	vector<float> bdes;
 	bdes.push_back(deg2rad(  0));
-	bdes.push_back(deg2rad(  45));
+	// bdes.push_back(deg2rad(  45));
 	bdes.push_back(deg2rad(  90));
-	bdes.push_back(deg2rad(  135));
+	// bdes.push_back(deg2rad(  135));
 
 	// Which neighbors can you sense within the range?
 	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
@@ -261,22 +267,22 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// --------------------------------------------------
 	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
 
-	// vector<vector<bool>> links(4);
-	// links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
-	// links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
-	// links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
-	// links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
-	// vector<int> trace = {0, 1, 2, 3};
+	vector<vector<bool>> links(4);
+	links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
+	links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
+	links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
+	links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
+	vector<int> trace = {0, 1, 2, 3};
 
 
-	vector<vector<bool>> links(6);
-	links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
-	links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
-	links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
-	links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
-	links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
-	links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
-	vector<int> trace = {0, 1, 2, 3, 4, 5};
+	// vector<vector<bool>> links(6);
+	// links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
+	// links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
+	// links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
+	// links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
+	// links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
+	// links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
+	// vector<int> trace = {0, 1, 2, 3, 4, 5};
 
 	int hl = 0;
 	int th = 50;
@@ -330,7 +336,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 
 	if ( happy )// If happy, do what you gotta do
 	{
-		// cout << " \t happy";
+		// cout << " ID " << ID << "\t happy";
 		
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
@@ -347,20 +353,22 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 
 		circlemotion     ( v_r, v_adj , v_b,  bdes[minindex], v_x, v_y);
 
-		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
+		if ( (improved) || waiting[ID] > 1000 )
 		{
+			// cout << ID <<" stopping " << endl;
 			circling[ID] = false; // stop circling
 			waiting [ID] = 0; // reset counter
+			hlvec[ID] = hl;
 		}
-
 		else
 		{
 			waiting[ID]++;
 		}
+
+		// cout << ID <<  waiting[ID] << endl;
 	}
 	else // In waiting mode
 	{
-		// cout << "\t waiting "<< hlvec[ID] << " " << hl;
 
 		if ( !circling[closest[0]] )
 			latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y );
