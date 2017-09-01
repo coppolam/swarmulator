@@ -13,10 +13,10 @@
 #define scale 0.3			 // Scale of agent size
 #define mouse_drag_speed 1.0 // Speed of mouse to drag animation
 #define mouse_zoom_speed 0.5 // Zoom speed of scroll wheel
-#define animation_updatefreq  30.0  // Animation fps
+#define animation_updatefreq  25.0  // Animation fps
 #define whitebackground 	 // Use if you want a white background (can be nice for papers)
 
-#define LOG // Activate logger thread
+// #define LOG // Activate logger thread
 #define logger_updatefreq 1	 // Hz (with respect to simulation time!)
 
 // Only one of the following works

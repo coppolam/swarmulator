@@ -7,6 +7,7 @@
 #include <cctype>
 #include <algorithm>
 
+#include "main.h"
 #include "parameters.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
@@ -69,7 +70,7 @@ void simulation_start()
 vector<float> generate_random_vector_zeromean(const int &length)
 {
 	// Generate the random vector
-	vector<float> v(length);
+	vector<float> v(length,0);
 	for (int i = 0; i < length; i++)
 	{
     	v[i] = getrand_float(-0.5,0.5);
@@ -124,10 +125,11 @@ void start_simulation(int argc, char* argv[]){
 	// Set the model. This main should just spawn n agents at random positions/states.
 	for (int i = 0; i < nagents; i++)
 	{
-		vector<float> states = { x0[i], y0[i], 0.0, 0.0};  			// Initial positions/states
+		vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 };  // Initial positions/states
 		s.push_back(Particle(i,states,1.0/simulation_updatefreq));
 	}
 
 	simulation_start(); // Begin the simulation
+
 }
 #endif /*SIMULATION_H*/

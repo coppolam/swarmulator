@@ -1,11 +1,14 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include "main.h"
 #include "glincludes.h"
 #include "draw.h"
 #include "parameters.h"
 #include "mousefunctions.h"
 #include "omniscient_observer.h"
+
+bool animation_running = false;
 
 /*
 	Main animation loop. 
@@ -13,8 +16,13 @@
 */
 void main_loop_function()
 {
+	if (!animation_running)
+	{	
+		debug_msg("Animation started.");
+		animation_running = true;
+	}
+
 	static draw drawer; // Drawer object 
-	// static OmniscientObserver *obs = new OmniscientObserver(); // Observer object
 
 	#ifdef whitebackground
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
@@ -24,6 +32,10 @@ void main_loop_function()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 
+	// Get current window size w.r.t. beginning
+	xrat = (float)window_width/(float)glutGet(GLUT_WINDOW_WIDTH);
+	yrat = (float)window_height/(float)glutGet(GLUT_WINDOW_HEIGHT);
+	
 	mouse_draganddrop(); // Activate mouse functions
 
 	// Draw fixed one time objects
@@ -83,6 +95,8 @@ void start_animation(int argc, char* argv[])
 	px = 0;
 	py = 0;
 	paused = false;
+	xrat = 0;
+	yrat = 0;
 
 	// Start simulation window
 	glutInit(&argc, argv);

@@ -25,6 +25,8 @@ float zms = 0;
 float zscale = 0;
 float px, py;
 bool paused = false;
+float xrat = 0;
+float yrat = 0;
 
 void keyboard_callback(unsigned char key, int x, int y)
 {
@@ -47,7 +49,9 @@ void keyboard_callback(unsigned char key, int x, int y)
  			break;
 		case 'q':
 			info_msg ("Quitting." );
-			exit(1);
+			mtx.try_lock();
+			program_running = false;
+			break;
 		case 'p':
 			if (!paused)
 			{
@@ -75,7 +79,7 @@ void keyboard_callback(unsigned char key, int x, int y)
 		case 'a':
 			if (!paused)
 			{
-				vector<float> ns = { py, px, 0.0, 0.0 };  // Initial positions/states		
+				vector<float> ns = { py, px, 0.0, 0.0, 0.0, 0.0 };  // Initial positions/states		
 				mtx.lock();
 				s.push_back(Particle(nagents,ns,1.0/simulation_updatefreq));
 				nagents++;
@@ -84,6 +88,7 @@ void keyboard_callback(unsigned char key, int x, int y)
 					knearest++;
 				}
 				mtx.unlock();
+				info_msg ("Drawing new agent." );
 				break;
 			}
 	}
@@ -98,8 +103,8 @@ void mouse_motion_callback(int x, int y)
 
 void mouse_motion_callback_passive(int x, int y)
 {
-	px = (   (((float)x/window_width  )*8/zscale)-4/zscale )  - mx;
-	py = ( - (((float)y/window_height )*8/zscale)-4/zscale )  - my;
+	px = (   (((float)x/(window_width/xrat)  )*8/zscale)-4/zscale )  - mx;
+	py = ( -((((float)y/(window_height/yrat) )*8/zscale)-4/zscale )) - my;
 }
 
 void mouse_click_callback(int button, int state, int x, int y)
@@ -114,6 +119,12 @@ void mouse_click_callback(int button, int state, int x, int y)
     	zms += mouse_zoom_speed;
     else if (button == GLUT_WHEEL_DOWN)
     	zms += -mouse_zoom_speed;
+
+	// Guard on too much / too little zoom
+	if (zms > 9)
+		zms = 9;
+	else if (zms < -90)
+		zms = -90;
 }
 
 void mouse_draganddrop()

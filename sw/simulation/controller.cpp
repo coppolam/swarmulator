@@ -289,7 +289,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 		// Quantify happiness level
 		int s = 0;
 
-		for (int j = 0; j < 8; j++)
+		for (int j = 0; j < 8; j++)	
 		{ 
 			// Use classifying threshold and write it to Link holder
 			if (q[j] > th)

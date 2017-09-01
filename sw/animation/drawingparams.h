@@ -9,5 +9,7 @@ extern float zms;
 extern float zscale;
 extern float px, py;
 extern bool paused;
+extern float xrat;
+extern float yrat;
 
 #endif /* DRAWINGPARAMS_H */

@@ -15,8 +15,7 @@
 // TODO: Make the position relative to zoom.
 void draw::draw_data()
 {
-	glRasterPos2f((-3.9-mx), (-3.9-my));
-	cout << mx << endl;
+	glRasterPos2f((-3.9/zscale-mx), (-3.9/zscale-my));
 	glColor3f(0,0,1); // Red 
 	stringstream ss;
 	ss << "Time[s]:" << simulation_realtimefactor*simulation_time/1000000.0;
@@ -31,12 +30,12 @@ void draw::draw_axes_text(int dim) {
 
 	if (dim == 0)
 	{
-		glRasterPos2f(3.9-mx, 0.1);
+		glRasterPos2f(3.9/zscale-mx, 0.1/zscale);
 		ss << "y";
 	}
 	else if (dim == 1)
 	{
-		glRasterPos2f(0.1, 3.9-my);
+		glRasterPos2f(0.1/zscale, 3.9/zscale-my);
 		ss << "x";
 	}
 	glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char*)ss.str().c_str());
@@ -78,11 +77,11 @@ void draw::draw_circle(double d)
 	glPushMatrix();
 	glBegin(GL_POLYGON);
 	glColor3ub(255, 000, 000); // Red 
-	for(int i =0; i <= 300; i++)
+	for(int i =0; i <= 100; i++)
 	{
-		angle = 2 * M_PI * i / 300;
-		x = d/2.0*cos(angle);
-		y = d/2.0*sin(angle);
+		angle = 2 * M_PI * i / 100;
+		x = (d/xrat)/2.0*cos(angle);
+		y = (d/yrat)/2.0*sin(angle);
 		glVertex2d(x,y);
 	}
 	glEnd(); 
