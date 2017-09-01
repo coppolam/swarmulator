@@ -1,9 +1,11 @@
 /*
-	Swarmulator is a swarm simulation.
-	Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents. 
-	To program specific behaviors, you can do so in the controller.cpp/controller.h file.
+	Swarmulator is a swarm simulation environment
+	Its design purpose is to be a simple testing platform to observe 
+	the emergent behavior of a group of agents. 
 
-	Copyright Mario Coppola, 2017
+	To program specific behaviors, you can do so in the controller.cpp/controller.h class.
+
+	Copyright Mario Coppola, 2017.
 */
 
 // External includes
@@ -32,7 +34,8 @@ int knearest;			 // knearest objects
 float simulation_time;	 // Time in the simulation
 float simtime_seconds;	 // Global counter in real time
 mutex mtx;				 // Mutex needed to lock threads
-bool program_running;
+bool program_running;    // True if the program is running, turns false when the program is shut down
+
 /*
 	The main function launches separate threads that control independent
 	functions of the code. All threads are designed to be optional with the
@@ -50,12 +53,14 @@ int main(int argc, char* argv[])
 	thread animation (start_animation, argc, argv);
 	#endif
 
-	/* Create a logging thread to file log.txt, if desired*/
+	/* Create a logging thread to file log.txt, if desired */
 	#ifdef LOG
 	thread logger (start_logger, argc, argv);
 	#endif
-
-	while(program_running){};  // Keep the program running until terminated by a thread.
-
+	
+	/* Keep the program running until terminated by a thread */
+	while(program_running){};  
+	
+	/* Exit */
 	return 0;
 }

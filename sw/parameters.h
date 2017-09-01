@@ -1,6 +1,6 @@
 #ifndef PARAMETERS_H
 #define PARAMETERS_H
-/* Put all defines in here */
+/* Put all defines in here. Eventually this will be moved to an xml file */
 
 // Simulation Parameters
 #define simulation_updatefreq 30.0 	  // (Hz) Defines the simulation time step
@@ -16,7 +16,7 @@
 #define animation_updatefreq  25.0  // Animation fps
 #define whitebackground 	 // Use if you want a white background (can be nice for papers)
 
-// #define LOG // Activate logger thread
+#define LOG // Activate logger thread
 #define logger_updatefreq 1	 // Hz (with respect to simulation time!)
 
 // Only one of the following works

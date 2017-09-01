@@ -20,8 +20,9 @@ OmniscientObserver *o = new OmniscientObserver();
 
 Controller::Controller(): waiting(100,0)
 {
-		srand(time(NULL)); // Seed the time random generator with time.
+	srand(time(NULL)); // Seed the time random generator with time.
 };
+
 Controller::~Controller(){};
 
 float Controller::f_attraction(float u)
@@ -31,15 +32,14 @@ float Controller::f_attraction(float u)
 }
 
 
-float Controller::f_attraction_bearing(float u, int b)
+float Controller::f_attraction_bearing(float u, float b_eq)
 {
 		// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
 
-	// if (b == 1 || b == 3)
-	// 	return  1/(1+exp(-5*(u-1.1080))); //% sigmoid function -- long-range attraction
-	// else
+	if (b_eq == deg2rad(90) || b_eq == deg2rad(0))
 		return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
-	// else
+	else
+		return  1/(1+exp(-5*(u-1.1080))); //% sigmoid function -- long-range attraction
 		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
 }
 
@@ -65,13 +65,11 @@ float Controller::f_extra(float u)
 	Get a velocity command along an axis based on knowledge of 
 	position with respect to another agent.
 */
-float Controller::get_attraction_velocity(float u, float b)
+float Controller::get_attraction_velocity(float u, float b_eq)
 {
-	float d;
 	if (set)
 	{
-		d = saturate( f_attraction_bearing(u,b) + f_repulsion(u) + f_extra(u) ); 
-		return d;
+		return saturate( f_attraction_bearing(u, b_eq) + f_repulsion(u) + f_extra(u) ); ;
 	}
 
 	return 0;
@@ -142,10 +140,10 @@ float Controller::get_preferred_bearing(const vector<float> &bdes, const float v
 	vector<float> bv;
 	for (int i = 0; i < 5; i++)
 	{
-		bv.push_back( deg2rad( 0));
-		// bv.push_back( deg2rad( 45));
-		bv.push_back( deg2rad( 90));
-		// bv.push_back( deg2rad( 135));
+		for (int j = 0; j < (int)bdes.size(); j++)
+		{
+			bv.push_back( bdes[j]);
+		}
 	}
 
 	// Find what the desired angle is in bdes
@@ -219,9 +217,9 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// Desired angles, so as to create a matrix
 	vector<float> bdes;
 	bdes.push_back(deg2rad(  0));
-	// bdes.push_back(deg2rad(  45));
-	bdes.push_back(deg2rad(  90));
-	// bdes.push_back(deg2rad(  135));
+	bdes.push_back(deg2rad(  45));
+	// bdes.push_back(deg2rad(  90));
+	bdes.push_back(deg2rad(  135));
 
 	// Which neighbors can you sense within the range?
 	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
@@ -271,22 +269,22 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
 
 	// Square with 4s
-	vector<vector<bool>> links(4);
-	links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
-	links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
-	links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
-	links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
-	vector<int> trace = {0, 1, 2, 3};
+	// vector<vector<bool>> links(4);
+	// links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
+	// links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
+	// links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
+	// links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
+	// vector<int> trace = {0, 1, 2, 3};
 
 
-	// vector<vector<bool>> links(6);
-	// links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
-	// links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
-	// links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
-	// links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
-	// links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
-	// links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
-	// vector<int> trace = {0, 1, 2, 3, 4, 5};
+	vector<vector<bool>> links(6);
+	links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
+	links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
+	links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
+	links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
+	links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
+	links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
+	vector<int> trace = {0, 1, 2, 3, 4, 5};
 
 	int hl = 0;
 	int th = 20;

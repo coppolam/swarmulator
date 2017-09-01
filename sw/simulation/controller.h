@@ -13,14 +13,12 @@ class Controller {
 private:
 	
 	float f_attraction(float u);	
-	float f_attraction_bearing(float u, int b);
+	float f_attraction_bearing(float u, float b);
 	float f_repulsion(float u);
 	float f_extra(float u);
 	bool  saturation;
 	float saturation_limits;
-	int   k = 0;
 	bool  set = true;
-    time_t timer;
 
 public:
 	vector<float> weights;
@@ -38,13 +36,11 @@ public:
 	float saturate(float f);
 	
 	void assess_situation(int ID, vector<float> &q_old);
+	void fill_template(vector<float> &q, const float b_i, const float u, float dmax);
 
-	void  fill_template(vector<float> &q, const float b_i, const float u, float dmax);
-
-	void  set_weights(const vector<float> &w);
-	void  set_saturation(const float &lim);
-	void  remove_saturation()	{saturation = false;};
-	void  set_k(int i)			{k = i;};
+	void set_weights(const vector<float> &w);
+	void set_saturation(const float &lim);
+	void remove_saturation() {saturation = false;};
 };
 
 

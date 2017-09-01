@@ -14,7 +14,6 @@ bool animation_running = false;
 	Main animation loop. 
 	Takes care of drawing the agents in their corrective location.
 */
-
 void main_loop_function()
 {
 	if (!animation_running)
@@ -83,6 +82,7 @@ void GL_Setup(int width, int height)
 */
 void start_animation(int argc, char* argv[])
 {
+	// Initialize all variables
 	mx = 0;
 	my = 0;
 	sx = 0;
@@ -95,7 +95,7 @@ void start_animation(int argc, char* argv[])
 	xrat = 0;
 	yrat = 0;
 
-	// Start simulation window
+	// Set up simulation window
 	glutInit(&argc, argv);
 	glutInitWindowSize(window_width, window_height);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE );
