@@ -339,7 +339,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 
 	if ( happy )// If happy, do what you gotta do
 	{
-		cout << " ID " << ID << "\t happy";
+		// cout << " ID " << ID << "\t happy";
 		
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
@@ -352,13 +352,13 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
+		// cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
 		circlemotion     ( v_r, v_adj , v_b,  b_eq, v_x, v_y);
 
 		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
 		{
-			cout << ID << " stopping " << endl;
+			// cout << ID << " stopping " << endl;
 			circling[ID] = false; // stop circling
 			// waiting [ID] = 0; // reset counter
 		}
@@ -370,7 +370,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	}
 	else // In waiting mode
 	{
-		cout << ID <<  " " << waiting[ID] << endl;
+		// cout << ID <<  " " << waiting[ID] << endl;
 
 		if ( !circling[closest[0]] )
 			latticemotion    ( v_r, v_adj , v_b, b_eq, v_x, v_y );

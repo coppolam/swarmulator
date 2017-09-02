@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
-<simulation>
+<simulation name="simuation">
     <node name="updatefreq" value="20"/>
 </simulation>

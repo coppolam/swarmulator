@@ -1,0 +1,27 @@
+#ifndef XMLREADER_H
+#define XMLREADER_H
+
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <pugixml/pugixml.hpp>
+#include <vector>
+#include <thread>         // std::thread
+#include <mutex>
+
+#include "agent.h"
+#include "particle.h"
+#include "main.h"
+
+using namespace std;
+using namespace pugi;
+
+class XMLreader {
+	pugi::xml_document doc;
+
+public:
+	XMLreader(string str);
+	~XMLreader();
+};
+
+#endif /*XMLREADER_H*/

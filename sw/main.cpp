@@ -16,7 +16,6 @@
 #include <vector>
 #include <thread>         // std::thread
 #include <mutex>
-#include <pugixml/pugixml.hpp>
 
 // Internal Includes
 #include "agent.h"
@@ -26,7 +25,7 @@
 #include "simulation.h"				// Simulation thread
 #include "logger.h"					// Logger thread
 #include "omniscient_observer.h"	// Class used to simulate sensing
-
+#include "xmlreader.h"
 using namespace std;
 
 int nagents;			 // Number of agents in the simulation
@@ -46,28 +45,25 @@ int main(int argc, char* argv[])
 {	
 	program_running = true; // Program is running
 
-	// Load XML file
-	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file("conf/parameters.xml");
-	if (result.status) // False (0) = No errors
-	{
-		debug_msg ("Could not load parameters file.");
-		return 0;
-	}
-		
-	pugi::xml_node node_sim = doc.child("simulation");
-	doc.child("simulation").attribute("name").value();
-	for (pugi::xml_node node_sim = node_sim.first_child(); node_sim; node_sim = node_sim.next_sibling())
-    {
-        std::cout << node_sim.name() << std::endl;
+	XMLreader xmlrdr("conf/parameters.xml");
+	// TODO make something like this:
+	// xmlrdr.runthrough("simulation");
 
-        for (pugi::xml_attribute attr = node_sim.first_attribute(); attr; attr = attr.next_attribute())
-        {
-            std::cout << " " << attr.name() << "=" << attr.value() << std::endl;
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
+	// pugi::xml_node node_sim = doc.child("simulation"); // Load the simulation node
+	// doc.child("simulation").attribute("name").value();
+
+	// // Go through all its children
+	// for (pugi::xml_node node_sim = node_sim.first_child(); node_sim; node_sim = node_sim.next_sibling())
+ //    {
+ //        std::cout << node_sim.name() << std::endl;
+
+ //        for (pugi::xml_attribute attr = node_sim.first_attribute(); attr; attr = attr.next_attribute())
+ //        {
+ //            std::cout << " " << attr.name() << "=" << attr.value() << std::endl;
+ //        }
+ //        std::cout << std::endl;
+ //    }
+ //    std::cout << std::endl;
 
 	// std::cout << "Load result: " <<  << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
 
