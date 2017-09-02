@@ -35,14 +35,15 @@ float Controller::f_attraction(float u)
 	return  1/(1+exp(-_ka*(u-w))); //% sigmoid function -- long-range 
 }
 
-
+/*
+	Attraction function
+*/
 float Controller::f_attraction_bearing(float u, float b_eq)
 {
 	float w;
 	if (b_eq == deg2rad(90) || b_eq == deg2rad(0))
 	{
 		w = log((_ddes/_kr-1)/exp(-_ka*_ddes))/_ka;
-		cout << "x "<< u << " W: " << w << endl;
 		return  1/(1+exp(-_ka*(u-w))); //% sigmoid function -- long-range 
 	}
 	else
@@ -54,20 +55,28 @@ float Controller::f_attraction_bearing(float u, float b_eq)
 }
 
 /*
-	Repulsion function 
-	TODO: Make parametrized
+	Repulsion function
 */
 float Controller::f_repulsion(float u)
 {
-	return -0.1/u; // basic function -- short-distance repulsion
+	return -_kr/u; // Short-distance repulsion
 }
 
 /*
-	Extra (Gaussian?) function 
-	TODO: Make parametrized
+	Extra function. Use this for other possible attractors or behaviors.
 */
 float Controller::f_extra(float u)
 {
+	return 0;
+}
+
+float Controller::get_attraction_velocity(float u)
+{
+	if (set)
+	{
+		return saturate( f_attraction(u) + f_repulsion(u) + f_extra(u) ); ;
+	}
+
 	return 0;
 }
 
@@ -75,7 +84,7 @@ float Controller::f_extra(float u)
 	Get a velocity command along an axis based on knowledge of 
 	position with respect to another agent.
 */
-float Controller::get_attraction_velocity(float u, float b_eq)
+float Controller::get_attraction_velocity_bearingbased(float u, float b_eq)
 {
 	if (set)
 	{
@@ -95,9 +104,9 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
 {
 	attractionmotion (v_r + v_adj, v_b, v_x, v_y);
 
-	// Additiona force for for reciprocal alignment
-	v_x += -v_adj * cos(bdes*2-v_b);
-	v_y += -v_adj * sin(bdes*2-v_b);
+	// Additional force for for reciprocal alignment
+	v_x += -v_adj * cos( bdes*2 - v_b );
+	v_y += -v_adj * sin( bdes*2 - v_b );
 }
 
 void circlemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
@@ -105,8 +114,8 @@ void circlemotion(const float &v_r, const float &v_adj, const float &v_b, const 
 	attractionmotion ( v_r, v_b, v_x, v_y);
 
 	// Additional force for rotation (- clockwise, + anti-clockwise )
-	v_x += v_adj * cos(v_b-M_PI/2);
-	v_y += v_adj * sin(v_b-M_PI/2);
+	v_x += v_adj * cos( v_b - M_PI/2 );
+	v_y += v_adj * sin( v_b - M_PI/2 );
 }
 
 
@@ -215,6 +224,7 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 vector<bool> circling(100,0);
 vector<int> hlvec(100,0);
 vector<int> tracenumber(100,0);
+vector<int> tracenumber_old(100,0);
 
 void Controller::get_velocity_command_radial(const int &ID, const vector<float> &q, float &v_x, float &v_y)
 {
@@ -235,14 +245,13 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
 	// What commands does this give?
-	float v_b    = wrapToPi_f(o->request_bearing(ID, closest[0]));
+	float v_b  = wrapToPi_f(o->request_bearing(ID, closest[0]));
 	float b_eq = get_preferred_bearing(bdes, v_b);
 
-	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
-	cout << "ID : " <<  ID << " " <<  o->request_distance(ID, closest[0]) << "to closest" << endl;
+	float v_r = get_attraction_velocity_bearingbased(o->request_distance(ID, closest[0]), b_eq);
 	// Uncomment this to simulate to simulate noise
 	// v_b += wrapToPi_f(o->request_bearing(ID, closest[0]))+ getrand_float(-0.2, 0.2);
-	// v_r += get_attraction_velocity(u + getrand_float(-0.1, 0.1),v_b);
+	// v_r += get_attraction_velocity_bearingbased(u + getrand_float(-0.1, 0.1),v_b);
 
 	// latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y);
 
@@ -292,12 +301,14 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
 	links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
 	links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
-	vector<int> trace = {0, 1, 2, 3, 4, 5};
-
+						 // 0  1  2  3  4  5
+	// vector<int> trace = {0, 1, 5, 2, 4, 3};
+	vector<int> trace =    {0, 1, 3, 5, 4, 2};
 	int hl = 0;
-	int th = 20;
+	int th = 50;
 	vector<bool> t(8,0); //LINK holder with false assumption
 
+	float tn;
 	// Check if happy cycling through the links
 	for (int i = 0; i < (int)links.size(); i++)
 	{
@@ -316,7 +327,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 
 		if ( (8-s) > hl )
 		{
-			tracenumber[ID] = trace[i]; // save this as the most similar link
+			tn = trace[i]; // save this as the most similar link
 			hl = 8-s; // Score out set to the value of s if lower. We are looking for the minimum score. Can be changed to maximum
 		}
 
@@ -327,27 +338,27 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 		}
 	}
 
-	if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
-	{
-		happy = true;
-		tracenumber[ID] = 0;	
-		hl = 8;
-	}
+	// if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
+	// {
+	// 	happy = true;
+	// 	tracenumber[ID] = 0;	
+	// 	hl = 8;
+	// }
 
 	bool improved = false;
-	if (hl > hlvec[ID])
+	if (hl > hlvec[ID] || tn > tracenumber[ID])
 	{
 		improved = true;
-		waiting[ID] = 0;
+		// waiting[ID] = 0;
 	}
 		
-	int finalNum = 400;
+	int finalNum = 300;
 	// THIS TUNING PARAMETER IS SUPER IMPORTANT --- the smaller shapes are ~100, bigger shapes are ~400.
 	// The bigger the shape the higher it should be because the agents need to wait for eachother.
 
 	if ( happy )// If happy, do what you gotta do
 	{
-		// cout << " ID " << ID << "\t happy";
+		cout << " ID " << ID << "\t happy" << endl;
 		
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
@@ -362,13 +373,15 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	{
 		// cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
+		v_r = get_attraction_velocity_bearingbased(o->request_distance(ID, closest[0]),rad2deg(135));
 		circlemotion     ( v_r, v_adj , v_b,  b_eq, v_x, v_y);
 
 		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
 		{
 			// cout << ID << " stopping " << endl;
-			circling[ID] = false; // stop circling
-			// waiting [ID] = 0; // reset counter
+			circling[ID] = false; // stop 
+			if (hl == 7)
+			waiting [ID] = 0; // reset counter
 		}
 		else
 		{
@@ -385,10 +398,10 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 		else
 			attractionmotion ( v_r, v_b, v_x, v_y);
 
-		if ( (float)waiting[ID]/pow((float)(links.size() - tracenumber[ID]),1) > finalNum )
+		if ( (float)waiting[ID]/pow((float)(links.size() - tn),1) > finalNum )
 		{
-			circling[ID] = true; // start circling
-			waiting [ID] = 0; // reset counter 
+			circling[ID] = true; // Start circling
+			waiting [ID] = 0;    // Reset counter 
 		}
 		else
 		{
@@ -397,6 +410,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	}
 		
 	hlvec[ID] = hl;
+	tracenumber[ID] = tn;
 }
 
 
@@ -410,8 +424,8 @@ void Controller::get_velocity_command_cartesian(const int ID, float &v_x, float 
 	vector<int> closest = o->request_closest(ID);
 	for (int i = 0; i < knearest; i++)
 	{
-		v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0), 0);
-		v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1), 0);
+		v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0));
+		v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1));
 	}
 
 	#endif
@@ -431,8 +445,8 @@ void Controller::get_velocity_command_cartesian(const int ID, float &v_x, float 
 	{
 		if (i!=ID)
 		{
-			v_x += (get_attraction_velocity(o->request_distance(ID, i, 0),0) * mat[ID*nagents+i]);
-			v_y += (get_attraction_velocity(o->request_distance(ID, i, 0),0) * mat[ID*nagents+i]);				
+			v_x += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID*nagents+i]);
+			v_y += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID*nagents+i]);				
 		}
 	}
 	#endif
