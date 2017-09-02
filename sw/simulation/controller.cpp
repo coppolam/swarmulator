@@ -15,6 +15,10 @@
 #include "omniscient_observer.h"
 #include "parameters.h"
 
+#define _ddes 0.6 // Desired equilibrium distance
+#define _kr 0.1   // Repulsion gain
+#define _ka 5	  // Attraction gain
+
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
 
@@ -27,20 +31,26 @@ Controller::~Controller(){};
 
 float Controller::f_attraction(float u)
 {
-	// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
-	return  1/(1+exp(-5*(u-0.8022))); //% sigmoid function -- long-range attraction
+	float w = log((_ddes/_kr-1)/exp(-_ka*_ddes))/_ka;
+	return  1/(1+exp(-_ka*(u-w))); //% sigmoid function -- long-range 
 }
 
 
 float Controller::f_attraction_bearing(float u, float b_eq)
 {
-		// return 1/(1+exp(-5*(u-0.719*2))) + 1/(1+exp(-5*(u+0.719*2))) -1 ; //% sigmoid function -- long-range attraction
-
+	float w;
 	if (b_eq == deg2rad(90) || b_eq == deg2rad(0))
-		return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
+	{
+		w = log((_ddes/_kr-1)/exp(-_ka*_ddes))/_ka;
+		cout << "x "<< u << " W: " << w << endl;
+		return  1/(1+exp(-_ka*(u-w))); //% sigmoid function -- long-range 
+	}
 	else
-		return  1/(1+exp(-5*(u-1.1080))); //% sigmoid function -- long-range attraction
-		// return 1/(1+exp(-5*(u-0.8022))) ; //% sigmoid function -- long-range attraction
+	{
+		float ddes2 = sqrt(pow(_ddes,2)+pow(_ddes,2));
+		w = log((ddes2/_kr-1)/exp(-_ka*ddes2))/_ka;
+		return  1/(1+exp(-_ka*(u-w))); //% sigmoid function -- long-range 
+	}
 }
 
 /*
@@ -187,7 +197,7 @@ void Controller::assess_situation(int ID, vector<float> &q_old)
 		fill_template(q,  // Vector to fill
 			wrapTo2Pi_f(o->request_bearing (ID, closest[i])),  // Bearing
 			o->request_distance(ID, closest[i]), // Distance
-			sqrt(pow(0.7,2)+pow(0.7,2)));
+			sqrt(pow(_ddes*1.2,2)+pow(_ddes*1.2,2)));
 	}
 
 	// Add the result to the previous template
@@ -229,16 +239,14 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	float b_eq = get_preferred_bearing(bdes, v_b);
 
 	float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
-
+	cout << "ID : " <<  ID << " " <<  o->request_distance(ID, closest[0]) << "to closest" << endl;
 	// Uncomment this to simulate to simulate noise
 	// v_b += wrapToPi_f(o->request_bearing(ID, closest[0]))+ getrand_float(-0.2, 0.2);
 	// v_r += get_attraction_velocity(u + getrand_float(-0.1, 0.1),v_b);
 
-
 	// latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y);
-	
 
-	// vector<vector<bool>> links(4);
+	// vector<vector<bool>> links(4); // Triangle with 4
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
@@ -248,7 +256,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// 	--------------------------------------------------
 	// vector<int> trace = {0, 2, 3, 1};
 
-	// vector<vector<bool>> links(9);
+	// vector<vector<bool>> links(9); // Triangle with 9
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
@@ -268,7 +276,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// --------------------------------------------------
 	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
 
-	// Square with 4s
+	// Square with 4 or 9, with possible 4x2 spurious equilibrium
 	// vector<vector<bool>> links(4);
 	// links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
 	// links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
@@ -276,7 +284,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
 	// vector<int> trace = {0, 1, 2, 3};
 
-
+	// Hexagon
 	vector<vector<bool>> links(6);
 	links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
 	links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
@@ -339,7 +347,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 
 	if ( happy )// If happy, do what you gotta do
 	{
-		cout << " ID " << ID << "\t happy";
+		// cout << " ID " << ID << "\t happy";
 		
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
@@ -352,13 +360,13 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	}
 	else if ( circling[ID] ) // In circling mode, circle around
 	{
-		cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
+		// cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
 		circlemotion     ( v_r, v_adj , v_b,  b_eq, v_x, v_y);
 
 		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
 		{
-			cout << ID << " stopping " << endl;
+			// cout << ID << " stopping " << endl;
 			circling[ID] = false; // stop circling
 			// waiting [ID] = 0; // reset counter
 		}
@@ -370,7 +378,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	}
 	else // In waiting mode
 	{
-		cout << ID <<  " " << waiting[ID] << endl;
+		// cout << ID <<  " " << waiting[ID] << endl;
 
 		if ( !circling[closest[0]] )
 			latticemotion    ( v_r, v_adj , v_b, b_eq, v_x, v_y );
