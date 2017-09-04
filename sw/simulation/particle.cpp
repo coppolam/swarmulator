@@ -19,7 +19,7 @@ void Particle::update_position()
 	state[3] += state[5]*dt; // velocity y
 	
 	// Acceleration
-	state[4] = -2*( state[2] - v_x ) ;
-	state[5] = -2*( state[3] - v_y ) ;
+	state[4] = -2*( state[2] - v_x ) ; // Acceleration x 
+	state[5] = -2*( state[3] - v_y ) ; // Acceleration y
 
 };

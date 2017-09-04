@@ -237,9 +237,9 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// Desired angles, so as to create a matrix
 	vector<float> bdes;
 	bdes.push_back(deg2rad(  0));
-	bdes.push_back(deg2rad(  45));
-	// bdes.push_back(deg2rad(  90));
-	bdes.push_back(deg2rad(  135));
+	// bdes.push_back(deg2rad(  45));
+	bdes.push_back(deg2rad(  90));
+	// bdes.push_back(deg2rad(  135));
 
 	// Which neighbors can you sense within the range?
 	vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
@@ -260,8 +260,8 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// links[1] = {0, 0, 0, 0, 0, 0, 1, 1};
 	// links[2] = {0, 0, 0, 1, 1, 1, 0, 0};
 	// links[3] = {1, 0, 1, 0, 0, 0, 1, 0};
-	// 				  0  1  2  3
-	// 		 trace = {0, 3, 1, 2};
+				// 	  0  1  2  3
+			 // trace = {0, 3, 1, 2};
 	// 	--------------------------------------------------
 	// vector<int> trace = {0, 2, 3, 1};
 
@@ -286,24 +286,24 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// vector<int> trace = {8, 0, 3, 5, 6, 1, 4, 7, 2};
 
 	// Square with 4 or 9, with possible 4x2 spurious equilibrium
-	// vector<vector<bool>> links(4);
-	// links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
-	// links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
-	// links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
-	// links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
-	// vector<int> trace = {0, 1, 2, 3};
+	vector<vector<bool>> links(4);
+	links[0] = {0, 0, 1, 1, 1, 0, 0, 0};
+	links[1] = {0, 0, 0, 0, 1, 1, 1, 0};
+	links[2] = {1, 0, 0, 0, 0, 0, 1, 1};
+	links[3] = {1, 1, 1, 0, 0, 0, 0, 0};
+	vector<int> trace = {0, 1, 2, 3};
 
 	// Hexagon
-	vector<vector<bool>> links(6);
-	links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
-	links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
-	links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
-	links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
-	links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
-	links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
+	// vector<vector<bool>> links(6);
+	// links[0] = {1, 0, 0, 1, 0, 0, 0, 0};
+	// links[1] = {0, 1, 0, 0, 0, 0, 0, 1};
+	// links[2] = {1, 0, 0, 0, 0, 1, 0, 0};
+	// links[3] = {0, 0, 0, 0, 1, 0, 0, 1};
+	// links[4] = {0, 0, 0, 1, 0, 1, 0, 0};
+	// links[5] = {0, 1, 0, 0, 1, 0, 0, 0};
 						 // 0  1  2  3  4  5
 	// vector<int> trace = {0, 1, 5, 2, 4, 3};
-	vector<int> trace =    {0, 1, 3, 5, 4, 2};
+	// vector<int> trace =    {0, 1, 3, 5, 4, 2};
 	int hl = 0;
 	int th = 50;
 	vector<bool> t(8,0); //LINK holder with false assumption
@@ -335,24 +335,25 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 		if (hl == 8)
 		{
 			happy = true;
+			break; // Or hl might be rewritten
 		}
 	}
 
 	// if ( !happy && ( (q[0]>th && q[4]>th) || (q[1]>th && q[5]>th) || (q[2]>th && q[6]>th) || (q[3]>th && q[7]>th) ))
 	// {
 	// 	happy = true;
-	// 	tracenumber[ID] = 0;	
+	// 	tn = 0;	
 	// 	hl = 8;
 	// }
 
 	bool improved = false;
-	if (hl > hlvec[ID] || tn > tracenumber[ID])
+	if (hl > hlvec[ID]) //|| tn < tracenumber[ID])
 	{
 		improved = true;
 		// waiting[ID] = 0;
 	}
 		
-	int finalNum = 300;
+	int finalNum = 400;
 	// THIS TUNING PARAMETER IS SUPER IMPORTANT --- the smaller shapes are ~100, bigger shapes are ~400.
 	// The bigger the shape the higher it should be because the agents need to wait for eachother.
 
@@ -362,6 +363,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 		
 		circling[ID] = false; // flag you are not circling
 		hlvec[ID] = hl;
+		waiting[ID] = 0;
 
 		if ( !circling[closest[0]] )
 			latticemotion    ( v_r, v_adj , v_b, b_eq, v_x, v_y );
@@ -373,14 +375,13 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	{
 		// cout << " ID " << ID << "\t circling " << hlvec[ID] << " " << hl << endl;
 
-		v_r = get_attraction_velocity_bearingbased(o->request_distance(ID, closest[0]),rad2deg(135));
-		circlemotion     ( v_r, v_adj , v_b,  b_eq, v_x, v_y);
+		// v_r = get_attraction_velocity_bearingbased(o->request_distance(ID, closest[0]),rad2deg(90));
+		circlemotion     ( v_r, v_adj , v_b,  b_eq, v_x, v_y );
 
 		if ( (improved && waiting[ID] > finalNum) || waiting[ID] > 1000 )
 		{
 			// cout << ID << " stopping " << endl;
-			circling[ID] = false; // stop 
-			if (hl == 7)
+			circling[ID] = false; // stop
 			waiting [ID] = 0; // reset counter
 		}
 		else

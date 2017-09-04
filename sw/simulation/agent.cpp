@@ -1,6 +1,7 @@
 #include "agent.h"
 
-Agent::Agent(int i, const vector<float> &s):situation(8,0)
+Agent::Agent(int i, const vector<float> &s):
+	situation(8,0)
 {
 	this->state = s;
 	ID = i;
