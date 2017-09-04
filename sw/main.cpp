@@ -47,24 +47,8 @@ int main(int argc, char* argv[])
 
 	XMLreader xmlrdr("conf/parameters.xml");
 	// TODO make something like this:
-	// xmlrdr.runthrough("simulation");
-
-	// pugi::xml_node node_sim = doc.child("simulation"); // Load the simulation node
-	// doc.child("simulation").attribute("name").value();
-
-	// // Go through all its children
-	// for (pugi::xml_node node_sim = node_sim.first_child(); node_sim; node_sim = node_sim.next_sibling())
- //    {
- //        std::cout << node_sim.name() << std::endl;
-
- //        for (pugi::xml_attribute attr = node_sim.first_attribute(); attr; attr = attr.next_attribute())
- //        {
- //            std::cout << " " << attr.name() << "=" << attr.value() << std::endl;
- //        }
- //        std::cout << std::endl;
- //    }
- //    std::cout << std::endl;
-
+	xmlrdr.runthrough("simulation");
+	xmlrdr.runthrough("animation");
 	// std::cout << "Load result: " <<  << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
 
 	/* Create a simulation thread */

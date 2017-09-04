@@ -1,4 +1,8 @@
-<?xml version="1.0"?>
-<simulation name="simuation">
-    <node name="updatefreq" value="20"/>
+<?xml version="1.0" encoding = "UTF-8"?>
+<simulation>
+    <node name="a" value="20"/>
 </simulation>
+<animation name="animation">
+    <node name="i" value="20"/>
+    <node name="updatefreq" value="10"/>
+</animation>

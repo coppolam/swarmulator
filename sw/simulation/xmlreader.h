@@ -22,6 +22,7 @@ class XMLreader {
 public:
 	XMLreader(string str);
 	~XMLreader();
+	void runthrough(string str);
 };
 
 #endif /*XMLREADER_H*/
