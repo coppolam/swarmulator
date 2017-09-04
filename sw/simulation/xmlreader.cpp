@@ -13,12 +13,11 @@ XMLreader::XMLreader(string str)
 
 XMLreader::~XMLreader(){};
 
-float updatefreq;
+float updatefreq; // TODO: just a sample, so remove this and put it somewhere else with the full list.
 void XMLreader::runthrough(string str)
 {	
 	// Load the simulation node
 	xml_node node = doc.child(str.c_str());
-    std::cout << node.name() << std::endl;
 
 	// Go through all its children and parse them
 	for (node = node.first_child(); node; node = node.next_sibling())
@@ -29,12 +28,14 @@ void XMLreader::runthrough(string str)
         	if (!attrName.compare("name")) // We only process variable names
         	{
         		string varname = attr.value();
-        		if (!varname.compare("updatefreq")) // I have to hardcode all the variables!
+        		if (!varname.compare("updatefreq")) // TODO: hardcode all the variable names!
         		{
         			attr = attr.next_attribute();
 	           		updatefreq = stof(attr.value());//std::cout << " " << attrName << "=" << attr.value() << std::endl;
         		}
+                debug_msg("In " + str + " node, loaded " + varname + "=" + attr.value());
         	}
         }
     }
+
 }

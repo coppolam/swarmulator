@@ -25,7 +25,7 @@
 #include "simulation.h"				// Simulation thread
 #include "logger.h"					// Logger thread
 #include "omniscient_observer.h"	// Class used to simulate sensing
-#include "xmlreader.h"
+#include "xmlreader.h"				
 using namespace std;
 
 int nagents;			 // Number of agents in the simulation
@@ -46,10 +46,9 @@ int main(int argc, char* argv[])
 	program_running = true; // Program is running
 
 	XMLreader xmlrdr("conf/parameters.xml");
-	// TODO make something like this:
 	xmlrdr.runthrough("simulation");
 	xmlrdr.runthrough("animation");
-	// std::cout << "Load result: " <<  << ", mesh name: " << doc.child("mesh").attribute("name").value() << std::endl;
+	xmlrdr.runthrough("logger");
 
 	/* Create a simulation thread */
 	thread simulation (start_simulation, argc, argv);

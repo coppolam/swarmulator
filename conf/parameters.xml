@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding = "UTF-8"?>
+<!-- 
+This XML file contains parameters for the simulation that can be changed 
+without rebuilding the code.
+-->
+
+<!-- Simulation global variables. -->
 <simulation>
     <node name="a" value="20"/>
 </simulation>
-<animation name="animation">
+
+<!-- Animation global variables. -->
+<animation>
     <node name="i" value="20"/>
-    <node name="updatefreq" value="10"/>
+    <node name="updatefreq" value="2"/>
 </animation>
+
+<!-- Logger global variables. -->
+<logger>
+    <node name="i" value="20"/>
+    <node name="updatefreq" value="1"/>
+</logger>
