@@ -38,6 +38,7 @@ void draw::draw_axes_text(int dim) {
 		glRasterPos2f(0.1/zscale, 3.9/zscale-my);
 		ss << "x";
 	}
+	
 	glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char*)ss.str().c_str());
 
 }

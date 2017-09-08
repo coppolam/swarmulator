@@ -40,7 +40,6 @@ void main_loop_function()
 	{	
 		drawer.draw_axes_text(i);
 	}
-	// TODO: Once environment is here, draw environment
 
 	// Draw all agents
 	for (int i = 0; i < nagents; ++i)	
@@ -96,7 +95,8 @@ void start_animation(int argc, char* argv[])
 
 	// Set up simulation window
 	glutInit(&argc, argv);
-	glutInitWindowSize(window_width, window_height);
+	glutInitWindowPosition(0, 0);
+	glutInitWindowSize( window_width, window_height);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE );
 	glutCreateWindow("Swarmulator"); 	   // Window name (TODO: make varible name)
 	glutIdleFunc(main_loop_function);
