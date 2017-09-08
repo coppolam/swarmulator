@@ -3,7 +3,6 @@
 #include <mutex>
 
 #include <fstream>
-#include "parameters.h"
 #include "particle.h"
 #include "agent.h"
 #include "main.h"

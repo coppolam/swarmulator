@@ -1,5 +1,5 @@
 /*
-	Swarmulator is a swarm simulation.
+	Swarmulator is a swarm simulation environment.
 	Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents. 
 	To program specific behaviors, you can do so in the controller.cpp/controller.h file.
 
@@ -38,7 +38,6 @@ using namespace std;
 #define KNEAREST // Use a k-nearest topology according to the second argument
 // #define ROGUE     // Would you like an agent to go rogue?
 // #define rogueID 0 // ID of agent that goes rogue.
-
 
 int nagents;			 // Number of agents in the simulation
 vector<Particle> s;  	 // Set up a vector of relative position filters
