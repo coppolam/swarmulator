@@ -13,7 +13,6 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
-#include "parameters.h"
 
 #define _ddes 0.6 // Desired equilibrium distance
 #define _kr 0.1   // Repulsion gain
@@ -254,6 +253,7 @@ void Controller::get_velocity_command_radial(const int &ID, const vector<float> 
 	// v_r += get_attraction_velocity_bearingbased(u + getrand_float(-0.1, 0.1),v_b);
 
 	// latticemotion    ( v_r, v_adj , v_b, bdes[minindex], v_x, v_y);
+	
 
 	// vector<vector<bool>> links(4); // Triangle with 4
 	// links[0] = {0, 1, 1, 0, 0, 0, 0, 0};

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding = "UTF-8"?>
+
+<!-- Simulation global variables -->
+<simulation>
+    <node name="simulation_updatefreq" value="30"/>
+    <node name="simulation_realtimefactor" value="30"/>
+</simulation>
+
+<!-- Animation global variables -->
+<animation>
+    <node name="window_width"  value="300"/>
+    <node name="window_height" value="300"/>
+    <node name="scale" value="0.5"/>
+    <node name="mouse_drag_speed" value="1.0"/>
+    <node name="mouse_zoom_speed" value="0.5"/>
+    <node name="animation_updatefreq" value="20"/>
+</animation>
+
+<!-- Logger global variables -->
+<logger>
+    <node name="logger_updatefreq" value="1"/>
+</logger>

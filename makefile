@@ -26,6 +26,7 @@ all:
 	sw/simulation/omniscient_observer.cpp \
 	sw/logger/txtwrite.cpp \
 	sw/math/randomgenerator.c \
+	sw/simulation/xmlreader.cpp \
 	$(OPT)
 
 clean: 
