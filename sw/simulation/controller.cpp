@@ -13,7 +13,6 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
-#include "parameters.h"
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();

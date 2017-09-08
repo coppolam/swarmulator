@@ -1,7 +1,6 @@
 #ifndef MOUSEFUNCTIONS_H
 #define MOUSEFUNCTIONS_H
 #include "main.h"
-#include "parameters.h"
 
 #include <thread>
 #include <mutex>

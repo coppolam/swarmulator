@@ -4,7 +4,6 @@
 #include "main.h"
 #include "glincludes.h"
 #include "draw.h"
-#include "parameters.h"
 #include "mousefunctions.h"
 #include "omniscient_observer.h"
 

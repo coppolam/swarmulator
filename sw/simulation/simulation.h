@@ -8,7 +8,6 @@
 #include <algorithm>
 
 #include "main.h"
-#include "parameters.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 

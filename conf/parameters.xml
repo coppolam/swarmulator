@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding = "UTF-8"?>
-<!-- 
-This XML file contains parameters for the simulation that can be changed 
-without rebuilding the code.
--->
 
-<!-- Simulation global variables. -->
+<!-- Simulation global variables -->
 <simulation>
-    <node name="a" value="20"/>
+    <node name="simulation_updatefreq" value="30"/>
+    <node name="simulation_realtimefactor" value="30"/>
 </simulation>
 
-<!-- Animation global variables. -->
+<!-- Animation global variables -->
 <animation>
-    <!-- <node name="i" value="20"/> -->
-    <node name="window_width" value="1000"/>
+    <node name="window_width"  value="300"/>
+    <node name="window_height" value="300"/>
+    <node name="scale" value="0.5"/>
+    <node name="mouse_drag_speed" value="1.0"/>
+    <node name="mouse_zoom_speed" value="0.5"/>
+    <node name="animation_updatefreq" value="20"/>
 </animation>
+
+<!-- Logger global variables -->
+<logger>
+    <node name="logger_updatefreq" value="1"/>
+</logger>

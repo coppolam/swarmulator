@@ -26,14 +26,31 @@ void XMLreader::runthrough(string str)
         {
             std::string attrName = attr.name();
         	if (!attrName.compare("name")) // We only process variable names
-        	{
+        	{  
         		string varname = attr.value();
-        		if (!varname.compare("window_width")) // TODO: hardcode all the variable names!
-        		{
-        			attr = attr.next_attribute();
-	           		window_width = stof(attr.value());//std::cout << " " << attrName << "=" << attr.value() << std::endl;
-        		}
-                debug_msg("In " + str + " node, loaded " + varname + "=" + attr.value());
+                if      (!varname.compare("simulation_updatefreq")) // TODO: hardcode all variables
+                    simulation_updatefreq = stof(attr.next_attribute().value());
+                else if (!varname.compare("simulation_realtimefactor")) // TODO: hardcode all variables
+                    simulation_realtimefactor = stof(attr.next_attribute().value());
+                
+
+        		else if (!varname.compare("window_width")) // TODO: hardcode all variables
+                    window_width = stof(attr.next_attribute().value());
+                else if (!varname.compare("window_height"))
+                    window_height = stof(attr.next_attribute().value());
+                else if (!varname.compare("scale"))
+                    scale = stof(attr.next_attribute().value());
+                else if (!varname.compare("mouse_drag_speed"))
+                    mouse_drag_speed = stof(attr.next_attribute().value());
+                else if (!varname.compare("mouse_zoom_speed"))
+                    mouse_zoom_speed = stof(attr.next_attribute().value());
+                else if (!varname.compare("animation_updatefreq"))
+                    animation_updatefreq = stof(attr.next_attribute().value());
+
+                else if (!varname.compare("logger_updatefreq"))
+                    logger_updatefreq = stof(attr.next_attribute().value());   
+
+                debug_msg("In " + str + " node, loaded " + varname + "=" + attr.next_attribute().value());
         	}
         }
     }

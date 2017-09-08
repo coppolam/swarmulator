@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <ctime>
 
-#include "parameters.h"
 #include "txtwrite.h"
 #include "drawingparams.h"
 

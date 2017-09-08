@@ -28,14 +28,27 @@
 #include "xmlreader.h"				
 using namespace std;
 
+
+#define ANIMATE // Activate animation thread
+// #define whitebackground 	 // Use if you want a white background (can be nice for papers)
+#define LOG // Activate logger thread
+
+// Only one of the following can work
+// #define FORCED 	 // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt" 
+#define KNEAREST // Use a k-nearest topology according to the second argument
+// #define ROGUE     // Would you like an agent to go rogue?
+// #define rogueID 0 // ID of agent that goes rogue.
+
+
 int nagents;			 // Number of agents in the simulation
 vector<Particle> s;  	 // Set up a vector of relative position filters
 int knearest;			 // knearest objects
-float simulation_time;	 // Time in the simulation
-float simtime_seconds;	 // Global counter in real time
 mutex mtx;				 // Mutex needed to lock threads
-bool program_running;    // True if the program is running, turns false when the program is shut down
 
+// Default values
+float simulation_time = 0;	 // Time in the simulation
+float simtime_seconds = 0;	 // Global counter in real time
+bool program_running = false; // True if the program is running, turns false when the program is shut down
 float simulation_updatefreq = 30; // (Hz) Defines the simulation time step
 float simulation_realtimefactor = 30; // Real time factor of simulation
 int window_width = 600;  //1920	 // Native HD window width  (px)
@@ -45,6 +58,7 @@ float mouse_drag_speed = 1.0;  // Speed of mouse to drag animation
 float mouse_zoom_speed = 0.5; // Zoom speed of scroll wheel
 float animation_updatefreq = 25;  // Animation fps
 int backgroundcolor; // Use if you want a white background (can be nice for papers)
+float logger_updatefreq = 1;
 
 /*
 	The main function launches separate threads that control independent
