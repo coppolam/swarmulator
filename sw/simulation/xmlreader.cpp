@@ -28,10 +28,10 @@ void XMLreader::runthrough(string str)
         	if (!attrName.compare("name")) // We only process variable names
         	{
         		string varname = attr.value();
-        		if (!varname.compare("updatefreq")) // TODO: hardcode all the variable names!
+        		if (!varname.compare("window_width")) // TODO: hardcode all the variable names!
         		{
         			attr = attr.next_attribute();
-	           		updatefreq = stof(attr.value());//std::cout << " " << attrName << "=" << attr.value() << std::endl;
+	           		window_width = stof(attr.value());//std::cout << " " << attrName << "=" << attr.value() << std::endl;
         		}
                 debug_msg("In " + str + " node, loaded " + varname + "=" + attr.value());
         	}

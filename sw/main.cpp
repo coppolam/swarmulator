@@ -36,6 +36,16 @@ float simtime_seconds;	 // Global counter in real time
 mutex mtx;				 // Mutex needed to lock threads
 bool program_running;    // True if the program is running, turns false when the program is shut down
 
+float simulation_updatefreq = 30; // (Hz) Defines the simulation time step
+float simulation_realtimefactor = 30; // Real time factor of simulation
+int window_width = 600;  //1920	 // Native HD window width  (px)
+int window_height = 600; //1080	 // Native HD window height (px) 
+float scale = 0.3;       // Scale of agent size
+float mouse_drag_speed = 1.0;  // Speed of mouse to drag animation
+float mouse_zoom_speed = 0.5; // Zoom speed of scroll wheel
+float animation_updatefreq = 25;  // Animation fps
+int backgroundcolor; // Use if you want a white background (can be nice for papers)
+
 /*
 	The main function launches separate threads that control independent
 	functions of the code. All threads are designed to be optional with the

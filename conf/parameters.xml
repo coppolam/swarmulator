@@ -11,12 +11,6 @@ without rebuilding the code.
 
 <!-- Animation global variables. -->
 <animation>
-    <node name="i" value="20"/>
-    <node name="updatefreq" value="2"/>
+    <!-- <node name="i" value="20"/> -->
+    <node name="window_width" value="1000"/>
 </animation>
-
-<!-- Logger global variables. -->
-<logger>
-    <node name="i" value="20"/>
-    <node name="updatefreq" value="1"/>
-</logger>
