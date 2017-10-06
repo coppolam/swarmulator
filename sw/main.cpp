@@ -29,27 +29,17 @@
 using namespace std;
 
 
-#define ANIMATE // Activate animation thread
-// #define whitebackground 	 // Use if you want a white background (can be nice for papers)
-// #define LOG // Activate logger thread
-
-// Only one of the following can work
-// #define FORCED 	 // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt" 
-#define KNEAREST // Use a k-nearest topology according to the second argument
-// #define ROGUE     // Would you like an agent to go rogue?
-// #define rogueID 0 // ID of agent that goes rogue.
-
 int nagents;			 // Number of agents in the simulation
 vector<Particle> s;  	 // Set up a vector of relative position filters
 int knearest;			 // knearest objects
 mutex mtx;				 // Mutex needed to lock threads
 
-// Default values
+// Simulation default values
 float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;
 
-// Animation
+// Animation default values
 float simulation_updatefreq = 30;
 float simulation_realtimefactor = 30;
 int window_width  = 600;

@@ -8,12 +8,12 @@
 
 <!-- Animation global variables -->
 <animation>
-    <node name="window_width"  value="300"/>
-    <node name="window_height" value="300"/>
+    <node name="window_width"  value="500"/>
+    <node name="window_height" value="500"/>
     <node name="scale" value="0.5"/>
     <node name="mouse_drag_speed" value="1.0"/>
     <node name="mouse_zoom_speed" value="0.5"/>
-    <node name="animation_updatefreq" value="20"/>
+    <node name="animation_updatefreq" value="25"/>
 </animation>
 
 <!-- Logger global variables -->

@@ -25,4 +25,14 @@ extern int backgroundcolor; 		// Use if you want a white background (can be nice
 
 extern float logger_updatefreq; 	// Use if you want a white background (can be nice for papers)
 
+#define ANIMATE // Activate animation thread
+// #define whitebackground 	 // Use if you want a white background (can be nice for papers)
+// #define LOG // Activate logger thread
+
+// Only one of the following can work
+// #define FORCED 	 // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt" 
+#define KNEAREST // Use a k-nearest topology according to the second argument
+// #define ROGUE     // Would you like an agent to go rogue?
+// #define rogueID 0 // ID of agent that goes rogue.
+
 #endif /*MAIN_H*/
