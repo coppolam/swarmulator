@@ -58,8 +58,7 @@ void Controller::get_velocity_command_cartesian(const int ID, float &v_x, float 
 	#ifdef KNEAREST
 
 	vector<int> closest = o->request_closest(ID);
-	for (int i = 0; i < knearest; i++)
-	{
+	for (int i = 0; i < knearest; i++) {
 		v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0));
 		v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1));
 	}
@@ -71,16 +70,13 @@ void Controller::get_velocity_command_cartesian(const int ID, float &v_x, float 
 	int i = 0;
 	std::ifstream infile("adjacencymatrix.txt");
 	bool mat[nagents*nagents];
-	while (i<(nagents*nagents))
-	{
+	while (i<(nagents*nagents)) {
 		infile >> mat[i];
 		i++;
 	}
 
-	for (i = 0; i < nagents; i++)
-	{
-		if (i!=ID)
-		{
+	for (i = 0; i < nagents; i++) {
+		if (i!=ID) {
 			v_x += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID*nagents+i]);
 			v_y += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID*nagents+i]);				
 		}
@@ -95,8 +91,7 @@ void Controller::get_velocity_command_cartesian(const int ID, float &v_x, float 
 
 float Controller::saturate(float f)
 {
-	if (saturation) 
-	{
+	if (saturation) {
 		keepbounded(f,-saturation_limits,saturation_limits);
 	}
 	return f;
