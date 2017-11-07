@@ -8,7 +8,7 @@ APPNAME = swarmulator
 CC = g++
 CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO
 
-INC=-I. -Isw -Isw/animation/ -Isw/simulation -Isw/logger -Isw/math
+INC=-I. -Isw -Isw/animation/ -Isw/simulation -Isw/simulation/agents -Isw/simulation/controllers  -Isw/logger -Isw/math
 OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw
 
 $(info ************ SWARMULATOR V0.1 **********)
@@ -20,9 +20,10 @@ all:
 	$(APPNAME) \
 	sw/main.cpp \
 	sw/animation/draw.cpp \
-	sw/simulation/particle.cpp \
+	sw/simulation/agents/particle.cpp \
 	sw/simulation/agent.cpp \
 	sw/simulation/controller.cpp \
+	sw/simulation/controllers/controller_cartesian.cpp \
 	sw/simulation/omniscient_observer.cpp \
 	sw/logger/txtwrite.cpp \
 	sw/math/randomgenerator.c \

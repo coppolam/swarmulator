@@ -1,7 +1,6 @@
 #include "omniscient_observer.h"
-#include "agent.h"
-#include "particle.h"
 #include "main.h"
+
 // struct indexed_array;
 /* Structure holding values and indexes of an array, used for sorting while keeping original index*/
 bool printed = false;

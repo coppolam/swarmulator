@@ -5,7 +5,6 @@ Agent::Agent(uint8_t i, const vector<float> &s):
 {
 	this->state = s;
 	ID = i;
-	controller.set_saturation(1.0);
 };
 
 Agent::~Agent(){};

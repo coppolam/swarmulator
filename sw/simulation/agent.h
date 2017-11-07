@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "controller.h"
+#include "controller_cartesian.h"
 #include "terminalinfo.h"
 
 using namespace std;
@@ -14,17 +14,18 @@ using namespace std;
 class Agent {
 	vector<float> inputs;
 	vector<float> actions;
-	
+
 public:
 	Agent(uint8_t i, const vector<float> &s); // Make two versions for random initialization
 	~Agent();
 
 	uint8_t ID;
-	Controller controller;
 	vector<float> outputs;
 	vector<float> state;
 	vector<float> situation; // vector of happiness situation
 	
+	Controller_Cartesian controller;
+
 	vector<float> get_states();
 	void select_action();
 	virtual void update_position()=0;

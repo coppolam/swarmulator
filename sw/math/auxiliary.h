@@ -1,8 +1,12 @@
 #ifndef AUXILIARY_H
 #define AUXILIARY_H
 
-#include <stdlib.h>     /* qsort */
+#include <stdlib.h> // qsort
 #include <cmath>
+#include <vector>
+#include <string>
+
+using namespace std;
 
 int bool2int(vector<bool> t)
 {

@@ -37,7 +37,9 @@
                 "${workspaceRoot}/sw/animation",
                 "${workspaceRoot}/sw",
                 "${workspaceRoot}/sw/math",
-                "${workspaceRoot}/sw/simulation"
+                "${workspaceRoot}/sw/simulation",
+                "${workspaceRoot}/sw/simulation/agents",
+                "${workspaceRoot}/sw/simulation/controllers"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -53,7 +55,9 @@
                     "${workspaceRoot}/sw/logger",
                     "${workspaceRoot}/sw/animation",
                     "${workspaceRoot}/sw",
-                    "${workspaceRoot}/sw/math"
+                    "${workspaceRoot}/sw/math",
+                    "${workspaceRoot}/sw/simulation/agents",
+                    "${workspaceRoot}/sw/simulation/controllers"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

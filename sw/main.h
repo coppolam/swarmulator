@@ -2,6 +2,10 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <mutex>
+#include <vector>
+#include "particle.h"
+
 extern int nagents;	 			// Number of agents in the swarm
 extern int knearest;			// Knearest neighbours
 extern std::vector<Particle> s; // Set up a vector of relative position filters

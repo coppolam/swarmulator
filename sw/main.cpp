@@ -18,8 +18,6 @@
 #include <mutex>
 
 // Internal Includes
-#include "agent.h"					// Agent
-#include "particle.h"				
 #include "main.h"					// Contains extern defines for global variables
 #include "animation.h"				// Animation thread
 #include "simulation.h"				// Simulation thread
