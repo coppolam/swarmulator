@@ -17,7 +17,7 @@ public:
     float f_repulsion(float u);
     float f_extra(float u);
     float get_attraction_velocity(float u);
-    virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
+    virtual void get_velocity_command(const int ID, float &v_x, float &v_y);
 };
 
 #endif /*CONTROLLER_CARTESIAN_H*/

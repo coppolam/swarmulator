@@ -31,10 +31,10 @@ float Controller_Cartesian::f_extra(float u)
 
 float Controller_Cartesian::get_attraction_velocity(float u)
 {
-	return saturate( f_attraction(u) + f_repulsion(u) + f_extra(u) ); ;
+	return f_attraction(u) + f_repulsion(u) + f_extra(u);
 }
 
-void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void Controller_Cartesian::get_velocity_command(const int ID, float &v_x, float &v_y)
 {
     v_x = 0;
     v_y = 0;
