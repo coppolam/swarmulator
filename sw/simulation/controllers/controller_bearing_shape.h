@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_BEARING_H
-#define CONTROLLER_BEARING_H
+#ifndef CONTROLLER_BEARING_SHAPE_H
+#define CONTROLLER_BEARING_SHAPE_H
 
 #include <vector>
 #include <stdio.h>
@@ -8,11 +8,11 @@
 
 using namespace std;
 
-class Controller_Bearing: public Controller
+class Controller_Bearing_Shape: public Controller
 {
 
 public:
-  Controller_Bearing() : Controller() {};
+  Controller_Bearing_Shape() : Controller() {};
 
   float f_attraction(float u, float b);
   float f_repulsion(float u);
@@ -25,4 +25,4 @@ public:
   void assess_situation(uint8_t ID, vector<bool> &q_old);
 };
 
-#endif /*CONTROLLER_BEARING_H*/
+#endif /*CONTROLLER_BEARING_SHAPE_H*/

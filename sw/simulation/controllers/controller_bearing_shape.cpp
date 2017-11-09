@@ -1,4 +1,4 @@
-#include "controller_bearing.h"
+#include "controller_bearing_shape.h"
 #include "agent.h"
 #include "particle.h"
 #include "main.h"
@@ -14,7 +14,7 @@
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
 
-float Controller_Bearing::f_attraction(float u, float b_eq)
+float Controller_Bearing_Shape::f_attraction(float u, float b_eq)
 {
   float w;
   if (b_eq == M_PI / 2 || b_eq == 0) {
@@ -27,10 +27,10 @@ float Controller_Bearing::f_attraction(float u, float b_eq)
   }
 }
 
-float Controller_Bearing::f_repulsion(float u) {return -_kr / u;}
-float Controller_Bearing::f_extra(float u) {return 0;}
+float Controller_Bearing_Shape::f_repulsion(float u) { return -_kr / u; }
+float Controller_Bearing_Shape::f_extra(float u) {return 0;}
 
-float Controller_Bearing::get_attraction_velocity(float u, float b_eq)
+float Controller_Bearing_Shape::get_attraction_velocity(float u, float b_eq)
 {
   return f_attraction(u, b_eq) + f_repulsion(u) + f_extra(u);;
 }
@@ -51,7 +51,7 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
 }
 
 
-void Controller_Bearing::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
+void Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
 {
   vector<float> blink;
 
@@ -80,7 +80,7 @@ void Controller_Bearing::fill_template(vector<bool> &q, const float b_i, const f
   }
 }
 
-float Controller_Bearing::get_preferred_bearing(const vector<float> &bdes, const float v_b)
+float Controller_Bearing_Shape::get_preferred_bearing(const vector<float> &bdes, const float v_b)
 {
   // Define in bv all equilibrium angles at which the agents can organize themselves
   vector<float> bv;
@@ -121,7 +121,7 @@ float Controller_Bearing::get_preferred_bearing(const vector<float> &bdes, const
   return bdes[minindex];
 }
 
-void Controller_Bearing::assess_situation(uint8_t ID, vector<bool> &q_old)
+void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q_old)
 {
   vector<bool> q(8, false);                        // Set up new q template
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
@@ -145,7 +145,7 @@ void Controller_Bearing::assess_situation(uint8_t ID, vector<bool> &q_old)
   }
 }
 
-void Controller_Bearing::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   vector<bool> q(8,0);
   assess_situation(ID, q);

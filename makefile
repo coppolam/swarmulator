@@ -8,8 +8,14 @@ APPNAME = swarmulator
 CC = g++
 CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO
 
-INC=-I. -Isw -Isw/animation/ -Isw/simulation -Isw/simulation/agents -Isw/simulation/controllers  -Isw/logger -Isw/math
 OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw
+
+SIMULATION_FOLDER = sw/simulation
+ANIMATION_FOLDER = sw/animation
+LOGGER_FOLDER = sw/logger
+MATH_FOLDER = sw/math
+
+INC=-I. -Isw -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -Isw/simulation/agents -Isw/simulation/controllers  -I$(LOGGER_FOLDER) -I$(MATH_FOLDER)
 
 $(info ************ SWARMULATOR V0.1 **********)
 
@@ -19,16 +25,12 @@ all:
 	-o \
 	$(APPNAME) \
 	sw/main.cpp \
-	sw/animation/draw.cpp \
-	sw/simulation/agents/particle.cpp \
-	sw/simulation/agent.cpp \
-	sw/simulation/controller.cpp \
-	sw/simulation/controllers/controller_bearing.cpp \
-	sw/simulation/omniscient_observer.cpp \
-	sw/logger/txtwrite.cpp \
-	sw/math/randomgenerator.c \
-	sw/animation/terminalinfo.cpp \
-	sw/simulation/xmlreader.cpp \
+	$(SIMULATION_FOLDER)/agents/particle.cpp \
+	$(SIMULATION_FOLDER)/controllers/controller_bearing_shape.cpp \
+	$(SIMULATION_FOLDER)/*.cpp \
+	$(ANIMATION_FOLDER)/*.cpp \
+	$(LOGGER_FOLDER)/*.cpp \
+	$(MATH_FOLDER)/randomgenerator.c \
 	$(OPT)
 
 clean: 

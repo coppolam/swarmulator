@@ -22,8 +22,7 @@ public:
 	void set_saturation(const float &saturation_limits);
 	float saturate(float f);
 
-	virtual void get_velocity_command(const int ID, float &v_x, float &v_y)=0;
-
+	virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
 };
 
 

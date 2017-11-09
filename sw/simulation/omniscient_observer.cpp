@@ -25,7 +25,7 @@ void array_sortmintomax_index(int length, indexed_array *x)
   return;
 }
 
-vector<int> OmniscientObserver::request_closest(int ID)
+vector<int> OmniscientObserver::request_closest(uint8_t ID)
 {
   indexed_array dm[nagents - 1];
   vector<int> ind;
@@ -47,7 +47,7 @@ vector<int> OmniscientObserver::request_closest(int ID)
   return ind;
 }
 
-vector<int> OmniscientObserver::request_closest_inrange(int ID, float range)
+vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
 {
   indexed_array dm[nagents - 1];
   vector<int> ind;
@@ -93,11 +93,12 @@ void OmniscientObserver::adjacency_matrix()
 {
   bool mat[nagents * nagents];
 
-  for (int i = 0; i < nagents; i++) {
+  for (uint8_t i = 0; i < nagents; i++)
+  {
     vector<int> vr = request_closest(i);
     vector<int> v(vr.begin(), vr.begin() + knearest); // cut to knearest
 
-    for (int j = 0; j < nagents; j++) {
+    for (uint8_t j = 0; j < nagents; j++) {
       if (i == j) {
         mat[i * nagents + j] = false;
       } else if (find(v.begin(), v.end(), j) != end(v)) { // TODO: Fix to only look at closest k
@@ -120,26 +121,26 @@ void OmniscientObserver::adjacency_matrix()
   }
 }
 
-float OmniscientObserver::get_centroid(int dim)
+float OmniscientObserver::get_centroid(uint8_t dim)
 {
   float c = 0;
 
-  for (int i = 0; i < nagents; i++) {
+  for (uint8_t i = 0; i < nagents; i++) {
     c += s[i].get_position(dim) / nagents;
   }
 
   return c;
 }
 
-float OmniscientObserver::request_distance_dim(int ID, int ID_tracked, int dim)
+float OmniscientObserver::request_distance_dim(uint8_t ID, uint8_t ID_tracked, uint8_t dim)
 {
   return s[ID_tracked].get_position(dim) - s[ID].get_position(dim);
 }
 
-float OmniscientObserver::request_distance(int ID, int ID_tracked)
+float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
 {
   float u = 0;
-  for (int i = 0; i < 2; i++) {
+  for (uint8_t i = 0; i < 2; i++) {
     float dd = s[ID_tracked].get_position(i) - s[ID].get_position(i);
     u += pow(dd, 2);
   }
@@ -147,7 +148,7 @@ float OmniscientObserver::request_distance(int ID, int ID_tracked)
 
 }
 
-float OmniscientObserver::request_bearing(int ID, int ID_tracked)
+float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 {
   return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0));
 }

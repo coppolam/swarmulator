@@ -5,10 +5,11 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdint.h>
+#include "../../conf/parameters.h"
 
-#include "controller_bearing.h"
+#include CONTROLLER_INCLUDE
+
 #include "terminalinfo.h"
-
 using namespace std;
 
 class Agent
@@ -23,9 +24,8 @@ public:
   uint8_t ID;
   vector<float> outputs;
   vector<float> state;
-  vector<float> situation; // vector of happiness situation
 
-  Controller_Bearing controller;
+  CONTROLLER controller;
 
   vector<float> get_states();
   void select_action();

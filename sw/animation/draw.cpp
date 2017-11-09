@@ -24,7 +24,7 @@ void draw::draw_data()
 }
 
 // TODO: Make the position relative to zoom.
-void draw::draw_axes_text(int dim)
+void draw::draw_axes_text(uint8_t dim)
 {
 
   stringstream ss;
@@ -41,7 +41,7 @@ void draw::draw_axes_text(int dim)
 
 }
 
-void draw::draw_agent_number(int ID)
+void draw::draw_agent_number(uint8_t ID)
 {
 
   glRasterPos2f(-0.01, 0.035);
@@ -52,7 +52,7 @@ void draw::draw_agent_number(int ID)
 #endif
 
   stringstream ss;
-  ss << ID;
+  ss << (int)ID;
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
 
 }
@@ -131,7 +131,7 @@ void draw::draw_axes()
 }
 
 // TODO: Add different options dependending on agent type
-void draw::draw_agent(int ID, float x, float y, float z)
+void draw::draw_agent(uint8_t ID, float x, float y, float z)
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, z); // ENU to NED

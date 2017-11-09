@@ -30,9 +30,9 @@ public:
 
   // Swarmulator specific functions
   void draw_data();     // Draw relevant data in the corner
-  void draw_axes_text(int dim);
-  void draw_agent_number(int ID); // Draw an agent number in the location of the agent
-  void draw_agent(int ID, float x, float y, float z); // Draw the actual agent
+  void draw_axes_text(uint8_t dim);
+  void draw_agent_number(uint8_t ID);                 // Draw an agent number in the location of the agent
+  void draw_agent(uint8_t ID, float x, float y, float z); // Draw the actual agent
   void draw_centroid(float x, float y, float z); // Draw a dot at the swarm centroid
 
 };

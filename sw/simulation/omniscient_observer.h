@@ -22,13 +22,13 @@ class OmniscientObserver
 public:
 	OmniscientObserver(){};
 	~OmniscientObserver(){};
-	vector<int> request_closest(int ID); // request IDs of closest k neighbours and for your ID
-	vector<int> request_closest_inrange(int ID, float range);
-	float request_distance_dim(int ID, int ID_tracked, int dim);
-	float request_distance(int ID, int ID_tracked);
-	float request_bearing(int ID, int ID_tracked);
+	vector<int> request_closest(uint8_t ID); // request IDs of closest k neighbours and for your ID
+	vector<int> request_closest_inrange(uint8_t ID, float range);
+	float request_distance_dim(uint8_t ID, uint8_t ID_tracked, uint8_t dim);
+	float request_distance(uint8_t ID, uint8_t ID_tracked);
+	float request_bearing(uint8_t ID, uint8_t ID_tracked);
 	void adjacency_matrix();
-	float get_centroid(int dim);
+	float get_centroid(uint8_t dim);
 };
 
 #endif /*OMNISCIENT_OBSERVER_H*/
