@@ -11,107 +11,105 @@
 bool animation_running = false;
 
 /*
-	Main animation loop. 
-	Takes care of drawing the agents in their corrective location.
+  Main animation loop.
+  Takes care of drawing the agents in their corrective location.
 */
 void main_loop_function()
 {
-	terminalinfo ti;
+  terminalinfo ti;
 
-	if (!animation_running) {	
-		ti.debug_msg("Animation started.");
-		animation_running = true;
-	}
+  if (!animation_running) {
+    ti.debug_msg("Animation started.");
+    animation_running = true;
+  }
 
-	static draw drawer; // Drawer object 
+  static draw drawer; // Drawer object
 
-	// And depth (used internally to block obstructed objects)
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glLoadIdentity();
+  // And depth (used internally to block obstructed objects)
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glLoadIdentity();
 
-	// Get current window size w.r.t. beginning
-	xrat = (float)window_width/(float)glutGet(GLUT_WINDOW_WIDTH);
-	yrat = (float)window_height/(float)glutGet(GLUT_WINDOW_HEIGHT);
-	
-	mouse_draganddrop(); // Activate mouse functions
+  // Get current window size w.r.t. beginning
+  xrat = (float)window_width / (float)glutGet(GLUT_WINDOW_WIDTH);
+  yrat = (float)window_height / (float)glutGet(GLUT_WINDOW_HEIGHT);
 
-	// Draw fixed one time objects
-	drawer.draw_data(); // Put data in corner
-	drawer.draw_axes(); // Put x and y global axes
-	for (int i = 0; i < 3; i++)
-	{	
-		drawer.draw_axes_text(i);
-	}
+  mouse_draganddrop(); // Activate mouse functions
 
-	// Draw all agents
-	for (int i = 0; i < nagents; ++i)	
-	{
-		drawer.draw_agent(
-			i,
-			s[i].state.at(0),
-			s[i].state.at(1),
-			0.0);
-			// TODO: Add orientation once model becomes more complex
-	}
+  // Draw fixed one time objects
+  drawer.draw_data(); // Put data in corner
+  drawer.draw_axes(); // Put x and y global axes
+  for (int i = 0; i < 3; i++) {
+    drawer.draw_axes_text(i);
+  }
 
-	// Draw point at the center of mass of the swarm
-	// drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
+  // Draw all agents
+  for (int i = 0; i < nagents; ++i) {
+    drawer.draw_agent(
+      i,
+      s[i].state.at(0),
+      s[i].state.at(1),
+      0.0);
+    // TODO: Add orientation once model becomes more complex
+  }
 
-	// Swap buffers (color buffers, makes previous render visible)
-	glutSwapBuffers();
+  // Draw point at the center of mass of the swarm
+  // drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
 
-	// Wait until the next time-step according to the update frequency parameter
-	int t_wait = (int) 1000.0*(1.0/animation_updatefreq);
-	this_thread::sleep_for(chrono::milliseconds( t_wait ));
+  // Swap buffers (color buffers, makes previous render visible)
+  glutSwapBuffers();
+
+  // Wait until the next time-step according to the update frequency parameter
+  int t_wait = (int) 1000.0 * (1.0 / animation_updatefreq);
+  this_thread::sleep_for(chrono::milliseconds(t_wait));
 }
 
 /*
-	Initialze OpenGL perspective matrix
+  Initialze OpenGL perspective matrix
 */
 void GL_Setup(int width, int height)
 {
-	glViewport( 0, 0, width, height );
-	glMatrixMode( GL_PROJECTION );
-	glEnable( GL_DEPTH_TEST );
-	gluPerspective( 45, (float)width/height, .1, 100 );
-	glMatrixMode( GL_MODELVIEW );
+  glViewport(0, 0, width, height);
+  glMatrixMode(GL_PROJECTION);
+  glEnable(GL_DEPTH_TEST);
+  gluPerspective(45, (float)width / height, .1, 100);
+  glMatrixMode(GL_MODELVIEW);
 }
 
 /*
-	Thread function that initiates the animation
+  Thread function that initiates the animation
 */
-void start_animation(int argc, char* argv[])
+void start_animation(int argc, char *argv[])
 {
-	// Initialize all variables
-	mx = 0;
-	my = 0;
-	sx = 0;
-	sy = 0;
-	zms = 0;
-	zscale = 0;
-	px = 0;
-	py = 0;
-	paused = false;
-	xrat = 0;
-	yrat = 0;
+  // Initialize all variables
+  mx = 0;
+  my = 0;
+  sx = 0;
+  sy = 0;
+  zms = 0;
+  zscale = 0;
+  px = 0;
+  py = 0;
+  paused = false;
+  xrat = 0;
+  yrat = 0;
 
-	// Set up simulation window
-	glutInit(&argc, argv);
-	glutInitWindowPosition(0, 0);
-	glutInitWindowSize( window_width, window_height);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE );
-	glutCreateWindow("Swarmulator"); 	   // Window name (TODO: make varible name)
-	glutIdleFunc(main_loop_function);
-	GL_Setup(window_width, window_height); // Set up window parameters
+  // Set up simulation window
+  glutInit(&argc, argv);
+  glutInitWindowPosition(0, 0);
+  glutInitWindowSize(window_width, window_height);
+  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+  glutCreateWindow("Swarmulator");     // Window name (TODO: make varible name)
+  glutIdleFunc(main_loop_function);
+  GL_Setup(window_width, window_height); // Set up window parameters
 
-	#ifdef whitebackground
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
-	#endif
-	
-	xrat = (float)window_width/(float)glutGet(GLUT_WINDOW_WIDTH);
-	yrat = (float)window_height/(float)glutGet(GLUT_WINDOW_HEIGHT);
+#ifdef whitebackground
+  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
+#endif
 
-   	glutMainLoop(); // Initiate main drawing loop
+  xrat = (float)window_width / (float)glutGet(GLUT_WINDOW_WIDTH);
+  yrat = (float)window_height / (float)glutGet(GLUT_WINDOW_HEIGHT);
+
+  glutMainLoop(); // Initiate main drawing loop
 }
 
 #endif /*ANIMATION_HPP*/

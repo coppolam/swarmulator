@@ -9,10 +9,11 @@
 
 using namespace std;
 
-class txtwrite {
+class txtwrite
+{
 public:
-	void txtwrite_state(ofstream &logfile);
-	// void write_command(int ID);
+  void txtwrite_state(ofstream &logfile);
+  // void write_command(int ID);
 };
 
 

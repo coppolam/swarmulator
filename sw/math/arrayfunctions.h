@@ -11,8 +11,8 @@
 
 /* Structure holding values and indexes of an array, used for sorting while keeping original index*/
 typedef struct indexed_array {
-    float values;
-    int index;
+  float values;
+  int index;
 } indexed_array;
 
 extern void  array_shiftleft(float *array, int size, int shift);

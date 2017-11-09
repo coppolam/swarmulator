@@ -1,11 +1,11 @@
 /*
-	Swarmulator is a swarm simulation environment.
-	Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents. 
-	To program specific behaviors, you can do so in the controller.cpp/controller.h file.
+  Swarmulator is a swarm simulation environment.
+  Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents.
+  To program specific behaviors, you can do so in the controller.cpp/controller.h file.
 
-	To program specific behaviors, you can do so in the controller.cpp/controller.h class.
+  To program specific behaviors, you can do so in the controller.cpp/controller.h class.
 
-	Copyright Mario Coppola, 2017.
+  Copyright Mario Coppola, 2017.
 */
 
 // External includes
@@ -18,19 +18,19 @@
 #include <mutex>
 
 // Internal Includes
-#include "main.h"					// Contains extern defines for global variables
-#include "animation.h"				// Animation thread
-#include "simulation.h"				// Simulation thread
-#include "logger.h"					// Logger thread
-#include "omniscient_observer.h"	// Class used to simulate sensing
-#include "xmlreader.h"				
+#include "main.h"         // Contains extern defines for global variables
+#include "animation.h"        // Animation thread
+#include "simulation.h"       // Simulation thread
+#include "logger.h"         // Logger thread
+#include "omniscient_observer.h"  // Class used to simulate sensing
+#include "xmlreader.h"
 using namespace std;
 
 
-int nagents;			 // Number of agents in the simulation
-vector<Particle> s;  	 // Set up a vector of relative position filters
-int knearest;			 // knearest objects
-mutex mtx;				 // Mutex needed to lock threads
+int nagents;       // Number of agents in the simulation
+vector<Particle> s;    // Set up a vector of relative position filters
+int knearest;      // knearest objects
+mutex mtx;         // Mutex needed to lock threads
 
 // Simulation default values
 float simulation_time = 0;
@@ -52,36 +52,36 @@ int backgroundcolor; // Use if you want a white background (can be nice for pape
 float logger_updatefreq = 1;
 
 /*
-	The main function launches separate threads that control independent
-	functions of the code. All threads are designed to be optional with the
-	exception of the simulation thread.
+  The main function launches separate threads that control independent
+  functions of the code. All threads are designed to be optional with the
+  exception of the simulation thread.
 */
-int main(int argc, char* argv[])
-{	
-	program_running = true; // Program is running
+int main(int argc, char *argv[])
+{
+  program_running = true; // Program is running
 
-	/* Read the parameters */
-	XMLreader xmlrdr("conf/parameters.xml");
-	xmlrdr.runthrough("simulation");
-	xmlrdr.runthrough("animation");
-	xmlrdr.runthrough("logger");
+  /* Read the parameters */
+  XMLreader xmlrdr("conf/parameters.xml");
+  xmlrdr.runthrough("simulation");
+  xmlrdr.runthrough("animation");
+  xmlrdr.runthrough("logger");
 
-	/* Launch the simulation thread */
-	thread simulation (start_simulation, argc, argv);
+  /* Launch the simulation thread */
+  thread simulation(start_simulation, argc, argv);
 
-	/* Launch the animation thread */
-	#ifdef ANIMATE
-	thread animation (start_animation, argc, argv);
-	#endif
+  /* Launch the animation thread */
+#ifdef ANIMATE
+  thread animation(start_animation, argc, argv);
+#endif
 
-	/* Launch the logging thread to file logs/log<date><time>.txt */
-	#ifdef LOG
-	thread logger (start_logger, argc, argv);
-	#endif
-	
-	/* Keep the program running until terminated by a thread */
-	while(program_running){};
-	
-	/* Exit */
-	return 0;
+  /* Launch the logging thread to file logs/log<date><time>.txt */
+#ifdef LOG
+  thread logger(start_logger, argc, argv);
+#endif
+
+  /* Keep the program running until terminated by a thread */
+  while (program_running) {};
+
+  /* Exit */
+  return 0;
 }

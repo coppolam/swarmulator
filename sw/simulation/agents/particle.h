@@ -8,14 +8,15 @@
 
 using namespace std;
 
-class Particle: public Agent {
+class Particle: public Agent
+{
 public:
-	float dt; // timestep
-	Particle(int i, const vector<float> &state, float tstep): Agent(i, state){
-		dt = tstep;
-	}; // Make two versions for random initialization
+  float dt; // timestep
+  Particle(int i, const vector<float> &state, float tstep): Agent(i, state) {
+    dt = tstep;
+  }; // Make two versions for random initialization
 
-	virtual void update_position();
+  virtual void update_position();
 };
 
 #endif /*PARTICLE_H*/

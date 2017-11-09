@@ -8,22 +8,22 @@ It will create an initial random seed that is used later on, tuned to the curren
 */
 void randomgen_init()
 {
-	int temp;
-	uintptr_t t = (uintptr_t)&temp;
-	
-	srand( t );
+  int temp;
+  uintptr_t t = (uintptr_t)&temp;
+
+  srand(t);
 }
 
 /* Get a random value of type float between a min and max */
 float getrand_float(float min, float max)
 {
-	return min + ((float)rand() / ( RAND_MAX / (max - min) ) ) ;
+  return min + ((float)rand() / (RAND_MAX / (max - min))) ;
 };
 
 /* Get a random value of type int between a min and a max */
 int getrand_int(int min, int max)
 {
-	return min + (rand() / ( RAND_MAX / (max - min) ) ) ;
+  return min + (rand() / (RAND_MAX / (max - min))) ;
 };
 
 // <<complete Box-Muller function>>=
@@ -32,28 +32,28 @@ int getrand_int(int min, int max)
 //
 // Polar form of Box-Muller transform:
 // http://www.design.caltech.edu/erik/Misc/Gaussian.html
-float rand_normal(float mean, float stddev) {
-	static float n2 = 0.0;
-	static int n2_cached = 0;
-	if (!n2_cached) {
-		float x, y, r;
-		do {
-			x = 2.0*rand()/RAND_MAX - 1;
-			y = 2.0*rand()/RAND_MAX - 1;
-			r = x*x + y*y;
-		}  //
-		while (r == 0.0 || r > 1.0); {
-			float d = sqrt(-2.0*log(r)/r);
-			float n1 = x*d;
-			n2 = y*d;
-			float result = n1*stddev + mean;
-			n2_cached = 1;
-			return result;
-		}
-	} 
-	else {
-		n2_cached = 0;
-		return n2*stddev + mean;
-	}
+float rand_normal(float mean, float stddev)
+{
+  static float n2 = 0.0;
+  static int n2_cached = 0;
+  if (!n2_cached) {
+    float x, y, r;
+    do {
+      x = 2.0 * rand() / RAND_MAX - 1;
+      y = 2.0 * rand() / RAND_MAX - 1;
+      r = x * x + y * y;
+    }  //
+    while (r == 0.0 || r > 1.0); {
+      float d = sqrt(-2.0 * log(r) / r);
+      float n1 = x * d;
+      n2 = y * d;
+      float result = n1 * stddev + mean;
+      n2_cached = 1;
+      return result;
+    }
+  } else {
+    n2_cached = 0;
+    return n2 * stddev + mean;
+  }
 
 }

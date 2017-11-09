@@ -7,159 +7,147 @@ bool printed = false;
 
 int compare_index(const void *p1, const void *p2)
 {
-	indexed_array *elem1 = (indexed_array *)p1;    
-	indexed_array *elem2 = (indexed_array *)p2;
+  indexed_array *elem1 = (indexed_array *)p1;
+  indexed_array *elem2 = (indexed_array *)p2;
 
-	if (elem1->values < elem2->values)
-		return -1;
-	else if (elem1->values > elem2->values)
-		return 1;
-	else
-		return 0;
+  if (elem1->values < elem2->values) {
+    return -1;
+  } else if (elem1->values > elem2->values) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 void array_sortmintomax_index(int length, indexed_array *x)
 {
-	qsort(x, length, sizeof(struct indexed_array), compare_index);
-	return;
+  qsort(x, length, sizeof(struct indexed_array), compare_index);
+  return;
 }
 
 vector<int> OmniscientObserver::request_closest(int ID)
 {
-	indexed_array dm[nagents-1];
-	vector<int> ind;
-	for (int i = 0; i < nagents; i++)
-	{
-		dm[i].values = (sqrt(
-			  pow(s[i].get_position(0) - s[ID].get_position(0),2.0) 
-			+ pow(s[i].get_position(1) - s[ID].get_position(1),2.0)
-			));
-		dm[i].index = i;
-	}
+  indexed_array dm[nagents - 1];
+  vector<int> ind;
+  for (int i = 0; i < nagents; i++) {
+    dm[i].values = (sqrt(
+                      pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
+                      + pow(s[i].get_position(1) - s[ID].get_position(1), 2.0)
+                    ));
+    dm[i].index = i;
+  }
 
-	array_sortmintomax_index(nagents, dm);
+  array_sortmintomax_index(nagents, dm);
 
-	// Start from one to eliminate youself from the list (because you are 0 distance)
-	for (int i = 1 ; i < nagents ; i++)
-	{
-	    ind.push_back(dm[i].index);
-	}
+  // Start from one to eliminate youself from the list (because you are 0 distance)
+  for (int i = 1 ; i < nagents ; i++) {
+    ind.push_back(dm[i].index);
+  }
 
-	return ind;
+  return ind;
 }
 
 vector<int> OmniscientObserver::request_closest_inrange(int ID, float range)
 {
-	indexed_array dm[nagents-1];
-	vector<int> ind;
-	for (int i = 0; i < nagents; i++)
-	{
-		dm[i].values = (sqrt(
-			  pow( s[i].get_position(0) - s[ID].get_position(0), 2.0 ) 
-			+ pow( s[i].get_position(1) - s[ID].get_position(1), 2.0 )
-			));
-		dm[i].index = i;
-	}
+  indexed_array dm[nagents - 1];
+  vector<int> ind;
+  for (int i = 0; i < nagents; i++) {
+    dm[i].values = (sqrt(
+                      pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
+                      + pow(s[i].get_position(1) - s[ID].get_position(1), 2.0)
+                    ));
+    dm[i].index = i;
+  }
 
-	array_sortmintomax_index(nagents, dm);
+  array_sortmintomax_index(nagents, dm);
 
-	// Start from one to eliminate youself from the list (because you are 0 distance)
-	for (int i = 1 ; i < nagents ; i++)
-	{
-		if (dm[i].values < range)
-		    ind.push_back(dm[i].index);
-	}
-	cout << "hello" << endl;
+  // Start from one to eliminate youself from the list (because you are 0 distance)
+  for (int i = 1 ; i < nagents ; i++) {
+    if (dm[i].values < range) {
+      ind.push_back(dm[i].index);
+    }
+  }
+  cout << "hello" << endl;
 
-	return ind;
+  return ind;
 }
 
 void mat_print(int n_row, int n_col, bool a[])
 {
-	int row, col, ridx;
-	for (row = 0; row < n_row; row++)
-	{
-		for (col = 0; col < n_col; col++)
-		{
-			ridx = row * n_col + col;
-			if (a[ridx])
-			cout << 1 << " ";
-			else
-			cout << 0 << " ";
-				
-		}
-		cout << ";" << endl;
-	}
+  int row, col, ridx;
+  for (row = 0; row < n_row; row++) {
+    for (col = 0; col < n_col; col++) {
+      ridx = row * n_col + col;
+      if (a[ridx]) {
+        cout << 1 << " ";
+      } else {
+        cout << 0 << " ";
+      }
+
+    }
+    cout << ";" << endl;
+  }
 }
 
 void OmniscientObserver::adjacency_matrix()
 {
-	bool mat[nagents*nagents];
+  bool mat[nagents * nagents];
 
-	for (int i = 0; i < nagents; i++)
-	{
-		vector<int> vr = request_closest(i);
-		vector<int> v(vr.begin(),vr.begin()+knearest); // cut to knearest
+  for (int i = 0; i < nagents; i++) {
+    vector<int> vr = request_closest(i);
+    vector<int> v(vr.begin(), vr.begin() + knearest); // cut to knearest
 
-		for (int j = 0; j < nagents; j++)
-		{
-			if (i == j)
-			{
-				mat[i*nagents+j] = false;
-			}
-			else if ( find(v.begin(),v.end(),j) != end(v) ) // TODO: Fix to only look at closest k
-			{
-				mat[i*nagents+j] = true;
-			}
+    for (int j = 0; j < nagents; j++) {
+      if (i == j) {
+        mat[i * nagents + j] = false;
+      } else if (find(v.begin(), v.end(), j) != end(v)) { // TODO: Fix to only look at closest k
+        mat[i * nagents + j] = true;
+      }
 
-			else
-			{
-				mat[i*nagents+j] = false;
-			}
+      else {
+        mat[i * nagents + j] = false;
+      }
 
-		}
-	}
+    }
+  }
 
-	if ( !printed &&
-		((simulation_realtimefactor*simulation_time/1000000.0)>40.0) )
-	{		
-		cout << "A = [ " ;
-		mat_print(nagents,nagents,mat);
-		printed = true;
-		cout << " ] " << endl;
-	}
+  if (!printed &&
+      ((simulation_realtimefactor * simulation_time / 1000000.0) > 40.0)) {
+    cout << "A = [ " ;
+    mat_print(nagents, nagents, mat);
+    printed = true;
+    cout << " ] " << endl;
+  }
 }
 
 float OmniscientObserver::get_centroid(int dim)
 {
-	float c = 0;
+  float c = 0;
 
-	for (int i = 0; i < nagents; i++)
-	{
-		c += s[i].get_position(dim)/nagents;
-	}
+  for (int i = 0; i < nagents; i++) {
+    c += s[i].get_position(dim) / nagents;
+  }
 
-	return c;
+  return c;
 }
 
 float OmniscientObserver::request_distance_dim(int ID, int ID_tracked, int dim)
 {
-	return s[ID_tracked].get_position(dim) - s[ID].get_position(dim);
+  return s[ID_tracked].get_position(dim) - s[ID].get_position(dim);
 }
 
 float OmniscientObserver::request_distance(int ID, int ID_tracked)
 {
-	float u = 0;
-	for (int i = 0; i < 2; i++)
-	{
-		float dd = s[ID_tracked].get_position(i) - s[ID].get_position(i);
-		u += pow(dd,2);
-	}
-	return sqrt(u);
+  float u = 0;
+  for (int i = 0; i < 2; i++) {
+    float dd = s[ID_tracked].get_position(i) - s[ID].get_position(i);
+    u += pow(dd, 2);
+  }
+  return sqrt(u);
 
 }
 
 float OmniscientObserver::request_bearing(int ID, int ID_tracked)
 {
-	return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0));
+  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0));
 }
