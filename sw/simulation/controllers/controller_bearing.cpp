@@ -50,7 +50,7 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
 }
 
 
-void Controller_Bearing::fill_template(vector<float> &q, const float b_i, const float u, float dmax)
+void Controller_Bearing::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
 {
   vector<float> blink;
 
@@ -70,9 +70,9 @@ void Controller_Bearing::fill_template(vector<float> &q, const float b_i, const 
     for (int j = 0; j < (int)blink.size(); j++) {
       if (abs(b_i - blink[j]) < deg2rad(22.49)) {
         if (j == (int)blink.size() - 1) { // last element is back to 0
-          q[0] = 1;
+          q[0] = true;
         } else {
-          q[j] = 1;
+          q[j] = true;
         }
       }
     }
@@ -120,9 +120,9 @@ float Controller_Bearing::get_preferred_bearing(const vector<float> &bdes, const
   return bdes[minindex];
 }
 
-void Controller_Bearing::assess_situation(int ID, vector<float> &q_old)
+void Controller_Bearing::assess_situation(int ID, vector<bool> &q_old)
 {
-  vector<float> q(8, 0);                        // Set up new q template
+  vector<bool> q(8, false);                        // Set up new q template
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Fill the template for all agents
@@ -146,9 +146,15 @@ void Controller_Bearing::assess_situation(int ID, vector<float> &q_old)
 
 void Controller_Bearing::get_velocity_command(const int ID, float &v_x, float &v_y)
 {
-  // vector<float> situation;
-  // assess_situation(ID, situation);
+  vector<bool> q(8,0);
+  assess_situation(ID, q);
 
+
+  cout << ID << " ";
+  for(int i = 0;i < 8;i++) {
+      cout << q[i] << " ";
+  }
+  cout << endl;
   v_x = 0;
   v_y = 0;
   float v_adj = 0.1;
