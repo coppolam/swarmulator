@@ -6,6 +6,7 @@
 #include "draw.h"
 #include "mousefunctions.h"
 #include "omniscient_observer.h"
+#include "terminalinfo.h"
 
 bool animation_running = false;
 
@@ -15,9 +16,10 @@ bool animation_running = false;
 */
 void main_loop_function()
 {
-	if (!animation_running)
-	{	
-		debug_msg("Animation started.");
+	terminalinfo ti;
+
+	if (!animation_running) {	
+		ti.debug_msg("Animation started.");
 		animation_running = true;
 	}
 

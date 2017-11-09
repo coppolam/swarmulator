@@ -1,11 +1,13 @@
 #ifndef MOUSEFUNCTIONS_H
 #define MOUSEFUNCTIONS_H
+
 #include "main.h"
 
 #include <thread>
 #include <mutex>
 #include <iostream>
 #include <assert.h>     /* assert */
+#include "terminalinfo.h"
 
 // A bit of a hack for compatibility with old GLUT
 // http://iihm.imag.fr/blanch/software/glut-macosx/
@@ -27,34 +29,37 @@ bool paused = false;
 float xrat = 0;
 float yrat = 0;
 
+
 void keyboard_callback(unsigned char key, int x, int y)
 {
+	terminalinfo ti;
+
 	stringstream ss;
 	switch( key ){
 		case 'c':
 			mx = 0;
 			my = 0;
-			info_msg ("Recentering Animation." );
+			ti.info_msg ("Recentering Animation." );
 			break;
 		case 'n':
 			mtx.try_lock();
-			info_msg ("Restarting." );
+			ti.info_msg ("Restarting." );
 			ss << "pkill swarmulator && ./swarmulator " << nagents << " " << knearest;
 			system(ss.str().c_str());
 			break;
 		case 'z':
 			zms = 0;
-			info_msg ("Resetting zoom." );
+			ti.info_msg ("Resetting zoom." );
  			break;
 		case 'q':
-			info_msg ("Quitting." );
+			ti.info_msg ("Quitting." );
 			mtx.try_lock();
 			program_running = false;
 			break;
 		case 'p':
 			if (!paused)
 			{
-				info_msg ("Pause. Press arrow keys to step forward " );
+				ti.info_msg ("Pause. Press arrow keys to step forward " );
 				mtx.try_lock();
 				paused = true;
 				break;
@@ -62,13 +67,13 @@ void keyboard_callback(unsigned char key, int x, int y)
 		case 'r':
 			if (paused)
 			{
-				info_msg ("Resume.");
+				ti.info_msg ("Resume.");
 				mtx.unlock();
 				paused = false;
 				break;
 			}
 		case 's':
-			info_msg ("Stepping through.");
+			ti.info_msg ("Stepping through.");
 			mtx.try_lock();
 			mtx.unlock();
 			this_thread::sleep_for( chrono::microseconds( 1000 ));
@@ -87,7 +92,7 @@ void keyboard_callback(unsigned char key, int x, int y)
 					knearest++;
 				}
 				mtx.unlock();
-				info_msg ("Drawing new agent." );
+				ti.info_msg ("Drawing new agent." );
 				break;
 			}
 	}

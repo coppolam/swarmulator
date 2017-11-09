@@ -12,13 +12,14 @@
 #include "agent.h"
 #include "particle.h"
 #include "main.h"
+#include "terminalinfo.h"
 
 using namespace std;
 using namespace pugi;
 
 class XMLreader {
 	pugi::xml_document doc;
-
+	terminalinfo ti;
 public:
 	XMLreader(string str);
 	~XMLreader();

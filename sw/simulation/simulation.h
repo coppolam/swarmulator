@@ -10,14 +10,17 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
+#include "terminalinfo.h"
 
 bool simulation_running = false;
 
 void run_simulation()
 {
+	terminalinfo ti;
+
 	if (!simulation_running)
-	{	
-		debug_msg("Simulation started.");
+	{
+		ti.debug_msg("Simulation started.");
 		simulation_running = true;
 	}
 	
@@ -87,11 +90,13 @@ vector<float> generate_random_vector_zeromean(const int &length)
 
 void start_simulation(int argc, char* argv[]){
 
+	terminalinfo ti;
+	
 	// Extract number of agents from the argument
     if(argc<=1)
     {
-        debug_msg("Please specify the amount of agents.\n\n");
-        exit(1);
+		ti.debug_msg("Please specify the amount of agents.\n\n");
+		exit(1);
     }
     else
     {
@@ -102,7 +107,7 @@ void start_simulation(int argc, char* argv[]){
 
 	if (argc<=2)
 	{
-	    debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
+	    ti.debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
     	knearest = nagents-1;
     }
     else 
@@ -111,8 +116,8 @@ void start_simulation(int argc, char* argv[]){
     	
     	if (knearest > (nagents-1))
     	{
-		    debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
-        	exit(1);
+			ti.debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
+			exit(1);
     	}
 	}
 

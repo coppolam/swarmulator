@@ -6,7 +6,7 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "controller_cartesian.h"
+#include "controller_bearing.h"
 #include "terminalinfo.h"
 
 using namespace std;
@@ -24,7 +24,7 @@ public:
 	vector<float> state;
 	vector<float> situation; // vector of happiness situation
 	
-	Controller_Cartesian controller;
+	Controller_Bearing controller;
 
 	vector<float> get_states();
 	void select_action();

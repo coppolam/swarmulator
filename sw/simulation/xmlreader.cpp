@@ -6,8 +6,8 @@ XMLreader::XMLreader(string str)
 	xml_parse_result result = doc.load_file(str.c_str());
 	if (result.status) // False (0) = No errors
 	{
-		debug_msg ("Could not load parameters file.");
-		program_running = false;
+        ti.debug_msg("Could not load parameters file.");
+        program_running = false;
 	}
 };
 
@@ -48,10 +48,10 @@ void XMLreader::runthrough(string str)
                     animation_updatefreq = stof(attr.next_attribute().value());
 
                 else if (!varname.compare("logger_updatefreq"))
-                    logger_updatefreq = stof(attr.next_attribute().value());   
+                    logger_updatefreq = stof(attr.next_attribute().value());
 
-                debug_msg("In " + str + " node, loaded " + varname + "=" + attr.next_attribute().value());
-        	}
+                ti.debug_msg("In " + str + " node, loaded " + varname + "=" + attr.next_attribute().value());
+            }
         }
     }
 
