@@ -1,4 +1,4 @@
-#include "fmatrix.h"
+#include "matrix_manipulator.h"
 
 /* Function to add two matrices to eachother */
 vector<float> matrixmanipulator::fmat_add(int n_row, int n_col, vector<float> &a, vector<float> &b)

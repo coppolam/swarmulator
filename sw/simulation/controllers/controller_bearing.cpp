@@ -147,7 +147,7 @@ void Controller_Bearing::assess_situation(uint8_t ID, vector<bool> &q_old)
 
 void Controller_Bearing::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
-  vector<bool> q(8,0);
+  vector<bool> q(8, 0);
   assess_situation(ID, q);
 
   v_x = 0;

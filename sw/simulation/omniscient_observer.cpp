@@ -93,8 +93,7 @@ void OmniscientObserver::adjacency_matrix()
 {
   bool mat[nagents * nagents];
 
-  for (uint8_t i = 0; i < nagents; i++)
-  {
+  for (uint8_t i = 0; i < nagents; i++) {
     vector<int> vr = request_closest(i);
     vector<int> v(vr.begin(), vr.begin() + knearest); // cut to knearest
 

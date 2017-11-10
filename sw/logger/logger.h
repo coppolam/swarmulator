@@ -18,8 +18,7 @@ bool logger_running = false;
 
 void run_logger(ofstream &logfile)
 {
-  if (!logger_running)
-  {
+  if (!logger_running) {
     terminalinfo ti;
     ti.info_msg("Logger started.");
     logger_running = true;
@@ -58,8 +57,9 @@ void start_logger(int argc, char *argv[])
   logfile.open(filename.c_str());
   logfile.precision(3);
 
-  while (program_running)
-  { run_logger(logfile); };
+  while (program_running) {
+    run_logger(logfile);
+  };
 }
 
 #endif /*SIMULATION_H*/

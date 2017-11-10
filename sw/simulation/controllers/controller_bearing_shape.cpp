@@ -14,6 +14,45 @@
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
 
+Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
+{
+  state_action_matrix.clear();
+
+  terminalinfo ti;
+
+  vector<uint8_t> my_arr;
+  ifstream state_action_matrix_file("./conf/state_action_matrix_file.txt");
+
+  if (state_action_matrix_file.is_open()) {
+    ti.info_msg("Opened state action matrix file.");
+
+    // Collect the data inside the a stream, do this line by line
+    while (!state_action_matrix_file.eof()) {
+      string line;
+      getline(state_action_matrix_file, line);
+      stringstream stream_line(line);
+      int buff[10];
+      int columns = 0;
+      int state_index;
+      bool index_checked = false;
+      while (!stream_line.eof()) {
+        if (!index_checked) {
+          stream_line >> state_index;
+          index_checked = true;
+        } else {
+          stream_line >> buff[columns++];
+        }
+      }
+      vector<int> actions_index(begin(buff), begin(buff) + columns);
+      state_action_matrix.insert(pair<int, vector<int>>(state_index, actions_index));
+    }
+    state_action_matrix_file.close();
+  } else {
+    ti.debug_msg("Unable to open state action matrix file.");
+  }
+
+}
+
 float Controller_Bearing_Shape::f_attraction(float u, float b_eq)
 {
   float w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
@@ -158,12 +197,20 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   float b_eq = get_preferred_bearing(bdes, v_b);
   float v_r  = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
 
-  latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-
   vector<bool> q(8, 0);
   assess_situation(ID, q);
   // Convert q to integer value
-  
-  // Find integer value in matrix
+  int state_index = 12;
 
+  // Find integer value in matrix
+  std::map<int, vector<int>>::iterator it;
+  it = state_action_matrix.find(state_index);
+  if (it != state_action_matrix.end()) {
+    int r = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
+                             state_action_matrix.find(state_index)->second.end());
+    cout << r << endl;
+  }
+
+  // Apply action if needed
+  latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
 }
