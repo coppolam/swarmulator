@@ -17,11 +17,8 @@ OmniscientObserver *o = new OmniscientObserver();
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
-
   terminalinfo ti;
-
-  vector<uint8_t> my_arr;
-  ifstream state_action_matrix_file("./conf/state_action_matrix_file.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrix.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -31,7 +28,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
       string line;
       getline(state_action_matrix_file, line);
       stringstream stream_line(line);
-      int buff[10];
+      int buff[10] = {};
       int columns = 0;
       int state_index;
       bool index_checked = false;
@@ -40,14 +37,18 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
           stream_line >> state_index;
           index_checked = true;
         } else {
-          stream_line >> buff[columns++];
+          stream_line >> buff[columns];
+          columns++;
         }
       }
-      vector<int> actions_index(begin(buff), begin(buff) + columns);
-      state_action_matrix.insert(pair<int, vector<int>>(state_index, actions_index));
+      if (columns > 0) {
+        vector<int> actions_index( begin(buff), begin(buff) + columns );
+        state_action_matrix.insert( pair<int, vector<int>>(state_index, actions_index) );
+      }
     }
     state_action_matrix_file.close();
-  } else {
+  }
+  else {
     ti.debug_msg("Unable to open state action matrix file.");
   }
 
@@ -193,22 +194,20 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // What commands does this give?
-  float v_b  = wrapToPi_f(o->request_bearing(ID, closest[0]));
+  float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
   float b_eq = get_preferred_bearing(bdes, v_b);
-  float v_r  = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
+  float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
 
-  vector<bool> q(8, 0);
+  vector<bool> q(8, 0); // Get situation vector q
   assess_situation(ID, q);
-  // Convert q to integer value
-  int state_index = 12;
+  state_index = bool2int(q); // Convert q to integer value
 
-  // Find integer value in matrix
+  // Extract random action
   std::map<int, vector<int>>::iterator it;
   it = state_action_matrix.find(state_index);
   if (it != state_action_matrix.end()) {
     int r = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
                              state_action_matrix.find(state_index)->second.end());
-    cout << r << endl;
   }
 
   // Apply action if needed

@@ -67,8 +67,6 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
       ind.push_back(dm[i].index);
     }
   }
-  cout << "hello" << endl;
-
   return ind;
 }
 
