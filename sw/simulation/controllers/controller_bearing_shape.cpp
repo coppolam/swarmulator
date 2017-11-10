@@ -7,8 +7,8 @@
 #include "auxiliary.h"
 
 #define _ddes 0.6 // Desired equilibrium distance
-#define _kr 0.1   // Repulsion gain
-#define _ka 5   // Attraction gain
+#define _kr 0.1 // Repulsion gain
+#define _ka 5 // Attraction gain
 #define _v_adj 0.1 // Adjustment velocity
 
 // The omniscient observer is used to simulate sensing the other agents.
@@ -156,7 +156,7 @@ float Controller_Bearing_Shape::get_preferred_bearing(const vector<float> &bdes,
 
 void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q_old)
 {
-  vector<bool> q(8, false);                        // Set up new q template
+  vector<bool> q(8, false); // Set up new q template
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Fill the template for all agents
@@ -186,9 +186,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // Desired angles, so as to create a matrix
   vector<float> bdes;
   bdes.push_back(deg2rad(0));
-  // bdes.push_back(deg2rad(  45));
+  bdes.push_back(deg2rad(  45));
   bdes.push_back(deg2rad(90));
-  // bdes.push_back(deg2rad(  135));
+  bdes.push_back(deg2rad(  135));
 
   // Which neighbors can you sense within the range?
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
@@ -200,16 +200,29 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   vector<bool> q(8, 0); // Get situation vector q
   assess_situation(ID, q);
-  state_index = bool2int(q); // Convert q to integer value
+  int state_index = bool2int(q); // Convert q to integer value
 
   // Extract random action
   std::map<int, vector<int>>::iterator it;
   it = state_action_matrix.find(state_index);
+  int r;
   if (it != state_action_matrix.end()) {
-    int r = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
+    r = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
                              state_action_matrix.find(state_index)->second.end());
+  }
+  else {
+    r = 0;
   }
 
   // Apply action if needed
-  latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+  if (r > 0)
+  {
+    int actionspace_x[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+    int actionspace_y[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+    v_x = _v_adj * (float)actionspace_x[r];
+    v_y = _v_adj * (float)actionspace_y[r];
+  } else {
+    attractionmotion(v_r, v_b, v_x, v_y);
+    // latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+  }
 }

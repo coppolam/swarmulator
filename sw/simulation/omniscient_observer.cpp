@@ -100,9 +100,7 @@ void OmniscientObserver::adjacency_matrix()
         mat[i * nagents + j] = false;
       } else if (find(v.begin(), v.end(), j) != end(v)) { // TODO: Fix to only look at closest k
         mat[i * nagents + j] = true;
-      }
-
-      else {
+      } else {
         mat[i * nagents + j] = false;
       }
 
