@@ -9,7 +9,7 @@
 #define _ddes 0.6 // Desired equilibrium distance
 #define _kr 0.1 // Repulsion gain
 #define _ka 5 // Attraction gain
-#define _v_adj 0.1 // Adjustment velocity
+#define _v_adj 0.3 // Adjustment velocity
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -178,6 +178,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q_old)
   }
 }
 
+vector<bool> moving(100,0);
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
@@ -209,14 +210,14 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   if (it != state_action_matrix.end()) {
     r = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
                              state_action_matrix.find(state_index)->second.end());
+    moving(i) = true;
   }
   else {
     r = 0;
   }
 
   // Apply action if needed
-  if (r > 0)
-  {
+  if (r > 0) {
     int actionspace_x[8] = {0, 1, 1, 1, 0, -1, -1, -1};
     int actionspace_y[8] = {1, 1, 0, -1, -1, -1, 0, 1};
     v_x = _v_adj * (float)actionspace_x[r];
