@@ -14,8 +14,17 @@
 
 using namespace std;
 
+bool logger_running = false;
+
 void run_logger(ofstream &logfile)
 {
+  if (!logger_running)
+  {
+    terminalinfo ti;
+    ti.info_msg("Logger started.");
+    logger_running = true;
+  }
+
   static txtwrite writer;
 
   if (!paused) {

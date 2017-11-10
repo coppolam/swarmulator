@@ -16,10 +16,10 @@ bool animation_running = false;
 */
 void main_loop_function()
 {
-  terminalinfo ti;
 
   if (!animation_running) {
-    ti.debug_msg("Animation started.");
+    terminalinfo ti;
+    ti.info_msg("Animation started.");
     animation_running = true;
   }
 

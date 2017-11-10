@@ -16,18 +16,16 @@ bool simulation_running = false;
 
 void run_simulation()
 {
-	terminalinfo ti;
 
-	if (!simulation_running)
-	{
-		ti.debug_msg("Simulation started.");
+	if (!simulation_running) {
+		terminalinfo ti;
+		ti.info_msg("Simulation started.");
 		simulation_running = true;
 	}
 	
 	// The mutex ensures that while the positions are updated by the simulation thread, other threads are not trying to access the data.
 	mtx.lock();
-	for (int i = 0; i < nagents; i++)
-	{
+	for (int i = 0; i < nagents; i++) {
 		s[i].update_position();
 	}
 	mtx.unlock();
@@ -64,8 +62,9 @@ void simulation_start()
 {
 	simulation_time = 0.0; // Initialize simulation time to zero.
 
-	while(true)
-		{ run_simulation(); };
+	while(true) {
+		run_simulation();
+	};
 }
 
 /* Generate a random vector with zero mean */
@@ -73,15 +72,13 @@ vector<float> generate_random_vector_zeromean(const int &length)
 {
 	// Generate the random vector
 	vector<float> v(length,0);
-	for (int i = 0; i < length; i++)
-	{
+	for (int i = 0; i < length; i++) {
     	v[i] = getrand_float(-0.5,0.5);
     }
 
     // Adjust to zero mean
     vector<float> temp = v;
-    for (int i = 0; i < length; i++)
-    {
+    for (int i = 0; i < length; i++) {
     	v[i] = v[i]-vector_mean(temp);
     }
     
@@ -93,29 +90,24 @@ void start_simulation(int argc, char* argv[]){
 	terminalinfo ti;
 	
 	// Extract number of agents from the argument
-    if(argc<=1)
-    {
+    if(argc<=1) {
 		ti.debug_msg("Please specify the amount of agents.\n\n");
 		exit(1);
     }
-    else
-    {
+    else {
     	nagents = stoi(argv[1]);
 		s.reserve(nagents); // Reserve spots for the expected amount of agents
     }
 
 
-	if (argc<=2)
-	{
+	if (argc<=2) {
 	    ti.debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
     	knearest = nagents-1;
     }
-    else 
-    {
+    else {
     	knearest = stoi(argv[2]);
     	
-    	if (knearest > (nagents-1))
-    	{
+    	if (knearest > (nagents-1)) {
 			ti.debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
 			exit(1);
     	}
@@ -128,8 +120,7 @@ void start_simulation(int argc, char* argv[]){
  	std::vector<float> y0 = generate_random_vector_zeromean(nagents);
 
 	// Set the model. This main should just spawn n agents at random positions/states.
-	for (int i = 0; i < nagents; i++)
-	{
+	for (int i = 0; i < nagents; i++) {
 		vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 };  // Initial positions/states
 		s.push_back(Particle(i,states,1.0/simulation_updatefreq));
 	}

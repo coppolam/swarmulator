@@ -16,15 +16,8 @@ OmniscientObserver *o = new OmniscientObserver();
 
 float Controller_Bearing_Shape::f_attraction(float u, float b_eq)
 {
-  float w;
-  if (b_eq == M_PI / 2 || b_eq == 0) {
-    w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
-    return 1 / (1 + exp(-_ka * (u - w))); //% sigmoid function -- long-range
-  } else {
-    float ddes2 = sqrt(pow(_ddes, 2) + pow(_ddes, 2));
-    w = log((ddes2 / _kr - 1) / exp(-_ka * ddes2)) / _ka;
-    return 1 / (1 + exp(-_ka * (u - w))); //% sigmoid function -- long-range
-  }
+  float w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
+  return 1 / (1 + exp(-_ka * (u - w)));
 }
 
 float Controller_Bearing_Shape::f_repulsion(float u) { return -_kr / u; }
@@ -127,7 +120,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q_old)
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Fill the template for all agents
-  for (int i = 0; i < nagents - 1; i++) {
+  for (uint8_t i = 0; i < nagents - 1; i++) {
     fill_template(q,                                               // Vector to fill
                   wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
                   o->request_distance(ID, closest[i]),             // Distance
@@ -138,7 +131,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q_old)
   std::transform(q.begin(), q.end(), q_old.begin(), q_old.begin(), std::plus<float>()); // sum
 
   // Set to 0 any value that is not observable anymore
-  for (int i = 0; i < 8; i++) {
+  for (uint8_t i = 0; i < 8; i++) {
     if (q[i] == 0) {
       q_old[i] = 0;
     }
@@ -147,9 +140,6 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q_old)
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
-  vector<bool> q(8,0);
-  assess_situation(ID, q);
-
   v_x = 0;
   v_y = 0;
 
@@ -169,5 +159,11 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   float v_r  = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
 
   latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+
+  vector<bool> q(8, 0);
+  assess_situation(ID, q);
+  // Convert q to integer value
+  
+  // Find integer value in matrix
 
 }
