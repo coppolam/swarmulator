@@ -14,8 +14,8 @@ void Particle::update_position()
   state[5] = -2 * (state[3] - v_y); // Acceleration y
 
   // Velocity
-  state[2] += state[4] * dt; // velocity x
-  state[3] += state[5] * dt; // velocity y
+  state[2] = v_x; //state[4] * dt; // velocity x
+  state[3] = v_y; //state[5] * dt; // velocity y
 
   // Position
   state[0] += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // position x

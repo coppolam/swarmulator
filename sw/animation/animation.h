@@ -53,16 +53,14 @@ void main_loop_function()
   }
 
   // Draw velocity directions
-  for (int i = 0; i < nagents; ++i)
-  {
+  for (int i = 0; i < nagents; ++i) {
     drawer.draw_velocity_arrow(
         i,
         s[i].state.at(0),
         s[i].state.at(1),
         0.0,
-        s[i].state.at(2),
-        s[i].state.at(3));
-    // TODO: Add orientation once model becomes more complex
+        s[i].state.at(2), // v_x
+        s[i].state.at(3)); // v_y
   }
 
 

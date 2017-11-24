@@ -1,18 +1,6 @@
 #include "draw.h"
 #include <cmath>
-// Options
-// GL_POINTS,
-// GL_LINES,
-// GL_LINE_STRIP,
-// GL_LINE_LOOP,
-// GL_TRIANGLES,
-// GL_TRIANGLE_STRIP,
-// GL_TRIANGLE_FAN,
-// GL_QUADS,
-// GL_QUAD_STRIP, and
-// GL_POLYGON.
 
-// TODO: Make the position relative to zoom.
 void draw::draw_data()
 {
   glRasterPos2f((-3.9 / zscale - mx), (-3.9 / zscale - my));
@@ -20,13 +8,10 @@ void draw::draw_data()
   stringstream ss;
   ss << "Time[s]:" << simulation_realtimefactor *simulation_time / 1000000.0;
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
-
 }
 
-// TODO: Make the position relative to zoom.
 void draw::draw_axes_text(uint8_t dim)
 {
-
   stringstream ss;
 
   if (dim == 0) {
@@ -38,12 +23,10 @@ void draw::draw_axes_text(uint8_t dim)
   }
 
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
-
 }
 
 void draw::draw_agent_number(uint8_t ID)
 {
-
   glRasterPos2f(-0.01, 0.035);
 #ifdef whitebackground
   glColor3f(0.0, 0.0, 0.0); // Black
@@ -54,7 +37,6 @@ void draw::draw_agent_number(uint8_t ID)
   stringstream ss;
   ss << (int)ID;
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
-
 }
 
 void draw::draw_triangle(double scl)
@@ -88,28 +70,23 @@ void draw::draw_circle(double d)
 
   glColor3ub(255, 255, 255); // White
   glPopMatrix();
-
 }
 
 void draw::draw_line(float x, float y)
 {
   glPushMatrix();
-
   glLineWidth(2.5);
   glColor3f(1.0, 1.0, 1.0);
   glBegin(GL_LINES);
   glVertex3f(0.0, 0.0, 0.0);
-  glVertex3f(x, y, 0);
+  glVertex3f(x, -y, 0);
   glEnd();
-
   glPopMatrix();
-
 }
 
 
 void draw::draw_point()
 {
-
   glPointSize(10.0);
   glBegin(GL_POINTS);
   glVertex3f(0, 0, 0);
@@ -122,28 +99,27 @@ void draw::draw_axes()
 #ifndef whitebackground
   float lineintensity = 0.9;
 #endif
-
   glLineWidth(2.5);
+  
   glBegin(GL_LINES);
 #ifdef whitebackground
   glColor3ub(0, 0, 0); // black
 #else
   glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
 #endif
-
   glVertex3f(-1000,  0.0, 0.0);
   glVertex3f(1000.0,  0.0, 0.0);
   glEnd();
+
   glBegin(GL_LINES);
 #ifdef whitebackground
   glColor3ub(0, 0, 0); // black
 #else
   glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
 #endif
-
   glVertex3f(0.0, -1000.0, 0.0);
   glVertex3f(0.0,  1000.0, 0.0);
-  glEnd();
+  glEnd();  
 }
 
 // TODO: Add different options dependending on agent type
