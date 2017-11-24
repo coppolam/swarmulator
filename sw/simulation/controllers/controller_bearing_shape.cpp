@@ -236,8 +236,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   moving[ID] = false;
   // Apply action if needed
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 50 )
-  {
+  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 100 ) {
     cout << (int)ID << " action=" << selected_action[ID] + 1 << endl;
     moving[ID] = true;
     int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
