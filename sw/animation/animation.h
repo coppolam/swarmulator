@@ -52,6 +52,20 @@ void main_loop_function()
     // TODO: Add orientation once model becomes more complex
   }
 
+  // Draw velocity directions
+  for (int i = 0; i < nagents; ++i)
+  {
+    drawer.draw_velocity_arrow(
+        i,
+        s[i].state.at(0),
+        s[i].state.at(1),
+        0.0,
+        s[i].state.at(2),
+        s[i].state.at(3));
+    // TODO: Add orientation once model becomes more complex
+  }
+
+
   // Draw point at the center of mass of the swarm
   // drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
 

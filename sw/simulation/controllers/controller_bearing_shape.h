@@ -32,9 +32,8 @@ public:
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 
   float get_preferred_bearing(const vector<float> &bdes, const float v_b);
-  void fill_template(vector<bool> &q, const float b_i, const float u, float dmax);
-  void assess_situation(uint8_t ID, vector<bool> &q_old);
-
+  bool fill_template(vector<bool> &q, const float b_i, const float u, float dmax);
+  void assess_situation(uint8_t ID, vector<bool> &q_old, vector<int> &q_old_ID);
 };
 
 #endif /*CONTROLLER_BEARING_SHAPE_H*/

@@ -6,7 +6,7 @@
 #include "omniscient_observer.h"
 #include "auxiliary.h"
 
-#define _ddes 0.6 // Desired equilibrium distance
+#define _ddes 1.0 // Desired equilibrium distance
 #define _kr 0.1 // Repulsion gain
 #define _ka 5 // Attraction gain
 #define _v_adj 0.3 // Adjustment velocity
@@ -84,7 +84,7 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
 }
 
 
-void Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
+bool Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
 {
   vector<float> blink;
 
@@ -99,7 +99,7 @@ void Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, c
   blink.push_back(deg2rad(180 + 135));
   blink.push_back(2 * M_PI);
 
-  // Determine link
+  // Determine link (cycle through all options)
   if (u < dmax) {
     for (int j = 0; j < (int)blink.size(); j++) {
       if (abs(b_i - blink[j]) < deg2rad(22.49)) {
@@ -108,9 +108,13 @@ void Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, c
         } else {
           q[j] = true;
         }
+        return true;
       }
     }
   }
+  
+  return false;
+
 }
 
 float Controller_Bearing_Shape::get_preferred_bearing(const vector<float> &bdes, const float v_b)
@@ -154,42 +158,39 @@ float Controller_Bearing_Shape::get_preferred_bearing(const vector<float> &bdes,
   return bdes[minindex];
 }
 
-void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q_old)
+void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID)
 {
-  vector<bool> q(8, false); // Set up new q template
-  vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
+  q.clear();
+  q.assign(8,false);
 
-  // Fill the template for all agents
+  vector<int> closest = o->request_closest(ID); // Get vector of all neighbor IDs from closest to furthest
+
+  // Fill the template with respect to the agent in question
   for (uint8_t i = 0; i < nagents - 1; i++) {
-    fill_template(q,                                               // Vector to fill
+    if (fill_template(q,                                               // Vector to fill
                   wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
                   o->request_distance(ID, closest[i]),             // Distance
-                  sqrt(pow(_ddes * 1.2, 2) + pow(_ddes * 1.2, 2)));
+                  sqrt(pow(_ddes * 1.2, 2) + pow(_ddes * 1.2, 2)))){ // Sensor range
+                    q_ID.push_back(closest[i]);
+                  }
   }
 
-  // Add the result to the previous template
-  std::transform(q.begin(), q.end(), q_old.begin(), q_old.begin(), std::plus<float>()); // sum
-
-  // Set to 0 any value that is not observable anymore
-  for (uint8_t i = 0; i < 8; i++) {
-    if (q[i] == 0) {
-      q_old[i] = 0;
-    }
-  }
 }
 
-vector<bool> moving(100,0);
+vector<bool> moving(50, 0);
+vector<int> moving_timer(50, 0);
+
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;
-
+  
   // Desired angles, so as to create a matrix
   vector<float> bdes;
   bdes.push_back(deg2rad(0));
-  bdes.push_back(deg2rad(  45));
+  bdes.push_back(deg2rad(45));
   bdes.push_back(deg2rad(90));
-  bdes.push_back(deg2rad(  135));
+  bdes.push_back(deg2rad(135));
 
   // Which neighbors can you sense within the range?
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
@@ -199,31 +200,58 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   float b_eq = get_preferred_bearing(bdes, v_b);
   float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
 
-  vector<bool> q(8, 0); // Get situation vector q
-  assess_situation(ID, q);
+  vector<bool> q(8, 0); // Make situation vector q
+  vector<int>  q_ID; // Make situation vector q
+  assess_situation(ID, q, q_ID);
   int state_index = bool2int(q); // Convert q to integer value
 
   // Extract random action
   std::map<int, vector<int>>::iterator it;
   it = state_action_matrix.find(state_index);
-  int r;
+  int r = -1;
+  // Is there an action to take
   if (it != state_action_matrix.end()) {
     r = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
-                             state_action_matrix.find(state_index)->second.end());
-    moving(i) = true;
-  }
-  else {
-    r = 0;
+                         state_action_matrix.find(state_index)->second.end()); 
   }
 
+  // cout << (int)ID << " q = ";
+  // for (uint8_t i = 0; i < 8; i++)
+  //   cout << q[i] << " ";
+  // cout << endl << "q_ID = ";
+  // for (uint8_t i = 0; i < q_ID.size(); i++) {
+  //   cout << q_ID[i] << " ";
+  // }
+  // cout << endl;
+
+  // If I'm not moving yet, are my neighbors moving?
+  bool canImove = true;
+  for (uint8_t i = 0; i < q_ID.size(); i++) {
+    if (moving[q_ID[i]]) {
+      // Somebody nearby is moving
+      canImove = false;
+    }
+  }
+
+  cout << (int)ID <<" move?="<< (int)canImove << " action=" << r+1 << endl;
+  
   // Apply action if needed
-  if (r > 0) {
-    int actionspace_x[8] = {0, 1, 1, 1, 0, -1, -1, -1};
-    int actionspace_y[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+  if (( (r > -1 && canImove) || (moving[ID] && moving_timer[ID]<50) ) && moving_timer[ID] < 50) {
+    int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+    int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
     v_x = _v_adj * (float)actionspace_x[r];
     v_y = _v_adj * (float)actionspace_y[r];
-  } else {
+    moving[ID] = true;
+    moving_timer[ID]++;
+  } else if (!canImove) {
+    moving[ID] = false;
     attractionmotion(v_r, v_b, v_x, v_y);
-    // latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+    moving_timer[ID] = 0;
+  } else {
+    moving[ID] = false;
+    latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+    moving_timer[ID] = 0;
   }
+  keepbounded(v_x, -1, 1);
+  keepbounded(v_y, -1, 1);
 }

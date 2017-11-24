@@ -91,6 +91,22 @@ void draw::draw_circle(double d)
 
 }
 
+void draw::draw_line(float x, float y)
+{
+  glPushMatrix();
+
+  glLineWidth(2.5);
+  glColor3f(1.0, 1.0, 1.0);
+  glBegin(GL_LINES);
+  glVertex3f(0.0, 0.0, 0.0);
+  glVertex3f(x, y, 0);
+  glEnd();
+
+  glPopMatrix();
+
+}
+
+
 void draw::draw_point()
 {
 
@@ -141,6 +157,14 @@ void draw::draw_agent(uint8_t ID, float x, float y, float z)
   glPopMatrix();
 }
 
+void draw::draw_velocity_arrow(uint8_t ID, float x, float y, float z, float v_x, float v_y)
+{
+  glPushMatrix();
+  glTranslatef(y * xrat, x * yrat, z); // ENU to NED
+  glRotatef(90.0, 0.0, 0, 1);
+  draw_line(v_x, v_y);
+  glPopMatrix();
+}
 
 void draw::draw_centroid(float x, float y, float z)
 {
