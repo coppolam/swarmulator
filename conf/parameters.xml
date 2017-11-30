@@ -3,7 +3,7 @@
 <!-- Simulation global variables -->
 <simulation>
     <node name="simulation_updatefreq" value="30"/>
-    <node name="simulation_realtimefactor" value="10"/>
+    <node name="simulation_realtimefactor" value="30"/>
 </simulation>
 
 <!-- Animation global variables -->

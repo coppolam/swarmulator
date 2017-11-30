@@ -8,8 +8,8 @@
 
 #define _ddes 1.0 // Desired equilibrium distance
 #define _kr 0.1 // Repulsion gain
-#define _ka 5 // Attraction gain
-#define _v_adj 0.2 // Adjustment velocity
+#define _ka 2 // Attraction gain
+#define _v_adj 0.4 // Adjustment velocity
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -18,7 +18,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrix.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrix_triangle4.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -77,7 +77,6 @@ void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y
 void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
   attractionmotion(v_r + v_adj, v_b, v_x, v_y);
-
   // Additional force for for reciprocal alignment
   v_x += -v_adj * cos(bdes * 2 - v_b);
   v_y += -v_adj * sin(bdes * 2 - v_b);
@@ -112,9 +111,7 @@ bool Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, c
       }
     }
   }
-  
   return false;
-
 }
 
 float Controller_Bearing_Shape::get_preferred_bearing(const vector<float> &bdes, const float v_b)
@@ -206,16 +203,16 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   uint state_index = bool2int(q);
 
   // Print state
-  // cout << (int)ID << " q = ";
-  // for (uint8_t i = 0; i < 8; i++)
-  //   cout << q[i] << " ";
-  // cout << endl << "q_ID = ";
-  // for (uint8_t i = 0; i < q_ID.size(); i++) {
-  //   cout << q_ID[i] << " ";
-  // }
-  // cout << endl << o->request_distance(ID, closest[0]) << endl;
+  cout << (int)ID << " q = ";
+  for (uint8_t i = 0; i < 8; i++)
+    cout << q[i] << " ";
+  cout << endl << "q_ID = ";
+  for (uint8_t i = 0; i < q_ID.size(); i++) {
+    cout << q_ID[i] << " ";
+  }
+  cout << endl << o->request_distance(ID, closest[0]) << endl;
 
-  // If I'm not moving yet, are my neighbors moving?
+  // Can I move or are my neighbors moving?
   bool canImove = true;
   for (uint8_t i = 0; i < q_ID.size(); i++) {
     if (moving[q_ID[i]]) { // Somebody nearby is moving
@@ -226,21 +223,19 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // Action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
+  
   if (state_action_row != state_action_matrix.end() && !moving[ID]) {
     selected_action[ID] = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
-                                            state_action_matrix.find(state_index)->second.end());
-  }
-  else if (!moving[ID]) {
+                                          state_action_matrix.find(state_index)->second.end());
+  } else if (!moving[ID]) {
     selected_action[ID] = -2;
   }
 
   moving[ID] = false;
-  // Apply action if needed
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 100 ) {
-    cout << (int)ID << " action=" << selected_action[ID] + 1 << endl;
+  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200 ) {
     moving[ID] = true;
-    int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
-    int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+    int actionspace_y[8] = {0, 1, 1,  1,  0, -1, -1, -1};
+    int actionspace_x[8] = {1, 1, 0, -1, -1, -1,  0,  1};
     v_x = _v_adj * (float)actionspace_x[selected_action[ID]];
     v_y = _v_adj * (float)actionspace_y[selected_action[ID]];
     moving_timer[ID]++;
