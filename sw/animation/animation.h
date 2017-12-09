@@ -44,11 +44,13 @@ void main_loop_function()
 
   // Draw all agents
   for (int i = 0; i < nagents; ++i) {
+    mtx.lock();
     drawer.draw_agent(
       i,
       s[i].state.at(0),
       s[i].state.at(1),
       0.0);
+    mtx.unlock();
     // TODO: Add orientation once model becomes more complex
   }
 

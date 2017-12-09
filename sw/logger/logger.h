@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <ctime>
 
+#include "main.h"
 #include "txtwrite.h"
 #include "drawingparams.h"
 
@@ -26,8 +27,10 @@ void run_logger(ofstream &logfile)
 
   static txtwrite writer;
 
-  if (!paused) {
+  if (!paused && simulation_realtimefactor * simulation_time / 1000000.0 > 1.0) {
+    mtx.lock();
     writer.txtwrite_state(logfile);
+    mtx.unlock();
   }
 
   int t_wait = (int) 1000000.0 * (1.0 / (logger_updatefreq * simulation_realtimefactor));

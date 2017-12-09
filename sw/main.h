@@ -31,7 +31,7 @@ extern float logger_updatefreq;   // Use if you want a white background (can be 
 
 #define ANIMATE // Activate animation thread
 // #define whitebackground   // Use if you want a white background (can be nice for papers)
-// #define LOG // Activate logger thread
+#define LOG // Activate logger thread
 
 // Only one of the following can work
 // #define FORCED    // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt"
