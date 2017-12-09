@@ -1,6 +1,5 @@
 swarmulator
 logs/
-conf/*.xml
-conf/parameters.xml
+#conf/*.xml
 conf/parameters.h
 conf/*.txt
