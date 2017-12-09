@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding = "UTF-8"?>
 
 <!-- Simulation global variables -->
-<simulatiodfsfsn>
+<simulation>
     <node name="simulation_updatefreq" value="30"/>
     <node name="simulation_realtimefactor" value="30"/>
 </simulation>
