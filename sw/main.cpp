@@ -47,6 +47,7 @@ float mouse_drag_speed = 1.0;
 float mouse_zoom_speed = 0.5;
 float animation_updatefreq = 25;
 int backgroundcolor; // Use if you want a white background (can be nice for papers)
+bool visible_centroid = 0;
 
 // Logger
 float logger_updatefreq = 1;

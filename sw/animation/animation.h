@@ -9,6 +9,7 @@
 #include "terminalinfo.h"
 
 bool animation_running = false;
+OmniscientObserver *obs = new OmniscientObserver();
 
 /*
   Main animation loop.
@@ -67,7 +68,9 @@ void main_loop_function()
 
 
   // Draw point at the center of mass of the swarm
-  // drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
+  if (visible_centroid) {
+    drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
+  }
 
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();
@@ -126,4 +129,4 @@ void start_animation(int argc, char *argv[])
   glutMainLoop(); // Initiate main drawing loop
 }
 
-#endif /*ANIMATION_HPP*/
+#endif /*ANIMATION_H*/

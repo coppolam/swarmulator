@@ -43,6 +43,8 @@ void XMLreader::runthrough(string str)
           mouse_zoom_speed = stof(attr.next_attribute().value());
         } else if (!varname.compare("animation_updatefreq")) {
           animation_updatefreq = stof(attr.next_attribute().value());
+        } else if (!varname.compare("visible_centroid")) {
+          visible_centroid = stof(attr.next_attribute().value());
         }
 
         else if (!varname.compare("logger_updatefreq")) {
