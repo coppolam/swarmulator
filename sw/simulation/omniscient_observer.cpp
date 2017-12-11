@@ -53,7 +53,7 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
   vector<int> ind;
   for (int i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
-                      pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
+                        pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
                       + pow(s[i].get_position(1) - s[ID].get_position(1), 2.0)
                     ));
     dm[i].index = i;
@@ -119,12 +119,9 @@ void OmniscientObserver::adjacency_matrix()
 float OmniscientObserver::get_centroid(uint8_t dim)
 {
   float c = 0;
-
   for (uint8_t i = 0; i < nagents; i++) {
-
     c += s[i].get_position(dim) / (float)nagents;
   }
-
   return c;
 }
 
@@ -141,7 +138,6 @@ float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
     u += pow(dd, 2);
   }
   return sqrt(u);
-
 }
 
 float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)

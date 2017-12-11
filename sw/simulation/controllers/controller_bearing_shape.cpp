@@ -76,10 +76,18 @@ void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y
 
 void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
-  attractionmotion(v_r + v_adj, v_b, v_x, v_y);
+  attractionmotion(v_r , v_b, v_x, v_y);
   // Additional force for for reciprocal alignment
   v_x += -v_adj * cos(bdes * 2 - v_b);
   v_y += -v_adj * sin(bdes * 2 - v_b);
+}
+
+void actionmotion(const int selected_action, float &v_x, float &v_y)
+{
+  int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+  int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+  v_x = _v_adj * (float)actionspace_x[selected_action];
+  v_y = _v_adj * (float)actionspace_y[selected_action];
 }
 
 
@@ -176,12 +184,11 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
 vector<bool> moving(50, 0);
 vector<int> moving_timer(50, 0);
 vector<int> selected_action(50,-1);
+vector<int> waiting_timer(50,0);
+// vector<int> state_index(50,0);
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
-  // terminalinfo ti;
-  // ti.info_msg("Choosing action");
-
   v_x = 0;
   v_y = 0;
   
@@ -203,19 +210,29 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   uint state_index = bool2int(q);
 
   // Print state
-  // cout << (int)ID << " q = ";
-  // for (uint8_t i = 0; i < 8; i++)
-  //   cout << q[i] << " ";
-  // cout << endl << "q_ID = ";
-  // for (uint8_t i = 0; i < q_ID.size(); i++) {
-  //   cout << q_ID[i] << " ";
-  // }
-  // cout << endl << o->request_distance(ID, closest[0]) << endl;
+  cout << (int)ID << " q = ";
+  for (uint8_t i = 0; i < 8; i++)
+    cout << q[i] << " ";
+  cout << endl << "q_ID = ";
+  for (uint8_t i = 0; i < q_ID.size(); i++) {
+    cout << q_ID[i] << " ";
+  }
+  cout << endl << o->request_distance(ID, closest[0]) << endl;
+
+
+  // Find if you are in a desired state
+  bool desired_state;
+  vector<uint> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
+  if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
+    desired_state = true;
+  else
+    desired_state = false;
+
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
   for (uint8_t i = 0; i < q_ID.size(); i++) {
-    if (moving[q_ID[i]]) { // Somebody nearby is moving
+    if (moving[q_ID[i]]) { // Somebody nearby is already moving
       canImove = false;
     }
   }
@@ -224,25 +241,35 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
   
-  if (state_action_row != state_action_matrix.end() && !moving[ID]) {
-    selected_action[ID] = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
-                                          state_action_matrix.find(state_index)->second.end());
-  } else if (!moving[ID]) {
-    selected_action[ID] = -2;
-  }
+  // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
+  // If you are already busy with an action, then don't change the action
+  int t_start = 100;
+  int t_end = t_start + 100;
 
+  if (!moving[ID]) {
+    if (state_action_row != state_action_matrix.end() && !moving[ID]) {
+      selected_action[ID] = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
+                                            state_action_matrix.find(state_index)->second.end());
+    } else {
+      selected_action[ID] = -2; // State not found... no action to take.
+    }
+  }
+  
   moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200 ) {
-    moving[ID] = true;
-    int actionspace_y[8] = {0, 1, 1,  1,  0, -1, -1, -1};
-    int actionspace_x[8] = {1, 1, 0, -1, -1, -1,  0,  1};
-    v_x = _v_adj * (float)actionspace_x[selected_action[ID]];
-    v_y = _v_adj * (float)actionspace_y[selected_action[ID]];
-    moving_timer[ID]++;
+  if (selected_action[ID] > -1 && // An action is possible
+      canImove && // You can move
+      moving_timer[ID] < t_end) {
+      // You are in not blocked and you have priority. Take an action!
+      actionmotion(selected_action[ID], v_x, v_y);
+      moving[ID] = true;
+      moving_timer[ID]++;
   } else if (canImove) {
+    // You are blocked, but you still have priority!
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+    waiting_timer[ID]++;
     moving_timer[ID] = 0;
   } else {
+    // You are blocked, but also too slow, so no priority!
     attractionmotion(v_r, v_b, v_x, v_y);
     moving_timer[ID] = 0;
   }

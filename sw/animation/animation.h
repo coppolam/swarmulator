@@ -17,7 +17,6 @@ OmniscientObserver *obs = new OmniscientObserver();
 */
 void main_loop_function()
 {
-
   if (!animation_running) {
     terminalinfo ti;
     ti.info_msg("Animation started.");
@@ -26,7 +25,7 @@ void main_loop_function()
 
   static draw drawer; // Drawer object
 
-  // And depth (used internally to block obstructed objects)
+  // Add depth (used internally to block obstructed objects)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
 
@@ -68,9 +67,9 @@ void main_loop_function()
 
 
   // Draw point at the center of mass of the swarm
-  if (visible_centroid) {
-    drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
-  }
+  // if (visible_centroid) {
+  //   drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
+  // }
 
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();

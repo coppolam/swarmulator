@@ -28,7 +28,7 @@ void run_logger(ofstream &logfile)
   static txtwrite writer;
 
   if (!paused && simulation_realtimefactor * simulation_time / 1000000.0 > 1.0) {
-    mtx.lock();
+    mtx.try_lock();
     writer.txtwrite_state(logfile);
     mtx.unlock();
   }

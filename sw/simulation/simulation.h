@@ -16,7 +16,6 @@ bool simulation_running = false;
 
 void run_simulation()
 {
-
   if (!simulation_running) {
     terminalinfo ti;
     ti.info_msg("Simulation started.");
