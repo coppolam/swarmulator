@@ -43,14 +43,12 @@ void main_loop_function()
   }
 
   // Draw all agents
-  for (int i = 0; i < nagents; ++i) {
-    mtx.lock();
+  for (int i = 0; i < nagents; i++) {
     drawer.draw_agent(
       i,
       s[i].state.at(0),
       s[i].state.at(1),
       0.0);
-    mtx.unlock();
     // TODO: Add orientation once model becomes more complex
   }
 
@@ -67,9 +65,9 @@ void main_loop_function()
 
 
   // Draw point at the center of mass of the swarm
-  // if (visible_centroid) {
-  //   drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
-  // }
+  if (visible_centroid) {
+    drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
+  }
 
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();

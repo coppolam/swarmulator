@@ -29,7 +29,6 @@ bool paused = false;
 float xrat = 0;
 float yrat = 0;
 
-
 void keyboard_callback(unsigned char key, int x, int y)
 {
   terminalinfo ti;
@@ -58,11 +57,11 @@ void keyboard_callback(unsigned char key, int x, int y)
       break;
     case 'p':
       if (!paused) {
-        ti.info_msg("Pause. Press arrow keys to step forward ");
+        ti.info_msg("Paused. Press `r' to resume or `s' to step forward.");
         mtx.try_lock();
         paused = true;
-        break;
       }
+      break;
     case 'r':
       if (paused) {
         ti.info_msg("Resume.");
@@ -93,7 +92,6 @@ void keyboard_callback(unsigned char key, int x, int y)
       }
   }
 }
-
 
 void mouse_motion_callback(int x, int y)
 {
