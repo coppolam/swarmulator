@@ -18,7 +18,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -222,8 +222,8 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // Find if you are in a desired state
   bool left_a_desired_state = false;
-  // vector<uint> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
-  vector<uint> sdes = { 3, 28, 96, 162};
+  vector<uint> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
+  // vector<uint> sdes = { 3, 28, 96, 162};
   if (state_index != state_index_store[ID]) {
     if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) != sdes.end() &&
         std::find(sdes.begin(), sdes.end(), state_index) == sdes.end()) {
@@ -258,7 +258,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   
   moving[ID] = false;
-  if (left_a_desired_state || waiting_timer[ID] < 1000)
+  if (left_a_desired_state || waiting_timer[ID] < 2000)
   {
     if (canImove)
       latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
@@ -269,18 +269,18 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   } else if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200) {
     // You are in not blocked and you have priority. Take an action!
     actionmotion(selected_action[ID], v_x, v_y);
-    waiting_timer[ID] = 1400;
+    waiting_timer[ID] = 5400;
     moving[ID] = true;
     moving_timer[ID]++;
   } else if (canImove) {
     // You are static, but you still have priority! Fix your position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    waiting_timer[ID] = 1400;
+    waiting_timer[ID] = 5400;
     moving_timer[ID] = 0;
   } else {
     // You are static, but also too slow, so no priority! Wait about till you do.
     attractionmotion(v_r, v_b, v_x, v_y);
-    waiting_timer[ID] = 1400;
+    waiting_timer[ID] = 5400;
     moving_timer[ID] = 0;
   }
 
