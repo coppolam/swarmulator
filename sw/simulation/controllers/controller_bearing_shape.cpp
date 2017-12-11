@@ -184,9 +184,8 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
 vector<bool> moving(50, 0);
 vector<int> moving_timer(50, 0);
 vector<int> selected_action(50,-1);
-// vector<int> waiting_timer(50,0);
-// vector<int> state_index(50,0);
-// vector<int> state_index(50,0);
+vector<int> waiting_timer(50,0);
+vector<int> state_index_store(50,0);
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
@@ -208,7 +207,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   vector<bool> state(8, 0);
   vector<int>  state_ID;
   assess_situation(ID, state, state_ID); // The ID is just used for simulation purposes
-  uint state_index = bool2int(state);
+  int state_index = bool2int(state);
 
   // Print state
   // cout << (int)ID << " q = ";
@@ -222,20 +221,18 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
 
   // Find if you are in a desired state
-  // bool left_a_desired_state =false;
+  bool left_a_desired_state = false;
   // vector<uint> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
-  // if (state_index_new != state_index[ID]) {
-  //   if (std::find(sdes.begin(), sdes.end(), state_index[ID]) != sdes.end() &&
-  //       std::find(sdes.begin(), sdes.end(), state_index_new) == sdes.end()) {
-  //     left_a_desired_state = true;
-  //      waiting_timer[ID] = 0;
-  //     cout << (int)ID <<" left a desired state! Now in state " << state_index_new << " from " << state_index[ID] << endl;
-  //   }
-  //   else
-  //     left_a_desired_state = false;
-  // }
-  
-  // state_index[ID] = state_index_new;
+  vector<uint> sdes = { 3, 28, 96, 162};
+  if (state_index != state_index_store[ID]) {
+    if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) != sdes.end() &&
+        std::find(sdes.begin(), sdes.end(), state_index) == sdes.end()) {
+      left_a_desired_state = true;
+      waiting_timer[ID] = 0;
+      cout << (int)ID <<" left a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
+    }
+  }
+  state_index_store[ID] = state_index;
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
@@ -261,30 +258,29 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   
   moving[ID] = false;
-  // if (left_a_desired_state)// || waiting_timer[ID] < 300)
-  // {
-  //   if (canImove)
-  //     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-  //   else
-  //     attractionmotion(v_r, v_b, v_x, v_y);
-  //   waiting_timer[ID]++;
-  //   moving_timer[ID] = 0;
-  // } else 
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200) {
+  if (left_a_desired_state || waiting_timer[ID] < 1000)
+  {
+    if (canImove)
+      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+    else
+      attractionmotion(v_r, v_b, v_x, v_y);
+    waiting_timer[ID]++;
+    moving_timer[ID] = 0;
+  } else if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200) {
     // You are in not blocked and you have priority. Take an action!
     actionmotion(selected_action[ID], v_x, v_y);
-    // waiting_timer[ID] = 400;
+    waiting_timer[ID] = 1400;
     moving[ID] = true;
     moving_timer[ID]++;
   } else if (canImove) {
     // You are static, but you still have priority! Fix your position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    // waiting_timer[ID] = 400;
+    waiting_timer[ID] = 1400;
     moving_timer[ID] = 0;
   } else {
     // You are static, but also too slow, so no priority! Wait about till you do.
     attractionmotion(v_r, v_b, v_x, v_y);
-    // waiting_timer[ID] = 400;
+    waiting_timer[ID] = 1400;
     moving_timer[ID] = 0;
   }
 
