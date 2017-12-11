@@ -121,7 +121,8 @@ float OmniscientObserver::get_centroid(uint8_t dim)
   float c = 0;
 
   for (uint8_t i = 0; i < nagents; i++) {
-    c += s[i].get_position(dim) / nagents;
+
+    c += s[i].get_position(dim) / (float)nagents;
   }
 
   return c;
