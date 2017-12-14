@@ -11,6 +11,7 @@
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 #include "terminalinfo.h"
+#include "kill_functions.h"
 
 bool simulation_running = false;
 
@@ -34,6 +35,9 @@ void run_simulation()
   this_thread::sleep_for(chrono::microseconds(t_wait));
   simulation_time += t_wait;
   simtime_seconds = simulation_realtimefactor * simulation_time / 1000000.0;
+
+  // if (simtime_seconds > 100)
+  //   kill_switch(nagents,knearest);
 }
 
 /* Calculate the mean of a vector element */
