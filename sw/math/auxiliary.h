@@ -33,13 +33,23 @@ inline static void wrapToPi(float &ang)
 
 inline static void wrapTo2Pi(float &ang)
 {
-  if (ang > 2 * M_PI) {
-    while (ang > 2 * M_PI) {
-      ang = ang - 2 * M_PI;
-    }
+  while (ang > 2 * M_PI) {
+    ang = ang - 2 * M_PI;
   }
+  while (ang < 0.0) {
+    ang = ang + 2 * M_PI;
+  }
+}
 
-  else if (ang < 0.0) { while (ang < 0.0) { ang = ang + 2 * M_PI; } }
+inline static int wraptosequence(int x, int min, int max)
+{
+  while (x > max) {
+    x = x - max;
+  }
+  while (x < min) {
+    x = x + max;
+  }
+  return x;
 }
 
 inline static float wrapToPi_f(float ang)
