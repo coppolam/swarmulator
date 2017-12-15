@@ -13,10 +13,19 @@
 #define _ka 2 // Attraction gain
 #define _v_adj 0.4 // Adjustment velocity
 
-#define MOTION_MODE 1 // Use 0 for random or 1-8 to specift a direction.
+#define MOTION_MODE 0 // Use 0 for random or 1-8 to specift a direction.
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
+
+struct MyComparator
+{
+  const vector<int> &value_vector;
+  MyComparator(const vector<int> &val_vec) : value_vector(val_vec) {}
+  bool operator()(int i1, int i2) {
+    return value_vector[i1] < value_vector[i2];
+  }
+};
 
 Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller()
 {
@@ -88,8 +97,8 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
 
 void actionmotion(const int selected_action, float &v_x, float &v_y)
 {
-  int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
   int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+  int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
   v_x = _v_adj * (float)actionspace_x[selected_action];
   v_y = _v_adj * (float)actionspace_y[selected_action];
 }
@@ -232,21 +241,25 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
                                                state_action_row->second.end());
       }
       else {
+        vector<int> possibleactions = state_action_row->second;
         vector<int> difference = state_action_row->second;
+        for_each(possibleactions.begin(), possibleactions.end(), [](int &d) { d += 1; });
+        for_each(difference.begin(), difference.end(), [](int &d) { d += 1; });
+
         for_each(difference.begin(), difference.end(), [](int &d) { d -= MOTION_MODE; });
         for_each(difference.begin(), difference.end(), [](int &d) { d = abs(d); });
-        for_each(difference.begin(), difference.end(), [](int &d) { d = wraptosequence(d,0,3); });
-        sort(difference.begin(), difference.end());
-        cout << "a";
+        for_each(difference.begin(), difference.end(), [](int &d)
+          { if (d>4) {d = 4-wraptosequence(d,0,4);} else {d = wraptosequence(d,0,4);} });
+        sort(possibleactions.begin(), possibleactions.end(), MyComparator(difference));
+
+        if (difference[0] != difference[1]) {
+          selected_action[ID] = possibleactions[0]-1;
+          }
+        else {
+          selected_action[ID] = *select_randomly(state_action_row->second.begin(),
+                                                 state_action_row->second.begin()+1)-1;
+        }
       }
-      //   // % difference = wraptosequence(abs(action_preferred - possibleactions), [0 3]);
-      //   // % [ ~, difference_sort ] = sort(difference);
-      //   // % sorted_actions = possibleactions(difference_sort);
-      //   // %
-      //   //         % if length(unique(difference)) ==
-      //   //     length(difference) % action_idx = sorted_actions(1);
-      //   // % else % action_idx = rand_from_vector(sorted_actions(difference == min(difference)));
-      //   // % end
                                             
     } else {
       selected_action[ID] = -2; // State not found... no action to take.
@@ -254,7 +267,7 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
   }
   
   moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200) {
+  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 300) {
     // You are in not blocked and you have priority. Take an action!
     actionmotion(selected_action[ID], v_x, v_y);
     moving[ID] = true;
