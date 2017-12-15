@@ -11,9 +11,9 @@
 #define _ddes 1.0 // Desired equilibrium distance
 #define _kr 0.1 // Repulsion gain
 #define _ka 2 // Attraction gain
-#define _v_adj 0.4 // Adjustment velocity
+#define _v_adj 0.5 // Adjustment velocity
 
-#define MOTION_MODE 0 // Use 0 for random or 1-8 to specift a direction.
+#define MOTION_MODE 6 // Use 0 for random or 1-8 to specific a direction.
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -256,8 +256,8 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
           selected_action[ID] = possibleactions[0]-1;
           }
         else {
-          selected_action[ID] = *select_randomly(state_action_row->second.begin(),
-                                                 state_action_row->second.begin()+1)-1;
+          selected_action[ID] = *select_randomly(possibleactions.begin(),
+                                                 possibleactions.begin() + 1) -1;
         }
       }
                                             
@@ -267,7 +267,7 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
   }
   
   moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 300) {
+  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200) {
     // You are in not blocked and you have priority. Take an action!
     actionmotion(selected_action[ID], v_x, v_y);
     moving[ID] = true;
