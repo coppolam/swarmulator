@@ -258,7 +258,7 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
 
         // Select
         if (difference[0] != difference[1]) {
-          selected_action[ID] = possibleactions[0]-1;
+          selected_action[ID] = possibleactions[0] - 1;
           }
         else {
           selected_action[ID] = *select_randomly(possibleactions.begin(),
