@@ -13,19 +13,10 @@
 #define _ka 2 // Attraction gain
 #define _v_adj 0.5 // Adjustment velocity
 
-#define MOTION_MODE 6 // Use 0 for random or 1-8 to specific a direction.
+#define MOTION_MODE 1 // Use 0 for random or 1-8 to specific a direction.
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
-
-struct MyComparator
-{
-  const vector<int> &value_vector;
-  MyComparator(const vector<int> &val_vec) : value_vector(val_vec) {}
-  bool operator()(int i1, int i2) {
-    return value_vector[i1] < value_vector[i2];
-  }
-};
 
 Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller()
 {
@@ -236,28 +227,42 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
   // If you are already busy with an action, then don't change the action
   if (!moving[ID]) {
     if (state_action_row != state_action_matrix.end()) {
-      if (MOTION_MODE == 0) {
+      if (MOTION_MODE == 0 || state_action_row->second.size() < 2) {
         selected_action[ID] = *select_randomly(state_action_row->second.begin(),
                                                state_action_row->second.end());
       }
       else {
+        // Possible actions
         vector<int> possibleactions = state_action_row->second;
-        vector<int> difference = state_action_row->second;
-        for_each(possibleactions.begin(), possibleactions.end(), [](int &d) { d += 1; });
-        for_each(difference.begin(), difference.end(), [](int &d) { d += 1; });
+        for_each(possibleactions.begin(), possibleactions.end(), [](int &d) { d++; });
 
+        // Difference to favorite action
+        vector<int> difference = state_action_row->second;
+        for_each(difference.begin(), difference.end(), [](int &d) { d++; });
         for_each(difference.begin(), difference.end(), [](int &d) { d -= MOTION_MODE; });
         for_each(difference.begin(), difference.end(), [](int &d) { d = abs(d); });
         for_each(difference.begin(), difference.end(), [](int &d)
           { if (d>4) {d = 4-wraptosequence(d,0,4);} else {d = wraptosequence(d,0,4);} });
-        sort(possibleactions.begin(), possibleactions.end(), MyComparator(difference));
+        
+        // Sort
+        std::pair<int, int> AB[difference.size()];
+        for (size_t i = 0; i < difference.size(); ++i) {
+          AB[i].first = difference[i];
+          AB[i].second = possibleactions[i];
+        }
+        std::sort(AB, AB + difference.size());
+        for (size_t i = 0; i < difference.size(); ++i) {
+          difference[i] = AB[i].first;
+          possibleactions[i] = AB[i].second;
+        }
 
+        // Select
         if (difference[0] != difference[1]) {
           selected_action[ID] = possibleactions[0]-1;
           }
         else {
           selected_action[ID] = *select_randomly(possibleactions.begin(),
-                                                 possibleactions.begin() + 1) -1;
+                                                 possibleactions.begin() + 1) - 1;
         }
       }
                                             
