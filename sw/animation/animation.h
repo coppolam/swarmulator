@@ -112,10 +112,11 @@ void start_animation(int argc, char *argv[])
   glutInitWindowPosition(0, 0);
   glutInitWindowSize(window_width, window_height);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-  glutCreateWindow("Swarmulator");     // Window name (TODO: make varible name)
+  glutCreateWindow("Swarmulator");
   glutIdleFunc(main_loop_function);
   GL_Setup(window_width, window_height); // Set up window parameters
 
+  glutSetIconTitle("./logo.ico");
 #ifdef whitebackground
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
 #endif
