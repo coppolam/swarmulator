@@ -117,6 +117,7 @@ void start_animation(int argc, char *argv[])
   GL_Setup(window_width, window_height); // Set up window parameters
 
   glutSetIconTitle("./logo.ico");
+  
 #ifdef whitebackground
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
 #endif
