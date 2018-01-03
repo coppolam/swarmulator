@@ -58,7 +58,12 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 
 float Controller_Bearing_Shape::f_attraction(float u, float b_eq)
 {
-  float w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
+  float w;
+  if (!(abs(b_eq - M_PI / 4.0) < 0.1 || abs(b_eq - (3*M_PI/4.0)) < 0.1 ))
+    w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
+  else
+    w = log((_ddes / _kr - 1) / exp(-_ka * sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)))) / _ka;
+
   return 1 / (1 + exp(-_ka * (u - w)));
 }
 
@@ -177,7 +182,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     if (fill_template(q, // Vector to fill
           wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
           o->request_distance(ID, closest[i]), // Distance
-          _ddes*1.8)) { // Sensor range
+          _ddes*sqrt(2)+0.1)) { // Sensor range
             q_ID.push_back(closest[i]);
           }
   }
@@ -236,16 +241,16 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
       // std::map <int> = sdes;
       vector<int>::iterator it;
       int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-      waiting_timer[ID] = 1000 * pow(priority[pos]-1,1.0);
+      waiting_timer[ID] = 0.0;//1000 * pow(priority[pos]-1,1.0);
     }
   }
   state_index_store[ID] = state_index;
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
+  bool centeryoself = false;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
-    if (moving[state_ID[i]] || moving_timer[ID] == 200)
-    { // Somebody nearby is already moving
+    if (moving[state_ID[i]]) { // Somebody nearby is already moving
       canImove = false;
     }
   }
@@ -264,23 +269,29 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   
   moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200 && waiting_timer[ID] == 0)
+  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 500 && waiting_timer[ID] == 0)
   {
     // You are in not blocked and you have priority. Take an action!
     actionmotion(selected_action[ID], v_x, v_y);
     moving[ID] = true;
     moving_timer[ID]++;
-  } else //if (canImove && waiting_timer[ID] == 0)
+
+    if (moving_timer[ID] > 200)
+        latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+
+  } 
+  else if (canImove)// && waiting_timer[ID] == 0)
   {
-    // You are static, but you still have priority! Fix your position.
+  //   // You are static, but you still have priority! Fix your position.
+  // if (!moving[closest[0]])
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    // moving[ID] = true;
     moving_timer[ID] = 0;
   }
-  // else {
-  //   // You are static, but also too slow, so no priority! Wait about till you do.
-  //   // attractionmotion(v_r, v_b, v_x, v_y);
-  //   moving_timer[ID] = 0;
+  // else
+  // {
+    // You are static, but also too slow, so no priority! Wait about till you do.
+    // attractionmotion(v_r, v_b, v_x, v_y);
+    // moving_timer[ID] = 0;
   // }
 
   if (waiting_timer[ID] > 0)
