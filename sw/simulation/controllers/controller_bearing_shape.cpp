@@ -84,7 +84,6 @@ void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y
 void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
   attractionmotion(v_r+v_adj, v_b, v_x, v_y);
-  // Additional force for for reciprocal alignment
   v_x += -v_adj * cos(bdes * 2 - v_b);
   v_y += -v_adj * sin(bdes * 2 - v_b);
 }
@@ -182,7 +181,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     if (fill_template(q, // Vector to fill
           wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
           o->request_distance(ID, closest[i]), // Distance
-          _ddes*sqrt(2)+0.1)) { // Sensor range
+          _ddes*1.5)) { // Sensor range
             q_ID.push_back(closest[i]);
           }
   }
@@ -217,79 +216,84 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   int state_index = bool2int(state);
 
   // Print state
-  cout << (int)ID << " q = ";
-  for (uint8_t i = 0; i < 8; i++)
+  cout << (int)ID << " q  = ";
+  for (uint8_t i = 0; i < 8; i++){
     cout << state[i] << " ";
-  cout << endl << "q_ID = ";
+  }
+  cout << endl << "  ID = ";
   for (uint8_t i = 0; i < state_ID.size(); i++)  {
     cout << state_ID[i] << " ";
   }
-  cout << endl << o->request_distance(ID, closest[0]) << endl;
+  cout << endl;
 
   // Find if you are in a desired state
   // bool left_a_desired_state = false;
   vector<uint> sdes =     {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
   vector<uint> priority = {5, 3 ,  4,  1,  2,    4,   3,   2,   3}; // todo: make this not a hack
-
   // vector<uint> sdes = { 3, 28, 96, 162 };
   // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+  bool situationchanged = false;
   if (state_index != state_index_store[ID]) {
+    situationchanged = true;
     if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
         std::find(sdes.begin(), sdes.end(), state_index) != sdes.end()) {
-      cout << (int)ID <<" left a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
-      // left_a_desired_state = true;
-      // std::map <int> = sdes;
-      vector<int>::iterator it;
+      cout << (int)ID <<" entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
       int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-      waiting_timer[ID] = 0.0;//1000 * pow(priority[pos]-1,1.0);
+      waiting_timer[ID] = 0;//1000 * pow(priority[pos]-1,1.0);
     }
   }
   state_index_store[ID] = state_index;
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
-  bool centeryoself = false;
+  bool shouldImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
-    if (moving[state_ID[i]]) { // Somebody nearby is already moving
+    if (moving[state_ID[i]]){ // Somebody nearby is already moving
       canImove = false;
+    }
+    if (!moving[ID] && wrapToPi_f(o->request_bearing(ID, state_ID[i])) > 0.1) {
+      shouldImove = false;
     }
   }
 
-  // Action
-  std::map<int, vector<int>>::iterator state_action_row;
-  state_action_row = state_action_matrix.find(state_index);
-  
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
+  std::map<int, vector<int>>::iterator state_action_row;
+  state_action_row = state_action_matrix.find(state_index);
   if (state_action_row != state_action_matrix.end() && !moving[ID]) {
-      selected_action[ID] = *select_randomly(state_action_matrix.find(state_index)->second.begin(),
-                                            state_action_matrix.find(state_index)->second.end());
-  } else if (!moving[ID]) {
-        selected_action[ID] = -2; // State not found... no action to take.
+    selected_action[ID] = *select_randomly(
+      state_action_matrix.find(state_index)->second.begin(),
+      state_action_matrix.find(state_index)->second.end());
   }
-  
+  else if (!moving[ID]){
+    selected_action[ID] = -2;
+  }
+
   moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 500 && waiting_timer[ID] == 0)
-  {
-    // You are in not blocked and you have priority. Take an action!
-    actionmotion(selected_action[ID], v_x, v_y);
-    moving[ID] = true;
+  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 300 && waiting_timer[ID]==0) {
+
+    if (o->request_distance(ID, closest[0]) < 0.2 || !shouldImove)
+      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+    else {
+      actionmotion(selected_action[ID], v_x, v_y);
+      moving[ID] = true;
+    }
     moving_timer[ID]++;
-
-    if (moving_timer[ID] > 200)
-        latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-
-  } 
-  else if (canImove)// && waiting_timer[ID] == 0)
-  {
-  //   // You are static, but you still have priority! Fix your position.
-  // if (!moving[closest[0]])
+  }
+  else if (canImove || shouldImove) {
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
     moving_timer[ID] = 0;
   }
+
+  // else if (canImove)
+  // {
+  // //   // You are static, but you still have priority! Fix your position.
+  // // if (!moving[closest[0]])
+  //   latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+  //   moving_timer[ID] = 0;
+  // }
   // else
   // {
-    // You are static, but also too slow, so no priority! Wait about till you do.
     // attractionmotion(v_r, v_b, v_x, v_y);
     // moving_timer[ID] = 0;
   // }
