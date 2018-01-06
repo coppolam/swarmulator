@@ -11,7 +11,7 @@
 #define _ddes 1.0 // Desired equilibrium distance
 #define _kr 0.1 // Repulsion gain
 #define _ka 2 // Attraction gain
-#define _v_adj 0.3 // Adjustment velocity
+#define _v_adj 1.0 // Adjustment velocity
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -97,7 +97,7 @@ void actionmotion(const int selected_action, float &v_x, float &v_y)
 }
 
 
-bool Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
+bool Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, const float u, float dmax, float angle_err)
 {
   vector<float> blink;
 
@@ -115,7 +115,7 @@ bool Controller_Bearing_Shape::fill_template(vector<bool> &q, const float b_i, c
   // Determine link (cycle through all options)
   if (u < dmax) {
     for (int j = 0; j < (int)blink.size(); j++) {
-      if (abs(b_i - blink[j]) < deg2rad(22.49)) {
+      if (abs(b_i - blink[j]) < deg2rad(angle_err)) {
         if (j == (int)blink.size() - 1) { // last element is back to 0
           q[0] = true;
         } else {
@@ -169,7 +169,7 @@ float Controller_Bearing_Shape::get_preferred_bearing(const vector<float> &bdes,
   return bdes[minindex];
 }
 
-void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID)
+void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID, vector<bool> &q_precise)
 {
   q.clear();
   q.assign(8,false);
@@ -181,9 +181,16 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     if (fill_template(q, // Vector to fill
           wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
           o->request_distance(ID, closest[i]), // Distance
-          _ddes*1.5)) { // Sensor range
+          _ddes * 1.7, 22.5)) { // Sensor range, bearing precision
             q_ID.push_back(closest[i]);
           }
+  }
+
+  for (uint8_t i = 0; i < nagents - 1; i++){
+    fill_template(q_precise, // Vector to fill
+      wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
+      o->request_distance(ID, closest[i]), // Distance
+      _ddes * 1.5, 10.0); // Sensor range, bearing precision
   }
 }
 
@@ -211,9 +218,11 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // State
   vector<bool> state(8, 0);
+  vector<bool> state_precise(8, 0);
   vector<int>  state_ID;
-  assess_situation(ID, state, state_ID); // The ID is just used for simulation purposes
+  assess_situation(ID, state, state_ID, state_precise); // The ID is just used for simulation purposes
   int state_index = bool2int(state);
+  int state_index_precise = bool2int(state_precise);
 
   // Print state
   cout << (int)ID << " q  = ";
@@ -226,81 +235,74 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   cout << endl;
 
-  // Find if you are in a desired state
-  // bool left_a_desired_state = false;
-  vector<uint> sdes =     {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
-  vector<uint> priority = {5, 3 ,  4,  1,  2,    4,   3,   2,   3}; // todo: make this not a hack
-  // vector<uint> sdes = { 3, 28, 96, 162 };
-  // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
-  bool situationchanged = false;
-  if (state_index != state_index_store[ID]) {
-    situationchanged = true;
-    if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
-        std::find(sdes.begin(), sdes.end(), state_index) != sdes.end()) {
-      cout << (int)ID <<" entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
-      int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-      waiting_timer[ID] = 0;//1000 * pow(priority[pos]-1,1.0);
-    }
-  }
-  state_index_store[ID] = state_index;
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
   bool shouldImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
-    if (moving[state_ID[i]]){ // Somebody nearby is already moving
+    if (moving[state_ID[i]]) {
+      // If someone is moving you can't move
       canImove = false;
     }
-    if (!moving[ID] && wrapToPi_f(o->request_bearing(ID, state_ID[i])) > 0.1) {
+    if (!moving[ID] && o->request_distance(ID, closest[0]) < 0.9) //&& state_index != state_index_precise)
       shouldImove = false;
+  }
+
+  // Find if you are in a desired state
+  // bool left_a_desired_state = false;
+  vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
+  vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
+  // vector<uint> sdes = { 3, 28, 96, 162 };
+  // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+  bool situationchanged = false;
+  if (state_index != state_index_store[ID])
+  {
+    situationchanged = true;
+    if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
+        std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
+    {
+      cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
+      int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
+      waiting_timer[ID] = 1000 * pow(priority[pos]-1,2.0);
     }
   }
+  state_index_store[ID] = state_index;
+
 
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
-  if (state_action_row != state_action_matrix.end() && !moving[ID]) {
+  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && moving_timer[ID] < 70 ) {
     selected_action[ID] = *select_randomly(
       state_action_matrix.find(state_index)->second.begin(),
       state_action_matrix.find(state_index)->second.end());
   }
-  else if (!moving[ID]){
+  else if (!moving[ID]) {
     selected_action[ID] = -2;
   }
 
   moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 300 && waiting_timer[ID]==0) {
-
-    if (o->request_distance(ID, closest[0]) < 0.2 || !shouldImove)
-      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    else {
-      actionmotion(selected_action[ID], v_x, v_y);
-      moving[ID] = true;
-    }
+  if (selected_action[ID] > -1 && canImove && shouldImove && moving_timer[ID] < 50 && waiting_timer[ID] == 0 )
+  {
+    actionmotion(selected_action[ID], v_x, v_y);
+    moving[ID] = true;
     moving_timer[ID]++;
   }
-  else if (canImove || shouldImove) {
+  else if (canImove) {
+    // What a shame, you could move but you can't. Fix you position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    moving_timer[ID] = 0;
+    if (moving_timer[ID] >= 200)
+      moving_timer[ID] = 0;
   }
 
-  // else if (canImove)
-  // {
-  // //   // You are static, but you still have priority! Fix your position.
-  // // if (!moving[closest[0]])
-  //   latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-  //   moving_timer[ID] = 0;
-  // }
-  // else
-  // {
-    // attractionmotion(v_r, v_b, v_x, v_y);
-    // moving_timer[ID] = 0;
-  // }
+  if (moving_timer[ID] >= 50)
+    moving_timer[ID]++;
 
   if (waiting_timer[ID] > 0)
     waiting_timer[ID]--;
 
   keepbounded(v_x, -1, 1);
   keepbounded(v_y, -1, 1);
+
 }
