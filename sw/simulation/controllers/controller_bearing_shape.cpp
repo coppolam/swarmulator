@@ -11,7 +11,7 @@
 #define _ddes 1.0 // Desired equilibrium distance
 #define _kr 0.1 // Repulsion gain
 #define _ka 2 // Attraction gain
-#define _v_adj 1.0 // Adjustment velocity
+#define _v_adj 0.5 // Adjustment velocity
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -20,7 +20,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -263,7 +263,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     {
       cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
       int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-      waiting_timer[ID] = 1000 * pow(priority[pos]-1,2.0);
+      waiting_timer[ID] = 0;//1000 * pow(priority[pos]-1,2.0);
     }
   }
   state_index_store[ID] = state_index;
@@ -283,7 +283,8 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
 
   moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && shouldImove && moving_timer[ID] < 50 && waiting_timer[ID] == 0 )
+  float timelim = 100;
+  if (selected_action[ID] > -1 && canImove && shouldImove && moving_timer[ID] < timelim && waiting_timer[ID] == 0 )
   {
     actionmotion(selected_action[ID], v_x, v_y);
     moving[ID] = true;
@@ -296,7 +297,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
       moving_timer[ID] = 0;
   }
 
-  if (moving_timer[ID] >= 50)
+  if (moving_timer[ID] >= timelim)
     moving_timer[ID]++;
 
   if (waiting_timer[ID] > 0)
