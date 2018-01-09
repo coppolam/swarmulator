@@ -10,8 +10,8 @@ void Particle::update_position()
   controller.get_velocity_command(ID, v_x, v_y);
 
   // Acceleration
-  state[4] = -6 * (state[2] - v_x); // Acceleration x
-  state[5] = -6 * (state[3] - v_y); // Acceleration y
+  state[4] = -15 * (state[2] - v_x); // Acceleration x
+  state[5] = -15 * (state[3] - v_y); // Acceleration y
 
   // Velocity
   state[2] = state[4] * dt; // velocity x

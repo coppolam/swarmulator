@@ -10,9 +10,9 @@
 #include <algorithm> // std::find
 
 #define _ddes 1.0 // Desired equilibrium distance
-#define _kr 0.1 // Repulsion gain
-#define _ka 2 // Attraction gain
-#define _v_adj 0.5 // Adjustment velocity
+#define _kr 1 // Repulsion gain
+#define _ka 5 // Attraction gain
+#define _v_adj 10 // Adjustment velocity
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -224,7 +224,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   vector<int>  state_ID;
   assess_situation(ID, state, state_ID, state_precise); // The ID is just used for simulation purposes
   int state_index = bool2int(state);
-  int state_index_precise = bool2int(state_precise);
+  // int state_index_precise = bool2int(state_precise);
 
   // Print state
   // cout << (int)ID << " q  = ";
@@ -270,20 +270,17 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   if (s == nagents){
     killer k;
-    k.kill_switch_timer();
+    k.kill_switch();
   }
   cout << endl;
 
-  bool situationchanged = false;
-  if (state_index != state_index_store[ID])
-  {
-    situationchanged = true;
+  if (state_index != state_index_store[ID]) {
     if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
         std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
     {
       cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
       happy[ID] = true;
-      int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
+      // int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
       waiting_timer[ID] = 0; //1000 * pow(priority[pos]-1,2.0);
     }
   }
@@ -294,7 +291,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
-  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && moving_timer[ID] < 70 ) {
+  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && moving_timer[ID] < 1 ) {
     selected_action[ID] = *select_randomly(
       state_action_matrix.find(state_index)->second.begin(),
       state_action_matrix.find(state_index)->second.end());
@@ -304,7 +301,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
 
   moving[ID] = false;
-  float timelim = 200;
+  float timelim = 30;
   if (selected_action[ID] > -1 && canImove && shouldImove && moving_timer[ID] < timelim && waiting_timer[ID] == 0 )
   {
     actionmotion(selected_action[ID], v_x, v_y);
@@ -314,7 +311,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   else if (canImove) {
     // What a shame, you could move but you can't. Fix you position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    if (moving_timer[ID] > 400)
+    if (moving_timer[ID] > timelim*2)
       moving_timer[ID] = 0;
     else
       moving_timer[ID]++;
@@ -325,7 +322,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   if (waiting_timer[ID] > 0)
     waiting_timer[ID]--;
 
-  keepbounded(v_x, -1, 1);
-  keepbounded(v_y, -1, 1);
+  keepbounded(v_x, -2, 2);
+  keepbounded(v_y, -2, 2);
 
 }
