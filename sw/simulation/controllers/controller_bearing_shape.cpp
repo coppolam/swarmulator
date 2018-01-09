@@ -20,7 +20,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -190,7 +190,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     fill_template(q_precise, // Vector to fill
       wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
       o->request_distance(ID, closest[i]), // Distance
-      _ddes * 1.5, 10.0); // Sensor range, bearing precision
+      _ddes * 1.7, 15.0); // Sensor range, bearing precision
   }
 }
 
@@ -207,9 +207,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   
   vector<float> beta_des;
   beta_des.push_back(0.0);
-  beta_des.push_back(M_PI/4.0);
+  // beta_des.push_back(M_PI/4.0);
   beta_des.push_back(M_PI/2.0);
-  beta_des.push_back(3.0*M_PI/4.0);
+  // beta_des.push_back(3.0*M_PI/4.0);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
   float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
@@ -283,7 +283,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
 
   moving[ID] = false;
-  float timelim = 100;
+  float timelim = 200;
   if (selected_action[ID] > -1 && canImove && shouldImove && moving_timer[ID] < timelim && waiting_timer[ID] == 0 )
   {
     actionmotion(selected_action[ID], v_x, v_y);
@@ -293,7 +293,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   else if (canImove) {
     // What a shame, you could move but you can't. Fix you position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    if (moving_timer[ID] >= 200)
+    if (moving_timer[ID] >= 400)
       moving_timer[ID] = 0;
   }
 

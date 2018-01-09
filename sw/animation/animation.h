@@ -65,9 +65,9 @@ void main_loop_function()
 
 
   // Draw point at the center of mass of the swarm
-  if (visible_centroid) {
-    drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
-  }
+  // if (visible_centroid) {
+  //   drawer.draw_centroid(obs->get_centroid(0),obs->get_centroid(1),0.0);
+  // }
 
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();
