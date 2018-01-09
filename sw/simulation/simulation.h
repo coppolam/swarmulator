@@ -37,7 +37,7 @@ void run_simulation()
   simtime_seconds = simulation_realtimefactor * simulation_time / 1000000.0;
 
   // if (simtime_seconds > 100)
-  //   kill_switch(nagents,knearest);
+  //   kill_switch();
 }
 
 /* Calculate the mean of a vector element */

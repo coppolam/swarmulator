@@ -25,6 +25,7 @@ all:
 	-o \
 	$(APPNAME) \
 	sw/main.cpp \
+	sw/kill_functions.cpp \
 	$(SIMULATION_FOLDER)/agents/particle.cpp \
 	$(SIMULATION_FOLDER)/controllers/controller_bearing_shape.cpp \
 	$(SIMULATION_FOLDER)/*.cpp \

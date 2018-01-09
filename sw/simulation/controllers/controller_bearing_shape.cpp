@@ -5,6 +5,7 @@
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 #include "auxiliary.h"
+#include "kill_functions.h"
 
 #include <algorithm> // std::find
 
@@ -20,7 +21,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -190,7 +191,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     fill_template(q_precise, // Vector to fill
       wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
       o->request_distance(ID, closest[i]), // Distance
-      _ddes * 1.7, 15.0); // Sensor range, bearing precision
+      _ddes * 1.7, 22.5); // Sensor range, bearing precision
   }
 }
 
@@ -199,6 +200,7 @@ vector<int> moving_timer(50, 0);
 vector<int> selected_action(50,-1);
 vector<int> waiting_timer(50,0);
 vector<int> state_index_store(50,0);
+vector<bool> happy(50,0);
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
@@ -225,15 +227,15 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   int state_index_precise = bool2int(state_precise);
 
   // Print state
-  cout << (int)ID << " q  = ";
-  for (uint8_t i = 0; i < 8; i++){
-    cout << state[i] << " ";
-  }
-  cout << endl << "  ID = ";
-  for (uint8_t i = 0; i < state_ID.size(); i++)  {
-    cout << state_ID[i] << " ";
-  }
-  cout << endl;
+  // cout << (int)ID << " q  = ";
+  // for (uint8_t i = 0; i < 8; i++){
+  //   cout << state[i] << " ";
+  // }
+  // cout << endl << "  ID = ";
+  // for (uint8_t i = 0; i < state_ID.size(); i++)  {
+  //   cout << state_ID[i] << " ";
+  // }
+  // cout << endl;
 
 
   // Can I move or are my neighbors moving?
@@ -250,10 +252,28 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // Find if you are in a desired state
   // bool left_a_desired_state = false;
-  vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
-  vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
-  // vector<uint> sdes = { 3, 28, 96, 162 };
-  // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+  // vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
+  // vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
+  vector<uint> sdes = { 3, 28, 96, 162 };
+  vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+
+  if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
+    happy[ID] = true;
+  else 
+    happy[ID] = false;
+  
+  cout << (int)ID << " happy  = ";
+  int s = 0;
+  for (uint8_t i = 0; i < nagents; i++){
+    cout << happy[i] << " ";
+    s += happy[i];
+  }
+  if (s == nagents){
+    killer k;
+    k.kill_switch_timer();
+  }
+  cout << endl;
+
   bool situationchanged = false;
   if (state_index != state_index_store[ID])
   {
@@ -262,8 +282,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
         std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
     {
       cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
+      happy[ID] = true;
       int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-      waiting_timer[ID] = 0;//1000 * pow(priority[pos]-1,2.0);
+      waiting_timer[ID] = 0; //1000 * pow(priority[pos]-1,2.0);
     }
   }
   state_index_store[ID] = state_index;
@@ -293,12 +314,13 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   else if (canImove) {
     // What a shame, you could move but you can't. Fix you position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    if (moving_timer[ID] >= 400)
+    if (moving_timer[ID] > 400)
       moving_timer[ID] = 0;
+    else
+      moving_timer[ID]++;
   }
 
-  if (moving_timer[ID] >= timelim)
-    moving_timer[ID]++;
+  // if (moving_timer[ID] >= timelim)
 
   if (waiting_timer[ID] > 0)
     waiting_timer[ID]--;

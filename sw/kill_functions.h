@@ -2,18 +2,17 @@
 #define KILL_FUNCTIONS_H
 
 #include <iostream>
+#include <sstream> // std::stringstream
 
-void restart_switch (int nagents, int knearest) {
-    stringstream ss;
-    ss << "pkill swarmulator && ./swarmulator " << nagents << " " << knearest;
-    system(ss.str().c_str());
-}
+using namespace std;
 
-void kill_switch(int nagents, int knearest)
+class killer
 {
-    stringstream ss;
-    ss << "pkill swarmulator";
-    system(ss.str().c_str());
-}
+public:
+    killer(){}; // Make two versions for random initialization
+    ~killer(){};
 
+    void restart_switch(int nagents, int knearest);
+    void kill_switch(void);
+};
 #endif /* KILL_FUNCTIONS_H */
