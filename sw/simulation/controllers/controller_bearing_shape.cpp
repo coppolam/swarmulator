@@ -21,7 +21,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -252,27 +252,27 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // Find if you are in a desired state
   // bool left_a_desired_state = false;
-  // vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
-  // vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
-  vector<uint> sdes = { 3, 28, 96, 162 };
-  vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+  vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
+  vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
+  // vector<uint> sdes = { 3, 28, 96, 162 };
+  // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
 
   if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
     happy[ID] = true;
   else 
     happy[ID] = false;
   
-  cout << (int)ID << " happy  = ";
+  // cout << (int)ID << " happy  = ";
   int s = 0;
   for (uint8_t i = 0; i < nagents; i++){
-    cout << happy[i] << " ";
+    // cout << happy[i] << " ";
     s += happy[i];
   }
   if (s == nagents){
     killer k;
     k.kill_switch();
   }
-  cout << endl;
+  // cout << endl;
 
   if (state_index != state_index_store[ID]) {
     if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
@@ -281,7 +281,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
       cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
       happy[ID] = true;
       // int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-      waiting_timer[ID] = 0; //1000 * pow(priority[pos]-1,2.0);
+      waiting_timer[ID] = 0;//100 * pow(priority[pos]-1,2.0);
     }
   }
   state_index_store[ID] = state_index;
