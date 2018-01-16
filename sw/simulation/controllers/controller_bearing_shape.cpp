@@ -12,7 +12,7 @@
 #define _ddes 1.0 // Desired equilibrium distance
 #define _kr 1 // Repulsion gain
 #define _ka 5 // Attraction gain
-#define _v_adj 10 // Adjustment velocity
+#define _v_adj 10 // 
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -21,7 +21,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -63,7 +63,7 @@ float Controller_Bearing_Shape::f_attraction(float u, float b_eq)
   if (!(abs(b_eq - M_PI / 4.0) < 0.1 || abs(b_eq - (3*M_PI/4.0)) < 0.1 ))
     w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
   else
-    w = log((_ddes / _kr - 1) / exp(-_ka * sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)))) / _ka;
+    w = log((sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)) / _kr - 1) / exp(-_ka * sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)))) / _ka;
 
   return 1 / (1 + exp(-_ka * (u - w)));
 }
@@ -182,7 +182,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     if (fill_template(q, // Vector to fill
           wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
           o->request_distance(ID, closest[i]), // Distance
-          _ddes * 1.7, 22.5)) { // Sensor range, bearing precision
+          _ddes * 1.8, 22.5)) { // Sensor range, bearing precision
             q_ID.push_back(closest[i]);
           }
   }
@@ -209,15 +209,15 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   
   vector<float> beta_des;
   beta_des.push_back(0.0);
-  // beta_des.push_back(M_PI/4.0);
+  beta_des.push_back(M_PI/4.0);
   beta_des.push_back(M_PI/2.0);
-  // beta_des.push_back(3.0*M_PI/4.0);
+  beta_des.push_back(3.0*M_PI/4.0);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
   float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
   float b_eq = get_preferred_bearing(beta_des, v_b);
   float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
-
+  
   // State
   vector<bool> state(8, 0);
   vector<bool> state_precise(8, 0);
@@ -252,10 +252,10 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // Find if you are in a desired state
   // bool left_a_desired_state = false;
-  vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
-  vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
-  // vector<uint> sdes = { 3, 28, 96, 162 };
-  // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+  // vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
+  // vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
+  vector<uint> sdes = { 3, 28, 96, 162 };
+  vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
 
   if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
     happy[ID] = true;
@@ -311,13 +311,11 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   else if (canImove) {
     // What a shame, you could move but you can't. Fix you position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    if (moving_timer[ID] > timelim*2)
+    if (moving_timer[ID] > timelim*4)
       moving_timer[ID] = 0;
     else
       moving_timer[ID]++;
   }
-
-  // if (moving_timer[ID] >= timelim)
 
   if (waiting_timer[ID] > 0)
     waiting_timer[ID]--;
