@@ -21,7 +21,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
 
   if (state_action_matrix_file.is_open()) {
     ti.info_msg("Opened state action matrix file.");
@@ -91,10 +91,10 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
 
 void actionmotion(const int selected_action, float &v_x, float &v_y)
 {
-  int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
-  int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
-  v_x = _v_adj * (float)actionspace_x[selected_action];
-  v_y = _v_adj * (float)actionspace_y[selected_action];
+  float actionspace_y[8] = {0, sqrt(1), 1, sqrt(1), 0, -sqrt(1), -1, -sqrt(1)};
+  float actionspace_x[8] = {1, sqrt(1), 0, -sqrt(1), -1, -sqrt(1), 0, sqrt(1)};
+  v_x = _v_adj * actionspace_x[selected_action];
+  v_y = _v_adj * actionspace_y[selected_action];
 }
 
 
@@ -209,9 +209,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   
   vector<float> beta_des;
   beta_des.push_back(0.0);
-  beta_des.push_back(M_PI/4.0);
+  // beta_des.push_back(M_PI/4.0);
   beta_des.push_back(M_PI/2.0);
-  beta_des.push_back(3.0*M_PI/4.0);
+  // beta_des.push_back(3.0*M_PI/4.0);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
   float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
@@ -237,42 +237,39 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // }
   // cout << endl;
 
-
   // Can I move or are my neighbors moving?
+  float timelim = 1 * simulation_updatefreq;
   bool canImove = true;
   bool shouldImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
     if (moving[state_ID[i]]) {
-      // If someone is moving you can't move
       canImove = false;
+      moving_timer[ID] = timelim*5;
     }
-    if (!moving[ID] && o->request_distance(ID, closest[0]) < 0.9) //&& state_index != state_index_precise)
+    if (o->request_distance(ID, closest[0]) < 0.3)
       shouldImove = false;
   }
 
   // Find if you are in a desired state
   // bool left_a_desired_state = false;
-  // vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
-  // vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
-  vector<uint> sdes = { 3, 28, 96, 162 };
-  vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+  vector<int> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227}; // todo: make this not a hack
+  vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
+  // vector<uint> sdes = { 3, 28, 96, 162 };
+  // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
 
   if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
     happy[ID] = true;
   else 
     happy[ID] = false;
   
-  // cout << (int)ID << " happy  = ";
   int s = 0;
   for (uint8_t i = 0; i < nagents; i++){
-    // cout << happy[i] << " ";
     s += happy[i];
   }
   if (s == nagents){
     killer k;
     k.kill_switch();
   }
-  // cout << endl;
 
   if (state_index != state_index_store[ID]) {
     if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
@@ -280,8 +277,8 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     {
       cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
       happy[ID] = true;
-      // int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-      waiting_timer[ID] = 0;//100 * pow(priority[pos]-1,2.0);
+      int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
+      waiting_timer[ID] = 0; //1 * pow(priority[pos] - 1, 3.0) * simulation_updatefreq;
     }
   }
   state_index_store[ID] = state_index;
@@ -301,17 +298,17 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
 
   moving[ID] = false;
-  float timelim = 30;
-  if (selected_action[ID] > -1 && canImove && shouldImove && moving_timer[ID] < timelim && waiting_timer[ID] == 0 )
-  {
-    actionmotion(selected_action[ID], v_x, v_y);
-    moving[ID] = true;
-    moving_timer[ID]++;
-  }
-  else if (canImove) {
-    // What a shame, you could move but you can't. Fix you position.
-    latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    if (moving_timer[ID] > timelim*4)
+  if (canImove) {
+    
+    if (selected_action[ID] > -1 && shouldImove && moving_timer[ID] < timelim && waiting_timer[ID] == 0 ) {
+      actionmotion(selected_action[ID], v_x, v_y);
+      moving[ID] = true;
+    }
+    else {
+     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+    }
+
+    if (moving_timer[ID] > timelim * 10)
       moving_timer[ID] = 0;
     else
       moving_timer[ID]++;
@@ -320,7 +317,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   if (waiting_timer[ID] > 0)
     waiting_timer[ID]--;
 
-  keepbounded(v_x, -2, 2);
-  keepbounded(v_y, -2, 2);
+  keepbounded(v_x, -1, 1);
+  keepbounded(v_y, -1, 1);
 
 }

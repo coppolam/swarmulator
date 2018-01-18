@@ -6,13 +6,13 @@
 #include <vector>
 #include "particle.h"
 
-extern int nagents;       // Number of agents in the swarm
-extern int knearest;      // Knearest neighbours
-extern std::vector<Particle> s; // Set up a vector of relative position filters
+extern int nagents; // Number of agents in the swarm
+extern int knearest;  // Knearest neighbours
+extern std::vector<Particle> s; // Set up a vector of particles
 extern float simulation_time; // Simulation time (our time)
-extern float simtime_seconds;   // Adjusted simulation time (time according to simulation)
-extern std::mutex mtx;          // mutex for critical section
-extern bool program_running;
+extern float simtime_seconds; // Adjusted simulation time (time according to simulation)
+extern std::mutex mtx; // Mutex for critical section
+extern bool program_running; // True if the program is (or should be) running. If false the program shuts down.
 
 // Simulation parameters
 extern float simulation_updatefreq;   // (Hz) Defines the simulation time step
@@ -30,7 +30,7 @@ extern int backgroundcolor;     // Use if you want a white background (can be ni
 
 extern float logger_updatefreq;   // Use if you want a white background (can be nice for papers)
 
-// #define ANIMATE // Activate animation thread
+#define ANIMATE // Activate animation thread
 // #define whitebackground   // Use if you want a white background (can be nice for papers)
 #define LOG // Activate logger thread
 
