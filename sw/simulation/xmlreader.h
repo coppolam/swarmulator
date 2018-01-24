@@ -17,13 +17,14 @@
 using namespace std;
 using namespace pugi;
 
-class XMLreader {
-	pugi::xml_document doc;
-	terminalinfo ti;
+class XMLreader
+{
+  pugi::xml_document doc;
+  terminalinfo ti;
 public:
-	XMLreader(string str);
-	~XMLreader();
-	void runthrough(string str);
+  XMLreader(string str);
+  ~XMLreader();
+  void runthrough(string str);
 };
 
 #endif /*XMLREADER_H*/

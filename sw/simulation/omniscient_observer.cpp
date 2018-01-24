@@ -1,5 +1,6 @@
 #include "omniscient_observer.h"
 #include "main.h"
+#include "graph.h"
 
 // struct indexed_array;
 /* Structure holding values and indexes of an array, used for sorting while keeping original index*/
@@ -53,7 +54,7 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
   vector<int> ind;
   for (int i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
-                        pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
+                      pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
                       + pow(s[i].get_position(1) - s[ID].get_position(1), 2.0)
                     ));
     dm[i].index = i;
@@ -87,7 +88,7 @@ void mat_print(int n_row, int n_col, bool a[])
   }
 }
 
-void OmniscientObserver::adjacency_matrix()
+void OmniscientObserver::adjacency_matrix_knearest()
 {
   bool mat[nagents * nagents];
 
@@ -98,7 +99,7 @@ void OmniscientObserver::adjacency_matrix()
     for (uint8_t j = 0; j < nagents; j++) {
       if (i == j) {
         mat[i * nagents + j] = false;
-      } else if (find(v.begin(), v.end(), j) != end(v)) { // TODO: Fix to only look at closest k
+      } else if (find(v.begin(), v.end(), j) != end(v)) {
         mat[i * nagents + j] = true;
       } else {
         mat[i * nagents + j] = false;
@@ -114,6 +115,26 @@ void OmniscientObserver::adjacency_matrix()
     printed = true;
     cout << " ] " << endl;
   }
+}
+
+bool OmniscientObserver::connected_graph_range(float range)
+{
+  Graph g(nagents);
+  
+  for (uint8_t i = 0; i < nagents; i++) {
+    for (uint8_t j = 0; j < nagents; j++) {
+      if (request_distance(i, j) < range) {
+        g.addEdge(i,j);
+      }
+    }
+  }
+
+  if (g.isConnected()){
+    return true;
+  }
+
+  return false;
+
 }
 
 float OmniscientObserver::get_centroid(uint8_t dim)

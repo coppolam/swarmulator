@@ -21,7 +21,8 @@ $(info ************ SWARMULATOR V0.1 **********)
 
 # Build the executable
 all: 
-	$(CC) $(CFLAGS) $(INC) \
+	$(CC) $(CFLAGS) \
+	$(INC) \
 	-o \
 	$(APPNAME) \
 	sw/main.cpp \
