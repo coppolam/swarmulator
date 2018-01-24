@@ -12,7 +12,7 @@
 #define _ddes 1.0 // Desired equilibrium distance
 #define _kr 1 // Repulsion gain
 #define _ka 5 // Attraction gain
-#define _v_adj 10 // 
+#define _v_adj 5 // 
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -24,7 +24,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
   ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
 
   if (state_action_matrix_file.is_open()) {
-    ti.info_msg("Opened state action matrix file.");
+    // ti.info_msg("Opened state action matrix file.");
 
     // Collect the data inside the a stream, do this line by line
     while (!state_action_matrix_file.eof()) {
@@ -210,7 +210,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   vector<float> beta_des;
   beta_des.push_back(0.0);
+  beta_des.push_back(M_PI/4.0);
   beta_des.push_back(M_PI/2.0);
+  beta_des.push_back(3.0*M_PI/4.0);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
   float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
@@ -225,7 +227,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   int state_index = bool2int(state);
 
   // Can I move or are my neighbors moving?
-  float timelim = 1 * simulation_updatefreq;
+  float timelim = 2 * simulation_updatefreq;
   bool canImove = true;
   bool shouldImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
@@ -233,7 +235,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
       canImove = false;
       moving_timer[ID] = timelim * 2;
     }
-    if (o->request_distance(ID, closest[0]) < 0.3) {
+    if (o->request_distance(ID, closest[0]) < 0.5) {
         shouldImove = false;
     }
   }
@@ -285,13 +287,13 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     else {
      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
     }
-
   }
 
-  if (moving_timer[ID] > timelim * 5)
+  if (moving_timer[ID] > timelim * 3)
     moving_timer[ID] = 1;
   else
     moving_timer[ID]++;
+
 
   keepbounded(v_x, -1, 1);
   keepbounded(v_y, -1, 1);

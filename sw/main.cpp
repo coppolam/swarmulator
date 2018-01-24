@@ -84,5 +84,6 @@ int main(int argc, char *argv[])
   while (program_running) {};
 
   /* Exit */
+  cout << "Terminating swarmulator" << endl;
   return 0;
 }

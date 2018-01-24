@@ -51,7 +51,7 @@ void XMLreader::runthrough(string str)
           logger_updatefreq = stof(attr.next_attribute().value());
         }
 
-        ti.info_msg("In " + str + " node, loaded " + varname + "=" + attr.next_attribute().value());
+        // ti.info_msg("In " + str + " node, loaded " + varname + "=" + attr.next_attribute().value());
       }
     }
   }

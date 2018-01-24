@@ -62,11 +62,29 @@ void draw::draw_circle(double d)
   glColor3ub(255, 000, 000); // Red
   for (int i = 0; i <= 100; i++) {
     angle = 2 * M_PI * i / 100;
-    x = (d * yrat) / 2.0 * cos(angle);
-    y = (d * xrat) / 2.0 * sin(angle);
+    x = (d * yrat) * cos(angle);
+    y = (d * xrat) * sin(angle);
     glVertex2d(x, y);
   }
   glEnd();
+
+  glColor3ub(255, 255, 255); // White
+  glPopMatrix();
+}
+
+void draw::draw_circle_loop(double d)
+{
+  int num_segments = 100;
+  glPushMatrix();
+  glLineWidth(1);
+    glBegin(GL_LINE_LOOP);
+    for(int ii = 0; ii < num_segments; ii++) {
+      float theta = 2.0f * M_PI * float(ii) / float(num_segments);//get the current angle
+      float x = 1.8 * yrat  * cosf(theta);//calculate the x component
+      float y = 1.8 * xrat  * sinf(theta);//calculate the y component
+      glVertex2d(x, y);
+    }
+    glEnd();
 
   glColor3ub(255, 255, 255); // White
   glPopMatrix();
@@ -129,6 +147,7 @@ void draw::draw_agent(uint8_t ID, float x, float y, float z)
   glTranslatef(y * xrat, x * yrat, z); // ENU to NED
   glRotatef(90.0, 0.0, 0, 1);
   draw_circle(scale);
+  draw_circle_loop(scale);
   draw_agent_number(ID);
   glPopMatrix();
 }

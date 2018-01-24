@@ -1,4 +1,5 @@
 #include "kill_functions.h"
+#include "main.h"
 
 void killer::restart_switch(int nagents, int knearest) {
     stringstream ss;
@@ -8,7 +9,5 @@ void killer::restart_switch(int nagents, int knearest) {
 
 void killer::kill_switch(void)
 {
-    stringstream ss;
-    ss << "pkill swarmulator";
-    system(ss.str().c_str());
+    program_running = false;
 }

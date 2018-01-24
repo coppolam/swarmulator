@@ -23,6 +23,7 @@ public:
   // General functions
   void draw_triangle(double); // Draw a simple triangle
   void draw_circle(double r);
+  void draw_circle_loop(double d);
   void draw_line(float x, float y);
   void draw_axes(); // Draw global x and y axes
   void draw_point(); // Draw a white point
