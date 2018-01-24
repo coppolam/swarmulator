@@ -12,8 +12,10 @@ using namespace std;
 class txtwrite
 {
 public:
+  string filename;
+  void setfilename(string filename);
   void txtwrite_state(ofstream &logfile);
-  // void write_command(int ID);
+  void txtwrite_summary(ofstream &logfile);
 };
 
 

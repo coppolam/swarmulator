@@ -17,19 +17,21 @@ using namespace std;
 
 bool logger_running = false;
 
-void run_logger(ofstream &logfile)
+void run_logger(ofstream &logfile, string filename)
 {
+  static txtwrite writer;
+
   if (!logger_running) {
     terminalinfo ti;
+    writer.setfilename(filename);
     ti.info_msg("Logger started.");
     logger_running = true;
   }
 
-  static txtwrite writer;
-
   if (!paused && simulation_realtimefactor * simulation_time / 1000000.0 > 1.0) {
     mtx.try_lock();
     writer.txtwrite_state(logfile);
+    writer.txtwrite_summary(logfile);
     mtx.unlock();
   }
 
@@ -61,7 +63,7 @@ void start_logger(int argc, char *argv[])
   logfile.precision(3);
 
   while (program_running) {
-    run_logger(logfile);
+    run_logger(logfile, filename);
   };
 }
 

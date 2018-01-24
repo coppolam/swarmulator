@@ -257,14 +257,14 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     k.kill_switch();
   }
 
-  if (!o->connected_graph_range(1.8)){
-    killer k;
-    k.kill_switch();
-    }
+  // if (!o->connected_graph_range(1.8)){
+  //   killer k;
+  //   k.kill_switch();
+  //   }
 
-    // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
-    // If you are already busy with an action, then don't change the action
-    std::map<int, vector<int>>::iterator state_action_row;
+  // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
+  // If you are already busy with an action, then don't change the action
+  std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
   if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && moving_timer[ID] < 2 ) {
     selected_action[ID] = *select_randomly(
@@ -275,10 +275,10 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     selected_action[ID] = -2;
   }
 
+  // Controller
   moving[ID] = false;
   if (canImove) {
-    if (selected_action[ID] > -1 && shouldImove && moving_timer[ID] < timelim)
-    {
+    if (selected_action[ID] > -1 && shouldImove && moving_timer[ID] < timelim) {
       actionmotion(selected_action[ID], v_x, v_y);
       moving[ID] = true;
     }
