@@ -52,16 +52,6 @@ void main_loop_function()
     // TODO: Add orientation once model becomes more complex
   }
 
-  // Draw agent sensor
-  for (int i = 0; i < nagents; i++) {
-    drawer.draw_agent(
-      i,
-      s[i].state.at(0),
-      s[i].state.at(1),
-      0.0);
-    // TODO: Add orientation once model becomes more complex
-  }
-
   // Draw velocity directions
   for (int i = 0; i < nagents; ++i) {
     drawer.draw_velocity_arrow(

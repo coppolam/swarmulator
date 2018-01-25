@@ -191,7 +191,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     fill_template(q_precise, // Vector to fill
       wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
       o->request_distance(ID, closest[i]), // Distance
-      _ddes * 1.7, 22.5); // Sensor range, bearing precision
+      _ddes * 1.8, 22.49); // Sensor range, bearing precision
   }
 }
 
@@ -225,6 +225,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   vector<int>  state_ID;
   assess_situation(ID, state, state_ID, state_precise); // The ID is just used for simulation purposes
   int state_index = bool2int(state);
+  int state_index_precise = bool2int(state_precise);
 
   // Can I move or are my neighbors moving?
   float timelim = 2 * simulation_updatefreq;
@@ -259,19 +260,14 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     k.kill_switch();
   }
 
-  // if (!o->connected_graph_range(1.8)){
-  //   killer k;
-  //   k.kill_switch();
-  //   }
-
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
-  state_action_row = state_action_matrix.find(state_index);
+  state_action_row = state_action_matrix.find(state_index_precise);
   if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && moving_timer[ID] < 2 ) {
     selected_action[ID] = *select_randomly(
-      state_action_matrix.find(state_index)->second.begin(),
-      state_action_matrix.find(state_index)->second.end());
+      state_action_matrix.find(state_index_precise)->second.begin(),
+      state_action_matrix.find(state_index_precise)->second.end());
   }
   else if (!moving[ID]) {
     selected_action[ID] = -2;
@@ -280,20 +276,19 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // Controller
   moving[ID] = false;
   if (canImove) {
-    if (selected_action[ID] > -1 && shouldImove && moving_timer[ID] < timelim) {
+    if ( selected_action[ID] > -1 && shouldImove && moving_timer[ID] < timelim ) {
       actionmotion(selected_action[ID], v_x, v_y);
       moving[ID] = true;
     }
     else {
-     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
     }
   }
 
-  if (moving_timer[ID] > timelim * 3)
+  if (moving_timer[ID] > timelim * 10)
     moving_timer[ID] = 1;
   else
     moving_timer[ID]++;
-
 
   keepbounded(v_x, -1, 1);
   keepbounded(v_y, -1, 1);

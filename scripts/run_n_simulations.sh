@@ -2,10 +2,9 @@
 # This script expects swarmulator to have a kill-switch activated
 cd $SWARMULATOR_HOME
 
-timestamp=$(date +%s)
+make
 
 for (( i = 1; i <= $1; i++ )); do
 	echo "Running trial $i out of $1 for a simulation with $2 agents"
   ./swarmulator $2 1
-
 done
