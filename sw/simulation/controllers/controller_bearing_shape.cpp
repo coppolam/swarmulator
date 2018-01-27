@@ -234,7 +234,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   for (uint8_t i = 0; i < state_ID.size(); i++) {
     if (moving[state_ID[i]]) {
       canImove = false;
-      moving_timer[ID] = timelim * 2;
+      moving_timer[ID] = timelim * 1.5;
     }
     if (o->request_distance(ID, closest[0]) < 0.5) {
         shouldImove = false;
@@ -283,13 +283,13 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     else {
       latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
     }
+
+    if (moving_timer[ID] > timelim * 3)
+      moving_timer[ID] = 1;
+    else
+      moving_timer[ID]++;
   }
-
-  if (moving_timer[ID] > timelim * 10)
-    moving_timer[ID] = 1;
-  else
-    moving_timer[ID]++;
-
+  
   keepbounded(v_x, -1, 1);
   keepbounded(v_y, -1, 1);
 
