@@ -60,7 +60,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 float Controller_Bearing_Shape::f_attraction(float u, float b_eq)
 {
   float w;
-  if (!(abs(b_eq - M_PI / 4.0) < 0.01 || abs(b_eq - (3*M_PI/4.0)) < 0.01 ))
+  if (!(abs(b_eq - M_PI / 4.0) < 0.1 || abs(b_eq - (3*M_PI/4.0)) < 0.1 ))
     w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
   else
     w = log((sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)) / _kr - 1) / exp(-_ka * sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)))) / _ka;
@@ -170,7 +170,7 @@ float Controller_Bearing_Shape::get_preferred_bearing(const vector<float> &bdes,
   return bdes[minindex];
 }
 
-void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID, vector<bool> &q_precise)
+void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID)
 {
   q.clear();
   q.assign(8,false);
@@ -193,13 +193,6 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
       }
       }
   }
-
-  for (uint8_t i = 0; i < nagents - 1; i++){
-    fill_template(q_precise, // Vector to fill
-      wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
-      o->request_distance(ID, closest[i]), // Distance
-      _ddes * 1.5, 22.49,j); // Sensor range, bearing precision
-  }
 }
 
 vector<bool> moving(20, 0);
@@ -212,22 +205,23 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   v_x = 0;
   v_y = 0;
 
+  float timelim = 1.8 * simulation_updatefreq;
+
+  // Initialize moving_timer with random variable
   if (moving_timer[ID] == 0)
-    moving_timer[ID] = rand() % 300 + 30; 
+    moving_timer[ID] = rand() % (int)timelim; 
 
   vector<float> beta_des;
   beta_des.push_back(0.0);
-  beta_des.push_back(M_PI/4.0);
+  // beta_des.push_back(M_PI/4.0);
   beta_des.push_back(M_PI/2.0);
-  beta_des.push_back(3.0*M_PI/4.0);
+  // beta_des.push_back(3.0*M_PI/4.0);
 
   // State
   vector<bool> state(8, 0);
-  vector<bool> state_precise(8, 0);
   vector<int>  state_ID;
-  assess_situation(ID, state, state_ID, state_precise); // The ID is just used for simulation purposes
+  assess_situation(ID, state, state_ID); // The ID is just used for simulation purposes
   int state_index = bool2int(state);
-  int state_index_precise = bool2int(state_precise);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
@@ -245,24 +239,12 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
 
   // Can I move or are my neighbors moving?
-  float timelim = 1.8 * simulation_updatefreq;
   bool canImove = true;
-  bool shouldImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
     if (moving[state_ID[i]]) {
       canImove = false;
-      moving_timer[ID] = timelim*1.5;
+      moving_timer[ID] = timelim * 1.5; // Reset moving timer
     }
-    if (o->request_distance(ID, state_ID[i]) < 0.5)
-    {
-      shouldImove = false;
-    }
-  }
-
-  bool shouldIadjust = true;
-  for (uint8_t i = 0; i < state_ID.size(); i++) {
-    if (o->request_distance(ID, state_ID[i]) >= 1.0 && o->request_distance(ID, state_ID[i]) > 1.75)
-      shouldIadjust = false;
   }
 
   vector<uint> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227};       // todo: make this not a hack
@@ -304,22 +286,19 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
       actionmotion(selected_action[ID], v_x, v_y);
       moving[ID] = true;
     }
-  // }
   else {
-    v_x = 0;
-    v_y = 0;
-
-    if (o->request_distance(ID, closest[0]) > 0.9) {
+    if (o->request_distance(ID, closest[0]) > 0.90) {
+      float count = 1;
       for (size_t i = 0; i < state_ID.size(); i++) {
-        if (o->request_distance(ID, state_ID[i]) < 1.5 && !moving[state_ID[i]])
-          latticemotion(v_r[i], _v_adj, v_b[i], b_eq[i], v_x, v_y);
+        if (o->request_distance(ID, state_ID[i]) < 1.1) {// if beta_des is all 4 then do 1.5
+          latticemotion(v_r[i], _v_adj, v_b[i], b_eq[i], v_x, v_y); 
+          count++;
+          }
       }
-      if (o->request_distance(ID, closest[0]) > 0.9) {
-        v_x = v_x / state_ID.size();
-        v_y = v_y / state_ID.size();
-      }
+      v_x = v_x / count;
+      v_y = v_y / count;
     }
-    else if (!moving[closest[0]]) {
+    else {
       v_b[0] = wrapToPi_f(o->request_bearing(ID, closest[0]));
       b_eq[0] = get_preferred_bearing(beta_des, v_b[0]);
       v_r[0] = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq[0]);
