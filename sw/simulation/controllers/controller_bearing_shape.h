@@ -32,7 +32,7 @@ public:
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 
   float get_preferred_bearing(const vector<float> &bdes, const float v_b);
-  bool fill_template(vector<bool> &q, const float b_i, const float u, float dmax, float angle_err);
+  bool fill_template(vector<bool> &q, const float b_i, const float u, float dmax, float angle_err, int &j);
   void assess_situation(uint8_t ID, vector<bool> &q_old, vector<int> &q_old_ID, vector<bool> &q_precise);
 };
 
