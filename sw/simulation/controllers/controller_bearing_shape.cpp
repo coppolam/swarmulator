@@ -225,12 +225,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
-  vector<float> v_r;
-  vector<float> b_eq;
-  vector<float> v_b;
-  v_r.assign(state_ID.size(), 0);
-  b_eq.assign(state_ID.size(), 0);
-  v_b.assign(state_ID.size(), 0);
+  vector<float> v_r(state_ID.size(), 0);
+  vector<float> b_eq(state_ID.size(), 0);
+  vector<float> v_b(state_ID.size(), 0);
 
   for (size_t i = 0; i < state_ID.size(); i++) {
     v_b[i] = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
@@ -270,7 +267,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
-  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && (moving_timer[ID] < 2 || moving_timer[ID] > timelim) ) {
+  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && (moving_timer[ID] < 2 || moving_timer[ID] >= timelim) ) {
     selected_action[ID] = *select_randomly(
       state_action_matrix.find(state_index)->second.begin(),
       state_action_matrix.find(state_index)->second.end());
