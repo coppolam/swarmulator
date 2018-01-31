@@ -185,12 +185,12 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     if (fill_template(q, // Vector to fill
           wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
           o->request_distance(ID, closest[i]), // Distance
-          _ddes * 1.8, 22.5, j)) { // Sensor range, bearing precision
-      if (std::find(dir.begin(), dir.end(), j) == dir.end())
-      {
-        dir.push_back(j);
+          _ddes * 1.6, 22.5, j)) { // Sensor range, bearing precision
+      // if (std::find(dir.begin(), dir.end(), j) == dir.end())
+      // {
+        // dir.push_back(j);
         q_ID.push_back(closest[i]);
-      }
+      // }
       }
   }
 }
@@ -213,9 +213,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   vector<float> beta_des;
   beta_des.push_back(0.0);
-  // beta_des.push_back(M_PI/4.0);
+  beta_des.push_back(M_PI/4.0);
   beta_des.push_back(M_PI/2.0);
-  // beta_des.push_back(3.0*M_PI/4.0);
+  beta_des.push_back(3.0*M_PI/4.0);
 
   // State
   vector<bool> state(8, 0);
@@ -270,7 +270,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
-  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && moving_timer[ID] < 2 ) {
+  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && (moving_timer[ID] < 2 || moving_timer[ID] > timelim) ) {
     selected_action[ID] = *select_randomly(
       state_action_matrix.find(state_index)->second.begin(),
       state_action_matrix.find(state_index)->second.end());
@@ -290,7 +290,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     if (o->request_distance(ID, closest[0]) > 0.90) {
       float count = 1;
       for (size_t i = 0; i < state_ID.size(); i++) {
-        if (o->request_distance(ID, state_ID[i]) < 1.1) {// if beta_des is all 4 then do 1.5
+        if (o->request_distance(ID, state_ID[i]) < 1.5) {// if beta_des is all 4 then do 1.5
           latticemotion(v_r[i], _v_adj, v_b[i], b_eq[i], v_x, v_y); 
           count++;
           }
