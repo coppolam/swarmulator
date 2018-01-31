@@ -3,9 +3,6 @@
 #include <mutex>
 
 #include <fstream>
-#include "particle.h"
-#include "agent.h"
-#include "main.h"
 
 using namespace std;
 

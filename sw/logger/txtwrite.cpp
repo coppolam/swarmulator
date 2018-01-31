@@ -3,19 +3,28 @@
 #include "kill_functions.h"
 #include "terminalinfo.h"
 
+#include "particle.h"
+#include "agent.h"
+#include "main.h"
+
 void txtwrite::setfilename(string s) {
   filename = s;
 }
 
 void txtwrite::txtwrite_state(ofstream &logfile)
 {
-  for (int i = 0; i < nagents; i++) {
+  stringstream t;
+  t << simulation_realtimefactor * simulation_time / 1000000.0;
+  vector<Particle> state_buff = s;
+
+  for (int i = 0; i < nagents; i++)
+  {
     logfile << i+1 << " ";
-    logfile << simulation_realtimefactor * simulation_time / 1000000.0 << " "
-            << s[i].state.at(0) << " "
-            << s[i].state.at(1) << " "
-            << s[i].state.at(2) << " "
-            << s[i].state.at(3) << " " << endl;
+    logfile << t.str() << " "; // divide by 1000000.0
+    logfile << state_buff[i].state.at(0) << " "
+            << state_buff[i].state.at(1) << " "
+            << state_buff[i].state.at(2) << " "
+            << state_buff[i].state.at(3) << endl;
   }
 }
 

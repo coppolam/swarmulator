@@ -106,9 +106,9 @@ void start_simulation(int argc, char *argv[])
   if (argc <= 2) {
     ti.debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
     knearest = nagents - 1;
-  } else {
+  } 
+  else {
     knearest = stoi(argv[2]);
-
     if (knearest > (nagents - 1)) {
       ti.debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
       exit(1);
@@ -118,12 +118,12 @@ void start_simulation(int argc, char *argv[])
   // Generate random initial positions
   void randomgen_init();
   srand(time(NULL));
-  std::vector<float> x0 = generate_random_vector_zeromean(nagents);
-  std::vector<float> y0 = generate_random_vector_zeromean(nagents);
+  vector<float> x0 = generate_random_vector_zeromean(nagents);
+  vector<float> y0 = generate_random_vector_zeromean(nagents);
 
   // Set the model. This main should just spawn n agents at random positions/states.
   for (int i = 0; i < nagents; i++) {
-    vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 };  // Initial positions/states
+    vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
     s.push_back(Particle(i, states, 1.0 / simulation_updatefreq));
   }
 

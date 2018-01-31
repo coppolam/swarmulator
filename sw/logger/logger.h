@@ -39,7 +39,7 @@ void run_logger(ofstream &logfile, string filename)
   this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 
-/* Get current date/time, format is YYYY-MM-DD.HH:mm:ss */
+/* Get current date/time, format is YYYY-MM-DD-hh:mm:ss */
 const std::string currentDateTime()
 {
   time_t     now = time(0);
@@ -60,7 +60,6 @@ void start_logger(int argc, char *argv[])
 
   ofstream logfile;
   logfile.open(filename.c_str());
-  logfile.precision(3);
 
   while (program_running) {
     run_logger(logfile, filename);
