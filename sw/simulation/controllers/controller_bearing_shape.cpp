@@ -199,6 +199,8 @@ vector<bool> moving(20, 0);
 vector<int> moving_timer(20, 0);
 vector<int> selected_action(20,-1);
 vector<bool> happy(20,0);
+vector<int> state_index_store(50, 0);
+vector<int> waiting_timer(50, 0);
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
@@ -224,22 +226,14 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
-  vector<float> v_r(state_ID.size(), 0);
-  vector<float> b_eq(state_ID.size(), 0);
-  vector<float> v_b(state_ID.size(), 0);
-
-  for (size_t i = 0; i < state_ID.size(); i++) {
-    v_b[i] = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
-    b_eq[i] = get_preferred_bearing(beta_des, v_b[i]);
-    v_r[i] = get_attraction_velocity(o->request_distance(ID, state_ID[i]), b_eq[i]);
-  }
+  float v_r, b_eq, v_b;
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
     if (moving[state_ID[i]]) {
       canImove = false;
-      moving_timer[ID] = timelim * 1.1; // Reset moving timer
+      moving_timer[ID] = timelim * 1.5; // Reset moving timer
     }
   }
 
@@ -247,6 +241,19 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
   // vector<uint> sdes = { 3, 28, 96, 162 };
   // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
+
+  // if (state_index != state_index_store[ID])
+  // {
+  //   if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
+  //       std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
+  //   {
+  //     // cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
+  //     happy[ID] = true;
+  //     int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
+  //     waiting_timer[ID] = pow(priority[pos] - 1, 1.0) * timelim;
+  //   }
+  // }
+  // state_index_store[ID] = state_index;
 
   if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
     happy[ID] = true;
@@ -282,32 +289,34 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
       actionmotion(selected_action[ID], v_x, v_y);
       moving[ID] = true;
     } 
-    else {
-      if (o->request_distance(ID, closest[0]) > 0.90) {
+    else if (o->request_distance(ID, closest[0]) > 0.9) {
         uint count = 1;
         for (size_t i = 0; i < state_ID.size(); i++) {
-          if (o->request_distance(ID, state_ID[i]) < 1.5) {// if beta_des is all 4 then do 1.5
-            latticemotion(v_r[i], _v_adj, v_b[i], b_eq[i], v_x, v_y); 
+            v_b = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
+            b_eq = get_preferred_bearing(beta_des, v_b);
+            v_r = get_attraction_velocity(o->request_distance(ID, state_ID[i]), b_eq);
+            latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y); 
             count++;
-            }
         }
         v_x = v_x / (float)count;
         v_y = v_y / (float)count;
       }
-      else {
-        v_b[0] = wrapToPi_f(o->request_bearing(ID, closest[0]));
-        b_eq[0] = get_preferred_bearing(beta_des, v_b[0]);
-        v_r[0] = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq[0]);
-        latticemotion(v_r[0], 0, v_b[0], b_eq[0], v_x, v_y);
-      }
+    else {
+      v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
+      b_eq = get_preferred_bearing(beta_des, v_b);
+      v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
+      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
     }
   }
 
-  if (moving_timer[ID] > timelim * 2.2)
-    moving_timer[ID] = 1;
+  if (moving_timer[ID] > timelim * 3)
+      moving_timer[ID] = 1;
   else
     moving_timer[ID]++;
 
+  // if (waiting_timer[ID] > 0)
+  //   waiting_timer[ID]--;
+  
   keepbounded(v_x, -1, 1);
   keepbounded(v_y, -1, 1);
 
