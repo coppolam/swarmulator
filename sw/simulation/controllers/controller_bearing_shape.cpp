@@ -266,7 +266,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
-  if ( (state_action_row != state_action_matrix.end() && !moving[ID]) && (moving_timer[ID] < 2 || moving_timer[ID] >= timelim) ) {
+  if ( state_action_row != state_action_matrix.end() && !moving[ID] ) {
     selected_action[ID] = *select_randomly(
       state_action_matrix.find(state_index)->second.begin(),
       state_action_matrix.find(state_index)->second.end());
