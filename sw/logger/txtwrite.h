@@ -1,13 +1,14 @@
 #ifndef TXTWRITE_H
 #define TXTWRITE_H
-#include <mutex>
 
+#include <mutex>
 #include <fstream>
+
+#include "drawingparams.h"
 
 using namespace std;
 
-class txtwrite
-{
+class txtwrite {
 public:
   string filename;
   void setfilename(string filename);

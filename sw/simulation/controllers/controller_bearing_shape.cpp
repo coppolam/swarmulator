@@ -12,7 +12,7 @@
 #define _ddes 1.0 // Desired equilibrium distance
 #define _kr 1 // Repulsion gain
 #define _ka 5 // Attraction gain
-#define _v_adj 5 // 
+#define _v_adj 10 // 
 
 // The omniscient observer is used to simulate sensing the other agents.
 OmniscientObserver *o = new OmniscientObserver();
@@ -185,12 +185,8 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     if (fill_template(q, // Vector to fill
           wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
           o->request_distance(ID, closest[i]), // Distance
-          _ddes * 1.6, 22.5, j)) { // Sensor range, bearing precision
-      // if (std::find(dir.begin(), dir.end(), j) == dir.end())
-      // {
-        // dir.push_back(j);
+          _ddes * 1.6, 22.49, j)) { // Sensor range, bearing precision
         q_ID.push_back(closest[i]);
-      // }
       }
   }
 }
@@ -199,8 +195,6 @@ vector<bool> moving(20, 0);
 vector<int> moving_timer(20, 0);
 vector<int> selected_action(20,-1);
 vector<bool> happy(20,0);
-vector<int> state_index_store(50, 0);
-vector<int> waiting_timer(50, 0);
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
@@ -208,10 +202,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   v_y = 0;
 
   float timelim = 1.8 * simulation_updatefreq;
-
-  // Initialize moving_timer with random variable
-  if (moving_timer[ID] == 0)
-    moving_timer[ID] = rand() % (int)timelim; 
+  float v_r, b_eq, v_b;
 
   vector<float> beta_des;
   beta_des.push_back(0.0);
@@ -219,41 +210,32 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   beta_des.push_back(M_PI/2.0);
   beta_des.push_back(3.0*M_PI/4.0);
 
+  // Initialize moving_timer with random variable
+  if (moving_timer[ID] == 0)
+    moving_timer[ID] = rand() % (int)timelim;
+
   vector<bool> state(8, 0);
   vector<int>  state_ID;
-  assess_situation(ID, state, state_ID); // The ID is just used for simulation purposes
+  // The ID is just used for simulation purposes
+  assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
-
-  float v_r, b_eq, v_b;
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
     if (moving[state_ID[i]]) {
       canImove = false;
+      selected_action[ID] = -2; // Reset actions
       moving_timer[ID] = timelim * 1.5; // Reset moving timer
     }
   }
 
-  vector<uint> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227};       // todo: make this not a hack
+  vector<uint> sdes = {3, 28, 31, 96, 124, 163, 190, 226, 227};           // todo: make this not a hack
   vector<float> priority = {5, 3, 4, 1, 2, 4, 3, 2, 3};          // todo: make this not a hack
   // vector<uint> sdes = { 3, 28, 96, 162 };
   // vector<uint> priority = {3, 2, 1, 2}; // todo: make this not a hack
-
-  // if (state_index != state_index_store[ID])
-  // {
-  //   if (std::find(sdes.begin(), sdes.end(), state_index_store[ID]) == sdes.end() &&
-  //       std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
-  //   {
-  //     // cout << (int)ID << " entered a desired state! Now in state " << state_index << " from " << state_index_store[ID] << endl;
-  //     happy[ID] = true;
-  //     int pos = std::find(sdes.begin(), sdes.end(), state_index) - sdes.begin();
-  //     waiting_timer[ID] = pow(priority[pos] - 1, 1.0) * timelim;
-  //   }
-  // }
-  // state_index_store[ID] = state_index;
 
   if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end())
     happy[ID] = true;
@@ -273,10 +255,8 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = state_action_matrix.find(state_index);
-  if ( state_action_row != state_action_matrix.end() && !moving[ID] ) {
-    selected_action[ID] = *select_randomly(
-      state_action_matrix.find(state_index)->second.begin(),
-      state_action_matrix.find(state_index)->second.end());
+  if (!moving[ID] && state_action_row != state_action_matrix.end()) {
+    selected_action[ID] = *select_randomly(state_action_row->second.begin(),state_action_row->second.end());
   }
   else if (!moving[ID]) {
     selected_action[ID] = -2;
@@ -285,38 +265,36 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // Controller
   moving[ID] = false;
   if (canImove) {
-    if (selected_action[ID] > -1 && moving_timer[ID] < timelim) {
+    if (selected_action[ID] > -1 && moving_timer[ID] < timelim && o->request_distance(ID, closest[0]) > 0.5) {
       actionmotion(selected_action[ID], v_x, v_y);
       moving[ID] = true;
     } 
     else if (o->request_distance(ID, closest[0]) > 0.9) {
-        uint count = 1;
-        for (size_t i = 0; i < state_ID.size(); i++) {
-            v_b = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
-            b_eq = get_preferred_bearing(beta_des, v_b);
-            v_r = get_attraction_velocity(o->request_distance(ID, state_ID[i]), b_eq);
-            latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y); 
-            count++;
-        }
-        v_x = v_x / (float)count;
-        v_y = v_y / (float)count;
+      uint count = 1;
+      for (size_t i = 0; i < state_ID.size(); i++) {
+        v_b = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
+        b_eq = get_preferred_bearing(beta_des, v_b);
+        v_r = get_attraction_velocity(o->request_distance(ID, state_ID[i]), b_eq);
+        latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y); 
+        count++;
       }
+      v_x = v_x / (float)count;
+      v_y = v_y / (float)count;
+    }
     else {
       v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
       b_eq = get_preferred_bearing(beta_des, v_b);
       v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
       latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
     }
+
+    if (moving_timer[ID] > timelim * 3)
+      moving_timer[ID] = 1;
+    else
+      moving_timer[ID]++;
   }
 
-  if (moving_timer[ID] > timelim * 3)
-      moving_timer[ID] = 1;
-  else
-    moving_timer[ID]++;
 
-  // if (waiting_timer[ID] > 0)
-  //   waiting_timer[ID]--;
-  
   keepbounded(v_x, -1, 1);
   keepbounded(v_y, -1, 1);
 

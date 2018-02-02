@@ -33,8 +33,8 @@ void run_simulation()
   // Increase time to the next timestep
   int t_wait = (int) 1000000.0 * (1.0 / (simulation_updatefreq * simulation_realtimefactor));
   this_thread::sleep_for(chrono::microseconds(t_wait));
-  simulation_time += t_wait;
-  simtime_seconds = simulation_realtimefactor * simulation_time / 1000000.0;
+  simulation_time = t_wait;
+  simtime_seconds += simulation_realtimefactor * simulation_time / 1000000.0;
 
   // if (simtime_seconds > 100)
   //   kill_switch();

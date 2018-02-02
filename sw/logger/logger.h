@@ -11,7 +11,6 @@
 
 #include "main.h"
 #include "txtwrite.h"
-#include "drawingparams.h"
 
 using namespace std;
 
@@ -28,23 +27,23 @@ void run_logger(ofstream &logfile, string filename)
     logger_running = true;
   }
 
-  if (!paused && simulation_realtimefactor * simulation_time / 1000000.0 > 1.0) {
+  if (!paused && simtime_seconds > 1.0) {
     mtx.try_lock();
     writer.txtwrite_state(logfile);
     writer.txtwrite_summary(logfile);
     mtx.unlock();
   }
 
-  int t_wait = (int) 1000000.0 * (1.0 / (logger_updatefreq * simulation_realtimefactor));
+  int t_wait = (int)1000000.0 / (logger_updatefreq * simulation_realtimefactor);
   this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 
 /* Get current date/time, format is YYYY-MM-DD-hh:mm:ss */
 const std::string currentDateTime()
 {
-  time_t     now = time(0);
-  struct tm  tstruct;
-  char       buf[80];
+  time_t now = time(0);
+  struct tm tstruct;
+  char buf[80];
   tstruct = *localtime(&now);
 
   // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
@@ -53,7 +52,6 @@ const std::string currentDateTime()
 
   return buf;
 }
-
 void start_logger(int argc, char *argv[])
 {
   string filename = "logs/log_" + currentDateTime() + ".txt";

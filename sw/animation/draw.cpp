@@ -1,12 +1,14 @@
 #include "draw.h"
 #include <cmath>
 
+// float rtfactor = simulation_realtimefactor;
+
 void draw::draw_data()
 {
   glRasterPos2f((-3.9 / zscale - mx), (-3.9 / zscale - my));
   glColor3f(0, 0, 1); // Red
   stringstream ss;
-  ss << "Time[s]:" << simulation_realtimefactor * simulation_time / 1000000.0;
+  ss << "Time[s]:" << simtime_seconds;
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
 }
 

@@ -28,6 +28,7 @@ float px, py;
 bool paused = false;
 float xrat = 0;
 float yrat = 0;
+float rtfactor = simulation_realtimefactor;
 
 void keyboard_callback(unsigned char key, int x, int y)
 {
@@ -90,6 +91,12 @@ void keyboard_callback(unsigned char key, int x, int y)
         ti.info_msg("Drawing new agent.");
         break;
       }
+    case 'm':
+    if (simulation_realtimefactor == 1)
+      simulation_realtimefactor = rtfactor;
+    else
+      simulation_realtimefactor = 1;
+    break;
   }
 }
 

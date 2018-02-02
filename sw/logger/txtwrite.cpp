@@ -7,6 +7,7 @@
 #include "agent.h"
 #include "main.h"
 
+
 void txtwrite::setfilename(string s) {
   filename = s;
 }
@@ -14,7 +15,7 @@ void txtwrite::setfilename(string s) {
 void txtwrite::txtwrite_state(ofstream &logfile)
 {
   stringstream t;
-  t << simulation_realtimefactor * simulation_time / 1000000.0;
+  t << simtime_seconds;
   vector<Particle> state_buff = s;
 
   for (int i = 0; i < nagents; i++)

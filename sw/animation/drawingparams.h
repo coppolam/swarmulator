@@ -11,5 +11,6 @@ extern float px, py;
 extern bool paused;
 extern float xrat;
 extern float yrat;
+extern float rtfactor;
 
 #endif /* DRAWINGPARAMS_H */
