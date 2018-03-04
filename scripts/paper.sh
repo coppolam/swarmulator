@@ -1,0 +1,1 @@
+./parallel_simulations.sh 5 10 9

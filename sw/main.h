@@ -30,7 +30,7 @@ extern int backgroundcolor;     // Use if you want a white background (can be ni
 
 extern float logger_updatefreq;   // Use if you want a white background (can be nice for papers)
 
-// #define ANIMATE // Activate animation thread
+#define ANIMATE // Activate animation thread
 // #define actionmotionwhitebackground   // Use if you want a white background (can be nice for papers)
 #define LOG // Activate logger thread
 

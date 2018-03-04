@@ -185,7 +185,7 @@ void Controller_Bearing_Shape::assess_situation(uint8_t ID, vector<bool> &q, vec
     if (fill_template(q, // Vector to fill
           wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
           o->request_distance(ID, closest[i]), // Distance
-          _ddes * 1.6, 22.49, j)) { // Sensor range, bearing precision
+          _ddes * 1.8, 22.499, j)) { // Sensor range, bearing precision
         q_ID.push_back(closest[i]);
       }
   }
@@ -202,6 +202,8 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   v_y = 0;
 
   float timelim = 1.8 * simulation_updatefreq;
+  float twait_1 = timelim*2;
+  float twait_2 = twait_1*2;
   float v_r, b_eq, v_b;
 
   vector<float> beta_des;
@@ -228,7 +230,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     if (moving[state_ID[i]]) {
       canImove = false;
       selected_action[ID] = -2; // Reset actions
-      moving_timer[ID] = timelim * 1.5; // Reset moving timer
+      moving_timer[ID] = twait_1; // Reset moving timer
     }
   }
 
@@ -264,12 +266,14 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // Controller
   moving[ID] = false;
+  float d_safe = 0.9;
+
   if (canImove) {
-    if (selected_action[ID] > -1 && moving_timer[ID] < timelim && o->request_distance(ID, closest[0]) > 0.5) {
+    if (selected_action[ID] > -1 && moving_timer[ID]<timelim && o->request_distance(ID, closest[0]) < 1.2) {
       actionmotion(selected_action[ID], v_x, v_y);
       moving[ID] = true;
-    } 
-    else if (o->request_distance(ID, closest[0]) > 0.9) {
+    }
+    else if (o->request_distance(ID, closest[0]) > d_safe) {
       uint count = 1;
       for (size_t i = 0; i < state_ID.size(); i++) {
         v_b = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
@@ -288,14 +292,12 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
       latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
     }
 
-    if (moving_timer[ID] > timelim * 3)
+    if (moving_timer[ID] > twait_2)
       moving_timer[ID] = 1;
     else
       moving_timer[ID]++;
   }
 
-
   keepbounded(v_x, -1, 1);
   keepbounded(v_y, -1, 1);
-
 }

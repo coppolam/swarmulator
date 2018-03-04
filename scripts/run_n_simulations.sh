@@ -16,10 +16,11 @@ for (( i = 1; i <= $1; i++ )); do
 	date
 
 	# Run code
+	md=$(date +%Y-%m-%d-%T);
 	./swarmulator $2 1
 	
 	# Move latest log to directory
 	fn=$(ls -t logs| head -n1)
-	mv -f -- "logs/$(sm).txt" $d/log_$sm.txt
+	mv -f -- logs/log_$md.txt $d/$fn
 
 done
