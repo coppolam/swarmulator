@@ -58,10 +58,11 @@ Additionally, you can do the following:
 * Quit (`q`). This will quit swarmulator.
 
 ## Prototyping with Swarmulator
-### Using your controller
+### Using your own controller
 The individual controller is accessible in `sw/simulation/controller.cpp`. Here you can define your rule that you would like to test out.
 You can use the functions in `OmniscientObserver` in order to simulate the sensing of other agents as you see fit.
 
 ### Using your agent dynamics
 The standard version of Swarmulator runs using standard kinematic equations as defined in the `Particle` class. `Particle` is a sub-class of `Agent`.
 If you would like to use your own dynamics, then you can create a new sub-class for `Agent` where you can include a model of your choice.
+

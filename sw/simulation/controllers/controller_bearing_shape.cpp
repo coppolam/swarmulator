@@ -21,7 +21,7 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller()
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle9.txt");
+  ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
 
   if (state_action_matrix_file.is_open()) {
     // ti.info_msg("Opened state action matrix file.");
@@ -250,7 +250,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   if (s == nagents) {
     killer k;
-    k.kill_switch();
+    // k.kill_switch();
   }
 
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
