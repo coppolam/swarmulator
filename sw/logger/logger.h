@@ -26,13 +26,13 @@ void run_logger(ofstream &logfile, string filename)
     ti.info_msg("Logger started.");
     logger_running = true;
   }
-
+  
+  mtx.lock();
   if (!paused && simtime_seconds > 1.0) {
-    mtx.try_lock();
     writer.txtwrite_state(logfile);
     writer.txtwrite_summary(logfile);
-    mtx.unlock();
   }
+  mtx.unlock();
 
   int t_wait = (int)1000000.0 / (logger_updatefreq * simulation_realtimefactor);
   this_thread::sleep_for(chrono::microseconds(t_wait));
@@ -52,7 +52,8 @@ const std::string currentDateTime()
 
   return buf;
 }
-void start_logger(int argc, char *argv[])
+
+void start_logger()
 {
   string filename = "logs/log_" + currentDateTime() + ".txt";
 

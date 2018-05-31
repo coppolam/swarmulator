@@ -6,12 +6,15 @@
 #include <functional>
 #include <cctype>
 #include <algorithm>
+#include <thread>         // std::thread
+#include <mutex>
 
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 #include "terminalinfo.h"
 #include "kill_functions.h"
+#include "agentthread.h"
 
 bool simulation_running = false;
 
@@ -23,21 +26,10 @@ void run_simulation()
     simulation_running = true;
   }
 
-  // The mutex ensures that while the positions are updated by the simulation thread, other threads are not trying to access the data.
-  mtx.lock();
-  for (int i = 0; i < nagents; i++) {
-    s[i].update_position();
-  }
-  mtx.unlock();
-
-  // Increase time to the next timestep
   int t_wait = (int) 1000000.0 * (1.0 / (simulation_updatefreq * simulation_realtimefactor));
   this_thread::sleep_for(chrono::microseconds(t_wait));
   simulation_time = t_wait;
   simtime_seconds += simulation_realtimefactor * simulation_time / 1000000.0;
-
-  // if (simtime_seconds > 100)
-  //   kill_switch();
 }
 
 /* Calculate the mean of a vector element */
@@ -58,8 +50,6 @@ float vector_std(const vector<float> &v)
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   return sqrt(sq_sum / v.size());
 }
-
-void start_simulation(int argc, char *argv[]);
 
 void simulation_start()
 {
@@ -122,9 +112,15 @@ void start_simulation(int argc, char *argv[])
   vector<float> y0 = generate_random_vector_zeromean(nagents);
 
   // Set the model. This main should just spawn n agents at random positions/states.
+  std::vector<std::thread> v;
   for (int i = 0; i < nagents; i++) {
     vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
     s.push_back(Particle(i, states, 1.0 / simulation_updatefreq));
+  }
+
+  for (int i = 0; i < nagents; i++) {
+    thread agent(start_agent_simulation, i);
+    agent.detach();
   }
 
   simulation_start(); // Begin the simulation

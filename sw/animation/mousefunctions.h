@@ -8,6 +8,7 @@
 #include <iostream>
 #include <assert.h>     /* assert */
 #include "terminalinfo.h"
+#include "agentthread.h"
 
 // A bit of a hack for compatibility with old GLUT
 // http://iihm.imag.fr/blanch/software/glut-macosx/
@@ -80,9 +81,11 @@ void keyboard_callback(unsigned char key, int x, int y)
       break;
     case 'a':
       if (!paused) {
-        vector<float> ns = { py, px, 0.0, 0.0, 0.0, 0.0 };  // Initial positions/states
+        vector<float> ns = { py, px, 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
         mtx.lock();
         s.push_back(Particle(nagents, ns, 1.0 / simulation_updatefreq));
+        thread agent(start_agent_simulation, nagents);
+        agent.detach();
         nagents++;
         if (knearest == nagents - 2) {
           knearest++;

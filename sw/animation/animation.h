@@ -92,7 +92,7 @@ void GL_Setup(int width, int height)
 /*
   Thread function that initiates the animation
 */
-void start_animation(int argc, char *argv[])
+void start_animation()
 {
   // Initialize all variables
   mx = 0;
@@ -108,6 +108,8 @@ void start_animation(int argc, char *argv[])
   yrat = 0;
 
   // Set up simulation window
+  int argc = 1;
+  char *argv[1] = {(char*)"Something"};
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
   glutInitWindowSize(window_width, window_height);

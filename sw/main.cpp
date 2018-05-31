@@ -27,10 +27,10 @@
 using namespace std;
 
 
-int nagents;       // Number of agents in the simulation
-vector<Particle> s;    // Set up a vector of relative position filters
-int knearest;      // knearest objects
-mutex mtx;         // Mutex needed to lock threads
+int nagents;        // Number of agents in the simulation
+vector<Particle> s; // Set up a vector of relative position filters
+int knearest;       // knearest objects
+mutex mtx;          // Mutex needed to lock threads
 
 // Simulation default values
 float simulation_time = 0;
@@ -69,15 +69,18 @@ int main(int argc, char *argv[])
 
   /* Launch the simulation thread */
   thread simulation(start_simulation, argc, argv);
+  simulation.detach();
 
   /* Launch the animation thread */
 #ifdef ANIMATE
-  thread animation(start_animation, argc, argv);
+  thread animation(start_animation);
+  animation.detach();
 #endif
 
   /* Launch the logging thread to file logs/log<date><time>.txt */
 #ifdef LOG
-  thread logger(start_logger, argc, argv);
+  thread logger(start_logger);
+  logger.detach();
 #endif
 
   /* Keep the program running until terminated by a thread */
