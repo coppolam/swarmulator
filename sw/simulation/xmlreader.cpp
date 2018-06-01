@@ -24,14 +24,14 @@ void XMLreader::runthrough(string str)
       std::string attrName = attr.name();
       if (!attrName.compare("name")) { // We only process variable names
         string varname = attr.value();
-        if (!varname.compare("simulation_updatefreq")) {    // TODO: hardcode all variables
+        if (!varname.compare("simulation_updatefreq")) {
           simulation_updatefreq = stof(attr.next_attribute().value());
-        } else if (!varname.compare("simulation_realtimefactor")) { // TODO: hardcode all variables
+        } else if (!varname.compare("simulation_realtimefactor")) {
           simulation_realtimefactor = stof(attr.next_attribute().value());
         }
 
 
-        else if (!varname.compare("window_width")) { // TODO: hardcode all variables
+        else if (!varname.compare("window_width")) {
           window_width = stof(attr.next_attribute().value());
         } else if (!varname.compare("window_height")) {
           window_height = stof(attr.next_attribute().value());
@@ -55,5 +55,4 @@ void XMLreader::runthrough(string str)
       }
     }
   }
-
 }

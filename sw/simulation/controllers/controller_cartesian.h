@@ -10,6 +10,7 @@ using namespace std;
 
 class Controller_Cartesian: public Controller
 {
+  OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
 
 public:
   Controller_Cartesian(): Controller() {};

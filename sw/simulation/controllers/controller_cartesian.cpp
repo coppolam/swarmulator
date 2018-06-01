@@ -9,9 +9,6 @@
 #define _kr 0.1   // Repulsion gain
 #define _ka 5   // Attraction gain
 
-// The omniscient observer is used to simulate sensing the other agents.
-OmniscientObserver *o = new OmniscientObserver();
-
 float Controller_Cartesian::f_attraction(float u)
 {
   // float w = log((_ddes/_kr-1)/exp(-_ka*_ddes))/_ka;

@@ -3,7 +3,6 @@
 #include "particle.h"
 #include "main.h"
 #include "randomgenerator.h"
-#include "omniscient_observer.h"
 #include "auxiliary.h"
 
 #include <algorithm> // std::sort
@@ -12,13 +11,12 @@
 #define _kr 0.1 // Repulsion gain
 #define _ka 2 // Attraction gain
 #define _v_adj 0.5 // Adjustment velocity
-
 #define MOTION_MODE 1 // Use 0 for random or 1-8 to specific a direction.
 
-// The omniscient observer is used to simulate sensing the other agents.
-OmniscientObserver *o = new OmniscientObserver();
-
-Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller()
+Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller(),
+moving(nagents,0),
+moving_timer(nagents,0),
+selected_action(nagents,-1)
 {
   state_action_matrix.clear();
   terminalinfo ti;
@@ -72,13 +70,13 @@ float Controller_Keep_Aggregate::get_attraction_velocity(float u, float b_eq)
   return f_attraction(u, b_eq) + f_repulsion(u) + f_extra(u);;
 }
 
-void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
+void Controller_Keep_Aggregate::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
 {
   v_x = v_r * cos(v_b);
   v_y = v_r * sin(v_b);
 }
 
-void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
+void Controller_Keep_Aggregate::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
   attractionmotion(v_r+v_adj, v_b, v_x, v_y);
   // Additional force for for reciprocal alignment
@@ -86,7 +84,7 @@ void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const
   v_y += -v_adj * sin(bdes * 2 - v_b);
 }
 
-void actionmotion(const int selected_action, float &v_x, float &v_y)
+void Controller_Keep_Aggregate::actionmotion(const int selected_action, float &v_x, float &v_y)
 {
   int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
   int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
@@ -184,10 +182,6 @@ void Controller_Keep_Aggregate::assess_situation(uint8_t ID, vector<bool> &q, ve
           }
   }
 }
-
-vector<bool> moving(50, 0);
-vector<int> moving_timer(50, 0);
-vector<int> selected_action(50,-1);
 
 void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {

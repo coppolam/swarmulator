@@ -2,11 +2,11 @@
 #define PARAMETERS_H
 
 #ifndef CONTROLLER
-#define CONTROLLER Controller_Bearing_Shape
+#define CONTROLLER Controller_Cartesian
 #endif
 
 #ifndef CONTROLLER_INCLUDE
-#define CONTROLLER_INCLUDE "controller_bearing_shape.h"
+#define CONTROLLER_INCLUDE "controller_cartesian.h"
 #endif
 
 #endif /*PARAMETERS_H*/

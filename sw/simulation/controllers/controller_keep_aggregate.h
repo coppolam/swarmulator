@@ -20,10 +20,18 @@ class Controller_Keep_Aggregate: public Controller
 {
   // Map of state-space index to possible action space indexes.
   std::map<int, vector<int>> state_action_matrix;
+  OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
+  vector<bool> moving;
+  vector<int> moving_timer;
+  vector<int> selected_action;
 
 public:
   Controller_Keep_Aggregate();
   ~Controller_Keep_Aggregate(){};
+
+  void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y);
+  void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y);
+  void actionmotion(const int selected_action, float &v_x, float &v_y);
 
   float f_attraction(float u, float b);
   float f_repulsion(float u);

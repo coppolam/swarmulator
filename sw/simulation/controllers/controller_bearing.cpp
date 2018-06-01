@@ -3,7 +3,6 @@
 #include "particle.h"
 #include "main.h"
 #include "randomgenerator.h"
-#include "omniscient_observer.h"
 #include "auxiliary.h"
 
 #define _ddes 0.6 // Desired equilibrium distance
@@ -11,8 +10,8 @@
 #define _ka 5   // Attraction gain
 #define _v_adj 0.1 // Adjustment velocity
 
-// The omniscient observer is used to simulate sensing the other agents.
-OmniscientObserver *o = new OmniscientObserver();
+Controller_Bearing::Controller_Bearing() : Controller() {};
+Controller_Bearing::~Controller_Bearing(){};
 
 float Controller_Bearing::f_attraction(float u, float b_eq)
 {
@@ -35,13 +34,13 @@ float Controller_Bearing::get_attraction_velocity(float u, float b_eq)
   return f_attraction(u, b_eq) + f_repulsion(u) + f_extra(u);;
 }
 
-void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
+void Controller_Bearing::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
 {
   v_x = v_r * cos(v_b);
   v_y = v_r * sin(v_b);
 }
 
-void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
+void Controller_Bearing::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
   attractionmotion(v_r + v_adj, v_b, v_x, v_y);
 

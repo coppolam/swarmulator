@@ -22,7 +22,7 @@ all:
 	@echo "Building $(TARGET)...";
 	$(CC) $(CFLAGS) $(INC) -o $(TARGET) sw/main.cpp \
 	$(SIMULATION_FOLDER)/agents/particle.cpp \
-	$(SIMULATION_FOLDER)/controllers/controller_bearing_shape.cpp \
+	$(SIMULATION_FOLDER)/controllers/*.cpp \
 	$(SIMULATION_FOLDER)/*.cpp \
 	$(ANIMATION_FOLDER)/*.cpp \
 	$(LOGGER_FOLDER)/*.cpp \

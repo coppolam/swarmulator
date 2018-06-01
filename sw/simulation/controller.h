@@ -7,6 +7,7 @@
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 #include <algorithm>
 #include <stdint.h>
+#include "omniscient_observer.h"
 
 using namespace std;
 
