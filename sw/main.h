@@ -15,20 +15,20 @@ extern std::mutex mtx; // Mutex for critical section
 extern bool program_running; // True if the program is (or should be) running. If false the program shuts down.
 
 // Simulation parameters
-extern float simulation_updatefreq;   // (Hz) Defines the simulation time step
-extern float simulation_realtimefactor; // Real time factor of simulation
+// extern float simulation_updatefreq;   // (Hz) Defines the simulation time step
+// extern float simulation_realtimefactor; // Real time factor of simulation
 
 // Animation parameters
-extern int window_width;        // Window width  (px)
-extern int window_height;       // Window height (px)
-extern float scale;             // Scale of agent size
-extern float mouse_drag_speed;  // Speed of mouse to drag animation
-extern float mouse_zoom_speed;  // Zoom speed of scroll wheel
-extern float animation_updatefreq;  // Animation fps
-extern bool visible_centroid;    // Centroid of swarm is visible
-extern int backgroundcolor;     // Use if you want a white background (can be nice for papers)
+// extern int window_width;        // Window width  (px)
+// extern int window_height;       // Window height (px)
+// extern float scale;             // Scale of agent size
+// extern float mouse_drag_speed;  // Speed of mouse to drag animation
+// extern float mouse_zoom_speed;  // Zoom speed of scroll wheel
+// extern float animation_updatefreq;  // Animation fps
+// extern bool visible_centroid;    // Centroid of swarm is visible
+// extern int backgroundcolor;     // Use if you want a white background (can be nice for papers)
 
-extern float logger_updatefreq;   // Use if you want a white background (can be nice for papers)
+// extern float logger_updatefreq;   // Use if you want a white background (can be nice for papers)
 
 #define ANIMATE // Activate animation thread
 // #define actionmotionwhitebackground   // Use if you want a white background (can be nice for papers)

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="parameters">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="animation"/>
+        <xs:element ref="logger"/>
+        <xs:element ref="simulation"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="animation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="window_width"/>
+        <xs:element ref="window_height"/>
+        <xs:element ref="scale"/>
+        <xs:element ref="mouse_drag_speed"/>
+        <xs:element ref="mouse_zoom_speed"/>
+        <xs:element ref="animation_updatefreq"/>
+        <xs:element ref="visible_centroid"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="window_width" type="xs:integer"/>
+  <xs:element name="window_height" type="xs:integer"/>
+  <xs:element name="scale" type="xs:string"/>
+  <xs:element name="mouse_drag_speed" type="xs:decimal"/>
+  <xs:element name="mouse_zoom_speed" type="xs:decimal"/>
+  <xs:element name="animation_updatefreq" type="xs:integer"/>
+  <xs:element name="visible_centroid" type="xs:integer"/>
+  <xs:element name="logger">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="logger_updatefreq"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="logger_updatefreq" type="xs:integer"/>
+  <xs:element name="simulation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="simulation_updatefreq"/>
+        <xs:element ref="simulation_realtimefactor"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="simulation_updatefreq" type="xs:integer"/>
+  <xs:element name="simulation_realtimefactor" type="xs:integer"/>
+</xs:schema>
