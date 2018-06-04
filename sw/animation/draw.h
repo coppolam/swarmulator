@@ -17,7 +17,6 @@ using namespace std;
   Object that takes care of OpenGL drawing for all elements of interest
   It is launched and managed by the animation thread.
 */
-
 class draw {
 public:
   // General functions

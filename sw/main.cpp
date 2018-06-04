@@ -12,31 +12,29 @@
 #include <unistd.h>
 #include <iostream>
 #include <vector>
-#include <thread>         // std::thread
+#include <thread> // std::thread
 #include <mutex>
 
 // Internal Includes
-#include "main.h"         // Contains extern defines for global variables
-#include "animation.h"        // Animation thread
-#include "simulation.h"       // Simulation thread
-#include "logger.h"         // Logger thread
-#include "omniscient_observer.h"  // Class used to simulate sensing
-// #include "xmlreader.h"
+#include "main.h" // Contains extern defines for global variables
+#include "animation.h" // Animation thread
+#include "simulation.h" // Simulation thread
+#include "logger.h" // Logger thread
+#include "omniscient_observer.h" // Class used to simulate sensing
 
 using namespace std;
 
-
+// Simulation default values
 int nagents;        // Number of agents in the simulation
 vector<Particle> s; // Set up a vector of relative position filters
 int knearest;       // knearest objects
 mutex mtx;          // Mutex needed to lock threads
-
-// Simulation default values
 float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;
 int window_width, window_height;
 
+// Parameters parser
 unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
 int backgroundcolor; // Use if you want a white background (can be nice for papers)
 
@@ -50,33 +48,21 @@ int main(int argc, char *argv[])
   program_running = true; // Program is running
   window_height = param->window_height();
   window_width = param->window_width();
-  /* Read the parameters */
-  // XMLreader xmlrdr("conf/parameters.xml");
-  // xmlrdr.runthrough("simulation");
-  // xmlrdr.runthrough("animation");
-  // xmlrdr.runthrough("logger");
-  // string str = "conf/parameters.xml";
-  cout << "test" << endl;
-  /* Launch the simulation thread */
-  thread simulation(start_simulation, argc, argv);
+  
+  thread simulation(start_simulation, argc, argv); // Launch simulation
   simulation.detach();
 
-  /* Launch the animation thread */
 #ifdef ANIMATE
-  thread animation(start_animation);
+  thread animation(start_animation); // Launch animation thread
   animation.detach();
 #endif
 
-  /* Launch the logging thread to file logs/log<date><time>.txt */
 #ifdef LOG
-  thread logger(start_logger);
+  thread logger(start_logger); // Launch logger to file logs/log<date><time>.txt
   logger.detach();
 #endif
 
-  /* Keep the program running until terminated by a thread */
-  while (program_running) {};
-
-  /* Exit */
+  while (program_running) {}; // Keep the program running
   cout << "Terminating swarmulator" << endl;
   return 0;
 }
