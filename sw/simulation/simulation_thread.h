@@ -117,11 +117,16 @@ void start_simulation(int argc, char *argv[])
     vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
     s.push_back(Particle(i, states, 1.0 / param->simulation_updatefreq()));
   }
-
+  
+  // Launch agent threads
   for (int i = 0; i < nagents; i++) {
     thread agent(start_agent_simulation, i);
     agent.detach();
   }
+  
+  // TODO: Launch enironment threads
+  // Gather enironment data (walls?!)
+  // Launch a thread that handles all environment data
 
   simulation_start(); // Begin the simulation
 
