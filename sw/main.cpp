@@ -3,9 +3,7 @@
   Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents.
   To program specific behaviors, you can do so in the controller.cpp/controller.h file.
 
-  To program specific behaviors, you can do so in the controller.cpp/controller.h class.
-
-  Copyright Mario Coppola, 2017.
+  Copyright Mario Coppola, 2017-2018.
 */
 
 // External includes
@@ -38,22 +36,8 @@ float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;
 
-unique_ptr<parameters_t> param(parameters("conf/test.xml", xml_schema::flags::dont_validate));
-
-// Animation default values
-// float simulation_updatefreq = 30;
-// float simulation_realtimefactor = 30;
-// int window_width  = 600;
-// int window_height = 600;
-// float scale = 0.3;
-// float mouse_drag_speed = 1.0;
-// float mouse_zoom_speed = 0.5;
-// float animation_updatefreq = 25;
+unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
 int backgroundcolor; // Use if you want a white background (can be nice for papers)
-// bool visible_centroid = 0;
-
-// Logger
-// float logger_updatefreq = 1;
 
 /*
   The main function launches separate threads that control independent

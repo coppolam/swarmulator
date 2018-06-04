@@ -9,6 +9,12 @@
 #define _kr 0.1   // Repulsion gain
 #define _ka 5   // Attraction gain
 
+// Only one of the following can work
+// #define FORCED    // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt"
+#define KNEAREST // Use a k-nearest topology according to the second argument
+// #define ROGUE     // Would you like an agent to go rogue?
+// #define rogueID 0 // ID of agent that goes rogue.
+
 float Controller_Cartesian::f_attraction(float u)
 {
   // float w = log((_ddes/_kr-1)/exp(-_ka*_ddes))/_ka;

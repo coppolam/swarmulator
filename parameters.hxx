@@ -31,8 +31,8 @@
 // in the accompanying FLOSSE file.
 //
 
-#ifndef TEST_HXX
-#define TEST_HXX
+#ifndef CONF_PARAMETERS_HXX
+#define CONF_PARAMETERS_HXX
 
 #ifndef XSD_USE_CHAR
 #define XSD_USE_CHAR
@@ -240,43 +240,158 @@ class parameters_t;
 class parameters_t: public ::xml_schema::type
 {
   public:
-  // greeting
+  // simulation_updatefreq
   //
-  typedef ::xml_schema::string greeting_type;
-  typedef ::xsd::cxx::tree::traits< greeting_type, char > greeting_traits;
+  typedef ::xml_schema::float_ simulation_updatefreq_type;
+  typedef ::xsd::cxx::tree::traits< simulation_updatefreq_type, char > simulation_updatefreq_traits;
 
-  const greeting_type&
-  greeting () const;
+  const simulation_updatefreq_type&
+  simulation_updatefreq () const;
 
-  greeting_type&
-  greeting ();
-
-  void
-  greeting (const greeting_type& x);
+  simulation_updatefreq_type&
+  simulation_updatefreq ();
 
   void
-  greeting (::std::auto_ptr< greeting_type > p);
+  simulation_updatefreq (const simulation_updatefreq_type& x);
 
-  // name
+  // simulation_realtimefactor
   //
-  typedef ::xml_schema::string name_type;
-  typedef ::xsd::cxx::tree::sequence< name_type > name_sequence;
-  typedef name_sequence::iterator name_iterator;
-  typedef name_sequence::const_iterator name_const_iterator;
-  typedef ::xsd::cxx::tree::traits< name_type, char > name_traits;
+  typedef ::xml_schema::float_ simulation_realtimefactor_type;
+  typedef ::xsd::cxx::tree::traits< simulation_realtimefactor_type, char > simulation_realtimefactor_traits;
 
-  const name_sequence&
-  name () const;
+  const simulation_realtimefactor_type&
+  simulation_realtimefactor () const;
 
-  name_sequence&
-  name ();
+  simulation_realtimefactor_type&
+  simulation_realtimefactor ();
 
   void
-  name (const name_sequence& s);
+  simulation_realtimefactor (const simulation_realtimefactor_type& x);
+
+  // window_width
+  //
+  typedef ::xml_schema::integer window_width_type;
+  typedef ::xsd::cxx::tree::traits< window_width_type, char > window_width_traits;
+
+  const window_width_type&
+  window_width () const;
+
+  window_width_type&
+  window_width ();
+
+  void
+  window_width (const window_width_type& x);
+
+  // window_height
+  //
+  typedef ::xml_schema::integer window_height_type;
+  typedef ::xsd::cxx::tree::traits< window_height_type, char > window_height_traits;
+
+  const window_height_type&
+  window_height () const;
+
+  window_height_type&
+  window_height ();
+
+  void
+  window_height (const window_height_type& x);
+
+  // scale
+  //
+  typedef ::xml_schema::float_ scale_type;
+  typedef ::xsd::cxx::tree::traits< scale_type, char > scale_traits;
+
+  const scale_type&
+  scale () const;
+
+  scale_type&
+  scale ();
+
+  void
+  scale (const scale_type& x);
+
+  // mouse_drag_speed
+  //
+  typedef ::xml_schema::float_ mouse_drag_speed_type;
+  typedef ::xsd::cxx::tree::traits< mouse_drag_speed_type, char > mouse_drag_speed_traits;
+
+  const mouse_drag_speed_type&
+  mouse_drag_speed () const;
+
+  mouse_drag_speed_type&
+  mouse_drag_speed ();
+
+  void
+  mouse_drag_speed (const mouse_drag_speed_type& x);
+
+  // mouse_zoom_speed
+  //
+  typedef ::xml_schema::float_ mouse_zoom_speed_type;
+  typedef ::xsd::cxx::tree::traits< mouse_zoom_speed_type, char > mouse_zoom_speed_traits;
+
+  const mouse_zoom_speed_type&
+  mouse_zoom_speed () const;
+
+  mouse_zoom_speed_type&
+  mouse_zoom_speed ();
+
+  void
+  mouse_zoom_speed (const mouse_zoom_speed_type& x);
+
+  // animation_updatefreq
+  //
+  typedef ::xml_schema::float_ animation_updatefreq_type;
+  typedef ::xsd::cxx::tree::traits< animation_updatefreq_type, char > animation_updatefreq_traits;
+
+  const animation_updatefreq_type&
+  animation_updatefreq () const;
+
+  animation_updatefreq_type&
+  animation_updatefreq ();
+
+  void
+  animation_updatefreq (const animation_updatefreq_type& x);
+
+  // visible_centroid
+  //
+  typedef ::xml_schema::integer visible_centroid_type;
+  typedef ::xsd::cxx::tree::traits< visible_centroid_type, char > visible_centroid_traits;
+
+  const visible_centroid_type&
+  visible_centroid () const;
+
+  visible_centroid_type&
+  visible_centroid ();
+
+  void
+  visible_centroid (const visible_centroid_type& x);
+
+  // logger_updatefreq
+  //
+  typedef ::xml_schema::integer logger_updatefreq_type;
+  typedef ::xsd::cxx::tree::traits< logger_updatefreq_type, char > logger_updatefreq_traits;
+
+  const logger_updatefreq_type&
+  logger_updatefreq () const;
+
+  logger_updatefreq_type&
+  logger_updatefreq ();
+
+  void
+  logger_updatefreq (const logger_updatefreq_type& x);
 
   // Constructors.
   //
-  parameters_t (const greeting_type&);
+  parameters_t (const simulation_updatefreq_type&,
+                const simulation_realtimefactor_type&,
+                const window_width_type&,
+                const window_height_type&,
+                const scale_type&,
+                const mouse_drag_speed_type&,
+                const mouse_zoom_speed_type&,
+                const animation_updatefreq_type&,
+                const visible_centroid_type&,
+                const logger_updatefreq_type&);
 
   parameters_t (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f = 0,
@@ -304,8 +419,16 @@ class parameters_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< greeting_type > greeting_;
-  name_sequence name_;
+  ::xsd::cxx::tree::one< simulation_updatefreq_type > simulation_updatefreq_;
+  ::xsd::cxx::tree::one< simulation_realtimefactor_type > simulation_realtimefactor_;
+  ::xsd::cxx::tree::one< window_width_type > window_width_;
+  ::xsd::cxx::tree::one< window_height_type > window_height_;
+  ::xsd::cxx::tree::one< scale_type > scale_;
+  ::xsd::cxx::tree::one< mouse_drag_speed_type > mouse_drag_speed_;
+  ::xsd::cxx::tree::one< mouse_zoom_speed_type > mouse_zoom_speed_;
+  ::xsd::cxx::tree::one< animation_updatefreq_type > animation_updatefreq_;
+  ::xsd::cxx::tree::one< visible_centroid_type > visible_centroid_;
+  ::xsd::cxx::tree::one< logger_updatefreq_type > logger_updatefreq_;
 };
 
 #include <iosfwd>
@@ -414,4 +537,4 @@ parameters (::xml_schema::dom::auto_ptr< ::xercesc::DOMDocument > d,
 //
 // End epilogue.
 
-#endif // TEST_HXX
+#endif // CONF_PARAMETERS_HXX

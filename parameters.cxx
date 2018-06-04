@@ -38,7 +38,7 @@
 
 #include <xsd/cxx/pre.hxx>
 
-#include "test.hxx"
+#include "parameters.hxx"
 
 // parameters_t
 // 
