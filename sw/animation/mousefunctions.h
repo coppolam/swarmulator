@@ -101,21 +101,21 @@ void keyboard_callback(unsigned char key, int x, int y)
 
 void mouse_motion_callback(int x, int y)
 {
-  mx += param->mouse_drag_speed() / zscale * ((float)x / ((float)param->window_width() / xrat) - sx);
-  my += param->mouse_drag_speed() / zscale * (-(float)y / ((float)param->window_height() / yrat) - sy);
+  mx += param->mouse_drag_speed() / zscale * ((float)x / ((float)window_width / xrat) - sx);
+  my += param->mouse_drag_speed() / zscale * (-(float)y / ((float)window_height / yrat) - sy);
 }
 
 void mouse_motion_callback_passive(int x, int y)
 {
-  px = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zscale * xrat)) - 4 / (zscale * xrat)) - mx;
-  py = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zscale * yrat)) - 4 / (zscale * yrat))) - my;
+  px = ((((float)x / ((float)window_width / xrat)) * 8 / (zscale * xrat)) - 4 / (zscale * xrat)) - mx;
+  py = (-((((float)y / ((float)window_height / yrat)) * 8 / (zscale * yrat)) - 4 / (zscale * yrat))) - my;
 }
 
 void mouse_click_callback(int button, int state, int x, int y)
 {
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-    sx = (float)x / ((float)param->window_width() / xrat);
-    sy = -(float)y / ((float)param->window_height() / yrat);
+    sx = (float)x / ((float)window_width / xrat);
+    sy = -(float)y / ((float)window_height / yrat);
   }
 
   if (button == GLUT_WHEEL_UP) {

@@ -15,7 +15,7 @@ extern float simtime_seconds; // Adjusted simulation time (time according to sim
 extern std::mutex mtx; // Mutex for critical section
 extern bool program_running; // True if the program is (or should be) running. If false the program shuts down.
 extern unique_ptr<parameters_t> param; // XML parameters from conf file
-
+extern int window_width, window_height;
 #define ANIMATE // Activate animation thread
 #define LOG // Activate logger thread
 

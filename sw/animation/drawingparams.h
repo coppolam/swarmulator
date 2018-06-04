@@ -8,9 +8,8 @@ extern float sy;
 extern float zms;
 extern float zscale;
 extern float px, py;
-extern bool paused;
 extern float xrat;
 extern float yrat;
-extern float rtfactor;
+extern bool paused;
 
 #endif /* DRAWINGPARAMS_H */

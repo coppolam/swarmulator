@@ -35,6 +35,7 @@ mutex mtx;          // Mutex needed to lock threads
 float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;
+int window_width, window_height;
 
 unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
 int backgroundcolor; // Use if you want a white background (can be nice for papers)
@@ -47,7 +48,8 @@ int backgroundcolor; // Use if you want a white background (can be nice for pape
 int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
-
+  window_height = param->window_height();
+  window_width = param->window_width();
   /* Read the parameters */
   // XMLreader xmlrdr("conf/parameters.xml");
   // xmlrdr.runthrough("simulation");

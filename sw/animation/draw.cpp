@@ -1,8 +1,6 @@
 #include "draw.h"
 #include <cmath>
 
-// float rtfactor = simulation_realtimefactor;
-
 void draw::draw_data()
 {
   glRasterPos2f((-3.9 / zscale - mx), (-3.9 / zscale - my));
