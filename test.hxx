@@ -256,7 +256,7 @@ class parameters_t: public ::xml_schema::type
 
   // simulation_realtimefactor
   //
-  typedef ::xml_schema::integer simulation_realtimefactor_type;
+  typedef ::xml_schema::float_ simulation_realtimefactor_type;
   typedef ::xsd::cxx::tree::traits< simulation_realtimefactor_type, char > simulation_realtimefactor_traits;
 
   const simulation_realtimefactor_type&

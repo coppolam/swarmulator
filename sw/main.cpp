@@ -38,7 +38,7 @@ float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;
 
-unique_ptr<parameters_t> param(parameters("conf/test.xml"));
+unique_ptr<parameters_t> param(parameters("conf/test.xml", xml_schema::flags::dont_validate));
 
 // Animation default values
 // float simulation_updatefreq = 30;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
   // xmlrdr.runthrough("animation");
   // xmlrdr.runthrough("logger");
   // string str = "conf/parameters.xml";
-
+  cout << "test" << endl;
   /* Launch the simulation thread */
   thread simulation(start_simulation, argc, argv);
   simulation.detach();

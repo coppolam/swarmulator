@@ -19,7 +19,7 @@ INC=-I. -Isw -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -Isw/simulation/agents
 
 # Build the executable
 all: 
-	xsd cxx-tree conf/test.xsd
+	xsd cxx-tree --root-element-all conf/test.xsd
 	@echo "Building $(TARGET)...";
 	$(CC) $(CFLAGS) $(INC) -o $(TARGET) sw/main.cpp \
 	conf/parameters_layout.cxx \

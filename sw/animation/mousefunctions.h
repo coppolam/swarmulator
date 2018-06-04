@@ -29,7 +29,6 @@ float px, py;
 bool paused = false;
 float xrat = 0;
 float yrat = 0;
-float rtfactor = param->simulation_realtimefactor();
 
 void keyboard_callback(unsigned char key, int x, int y)
 {
@@ -95,9 +94,6 @@ void keyboard_callback(unsigned char key, int x, int y)
         break;
       }
     case 'm':
-    if (param->simulation_realtimefactor() == 1)
-      param->simulation_realtimefactor() = rtfactor;
-    else
       param->simulation_realtimefactor() = 1;
     break;
   }
