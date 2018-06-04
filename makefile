@@ -8,7 +8,7 @@ TARGET = swarmulator
 CC = g++
 CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO
 
-OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c
+OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c -Wno-deprecated-declarations
 
 SIMULATION_FOLDER = sw/simulation
 ANIMATION_FOLDER = sw/animation
@@ -19,6 +19,7 @@ INC=-I. -Isw -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -Isw/simulation/agents
 
 # Build the executable
 all: 
+	xsd cxx-tree conf/test.xsd
 	@echo "Building $(TARGET)...";
 	$(CC) $(CFLAGS) $(INC) -o $(TARGET) sw/main.cpp \
 	conf/parameters_layout.cxx \
@@ -28,6 +29,7 @@ all:
 	$(ANIMATION_FOLDER)/*.cpp \
 	$(LOGGER_FOLDER)/*.cpp \
 	$(MATH_FOLDER)/randomgenerator.c \
+	test.cxx \
 	$(OPT);
 	@echo "Done";
 

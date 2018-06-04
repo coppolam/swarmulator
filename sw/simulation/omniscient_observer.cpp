@@ -109,7 +109,7 @@ void OmniscientObserver::adjacency_matrix_knearest()
   }
 
   if (!printed &&
-      ((simulation_realtimefactor * simulation_time / 1000000.0) > 40.0)) {
+      ((param->simulation_realtimefactor() * simulation_time / 1000000.0) > 40.0)) {
     cout << "A = [ " ;
     mat_print(nagents, nagents, mat);
     printed = true;

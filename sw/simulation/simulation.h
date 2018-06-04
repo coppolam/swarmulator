@@ -26,10 +26,10 @@ void run_simulation()
     simulation_running = true;
   }
 
-  int t_wait = (int) 1000000.0 * (1.0 / (simulation_updatefreq * simulation_realtimefactor));
+  int t_wait = (int) 1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
   this_thread::sleep_for(chrono::microseconds(t_wait));
   simulation_time = t_wait;
-  simtime_seconds += simulation_realtimefactor * simulation_time / 1000000.0;
+  simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1000000.0;
 }
 
 /* Calculate the mean of a vector element */
@@ -115,7 +115,7 @@ void start_simulation(int argc, char *argv[])
   std::vector<std::thread> v;
   for (int i = 0; i < nagents; i++) {
     vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
-    s.push_back(Particle(i, states, 1.0 / simulation_updatefreq));
+    s.push_back(Particle(i, states, 1.0 / param->simulation_updatefreq()));
   }
 
   for (int i = 0; i < nagents; i++) {

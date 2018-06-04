@@ -5,6 +5,7 @@
 #include <mutex>
 #include <vector>
 #include "particle.h"
+#include "test.hxx"
 
 extern int nagents; // Number of agents in the swarm
 extern int knearest;  // Knearest neighbours
@@ -13,6 +14,8 @@ extern float simulation_time; // Simulation time (our time)
 extern float simtime_seconds; // Adjusted simulation time (time according to simulation)
 extern std::mutex mtx; // Mutex for critical section
 extern bool program_running; // True if the program is (or should be) running. If false the program shuts down.
+
+extern unique_ptr<parameters_t> param;//(parameters(str.c_str()));
 
 // Simulation parameters
 // extern float simulation_updatefreq;   // (Hz) Defines the simulation time step

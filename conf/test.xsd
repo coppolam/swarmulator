@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:complexType name="parameters_t">
+    <xs:sequence>
+      <xs:element name="simulation_updatefreq" type="xs:float"/>
+      <xs:element name="simulation_realtimefactor" type="xs:float"/>
+	  <xs:element name="window_width" type="xs:integer"/>
+      <xs:element name="window_height" type="xs:integer"/>
+      <xs:element name="scale" type="xs:float"/>
+      <xs:element name="mouse_drag_speed" type="xs:float"/>
+      <xs:element name="mouse_zoom_speed" type="xs:float"/>
+      <xs:element name="animation_updatefreq" type="xs:float"/>
+      <xs:element name="visible_centroid" type="xs:integer"/>
+      <xs:element name="logger_updatefreq" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="parameters" type="parameters_t"/>
+
+</xs:schema>

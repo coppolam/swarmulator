@@ -23,8 +23,7 @@
 #include "simulation.h"       // Simulation thread
 #include "logger.h"         // Logger thread
 #include "omniscient_observer.h"  // Class used to simulate sensing
-#include "xmlreader.h"
-#include "../conf/parameters_layout.hxx"
+// #include "xmlreader.h"
 
 using namespace std;
 
@@ -35,9 +34,11 @@ int knearest;       // knearest objects
 mutex mtx;          // Mutex needed to lock threads
 
 // Simulation default values
-// float simulation_time = 0;
-// float simtime_seconds = 0;
+float simulation_time = 0;
+float simtime_seconds = 0;
 bool program_running = false;
+
+unique_ptr<parameters_t> param(parameters("conf/test.xml"));
 
 // Animation default values
 // float simulation_updatefreq = 30;
@@ -68,9 +69,8 @@ int main(int argc, char *argv[])
   // xmlrdr.runthrough("simulation");
   // xmlrdr.runthrough("animation");
   // xmlrdr.runthrough("logger");
-  
-  unique_ptr<parameters> p (parameters ("conf/parameters.xml"));
-  
+  // string str = "conf/parameters.xml";
+
   /* Launch the simulation thread */
   thread simulation(start_simulation, argc, argv);
   simulation.detach();

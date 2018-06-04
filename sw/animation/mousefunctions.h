@@ -29,7 +29,7 @@ float px, py;
 bool paused = false;
 float xrat = 0;
 float yrat = 0;
-float rtfactor = simulation_realtimefactor;
+float rtfactor = param->simulation_realtimefactor();
 
 void keyboard_callback(unsigned char key, int x, int y)
 {
@@ -83,7 +83,7 @@ void keyboard_callback(unsigned char key, int x, int y)
       if (!paused) {
         vector<float> ns = { py, px, 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
         mtx.lock();
-        s.push_back(Particle(nagents, ns, 1.0 / simulation_updatefreq));
+        s.push_back(Particle(nagents, ns, 1.0 / param->simulation_updatefreq()));
         thread agent(start_agent_simulation, nagents);
         agent.detach();
         nagents++;
@@ -95,37 +95,37 @@ void keyboard_callback(unsigned char key, int x, int y)
         break;
       }
     case 'm':
-    if (simulation_realtimefactor == 1)
-      simulation_realtimefactor = rtfactor;
+    if (param->simulation_realtimefactor() == 1)
+      param->simulation_realtimefactor() = rtfactor;
     else
-      simulation_realtimefactor = 1;
+      param->simulation_realtimefactor() = 1;
     break;
   }
 }
 
 void mouse_motion_callback(int x, int y)
 {
-  mx += mouse_drag_speed / zscale * ((float)x / ((float)window_width / xrat)   - sx);
-  my += mouse_drag_speed / zscale * (-(float)y / ((float)window_height / yrat)  - sy);
+  mx += param->mouse_drag_speed() / zscale * ((float)x / ((float)param->window_width() / xrat) - sx);
+  my += param->mouse_drag_speed() / zscale * (-(float)y / ((float)param->window_height() / yrat) - sy);
 }
 
 void mouse_motion_callback_passive(int x, int y)
 {
-  px = ((((float)x / ((float)window_width / xrat)) * 8 / (zscale * xrat)) - 4 / (zscale * xrat))  - mx;
-  py = (-((((float)y / ((float)window_height / yrat)) * 8 / (zscale * yrat)) - 4 / (zscale * yrat))) - my;
+  px = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zscale * xrat)) - 4 / (zscale * xrat)) - mx;
+  py = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zscale * yrat)) - 4 / (zscale * yrat))) - my;
 }
 
 void mouse_click_callback(int button, int state, int x, int y)
 {
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-    sx = (float)x / ((float)window_width / xrat);
-    sy = -(float)y / ((float)window_height / yrat);
+    sx = (float)x / ((float)param->window_width() / xrat);
+    sy = -(float)y / ((float)param->window_height() / yrat);
   }
 
   if (button == GLUT_WHEEL_UP) {
-    zms += mouse_zoom_speed;
+    zms += param->mouse_zoom_speed();
   } else if (button == GLUT_WHEEL_DOWN) {
-    zms += -mouse_zoom_speed;
+    zms += -param->mouse_zoom_speed();
   }
 
   // Guard on too much / too little zoom

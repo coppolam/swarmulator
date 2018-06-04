@@ -30,8 +30,8 @@ void main_loop_function()
   glLoadIdentity();
 
   // Get current window size w.r.t. beginning
-  xrat = (float)window_width / (float)glutGet(GLUT_WINDOW_WIDTH);
-  yrat = (float)window_height / (float)glutGet(GLUT_WINDOW_HEIGHT);
+  xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
+  yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
 
   mouse_draganddrop(); // Activate mouse functions
 
@@ -73,7 +73,7 @@ void main_loop_function()
   glutSwapBuffers();
 
   // Wait until the next time-step according to the update frequency parameter
-  int t_wait = (int) 1000.0 * (1.0 / animation_updatefreq);
+  int t_wait = (int) 1000.0 * (1.0 / param->animation_updatefreq());
   this_thread::sleep_for(chrono::milliseconds(t_wait));
 }
 
@@ -112,11 +112,11 @@ void start_animation()
   char *argv[1] = {(char*)"Something"};
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
-  glutInitWindowSize(window_width, window_height);
+  glutInitWindowSize(param->window_width(), param->window_height());
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
   glutCreateWindow("Swarmulator");
   glutIdleFunc(main_loop_function);
-  GL_Setup(window_width, window_height); // Set up window parameters
+  GL_Setup(param->window_width(), param->window_height()); // Set up window parameters
 
   glutSetIconTitle("./logo.ico");
   
@@ -124,8 +124,8 @@ void start_animation()
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
 #endif
 
-  xrat = (float)window_width / (float)glutGet(GLUT_WINDOW_WIDTH);
-  yrat = (float)window_height / (float)glutGet(GLUT_WINDOW_HEIGHT);
+  xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
+  yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
 
   glutMainLoop(); // Initiate main drawing loop
 }

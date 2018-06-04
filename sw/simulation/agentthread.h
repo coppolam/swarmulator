@@ -17,7 +17,7 @@ void run_agent_simulation_step(int id)
   }
 
   // Increase time to the next timestep
-  int t_wait = (int) 1000000.0 * (1.0 / (simulation_updatefreq * simulation_realtimefactor));
+  int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
   this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 

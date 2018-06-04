@@ -34,7 +34,7 @@ void run_logger(ofstream &logfile, string filename)
   }
   mtx.unlock();
 
-  int t_wait = (int)1000000.0 / (logger_updatefreq * simulation_realtimefactor);
+  int t_wait = (int)1000000.0 / (param->logger_updatefreq() * param->simulation_realtimefactor());
   this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 

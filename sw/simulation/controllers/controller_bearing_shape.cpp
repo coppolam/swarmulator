@@ -198,7 +198,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   v_x = 0;
   v_y = 0;
 
-  float timelim = 1.8 * simulation_updatefreq;
+  float timelim = 1.8 * param->simulation_updatefreq();
   float twait_1 = timelim*2;
   float twait_2 = twait_1*2;
   float v_r, b_eq, v_b;
