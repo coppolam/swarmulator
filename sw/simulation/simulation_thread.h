@@ -14,7 +14,7 @@
 #include "omniscient_observer.h"
 #include "terminalinfo.h"
 #include "kill_functions.h"
-#include "agentthread.h"
+#include "agent_thread.h"
 
 bool simulation_running = false;
 

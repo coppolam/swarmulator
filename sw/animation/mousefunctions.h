@@ -8,7 +8,7 @@
 #include <iostream>
 #include <assert.h>     /* assert */
 #include "terminalinfo.h"
-#include "agentthread.h"
+#include "agent_thread.h"
 
 // A bit of a hack for compatibility with old GLUT
 // http://iihm.imag.fr/blanch/software/glut-macosx/

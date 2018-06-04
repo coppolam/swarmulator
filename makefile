@@ -21,14 +21,11 @@ INC=-I. -Isw -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -Isw/simulation/agents
 all: 
 	xsd cxx-tree --root-element-all conf/parameters.xsd
 	@echo "Building $(TARGET)...";
-	$(CC) $(CFLAGS) $(INC) -o $(TARGET) sw/main.cpp \
-	parameters.cxx \
-	$(SIMULATION_FOLDER)/agents/particle.cpp \
-	$(SIMULATION_FOLDER)/controllers/*.cpp \
-	$(SIMULATION_FOLDER)/*.cpp \
+	$(CC) $(CFLAGS) $(INC) -o $(TARGET) sw/main.cpp parameters.cxx \
+	$(SIMULATION_FOLDER)/agents/*.cpp $(SIMULATION_FOLDER)/controllers/*.cpp $(SIMULATION_FOLDER)/*.cpp \
 	$(ANIMATION_FOLDER)/*.cpp \
 	$(LOGGER_FOLDER)/*.cpp \
-	$(MATH_FOLDER)/randomgenerator.c \
+	$(MATH_FOLDER)/*.cpp \
 	$(OPT);
 	@echo "Done";
 

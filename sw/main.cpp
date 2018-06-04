@@ -17,8 +17,8 @@
 
 // Internal Includes
 #include "main.h" // Contains extern defines for global variables
-#include "animation.h" // Animation thread
-#include "simulation.h" // Simulation thread
+#include "animation_thread.h" // Animation thread
+#include "simulation_thread.h" // Simulation thread
 #include "logger.h" // Logger thread
 #include "omniscient_observer.h" // Class used to simulate sensing
 
