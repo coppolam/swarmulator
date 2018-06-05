@@ -12,6 +12,10 @@ Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller(),
   moving_timer(nagents, 0),
   selected_action(nagents, -1)
 {
+  beta_des.push_back(0.0);
+  beta_des.push_back(M_PI / 4.0);
+  beta_des.push_back(M_PI / 2.0);
+  beta_des.push_back(3.0 * M_PI / 4.0);
 }
 
 float Controller_Keep_Aggregate::f_attraction(float u, float b_eq)
@@ -51,12 +55,6 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
 {
   v_x = 0;
   v_y = 0;
-
-  vector<float> beta_des;
-  beta_des.push_back(0.0);
-  beta_des.push_back(M_PI / 4.0);
-  beta_des.push_back(M_PI / 2.0);
-  beta_des.push_back(3.0 * M_PI / 4.0);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
   float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));

@@ -8,7 +8,8 @@ void Particle::update_position()
 
   float v_x, v_y;
   controller.get_velocity_command(ID, v_x, v_y);
-
+  moving = controller.moving;
+  
   // Acceleration
   state[4] = -15 * (state[2] - v_x); // Acceleration x
   state[5] = -15 * (state[3] - v_y); // Acceleration y

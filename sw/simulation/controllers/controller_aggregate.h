@@ -19,7 +19,9 @@ class Controller_Aggregate: public Controller
   OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
   Template_Calculator t;
   vector<float> beta_des;
-
+  int moving_timer;
+  int selected_action;
+  
   float _v_adj = 10;    // Adjustment velocity
   int motion_dir = 0;   // Use 0 for random or 1-8 to specific a direction.
 

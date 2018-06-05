@@ -17,9 +17,10 @@ class Template_Calculator
 {
     // Map of state-space index to possible action space indexes.
     OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
+    vector<float> blink;
 
   public:
-    Template_Calculator(){};
+    Template_Calculator();
     ~Template_Calculator(){};
     
     std::map<int, vector<int>> state_action_matrix;

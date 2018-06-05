@@ -10,9 +10,9 @@ class Controller_Bearing: public Controller
 {
   OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
   Template_Calculator *t;
-
+  vector<float> bdes;
   float _v_adj = 0.1; // Adjustment velocity
-
+  
 public:
 
   Controller_Bearing();

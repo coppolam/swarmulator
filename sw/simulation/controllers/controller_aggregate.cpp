@@ -8,18 +8,14 @@
 #include <algorithm> // std::sort
 
 Controller_Aggregate::Controller_Aggregate() : Controller()
-// moving(nagents,0),
-// moving_timer(nagents,0),
-// selected_action(nagents,-1)
 {
-  string s="./conf/state_action_matrices/state_action_matrix_triangle4.txt";
+  string s = "./conf/state_action_matrices/state_action_matrix_triangle4.txt";
   t.set_state_action_matrix(s);
-
+  moving_timer = 0;
   beta_des.push_back(0.0);
   beta_des.push_back(M_PI / 4.0);
   beta_des.push_back(M_PI / 2.0);
   beta_des.push_back(3.0 * M_PI / 4.0);
-  
 }
 
 float Controller_Aggregate::f_attraction(float u, float b_eq)
@@ -61,9 +57,7 @@ void Controller_Aggregate::actionmotion(const int selected_action, float &v_x, f
   v_y = _v_adj * (float)actionspace_y[selected_action];
 }
 
-vector<bool> moving(20, 0);
-vector<int> moving_timer(20, 0);
-vector<int> selected_action(20, -1);
+
 void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
@@ -83,7 +77,8 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   // Can I move or are my neighbors moving?
   bool canImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
-    if (moving[state_ID[i]]) { // Somebody nearby is already moving
+    if (o->see_if_moving(state_ID[i]))
+    { // Somebody nearby is already moving
       canImove = false;
     }
   }
@@ -94,10 +89,11 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
 
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
-  if (!moving[ID]) {
+  if (!o->see_if_moving(ID))
+  {
     if (state_action_row != t.state_action_matrix.end()) {
       if (motion_dir == 0 || state_action_row->second.size() < 2) {
-        selected_action[ID] = *select_randomly(state_action_row->second.begin(),
+        selected_action = *select_randomly(state_action_row->second.begin(),
                                                state_action_row->second.end());
       } else {
         // Possible actions
@@ -126,32 +122,32 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
 
         // Select
         if (difference[0] != difference[1]) {
-          selected_action[ID] = possibleactions[0] - 1;
+          selected_action = possibleactions[0] - 1;
         } else {
-          selected_action[ID] = *select_randomly(possibleactions.begin(),
+          selected_action = *select_randomly(possibleactions.begin(),
                                                  possibleactions.begin() + 1) - 1;
         }
       }
 
     } else {
-      selected_action[ID] = -2; // State not found... no action to take.
+      selected_action = -2; // State not found... no action to take.
     }
   }
 
-  moving[ID] = false;
-  if (selected_action[ID] > -1 && canImove && moving_timer[ID] < 200) {
+  moving = false;
+  if (selected_action > -1 && canImove && moving_timer < 200) {
     // You are in not blocked and you have priority. Take an action!
-    actionmotion(selected_action[ID], v_x, v_y);
-    moving[ID] = true;
-    moving_timer[ID]++;
+    actionmotion(selected_action, v_x, v_y);
+    moving = true;
+    moving_timer++;
   } else if (canImove) {
     // You are static, but you still have priority! Fix your position.
     latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    moving_timer[ID] = 0;
+    moving_timer = 0;
   } else {
     // You are static, but also too slow, so no priority! Wait about till you do.
     attractionmotion(v_r, v_b, v_x, v_y);
-    moving_timer[ID] = 0;
+    moving_timer = 0;
   }
 
   keepbounded(v_x, -1, 1);

@@ -1,6 +1,6 @@
-#include "particle.h"
+#include "wall.h"
 
-void Particle::update_position()
+void Wall::update_position()
 {
   // NED frame
   // x+ towards North

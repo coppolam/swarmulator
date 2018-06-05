@@ -8,11 +8,10 @@
 
 using namespace std;
 
-class Particle: public Agent
-{
+class Wall {
 public:
   float dt; // timestep
-  Particle(int i, const vector<float> &state, float tstep): Agent(i, state) {
+  Wall(int i, const vector<float> &state, float tstep): Agent(i, state) {
     dt = tstep;
   }; // Make two versions for random initialization
 

@@ -5,7 +5,13 @@
 #include "randomgenerator.h"
 #include "auxiliary.h"
 
-Controller_Bearing::Controller_Bearing() : Controller() {};
+Controller_Bearing::Controller_Bearing() : Controller()
+{
+  bdes.push_back(deg2rad(0));
+  // bdes.push_back(deg2rad(  45));
+  bdes.push_back(deg2rad(90));
+  // bdes.push_back(deg2rad(  135));
+};
 Controller_Bearing::~Controller_Bearing() {};
 
 float Controller_Bearing::f_attraction(float u, float b_eq)
@@ -50,13 +56,6 @@ void Controller_Bearing::get_velocity_command(const uint8_t ID, float &v_x, floa
 
   v_x = 0;
   v_y = 0;
-
-  // Desired angles, so as to create a matrix
-  vector<float> bdes;
-  bdes.push_back(deg2rad(0));
-  // bdes.push_back(deg2rad(  45));
-  bdes.push_back(deg2rad(90));
-  // bdes.push_back(deg2rad(  135));
 
   // Which neighbors can you sense within the range?
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest

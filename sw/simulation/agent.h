@@ -25,6 +25,7 @@ public:
   uint8_t ID;
   vector<float> outputs;
   vector<float> state;
+  bool moving;
 
   CONTROLLER controller;
 

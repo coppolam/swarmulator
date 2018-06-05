@@ -29,6 +29,7 @@ public:
   void adjacency_matrix_knearest();
   bool connected_graph_range(float range);
   float get_centroid(uint8_t dim);
+  bool see_if_moving(uint8_t ID);
 };
 
 #endif /*OMNISCIENT_OBSERVER_H*/

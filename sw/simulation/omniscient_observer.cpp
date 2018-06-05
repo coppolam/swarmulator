@@ -165,3 +165,8 @@ float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 {
   return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0));
 }
+
+bool OmniscientObserver::see_if_moving(uint8_t ID)
+{
+  return s[ID].moving;
+}

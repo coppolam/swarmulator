@@ -18,15 +18,14 @@ using namespace std;
 class Controller_Bearing_Shape: public Controller
 {
   OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
-  Template_Calculator *t;
-  
-  // TODO THIS DOESN'T WORK BECAUSE NEIGHBORS ARE NOT GLOBALLY UPDATED!
-  vector<bool> moving;
-  vector<int> moving_timer;
-  vector<int> selected_action;
-  vector<bool> happy;
+  Template_Calculator t;
+  vector<float> beta_des;
 
-  float _v_adj = 10; //
+  // TODO THIS DOESN'T WORK BECAUSE NEIGHBORS ARE NOT GLOBALLY UPDATED!
+  int moving_timer;
+  int selected_action;
+
+  float _v_adj = 10;
 
 public:
   Controller_Bearing_Shape();

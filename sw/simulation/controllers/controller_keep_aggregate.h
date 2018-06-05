@@ -29,6 +29,7 @@ class Controller_Keep_Aggregate: public Controller
 
   float _v_adj = 0.5; // Adjustment velocity
   int motion_dir = 0; // Use 0 for random or 1-8 to specific a direction.
+  vector<float> beta_des;
 
 public:
   Controller_Keep_Aggregate();

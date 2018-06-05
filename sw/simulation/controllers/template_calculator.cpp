@@ -3,6 +3,20 @@
 #include "auxiliary.h"
 #include <algorithm> // std::find
 
+Template_Calculator::Template_Calculator()
+{
+  // Angles to check for neighboring links
+  blink.push_back(0);
+  blink.push_back(M_PI / 4.0);
+  blink.push_back(M_PI / 2.0);
+  blink.push_back(3 * M_PI / 4.0);
+  blink.push_back(M_PI);
+  blink.push_back(deg2rad(180 + 45));
+  blink.push_back(deg2rad(180 + 90));
+  blink.push_back(deg2rad(180 + 135));
+  blink.push_back(2 * M_PI);
+};
+
 void Template_Calculator::set_state_action_matrix(string filename)
 {
   state_action_matrix.clear();
@@ -44,19 +58,6 @@ void Template_Calculator::set_state_action_matrix(string filename)
 
 bool Template_Calculator::fill_template(vector<bool> &q, const float b_i, const float u, float dmax, float angle_err, int &d)
 {
-  vector<float> blink;
-
-  // Angles to check for neighboring links
-  blink.push_back(0);
-  blink.push_back(M_PI / 4.0);
-  blink.push_back(M_PI / 2.0);
-  blink.push_back(3 * M_PI / 4.0);
-  blink.push_back(M_PI);
-  blink.push_back(deg2rad(180 + 45));
-  blink.push_back(deg2rad(180 + 90));
-  blink.push_back(deg2rad(180 + 135));
-  blink.push_back(2 * M_PI);
-
   // Determine link (cycle through all options)
   if (u < dmax) {
     for (int j = 0; j < (int)blink.size(); j++) {
@@ -130,7 +131,7 @@ void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<i
     if (fill_template(q,                                               // Vector to fill
                       wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
                       o->request_distance(ID, closest[i]),             // Distance
-                      1.8, 22.499, j)) {
+                      1.7, 22.499, j)) {
       // Sensor range, bearing precision
       q_ID.push_back(closest[i]);
     }

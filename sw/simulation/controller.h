@@ -18,13 +18,14 @@ public:
   Controller();
   ~Controller();
 
-  float _kr = 1; // Repulsion gain
   float _ddes = 1.0; // Desired equilibrium distance
+  float _kr = 1; // Repulsion gain
   float _ka = 5; // Attraction gain
 
   bool  saturation;
   float saturation_limits;
-
+  bool moving;
+  
   void set_saturation(const float &saturation_limits);
   float saturate(float f);
   float f_repulsion(float u);
