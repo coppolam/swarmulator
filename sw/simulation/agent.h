@@ -5,10 +5,12 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdint.h>
+
 #include "settings.h"
+#include "terminalinfo.h"
+
 #include CONTROLLER_INCLUDE
 
-#include "terminalinfo.h"
 using namespace std;
 
 class Agent
@@ -17,7 +19,7 @@ class Agent
   vector<float> actions;
 
 public:
-  Agent(uint8_t i, const vector<float> &s); // Make two versions for random initialization
+  Agent(uint8_t i, const vector<float> &s);
   ~Agent();
 
   uint8_t ID;

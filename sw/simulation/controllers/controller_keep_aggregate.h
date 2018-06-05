@@ -13,6 +13,7 @@
 #include <random>
 #include <iterator>
 #include "auxiliary.h"
+#include "template_calculator.h"
 
 using namespace std;
 
@@ -24,6 +25,7 @@ class Controller_Keep_Aggregate: public Controller
   vector<bool> moving;
   vector<int> moving_timer;
   vector<int> selected_action;
+  Template_Calculator *t;
 
   float _v_adj = 0.5; // Adjustment velocity
   int motion_dir = 0; // Use 0 for random or 1-8 to specific a direction.
@@ -40,10 +42,6 @@ public:
   
   float get_attraction_velocity(float u, float b_eq);
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
-
-  float get_preferred_bearing(const vector<float> &bdes, const float v_b);
-  bool fill_template(vector<bool> &q, const float b_i, const float u, float dmax);
-  void assess_situation(uint8_t ID, vector<bool> &q_old, vector<int> &q_old_ID);
 };
 
 #endif /*CONTROLLER_KEEP_AGGREGATE_H*/
