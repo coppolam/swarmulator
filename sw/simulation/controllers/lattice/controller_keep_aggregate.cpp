@@ -7,7 +7,7 @@
 
 #include <algorithm> // std::sort
 
-Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller()
+Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller_Lattice_Basic()
 {
   string s = "./conf/state_action_matrices/state_action_matrix_triangle4.txt";
   t.set_state_action_matrix(s);
@@ -16,39 +16,6 @@ Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller()
   beta_des.push_back(M_PI / 4.0);
   beta_des.push_back(M_PI / 2.0);
   beta_des.push_back(3.0 * M_PI / 4.0);
-}
-
-float Controller_Keep_Aggregate::f_attraction(float u, float b_eq)
-{
-  float w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
-  return 1 / (1 + exp(-_ka * (u - w)));
-}
-
-float Controller_Keep_Aggregate::get_attraction_velocity(float u, float b_eq)
-{
-  return f_attraction(u, b_eq) + f_repulsion(u);
-}
-
-void Controller_Keep_Aggregate::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
-{
-  v_x = v_r * cos(v_b);
-  v_y = v_r * sin(v_b);
-}
-
-void Controller_Keep_Aggregate::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
-{
-  attractionmotion(v_r + v_adj, v_b, v_x, v_y);
-  // Additional force for for reciprocal alignment
-  v_x += -v_adj * cos(bdes * 2 - v_b);
-  v_y += -v_adj * sin(bdes * 2 - v_b);
-}
-
-void Controller_Keep_Aggregate::actionmotion(const int selected_action, float &v_x, float &v_y)
-{
-  int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
-  int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
-  v_x = _v_adj * (float)actionspace_x[selected_action];
-  v_y = _v_adj * (float)actionspace_y[selected_action];
 }
 
 void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)

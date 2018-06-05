@@ -16,16 +16,21 @@ ANIMATION_FOLDER = $(SW_FOLDER)/animation
 LOGGER_FOLDER = $(SW_FOLDER)/logger
 MATH_FOLDER = $(SW_FOLDER)/math
 
-INC=-I. -I$(SW_FOLDER) -I$(BUILD_FOLDER) -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -I$(SIMULATION_FOLDER)/agents -I$(SIMULATION_FOLDER)/controllers  -I$(LOGGER_FOLDER) -I$(MATH_FOLDER) 
-
+# INC=-I. -I$(SW_FOLDER) -I$(BUILD_FOLDER) -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -I$(SIMULATION_FOLDER)/agents -I$(SIMULATION_FOLDER)/controllers  -I$(LOGGER_FOLDER) -I$(MATH_FOLDER) 
+INCDIRS=$(shell find sw -maxdepth 50 -type d)
+INC_PARAMS=$(foreach d, $(INCDIRS), -I$d)
+INC=-I. -I$(SW_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS)
+SOURCE= $(shell find $(root_folder) -name *.cpp)
 # Build the executable
 # Using @ suppresses the output of the arguments
+# @$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(SW_FOLDER)/main.cpp $(BUILD_FOLDER)/*.cxx  $(SIMULATION_FOLDER)/agents/*.cpp $(SIMULATION_FOLDER)/controllers/*.cpp $(SIMULATION_FOLDER)/*.cpp $(ANIMATION_FOLDER)/*.cpp $(LOGGER_FOLDER)/*.cpp $(MATH_FOLDER)/*.cpp $(OPT);
+	
 all: 
 	@echo "Generating parameters parser...";
 	@mkdir -p $(BUILD_FOLDER);
 	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 	@echo "Building $(TARGET)...";
-	@$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(SW_FOLDER)/main.cpp $(BUILD_FOLDER)/*.cxx  $(SIMULATION_FOLDER)/agents/*.cpp $(SIMULATION_FOLDER)/controllers/*.cpp $(SIMULATION_FOLDER)/*.cpp $(ANIMATION_FOLDER)/*.cpp $(LOGGER_FOLDER)/*.cpp $(MATH_FOLDER)/*.cpp $(OPT);
+	$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(BUILD_FOLDER)/*.cxx $(SOURCE) $(OPT)
 	@echo "Done";
 
 clean:

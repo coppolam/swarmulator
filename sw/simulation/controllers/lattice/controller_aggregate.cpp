@@ -7,9 +7,9 @@
 
 #include <algorithm> // std::sort
 
-Controller_Aggregate::Controller_Aggregate() : Controller()
+Controller_Aggregate::Controller_Aggregate() : Controller_Lattice_Basic()
 {
-  string s = "./conf/state_action_matrices/state_action_matrix_triangle4.txt";
+  string s = "./conf/state_action_matrices/state_action_matrix_free.txt";
   t.set_state_action_matrix(s);
   moving_timer = 0;
   beta_des.push_back(0.0);
@@ -18,48 +18,15 @@ Controller_Aggregate::Controller_Aggregate() : Controller()
   beta_des.push_back(3.0 * M_PI / 4.0);
 }
 
-float Controller_Aggregate::f_attraction(float u, float b_eq)
-{
-  float w;
-  if (!(abs(b_eq - M_PI / 4.0) < 0.1 || abs(b_eq - (3 * M_PI / 4.0)) < 0.1)) {
-    w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
-  } else {
-    w = log((sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)) / _kr - 1) / exp(-_ka * sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)))) / _ka;
-  }
-
-  return 1 / (1 + exp(-_ka * (u - w)));
-}
-
-float Controller_Aggregate::get_attraction_velocity(float u, float b_eq)
-{
-  return f_attraction(u, b_eq) + f_repulsion(u) ;
-}
-
-void Controller_Aggregate::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
-{
-  v_x = v_r * cos(v_b);
-  v_y = v_r * sin(v_b);
-}
-
-void Controller_Aggregate::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
-{
-  attractionmotion(v_r + v_adj, v_b, v_x, v_y);
-  // Additional force for for reciprocal alignment
-  v_x += -v_adj * cos(bdes * 2 - v_b);
-  v_y += -v_adj * sin(bdes * 2 - v_b);
-}
-
-void Controller_Aggregate::actionmotion(const int selected_action, float &v_x, float &v_y)
-{
-  int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
-  int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
-  v_x = _v_adj * (float)actionspace_x[selected_action];
-  v_y = _v_adj * (float)actionspace_y[selected_action];
-}
 
 
 void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
+
+  float timelim = 1.8 * param->simulation_updatefreq();
+  float twait_1 = timelim * 2;
+  float twait_2 = twait_1 * 2;
+
   v_x = 0;
   v_y = 0;
 
@@ -134,20 +101,47 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
     }
   }
 
+  // Controller
   moving = false;
-  if (selected_action > -1 && canImove && moving_timer < 200) {
-    // You are in not blocked and you have priority. Take an action!
-    actionmotion(selected_action, v_x, v_y);
-    moving = true;
-    moving_timer++;
-  } else if (canImove) {
-    // You are static, but you still have priority! Fix your position.
-    latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-    moving_timer = 0;
-  } else {
-    // You are static, but also too slow, so no priority! Wait about till you do.
-    attractionmotion(v_r, v_b, v_x, v_y);
-    moving_timer = 0;
+  float d_safe = 0.9;
+
+  if (canImove)
+  {
+    if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.2)
+    {
+      actionmotion(selected_action, v_x, v_y);
+      moving = true;
+    }
+    else if (o->request_distance(ID, closest[0]) > d_safe)
+    {
+      uint count = 1;
+      for (size_t i = 0; i < state_ID.size(); i++)
+      {
+        v_b = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
+        b_eq = t.get_preferred_bearing(beta_des, v_b);
+        v_r = get_attraction_velocity(o->request_distance(ID, state_ID[i]), b_eq);
+        latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+        count++;
+      }
+      v_x = v_x / (float)count;
+      v_y = v_y / (float)count;
+    }
+    else
+    {
+      v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
+      b_eq = t.get_preferred_bearing(beta_des, v_b);
+      v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
+      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+    }
+
+    if (moving_timer > twait_2)
+    {
+      moving_timer = 1;
+    }
+    else
+    {
+      moving_timer++;
+    }
   }
 
   keepbounded(v_x, -1, 1);
