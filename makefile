@@ -19,9 +19,10 @@ MATH_FOLDER = $(SW_FOLDER)/math
 INC=-I. -I$(SW_FOLDER) -I$(BUILD_FOLDER) -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -I$(SIMULATION_FOLDER)/agents -I$(SIMULATION_FOLDER)/controllers  -I$(LOGGER_FOLDER) -I$(MATH_FOLDER) 
 
 # Build the executable
+# Using @ suppresses the output of the arguments
 all: 
 	@echo "Generating parameters parser...";
-	@mkdir $(BUILD_FOLDER);
+	@mkdir -p $(BUILD_FOLDER);
 	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 	@echo "Building $(TARGET)...";
 	@$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(SW_FOLDER)/main.cpp $(BUILD_FOLDER)/*.cxx  $(SIMULATION_FOLDER)/agents/*.cpp $(SIMULATION_FOLDER)/controllers/*.cpp $(SIMULATION_FOLDER)/*.cpp $(ANIMATION_FOLDER)/*.cpp $(LOGGER_FOLDER)/*.cpp $(MATH_FOLDER)/*.cpp $(OPT);
