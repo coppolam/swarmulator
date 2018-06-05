@@ -66,5 +66,4 @@ void Controller_Bearing::get_velocity_command(const uint8_t ID, float &v_x, floa
   float v_r  = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
 
   latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-
 }

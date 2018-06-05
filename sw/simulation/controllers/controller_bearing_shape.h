@@ -21,7 +21,6 @@ class Controller_Bearing_Shape: public Controller
   Template_Calculator t;
   vector<float> beta_des;
 
-  // TODO THIS DOESN'T WORK BECAUSE NEIGHBORS ARE NOT GLOBALLY UPDATED!
   int moving_timer;
   int selected_action;
 

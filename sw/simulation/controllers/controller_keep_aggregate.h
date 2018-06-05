@@ -22,10 +22,10 @@ class Controller_Keep_Aggregate: public Controller
   // Map of state-space index to possible action space indexes.
   std::map<int, vector<int>> state_action_matrix;
   OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
-  vector<bool> moving;
-  vector<int> moving_timer;
-  vector<int> selected_action;
-  Template_Calculator *t;
+
+  Template_Calculator t;
+  int moving_timer;
+  int selected_action;
 
   float _v_adj = 0.5; // Adjustment velocity
   int motion_dir = 0; // Use 0 for random or 1-8 to specific a direction.
