@@ -5,11 +5,6 @@
 #include "randomgenerator.h"
 #include "auxiliary.h"
 
-#define _ddes 0.6 // Desired equilibrium distance
-#define _kr 0.1   // Repulsion gain
-#define _ka 5   // Attraction gain
-#define _v_adj 0.1 // Adjustment velocity
-
 Controller_Bearing::Controller_Bearing() : Controller() {};
 Controller_Bearing::~Controller_Bearing(){};
 

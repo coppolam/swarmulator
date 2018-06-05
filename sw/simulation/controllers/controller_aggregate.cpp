@@ -7,7 +7,7 @@
 
 #include <algorithm> // std::sort
 
-Controller_Keep_Aggregate::Controller_Keep_Aggregate() : Controller(),
+Controller_Aggregate::Controller_Aggregate() : Controller(),
 moving(nagents,0),
 moving_timer(nagents,0),
 selected_action(nagents,-1)
@@ -50,27 +50,27 @@ selected_action(nagents,-1)
 
 }
 
-float Controller_Keep_Aggregate::f_attraction(float u, float b_eq)
+float Controller_Aggregate::f_attraction(float u, float b_eq)
 {
   float w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
   return 1 / (1 + exp(-_ka * (u - w)));
 }
 
-float Controller_Keep_Aggregate::f_repulsion(float u) { return -_kr / u; }
-float Controller_Keep_Aggregate::f_extra(float u) {return 0;}
+float Controller_Aggregate::f_repulsion(float u) { return -_kr / u; }
+float Controller_Aggregate::f_extra(float u) {return 0;}
 
-float Controller_Keep_Aggregate::get_attraction_velocity(float u, float b_eq)
+float Controller_Aggregate::get_attraction_velocity(float u, float b_eq)
 {
   return f_attraction(u, b_eq) + f_repulsion(u) + f_extra(u);;
 }
 
-void Controller_Keep_Aggregate::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
+void Controller_Aggregate::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
 {
   v_x = v_r * cos(v_b);
   v_y = v_r * sin(v_b);
 }
 
-void Controller_Keep_Aggregate::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
+void Controller_Aggregate::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
   attractionmotion(v_r+v_adj, v_b, v_x, v_y);
   // Additional force for for reciprocal alignment
@@ -78,7 +78,7 @@ void Controller_Keep_Aggregate::latticemotion(const float &v_r, const float &v_a
   v_y += -v_adj * sin(bdes * 2 - v_b);
 }
 
-void Controller_Keep_Aggregate::actionmotion(const int selected_action, float &v_x, float &v_y)
+void Controller_Aggregate::actionmotion(const int selected_action, float &v_x, float &v_y)
 {
   int actionspace_x[8] = {1, 1, 0, -1, -1, -1, 0, 1};
   int actionspace_y[8] = {0, 1, 1, 1, 0, -1, -1, -1};
@@ -87,7 +87,7 @@ void Controller_Keep_Aggregate::actionmotion(const int selected_action, float &v
 }
 
 
-bool Controller_Keep_Aggregate::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
+bool Controller_Aggregate::fill_template(vector<bool> &q, const float b_i, const float u, float dmax)
 {
   vector<float> blink;
 
@@ -118,7 +118,7 @@ bool Controller_Keep_Aggregate::fill_template(vector<bool> &q, const float b_i, 
   return false;
 }
 
-float Controller_Keep_Aggregate::get_preferred_bearing(const vector<float> &bdes, const float v_b)
+float Controller_Aggregate::get_preferred_bearing(const vector<float> &bdes, const float v_b)
 {
   // Define in bv all equilibrium angles at which the agents can organize themselves
   vector<float> bv;
@@ -159,7 +159,7 @@ float Controller_Keep_Aggregate::get_preferred_bearing(const vector<float> &bdes
   return bdes[minindex];
 }
 
-void Controller_Keep_Aggregate::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID)
+void Controller_Aggregate::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID)
 {
   q.clear();
   q.assign(8,false);
@@ -177,7 +177,7 @@ void Controller_Keep_Aggregate::assess_situation(uint8_t ID, vector<bool> &q, ve
   }
 }
 
-void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;
@@ -227,7 +227,7 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
         // Difference to favorite action
         vector<int> difference = state_action_row->second;
         for_each(difference.begin(), difference.end(), [](int &d) { d++; });
-        for_each(difference.begin(), difference.end(), [&](int &d) { d -= motion_dir; });
+        for_each(difference.begin(), difference.end(), [&](int &d) { d -= motion_dir; }); // https://stackoverflow.com/questions/13461538/lambda-of-a-lambda-the-function-is-not-captured/13461594
         for_each(difference.begin(), difference.end(), [](int &d) { d = abs(d); });
         for_each(difference.begin(), difference.end(), [](int &d)
           { if (d>4) {d = 4-wraptosequence(d,0,4);} else {d = wraptosequence(d,0,4);} });

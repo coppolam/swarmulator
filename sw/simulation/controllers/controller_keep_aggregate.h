@@ -25,10 +25,16 @@ class Controller_Keep_Aggregate: public Controller
   vector<int> moving_timer;
   vector<int> selected_action;
 
+  float _ddes = 1.0;  // Desired equilibrium distance
+  float _kr = 0.1;    // Repulsion gain
+  float _ka = 2;      // Attraction gain
+  float _v_adj = 0.5; // Adjustment velocity
+  int motion_dir = 0; // Use 0 for random or 1-8 to specific a direction.
+
 public:
   Controller_Keep_Aggregate();
   ~Controller_Keep_Aggregate(){};
-
+  
   void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y);
   void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y);
   void actionmotion(const int selected_action, float &v_x, float &v_y);

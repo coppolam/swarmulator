@@ -127,7 +127,8 @@ void start_simulation(int argc, char *argv[])
   // TODO: Launch enironment threads
   // Gather enironment data (walls?!)
   // Launch a thread that handles all environment data
-
+  // vector<float> wallpoints = {0, 0, 2, 2};
+  
   simulation_start(); // Begin the simulation
 
 }

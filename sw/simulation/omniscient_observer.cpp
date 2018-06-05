@@ -133,7 +133,7 @@ bool OmniscientObserver::connected_graph_range(float range)
     return true;
   }
 
-  return false;
+  return true;
 
 }
 

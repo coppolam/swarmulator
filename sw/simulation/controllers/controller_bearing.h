@@ -12,6 +12,11 @@ class Controller_Bearing: public Controller
 {
   OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
 
+  float _ddes = 0.6;  // Desired equilibrium distance
+  float _kr = 0.1;    // Repulsion gain
+  float _ka = 5;      // Attraction gain
+  float _v_adj = 0.1; // Adjustment velocity
+
 public:
 
   Controller_Bearing();

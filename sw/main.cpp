@@ -25,10 +25,11 @@
 using namespace std;
 
 // Simulation default values
-int nagents;        // Number of agents in the simulation
+int nagents; // Number of agents in the simulation
 vector<Particle> s; // Set up a vector of relative position filters
-int knearest;       // knearest objects
-mutex mtx;          // Mutex needed to lock threads
+// vector<Wall> w; // Set up a vector of walls
+int knearest; // knearest objects
+mutex mtx; // Mutex needed to lock threads
 float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;

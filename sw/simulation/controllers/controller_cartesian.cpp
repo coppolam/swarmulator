@@ -5,10 +5,6 @@
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 
-#define _ddes 0.6 // Desired equilibrium distance
-#define _kr 0.1   // Repulsion gain
-#define _ka 5   // Attraction gain
-
 // Only one of the following can work
 // #define FORCED    // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt"
 #define KNEAREST // Use a k-nearest topology according to the second argument

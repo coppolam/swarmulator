@@ -9,11 +9,6 @@
 
 #include <algorithm> // std::find
 
-#define _ddes 1.0 // Desired equilibrium distance
-#define _kr 1 // Repulsion gain
-#define _ka 5 // Attraction gain
-#define _v_adj 10 // 
-
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller(),
 moving(nagents,0),
 moving_timer(nagents,0),

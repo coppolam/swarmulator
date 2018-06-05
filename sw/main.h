@@ -10,6 +10,7 @@
 extern int nagents; // Number of agents in the swarm
 extern int knearest;  // Knearest neighbours
 extern std::vector<Particle> s; // Set up a vector of particles
+// extern std::vector<Wall> w; // Set up a vector of walls
 extern float simulation_time; // Simulation time (our time)
 extern float simtime_seconds; // Adjusted simulation time (time according to simulation)
 extern std::mutex mtx; // Mutex for critical section
