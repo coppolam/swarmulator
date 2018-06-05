@@ -56,12 +56,9 @@ float Controller_Keep_Aggregate::f_attraction(float u, float b_eq)
   return 1 / (1 + exp(-_ka * (u - w)));
 }
 
-float Controller_Keep_Aggregate::f_repulsion(float u) { return -_kr / u; }
-float Controller_Keep_Aggregate::f_extra(float u) {return 0;}
-
 float Controller_Keep_Aggregate::get_attraction_velocity(float u, float b_eq)
 {
-  return f_attraction(u, b_eq) + f_repulsion(u) + f_extra(u);;
+  return f_attraction(u, b_eq) + f_repulsion(u);
 }
 
 void Controller_Keep_Aggregate::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)

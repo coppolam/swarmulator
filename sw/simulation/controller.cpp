@@ -21,6 +21,11 @@ float Controller::saturate(float f)
   return f;
 }
 
+float Controller::f_repulsion(float u)
+{ 
+  return -_kr / u;
+}
+
 void Controller::set_saturation(const float &lim)
 {
   saturation = true;

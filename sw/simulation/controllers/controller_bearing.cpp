@@ -21,12 +21,9 @@ float Controller_Bearing::f_attraction(float u, float b_eq)
   }
 }
 
-float Controller_Bearing::f_repulsion(float u) {return -_kr / u;}
-float Controller_Bearing::f_extra(float u) {return 0;}
-
 float Controller_Bearing::get_attraction_velocity(float u, float b_eq)
 {
-  return f_attraction(u, b_eq) + f_repulsion(u) + f_extra(u);;
+  return f_attraction(u, b_eq) + f_repulsion(u);
 }
 
 void Controller_Bearing::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)

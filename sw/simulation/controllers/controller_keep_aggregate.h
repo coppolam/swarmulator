@@ -26,7 +26,6 @@ class Controller_Keep_Aggregate: public Controller
   vector<int> selected_action;
 
   float _ddes = 1.0;  // Desired equilibrium distance
-  float _kr = 0.1;    // Repulsion gain
   float _ka = 2;      // Attraction gain
   float _v_adj = 0.5; // Adjustment velocity
   int motion_dir = 0; // Use 0 for random or 1-8 to specific a direction.
@@ -40,8 +39,7 @@ public:
   void actionmotion(const int selected_action, float &v_x, float &v_y);
 
   float f_attraction(float u, float b);
-  float f_repulsion(float u);
-  float f_extra(float u);
+  
   float get_attraction_velocity(float u, float b_eq);
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 

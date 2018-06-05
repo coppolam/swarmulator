@@ -20,4 +20,7 @@ extern int window_width, window_height;
 #define ANIMATE // Activate animation thread
 #define LOG // Activate logger thread
 
+// #define CONTROLLER Controller_Aggregate
+// #define CONTROLLER_INCLUDE "controller_aggregate.h"
+
 #endif /*MAIN_H*/

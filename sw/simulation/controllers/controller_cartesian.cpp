@@ -18,19 +18,9 @@ float Controller_Cartesian::f_attraction(float u)
   return  1 / (1 + exp(-_ka * (u - w))) + 1 / (1 + exp(-_ka * (u + w))) - 1; //% sigmoid function -- long-range
 }
 
-float Controller_Cartesian::f_repulsion(float u)
-{
-  return -_kr / u; // Short-distance repulsion
-}
-
-float Controller_Cartesian::f_extra(float u)
-{
-  return 0;
-}
-
 float Controller_Cartesian::get_attraction_velocity(float u)
 {
-  return f_attraction(u) + f_repulsion(u) + f_extra(u);
+  return f_attraction(u) + f_repulsion(u);
 }
 
 void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
