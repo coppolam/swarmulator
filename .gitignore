@@ -4,4 +4,3 @@ conf/*.xml
 conf/*.txt
 parameters.*
 build/
-sw/settings.h
