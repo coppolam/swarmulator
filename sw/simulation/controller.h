@@ -19,6 +19,9 @@ public:
   ~Controller();
 
   float _kr = 1; // Repulsion gain
+  float _ddes = 1.0; // Desired equilibrium distance
+  float _ka = 5; // Attraction gain
+
   bool  saturation;
   float saturation_limits;
 

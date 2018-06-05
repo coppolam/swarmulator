@@ -25,8 +25,6 @@ class Controller_Keep_Aggregate: public Controller
   vector<int> moving_timer;
   vector<int> selected_action;
 
-  float _ddes = 1.0;  // Desired equilibrium distance
-  float _ka = 2;      // Attraction gain
   float _v_adj = 0.5; // Adjustment velocity
   int motion_dir = 0; // Use 0 for random or 1-8 to specific a direction.
 

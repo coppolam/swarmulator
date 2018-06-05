@@ -1,9 +1,6 @@
 #ifndef CONTROLLER_CARTESIAN_H
 #define CONTROLLER_CARTESIAN_H
 
-#include <vector>
-#include <stdio.h>
-#include <iostream>
 #include "controller.h"
 
 using namespace std;
@@ -11,8 +8,6 @@ using namespace std;
 class Controller_Cartesian: public Controller
 {
   OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
-  float _ddes = 0.6;        // Desired equilibrium distance
-  float _ka = 5;            // Attraction gain
 
 public:
   Controller_Cartesian(): Controller() {};

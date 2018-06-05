@@ -5,8 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <stdint.h>
-#include "../../conf/parameters.h"
-
+#include "settings.h"
 #include CONTROLLER_INCLUDE
 
 #include "terminalinfo.h"

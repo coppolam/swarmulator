@@ -1,9 +1,6 @@
 #ifndef CONTROLLER_AGGREGATE_H
 #define CONTROLLER_AGGREGATE_H
 
-#include <vector>
-#include <stdio.h>
-#include <iostream>
 #include "controller.h"
 
 #include <map>
@@ -25,8 +22,6 @@ class Controller_Aggregate: public Controller
   vector<int> moving_timer;
   vector<int> selected_action;
 
-  float _ddes = 1.0;  // Desired equilibrium distance
-  float _ka = 5;        // Attraction gain
   float _v_adj = 10;    // Adjustment velocity
   int motion_dir = 0;   // Use 0 for random or 1-8 to specific a direction.
 

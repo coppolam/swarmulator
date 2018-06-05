@@ -4,6 +4,7 @@
 #include <mutex>
 #include <vector>
 #include "particle.h"
+#include "settings.h"
 #include "parameters.hxx"
 
 // Simulation variables
@@ -17,10 +18,5 @@ extern std::mutex mtx; // Mutex for critical section
 extern bool program_running; // True if the program is (or should be) running. If false the program shuts down.
 extern unique_ptr<parameters_t> param; // XML parameters from conf file
 extern int window_width, window_height;
-#define ANIMATE // Activate animation thread
-#define LOG // Activate logger thread
-
-// #define CONTROLLER Controller_Aggregate
-// #define CONTROLLER_INCLUDE "controller_aggregate.h"
 
 #endif /*MAIN_H*/

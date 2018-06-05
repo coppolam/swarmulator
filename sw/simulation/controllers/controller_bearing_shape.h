@@ -1,9 +1,6 @@
 #ifndef CONTROLLER_BEARING_SHAPE_H
 #define CONTROLLER_BEARING_SHAPE_H
 
-#include <vector>
-#include <stdio.h>
-#include <iostream>
 #include "controller.h"
 
 #include <map>
@@ -27,9 +24,7 @@ class Controller_Bearing_Shape: public Controller
   vector<int> selected_action;
   vector<bool> happy;
 
-  float _ddes=1.0; // Desired equilibrium distance
-  float _ka=5;     // Attraction gain
-  float _v_adj=10; //
+  float _v_adj = 10; //
 
 public:
   Controller_Bearing_Shape();
