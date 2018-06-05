@@ -1,40 +1,39 @@
+# Makefile for Swarmulator
+#
+# Mario Coppola, 2017-2018
+
+TARGET = swarmulator # application name
+BUILD_FOLDER = build
+SRC_FOLDER = sw
+
+# Compiler parameters
 # Thanks to the help from
 # https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_makefiles.html#creating
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
-
-TARGET = swarmulator
-CC = g++
+CC = g++ # chosen compiler
 CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO
-
 OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c -Wno-deprecated-declarations
 
-BUILD_FOLDER = build
-SW_FOLDER = sw
-SIMULATION_FOLDER = $(SW_FOLDER)/simulation
-ANIMATION_FOLDER = $(SW_FOLDER)/animation
-LOGGER_FOLDER = $(SW_FOLDER)/logger
-MATH_FOLDER = $(SW_FOLDER)/math
+# General parameters to include all cpp files and all subfolders
+INC_DIRS=$(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should be enough.
+INC_PARAMS=$(foreach d, $(INC_DIRS), -I$d) #Each include folder must have a -I before it
+INC=-I. -I$(SRC_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS) # All include paths
+SOURCE= $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp files
 
-# INC=-I. -I$(SW_FOLDER) -I$(BUILD_FOLDER) -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -I$(SIMULATION_FOLDER)/agents -I$(SIMULATION_FOLDER)/controllers  -I$(LOGGER_FOLDER) -I$(MATH_FOLDER) 
-INCDIRS=$(shell find sw -maxdepth 50 -type d)
-INC_PARAMS=$(foreach d, $(INCDIRS), -I$d)
-INC=-I. -I$(SW_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS)
-SOURCE= $(shell find $(root_folder) -name *.cpp)
 # Build the executable
 # Using @ suppresses the output of the arguments
-# @$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(SW_FOLDER)/main.cpp $(BUILD_FOLDER)/*.cxx  $(SIMULATION_FOLDER)/agents/*.cpp $(SIMULATION_FOLDER)/controllers/*.cpp $(SIMULATION_FOLDER)/*.cpp $(ANIMATION_FOLDER)/*.cpp $(LOGGER_FOLDER)/*.cpp $(MATH_FOLDER)/*.cpp $(OPT);
-	
-all: 
-	@echo "Generating parameters parser...";
+all:
+	# Generate parameters XSD file
 	@mkdir -p $(BUILD_FOLDER);
 	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
-	@echo "Building $(TARGET)...";
-	$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(BUILD_FOLDER)/*.cxx $(SOURCE) $(OPT)
+	# Building target
+	@$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(BUILD_FOLDER)/*.cxx $(SOURCE) $(OPT);
 	@echo "Done";
 
+# Clear out everything
 clean:
-	@echo "Cleaning $(TARGET)...";
-	@$(RM) -r $(BUILD_FOLDER);
-	@$(RM) -r $(TARGET);
+	# Cleaning $(TARGET)...
+	@$(RM) -r $(BUILD_FOLDER); # Remove build folder
+	@$(RM) -r $(TARGET); # Remove application
 	@echo "Done";
