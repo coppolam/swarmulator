@@ -4,32 +4,31 @@
 #  -Wall turns on most, but not all, compiler warnings
 
 TARGET = swarmulator
-
 CC = g++
 CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO
 
 OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c -Wno-deprecated-declarations
 
-SIMULATION_FOLDER = sw/simulation
-ANIMATION_FOLDER = sw/animation
-LOGGER_FOLDER = sw/logger
-MATH_FOLDER = sw/math
+BUILD_FOLDER = build
+SW_FOLDER = sw
+SIMULATION_FOLDER = $(SW_FOLDER)/simulation
+ANIMATION_FOLDER = $(SW_FOLDER)/animation
+LOGGER_FOLDER = $(SW_FOLDER)/logger
+MATH_FOLDER = $(SW_FOLDER)/math
 
-INC=-I. -Isw -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -Isw/simulation/agents -Isw/simulation/controllers  -I$(LOGGER_FOLDER) -I$(MATH_FOLDER) 
+INC=-I. -I$(SW_FOLDER) -I$(BUILD_FOLDER) -I$(SIMULATION_FOLDER) -I$(ANIMATION_FOLDER) -I$(SIMULATION_FOLDER)/agents -I$(SIMULATION_FOLDER)/controllers  -I$(LOGGER_FOLDER) -I$(MATH_FOLDER) 
 
 # Build the executable
 all: 
-	xsd cxx-tree --root-element-all conf/parameters.xsd
+	@echo "Generating parameters parser...";
+	@mkdir $(BUILD_FOLDER);
+	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 	@echo "Building $(TARGET)...";
-	$(CC) $(CFLAGS) $(INC) -o $(TARGET) sw/main.cpp parameters.cxx \
-	$(SIMULATION_FOLDER)/agents/*.cpp $(SIMULATION_FOLDER)/controllers/*.cpp $(SIMULATION_FOLDER)/*.cpp \
-	$(ANIMATION_FOLDER)/*.cpp \
-	$(LOGGER_FOLDER)/*.cpp \
-	$(MATH_FOLDER)/*.cpp \
-	$(OPT);
+	@$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(SW_FOLDER)/main.cpp $(BUILD_FOLDER)/*.cxx  $(SIMULATION_FOLDER)/agents/*.cpp $(SIMULATION_FOLDER)/controllers/*.cpp $(SIMULATION_FOLDER)/*.cpp $(ANIMATION_FOLDER)/*.cpp $(LOGGER_FOLDER)/*.cpp $(MATH_FOLDER)/*.cpp $(OPT);
 	@echo "Done";
 
 clean:
 	@echo "Cleaning $(TARGET)...";
-	$(RM) -r $(TARGET) parameters.*;
+	@$(RM) -r $(BUILD_FOLDER);
+	@$(RM) -r $(TARGET);
 	@echo "Done";
