@@ -17,8 +17,6 @@ using namespace std;
 
 class Controller_Bearing_Shape : public Controller_Lattice_Basic
 {
-  vector<float> beta_des;
-
   int moving_timer;
   int selected_action;
 

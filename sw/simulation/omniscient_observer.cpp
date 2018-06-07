@@ -120,16 +120,16 @@ void OmniscientObserver::adjacency_matrix_knearest()
 bool OmniscientObserver::connected_graph_range(float range)
 {
   Graph g(nagents);
-  
+
   for (uint8_t i = 0; i < nagents; i++) {
     for (uint8_t j = 0; j < nagents; j++) {
       if (request_distance(i, j) < range) {
-        g.addEdge(i,j);
+        g.addEdge(i, j);
       }
     }
   }
 
-  if (g.isConnected()){
+  if (g.isConnected()) {
     return true;
   }
 

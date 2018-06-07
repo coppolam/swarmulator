@@ -18,28 +18,27 @@ Controller_Aggregate::Controller_Aggregate() : Controller_Lattice_Basic()
   beta_des.push_back(3.0 * M_PI / 4.0);
 }
 
-
-
 void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
+  v_x = 0;
+  v_y = 0;
 
   float timelim = 1.8 * param->simulation_updatefreq();
   float twait_1 = timelim * 2;
   float twait_2 = twait_1 * 2;
 
-  v_x = 0;
-  v_y = 0;
+  // Initialize moving_timer with random variable
+  if (moving_timer == 0) {
+    moving_timer = rand() % (int)timelim;
+  }
 
-  vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
-  float v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
-  float b_eq = t.get_preferred_bearing(beta_des, v_b);
-  float v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
-
-  // State
   vector<bool> state(8, 0);
   vector<int>  state_ID;
-  t.assess_situation(ID, state, state_ID); // The ID is just used for simulation purposes
+  // The ID is just used for simulation purposes
+  t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
+
+  vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
@@ -47,6 +46,8 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
     if (o->see_if_moving(state_ID[i]))
     { // Somebody nearby is already moving
       canImove = false;
+      selected_action = -2; // Reset actions
+      moving_timer = twait_1; // Reset moving timer
     }
   }
 
@@ -103,8 +104,6 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
 
   // Controller
   moving = false;
-  float d_safe = 0.9;
-
   if (canImove)
   {
     if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.2)
@@ -112,26 +111,9 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
       actionmotion(selected_action, v_x, v_y);
       moving = true;
     }
-    else if (o->request_distance(ID, closest[0]) > d_safe)
-    {
-      uint count = 1;
-      for (size_t i = 0; i < state_ID.size(); i++)
-      {
-        v_b = wrapToPi_f(o->request_bearing(ID, state_ID[i]));
-        b_eq = t.get_preferred_bearing(beta_des, v_b);
-        v_r = get_attraction_velocity(o->request_distance(ID, state_ID[i]), b_eq);
-        latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-        count++;
-      }
-      v_x = v_x / (float)count;
-      v_y = v_y / (float)count;
-    }
     else
     {
-      v_b = wrapToPi_f(o->request_bearing(ID, closest[0]));
-      b_eq = t.get_preferred_bearing(beta_des, v_b);
-      v_r = get_attraction_velocity(o->request_distance(ID, closest[0]), b_eq);
-      latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
+      get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
     }
 
     if (moving_timer > twait_2)
@@ -143,7 +125,4 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
       moving_timer++;
     }
   }
-
-  keepbounded(v_x, -1, 1);
-  keepbounded(v_y, -1, 1);
 }

@@ -22,7 +22,7 @@ float Controller::saturate(float f)
 }
 
 float Controller::f_repulsion(float u)
-{ 
+{
   return -_kr / u;
 }
 

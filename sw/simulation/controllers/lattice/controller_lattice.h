@@ -7,8 +7,8 @@
 using namespace std;
 
 class Controller_Lattice : public Controller_Lattice_Basic
-{  
-public:
+{
+  public: 
   Controller_Lattice();
   ~Controller_Lattice(){};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);

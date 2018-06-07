@@ -13,7 +13,7 @@ using namespace std;
 
 class Controller
 {
-  
+
 public:
   Controller();
   ~Controller();
@@ -25,7 +25,7 @@ public:
   bool  saturation;
   float saturation_limits;
   bool moving;
-  
+
   void set_saturation(const float &saturation_limits);
   float saturate(float f);
   float f_repulsion(float u);

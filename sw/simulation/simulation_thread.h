@@ -96,8 +96,7 @@ void start_simulation(int argc, char *argv[])
   if (argc <= 2) {
     ti.debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
     knearest = nagents - 1;
-  } 
-  else {
+  } else {
     knearest = stoi(argv[2]);
     if (knearest > (nagents - 1)) {
       ti.debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
@@ -117,18 +116,18 @@ void start_simulation(int argc, char *argv[])
     vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
     s.push_back(Particle(i, states, 1.0 / param->simulation_updatefreq()));
   }
-  
+
   // Launch agent threads
   for (int i = 0; i < nagents; i++) {
     thread agent(start_agent_simulation, i);
     agent.detach();
   }
-  
+
   // TODO: Launch enironment threads
   // Gather enironment data (walls?!)
   // Launch a thread that handles all environment data
   // vector<float> wallpoints = {0, 0, 2, 2};
-  
+
   simulation_start(); // Begin the simulation
 
 }

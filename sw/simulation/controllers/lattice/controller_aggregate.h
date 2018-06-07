@@ -1,7 +1,6 @@
 #ifndef CONTROLLER_AGGREGATE_H
 #define CONTROLLER_AGGREGATE_H
 
-
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -17,11 +16,9 @@ using namespace std;
 
 class Controller_Aggregate : public Controller_Lattice_Basic
 {
-  vector<float> beta_des;
   int moving_timer;
   int selected_action;
-  
-  int motion_dir = 0;   // Use 0 for random or 1-8 to specific a direction.
+  int motion_dir = 1;   // Use 0 for random or 1-8 to specify a direction.
 
 public:
   Controller_Aggregate();
