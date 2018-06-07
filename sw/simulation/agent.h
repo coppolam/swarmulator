@@ -23,9 +23,10 @@ class Agent
   vector<float> actions;
 
 public:
-  Agent(uint8_t i, const vector<float> &s);
+  Agent(uint8_t i, const vector<float> &s, float tstep);
   ~Agent();
 
+  float dt;
   uint8_t ID;
   vector<float> outputs;
   vector<float> state;

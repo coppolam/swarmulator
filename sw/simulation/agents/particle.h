@@ -11,11 +11,7 @@ using namespace std;
 class Particle: public Agent
 {
 public:
-  float dt; // timestep
-  Particle(int i, const vector<float> &state, float tstep): Agent(i, state) {
-    dt = tstep;
-  }; // Make two versions for random initialization
-
+  Particle(int i, const vector<float> &state, float tstep): Agent(i, state, tstep) {};
   virtual void update_position();
 };
 

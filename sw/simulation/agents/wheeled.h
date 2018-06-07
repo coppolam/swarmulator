@@ -11,12 +11,7 @@ using namespace std;
 class Wheeled : public Agent
 {
   public:
-    float dt; // timestep
-    Wheeled(int i, const vector<float> &state, float tstep) : Agent(i, state)
-    {
-        dt = tstep;
-    }; // Make two versions for random initialization
-
+    Wheeled(int i, const vector<float> &state, float tstep) : Agent(i, state, tstep){};
     virtual void update_position();
 };
 

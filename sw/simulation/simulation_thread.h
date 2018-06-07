@@ -15,6 +15,7 @@
 #include "terminalinfo.h"
 #include "kill_functions.h"
 #include "agent_thread.h"
+#include "settings.h"
 
 bool simulation_running = false;
 

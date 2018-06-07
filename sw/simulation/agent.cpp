@@ -1,9 +1,10 @@
 #include "agent.h"
 
-Agent::Agent(uint8_t i, const vector<float> &s)
+Agent::Agent(uint8_t i, const vector<float> &s, float tstep)
 {
   this->state = s;
   ID = i;
+  dt = tstep;
 };
 
 Agent::~Agent() {};

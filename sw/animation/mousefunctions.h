@@ -81,7 +81,7 @@ void keyboard_callback(unsigned char key, int x, int y)
     case 'a':
       if (!paused) {
         vector<float> ns = { py, px, 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
-        mtx.lock();
+        mtx.lock(); // TODO: Change so that this creates a new agent regardless of agent type
         s.push_back(Particle(nagents, ns, 1.0 / param->simulation_updatefreq()));
         thread agent(start_agent_simulation, nagents);
         agent.detach();

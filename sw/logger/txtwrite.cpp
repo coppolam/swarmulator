@@ -16,7 +16,7 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 {
   stringstream t;
   t << simtime_seconds;
-  vector<Particle> state_buff = s;
+  vector<Particle> state_buff = s;  // TODO: Change from particle to agent
 
   for (int i = 0; i < nagents; i++)
   {
