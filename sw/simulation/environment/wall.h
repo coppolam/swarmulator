@@ -1,5 +1,5 @@
-#ifndef PARTICLE_H
-#define PARTICLE_H
+#ifndef WALL_H
+#define WALL_H
 
 #include <vector>
 #include <stdio.h>
@@ -13,4 +13,4 @@ public:
   Wall(){};
 };
 
-#endif /*PARTICLE_H*/
+#endif /*WALL_H*/

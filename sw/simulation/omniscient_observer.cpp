@@ -32,8 +32,8 @@ vector<int> OmniscientObserver::request_closest(uint8_t ID)
   vector<int> ind;
   for (int i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
-                      pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
-                      + pow(s[i].get_position(1) - s[ID].get_position(1), 2.0)
+                      pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
+                      + pow(s[i]->get_position(1) - s[ID]->get_position(1), 2.0)
                     ));
     dm[i].index = i;
   }
@@ -54,8 +54,8 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
   vector<int> ind;
   for (int i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
-                      pow(s[i].get_position(0) - s[ID].get_position(0), 2.0)
-                      + pow(s[i].get_position(1) - s[ID].get_position(1), 2.0)
+                      pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
+                      + pow(s[i]->get_position(1) - s[ID]->get_position(1), 2.0)
                     ));
     dm[i].index = i;
   }
@@ -141,21 +141,21 @@ float OmniscientObserver::get_centroid(uint8_t dim)
 {
   float c = 0;
   for (uint8_t i = 0; i < nagents; i++) {
-    c += s[i].get_position(dim) / (float)nagents;
+    c += s[i]->get_position(dim) / (float)nagents;
   }
   return c;
 }
 
 float OmniscientObserver::request_distance_dim(uint8_t ID, uint8_t ID_tracked, uint8_t dim)
 {
-  return s[ID_tracked].get_position(dim) - s[ID].get_position(dim);
+  return s[ID_tracked]->get_position(dim) - s[ID]->get_position(dim);
 }
 
 float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
 {
   float u = 0;
   for (uint8_t i = 0; i < 2; i++) {
-    float dd = s[ID_tracked].get_position(i) - s[ID].get_position(i);
+    float dd = s[ID_tracked]->get_position(i) - s[ID]->get_position(i);
     u += pow(dd, 2);
   }
   return sqrt(u);
@@ -168,5 +168,5 @@ float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 
 bool OmniscientObserver::see_if_moving(uint8_t ID)
 {
-  return s[ID].moving;
+  return s[ID]->moving;
 }

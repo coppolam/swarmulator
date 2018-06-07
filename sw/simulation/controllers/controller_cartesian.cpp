@@ -1,6 +1,5 @@
 #include "controller_cartesian.h"
 #include "agent.h"
-#include "particle.h"
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"

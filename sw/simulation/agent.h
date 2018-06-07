@@ -35,8 +35,7 @@ public:
   CONTROLLER controller;
 
   vector<float> get_states();
-  void select_action();
-  virtual void update_position() = 0;
+  virtual void update_position()= 0;
   float get_position(uint8_t dim);
   uint8_t get_ID();
 };

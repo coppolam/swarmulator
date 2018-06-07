@@ -82,13 +82,11 @@ void keyboard_callback(unsigned char key, int x, int y)
       if (!paused) {
         vector<float> ns = { py, px, 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
         mtx.lock(); // TODO: Change so that this creates a new agent regardless of agent type
-        s.push_back(Particle(nagents, ns, 1.0 / param->simulation_updatefreq()));
+        Particle p(nagents, ns, 1.0 / param->simulation_updatefreq());
+        s.push_back(&p);
         thread agent(start_agent_simulation, nagents);
         agent.detach();
         nagents++;
-        if (knearest == nagents - 2) {
-          knearest++;
-        }
         mtx.unlock();
         ti.info_msg("Drawing new agent.");
         break;

@@ -115,7 +115,8 @@ void start_simulation(int argc, char *argv[])
   std::vector<std::thread> v;
   for (int i = 0; i < nagents; i++) {
     vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
-    s.push_back(Particle(i, states, 1.0 / param->simulation_updatefreq()));
+    Particle p(i, states, 1.0 / param->simulation_updatefreq());
+    s.push_back(&p);
   }
 
   // Launch agent threads

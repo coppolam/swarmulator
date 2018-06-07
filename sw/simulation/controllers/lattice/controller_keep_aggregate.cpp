@@ -1,6 +1,5 @@
 #include "controller_keep_aggregate.h"
 #include "agent.h"
-#include "particle.h"
 #include "main.h"
 #include "randomgenerator.h"
 #include "auxiliary.h"
@@ -108,6 +107,4 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
     moving_timer = 0;
   }
 
-  keepbounded(v_x, -1, 1);
-  keepbounded(v_y, -1, 1);
 }

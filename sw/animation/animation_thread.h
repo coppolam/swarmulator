@@ -45,10 +45,10 @@ void main_loop_function()
   // Draw all agents
   for (int i = 0; i < nagents; i++) {
     drawer.draw_agent(
-      i,
-      s[i].state.at(0),
-      s[i].state.at(1),
-      0.0);
+        i,
+        s[i]->state.at(0),
+        s[i]->state.at(1),
+        0.0);
     // TODO: Add orientation once model becomes more complex
   }
 
@@ -56,11 +56,11 @@ void main_loop_function()
   for (int i = 0; i < nagents; ++i) {
     drawer.draw_velocity_arrow(
         i,
-        s[i].state.at(0), // p_x
-        s[i].state.at(1), // p_y
-        0.0, // p_z
-        s[i].state.at(2), // v_x
-        s[i].state.at(3)); // v_y
+        s[i]->state.at(0),  // p_x
+        s[i]->state.at(1),  // p_y
+        0.0,                // p_z
+        s[i]->state.at(2),  // v_x
+        s[i]->state.at(3)); // v_y
   }
 
 

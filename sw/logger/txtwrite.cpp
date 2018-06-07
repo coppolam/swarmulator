@@ -7,8 +7,8 @@
 #include "agent.h"
 #include "main.h"
 
-
-void txtwrite::setfilename(string s) {
+void txtwrite::setfilename(const string &s)
+{
   filename = s;
 }
 
@@ -16,23 +16,22 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 {
   stringstream t;
   t << simtime_seconds;
-  vector<Particle> state_buff = s;  // TODO: Change from particle to agent
+  vector<Agent*> state_buff = s;
 
   for (int i = 0; i < nagents; i++)
   {
     logfile << i+1 << " ";
     logfile << t.str() << " "; // divide by 1000000.0
-    logfile << state_buff[i].state.at(0) << " "
-            << state_buff[i].state.at(1) << " "
-            << state_buff[i].state.at(2) << " "
-            << state_buff[i].state.at(3) << endl;
+    logfile << state_buff[i]->state.at(0) << " "
+            << state_buff[i]->state.at(1) << " "
+            << state_buff[i]->state.at(2) << " "
+            << state_buff[i]->state.at(3) << endl;
   }
 }
 
 void txtwrite::txtwrite_summary(ofstream &logfile)
 {
   OmniscientObserver o;
-
   if (!o.connected_graph_range(1.8))
   {
     logfile << o.connected_graph_range(1.8)

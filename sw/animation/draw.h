@@ -6,7 +6,7 @@
 #include <sstream>      // std::stringstream
 #include <mutex>
 
-#include "particle.h"
+// #include "particle.h"
 #include "agent.h"
 #include "main.h"
 #include "drawingparams.h"

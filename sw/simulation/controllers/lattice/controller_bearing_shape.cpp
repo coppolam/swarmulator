@@ -1,6 +1,5 @@
 #include "controller_bearing_shape.h"
 #include "agent.h"
-#include "particle.h"
 #include "main.h"
 #include "randomgenerator.h"
 #include "auxiliary.h"

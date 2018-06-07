@@ -26,7 +26,7 @@ using namespace std;
 
 // Simulation default values
 int nagents; // Number of agents in the simulation
-vector<Particle> s; // Set up a vector of relative position filters
+vector<Agent*> s; // Set up a vector of relative position filters
 // vector<Wall> w; // Set up a vector of walls
 int knearest; // knearest objects
 mutex mtx; // Mutex needed to lock threads

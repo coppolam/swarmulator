@@ -6,13 +6,15 @@
 #include <functional>
 #include <cctype>
 #include <algorithm>
+#include "particle.h"
 
 void run_agent_simulation_step(int id)
 {
   // The mutex ensures that while the positions are updated by the simulation thread, other threads are not trying to access the data.
-  if (s.size() - nagents == 0) {
+  if (s.size() - nagents == 0)
+  {
     mtx.lock();
-    s[id].update_position();
+    s[id]->update_position();
     mtx.unlock();
   }
 
@@ -21,16 +23,12 @@ void run_agent_simulation_step(int id)
   this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 
-void run_agent_simulation(int id)
-{
-  while (true) {
-    run_agent_simulation_step(id);
-  }
-}
-
 void start_agent_simulation(int id)
 {
   std::cout << "Agent" << id << "started" << endl;
-  run_agent_simulation(id);
+  while (true)
+  {
+    run_agent_simulation_step(id);
+  }
 };
 #endif /*AGENTTHREAD_H*/
