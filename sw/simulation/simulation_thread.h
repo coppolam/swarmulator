@@ -105,24 +105,24 @@ void start_simulation(int argc, char *argv[])
     }
   }
 
-  // Generate random initial positions
+  // Generate random initial positions with zero mean
   void randomgen_init();
   srand(time(NULL));
   vector<float> x0 = generate_random_vector_zeromean(nagents);
   vector<float> y0 = generate_random_vector_zeromean(nagents);
 
   // Set the model. This main should just spawn n agents at random positions/states.
-  std::vector<std::thread> v;
-  for (int i = 0; i < nagents; i++) {
-    vector<float> states = { x0[i], y0[i], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
-    Particle p(i, states, 1.0 / param->simulation_updatefreq());
+  for (int ID = 0; ID < nagents; ID++) {
+    vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
+    Particle p(ID, states, 1.0 / param->simulation_updatefreq());
     s.push_back(&p);
+
   }
 
   // Launch agent threads
-  for (int i = 0; i < nagents; i++) {
-    thread agent(start_agent_simulation, i);
-    agent.detach();
+  for (int ID = 0; ID < nagents; ID++) {
+  thread agent(start_agent_simulation, ID);
+  agent.detach();
   }
 
   // TODO: Launch enironment threads

@@ -1,5 +1,12 @@
 #include "wheeled.h"
 
+Wheeled::Wheeled(int i, const vector<float> &s, float tstep)
+{
+    state = s;
+    ID = i;
+    dt = tstep;
+}
+
 void Wheeled::update_position()
 {
     // NED frame

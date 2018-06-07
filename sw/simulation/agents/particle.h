@@ -10,9 +10,9 @@ using namespace std;
 
 class Particle: public Agent
 {
-public:
-  Particle(int i, const vector<float> &state, float tstep): Agent(i, state, tstep) {};
-  virtual void update_position();
+  public:
+    Particle(int i, vector<float> &state, float tstep);
+    virtual void update_position();
 };
 
 #endif /*PARTICLE_H*/

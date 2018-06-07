@@ -8,13 +8,16 @@
 #include <algorithm>
 #include "particle.h"
 
-void run_agent_simulation_step(int id)
+void run_agent_simulation_step(const int &id)
 {
   // The mutex ensures that while the positions are updated by the simulation thread, other threads are not trying to access the data.
-  if (s.size() - nagents == 0)
+  if ((uint8_t)s.size() <= nagents)
   {
+    cout << id;
     mtx.lock();
-    s[id]->update_position();
+    cout << " " << s[id]->get_position(1) << " " ;
+    s.at(id)->update_position();
+    // cout << " " << s[id]->get_position(1) << " " << endl;
     mtx.unlock();
   }
 

@@ -26,7 +26,7 @@ using namespace std;
 
 // Simulation default values
 int nagents; // Number of agents in the simulation
-vector<Agent*> s; // Set up a vector of relative position filters
+vector<Agent *> s; // Set up a vector of relative position filters
 // vector<Wall> w; // Set up a vector of walls
 int knearest; // knearest objects
 mutex mtx; // Mutex needed to lock threads
@@ -46,6 +46,8 @@ int backgroundcolor; // Use if you want a white background (can be nice for pape
 */
 int main(int argc, char *argv[])
 {
+  s.reserve(nagents);
+
   program_running = true; // Program is running
   window_height = param->window_height();
   window_width = param->window_width();

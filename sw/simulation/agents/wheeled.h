@@ -11,8 +11,8 @@ using namespace std;
 class Wheeled : public Agent
 {
   public:
-    Wheeled(int i, const vector<float> &state, float tstep) : Agent(i, state, tstep){};
-    virtual void update_position();
+    Wheeled(int i, const vector<float> &state, float tstep);
+    void update_position();
 };
 
 #endif /*WHEELED_H*/

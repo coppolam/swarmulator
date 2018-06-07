@@ -35,6 +35,7 @@
         "typeinfo": "cpp",
         "utility": "cpp",
         "slist": "cpp",
-        "*.ixx": "cpp"
+        "*.ixx": "cpp",
+        "*.txx": "cpp"
     }
 }

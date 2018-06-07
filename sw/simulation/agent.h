@@ -23,8 +23,8 @@ class Agent
   vector<float> actions;
 
 public:
-  Agent(uint8_t i, const vector<float> &s, float tstep);
-  ~Agent();
+  // Agent(uint8_t i, const vector<float> &s, float tstep);
+  virtual ~Agent(){};
 
   float dt;
   uint8_t ID;
@@ -35,7 +35,7 @@ public:
   CONTROLLER controller;
 
   vector<float> get_states();
-  virtual void update_position()= 0;
+  virtual void update_position()=0;
   float get_position(uint8_t dim);
   uint8_t get_ID();
 };

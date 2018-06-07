@@ -13,7 +13,7 @@ SRC_FOLDER = sw
 #  -Wall turns on most, but not all, compiler warnings
 CC = g++ # chosen compiler
 CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO
-OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c -Wno-deprecated-declarations
+OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions
 
 # General parameters to include all cpp files and all subfolders
 INC_DIRS=$(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should be enough.
