@@ -87,7 +87,16 @@ void keyboard_callback(unsigned char key, int x, int y)
         break;
       }
     case 'm':
-      param->simulation_realtimefactor() = 1;
+      if (param->simulation_realtimefactor() != 1)
+      {
+        realtimefactor = param->simulation_realtimefactor();
+        param->simulation_realtimefactor() = 1;
+      }
+      else
+      {
+        param->simulation_realtimefactor() = realtimefactor;
+      }
+
     break;
   }
 }

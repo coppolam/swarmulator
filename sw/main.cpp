@@ -34,6 +34,7 @@ float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;
 uint window_width, window_height;
+float realtimefactor;
 
 // Parameters parser
 unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));

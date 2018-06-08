@@ -17,8 +17,9 @@
 #include "agent_thread.h"
 
 bool simulation_running = false;
+std::vector<std::thread> threads;
 
-void run_simulation()
+    void run_simulation()
 {
   if (!simulation_running) {
     terminalinfo ti;
@@ -26,10 +27,16 @@ void run_simulation()
     simulation_running = true;
   }
 
+  {std::lock_guard<std::mutex> lk(cv_m);}
+  go_thread = 1;
   int t_wait = (int) 1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
   this_thread::sleep_for(chrono::microseconds(t_wait));
   simulation_time = t_wait;
   simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1000000.0;
+  cv.notify_one(); // Notify all threads that they can upgrade
+  go_thread = 0;
+  // _wait_barrier();
+  // std::lock_guard<std::mutex> block_threads_until_finish_this_job(mtx);
 }
 
 /* Calculate the mean of a vector element */
@@ -49,15 +56,6 @@ float vector_std(const vector<float> &v)
   );
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   return sqrt(sq_sum / v.size());
-}
-
-void simulation_start()
-{
-  simulation_time = 0.0; // Initialize simulation time to zero.
-
-  while (true) {
-    run_simulation();
-  };
 }
 
 /* Generate a random vector with zero mean */
@@ -136,6 +134,7 @@ void start_simulation(int argc, char *argv[])
   for (uint8_t ID = 0; ID < nagents; ID++)
   {
     thread agent(start_agent_simulation, ID);
+    // threads.emplace_back(start_agent_simulation, ID);
     agent.detach();
   }
 
@@ -143,7 +142,9 @@ void start_simulation(int argc, char *argv[])
   // Gather enironment data (walls?!)
   // Launch a thread that handles all environment data
   // vector<float> wallpoints = {0, 0, 2, 2};
-  simulation_start(); // Begin the simulation
-
+  while (true)
+  {
+    run_simulation();
+  };
 }
 #endif /*SIMULATION_H*/

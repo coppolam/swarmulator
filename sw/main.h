@@ -17,5 +17,6 @@ extern std::mutex mtx; // Mutex for critical section
 extern bool program_running; // True if the program is (or should be) running. If false the program shuts down.
 extern unique_ptr<parameters_t> param; // XML parameters from conf file
 extern uint window_width, window_height;
+extern float realtimefactor;
 
 #endif /*MAIN_H*/

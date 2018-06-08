@@ -19,7 +19,8 @@ OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c -Wno-deprecated-dec
 INC_DIRS=$(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should be enough.
 INC_PARAMS=$(foreach d, $(INC_DIRS), -I$d) #Each include folder must have a -I before it
 INC=-I. -I$(SRC_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS) # All include paths
-SOURCE= $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp files
+SOURCE_CPP= $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp files
+SOURCE_C= $(shell find $(SRC_FOLDER) -name *.c) # Recursively find all cpp files
 
 # Build the executable
 # Using @ suppresses the output of the arguments
@@ -28,7 +29,7 @@ all:
 	@mkdir -p $(BUILD_FOLDER);
 	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 	# Building target
-	@$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(BUILD_FOLDER)/*.cxx $(SOURCE) $(OPT);
+	@$(CC) $(CFLAGS) $(INC) -o $(TARGET) $(BUILD_FOLDER)/*.cxx $(SOURCE_CPP) $(SOURCE_C) $(OPT);
 	@echo "Done";
 
 # Clear out everything
