@@ -25,15 +25,15 @@
 using namespace std;
 
 // Simulation default values
-int nagents; // Number of agents in the simulation
+uint nagents; // Number of agents in the simulation
 vector<Agent *> s; // Set up a vector of relative position filters
 // vector<Wall> w; // Set up a vector of walls
-int knearest; // knearest objects
+uint knearest; // knearest objects
 mutex mtx; // Mutex needed to lock threads
 float simulation_time = 0;
 float simtime_seconds = 0;
 bool program_running = false;
-int window_width, window_height;
+uint window_width, window_height;
 
 // Parameters parser
 unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));

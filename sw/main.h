@@ -7,8 +7,8 @@
 #include "parameters.hxx" // auto generated file at compile time
 
 // Simulation variables
-extern int nagents; // Number of agents in the swarm
-extern int knearest;  // Knearest neighbours
+extern uint nagents; // Number of agents in the swarm
+extern uint knearest;  // Knearest neighbours
 extern std::vector<Agent*> s; // Set up a vector of particles
 // extern std::vector<Wall> w; // Set up a vector of walls
 extern float simulation_time; // Simulation time (our time)
@@ -16,6 +16,6 @@ extern float simtime_seconds; // Adjusted simulation time (time according to sim
 extern std::mutex mtx; // Mutex for critical section
 extern bool program_running; // True if the program is (or should be) running. If false the program shuts down.
 extern unique_ptr<parameters_t> param; // XML parameters from conf file
-extern int window_width, window_height;
+extern uint window_width, window_height;
 
 #endif /*MAIN_H*/

@@ -43,7 +43,8 @@ void main_loop_function()
   }
 
   // Draw all agents
-  for (int i = 0; i < nagents; i++) {
+  for (uint8_t i = 0; i < nagents; i++)
+  {
     drawer.draw_agent(
         i,
         s[i]->state.at(0),
@@ -53,7 +54,8 @@ void main_loop_function()
   }
 
   // Draw velocity directions
-  for (int i = 0; i < nagents; ++i) {
+  for (uint8_t i = 0; i < nagents; ++i)
+  {
     drawer.draw_velocity_arrow(
         i,
         s[i]->state.at(0),  // p_x

@@ -30,7 +30,7 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
 #ifdef KNEAREST
 
   vector<int> closest = o->request_closest(ID);
-  for (int i = 0; i < knearest; i++) {
+  for (uint8_t i = 0; i < knearest; i++) {
     v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0));
     v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1));
   }
@@ -39,7 +39,7 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
 
 #ifdef FORCED
 
-  int i = 0;
+  uint8_t i = 0;
   std::ifstream infile("adjacencymatrix.txt");
   bool mat[nagents * nagents];
   while (i < (nagents * nagents)) {
@@ -47,7 +47,8 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
     i++;
   }
 
-  for (i = 0; i < nagents; i++) {
+  for (i = 0; i < nagents; i++)
+  {
     if (i != ID) {
       v_x += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID * nagents + i]);
       v_y += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID * nagents + i]);

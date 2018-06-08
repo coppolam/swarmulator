@@ -44,7 +44,7 @@ To run Swarmulator, use the following command:
 
 Where <nagents> is the number of agents you would like to have at the start of the simulation.  <knearest> is the number of agents that each agent can observe starting with the closest from itself. If <knearest> is unspecified, the agents will be able to observe all other agents. So for instance, to run a simulation with 3 agents which can all observe each other, run:
 
-        .\swarmulator 3 2
+    .\swarmulator 3 2
 
 ### User commands
 You can interact with Swarmulator in real time through the animation. It is possible to intuitively drag and zoom within the animation using drag-and-drop and your mouse's scroll wheel. 
@@ -60,6 +60,7 @@ Additionally, you can do the following:
 ## Prototyping with Swarmulator
 ### Using your own controller
 The individual controller is accessible in `sw/simulation/controller.cpp`. Here you can define your rule that you would like to test out.
+You can define a controller as a child class of `Controller`, and then define that you want to use it in `sw/settings.h`
 You can use the functions in `OmniscientObserver` in order to simulate the sensing of other agents as you see fit.
 
 ### Using your agent dynamics

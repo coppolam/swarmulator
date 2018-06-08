@@ -83,7 +83,6 @@ void keyboard_callback(unsigned char key, int x, int y)
         mtx.lock(); // TODO: Change so that this creates a new agent regardless of agent type
         create_new_agent(nagents, py, px);
         mtx.unlock();
-        nagents++;
         ti.info_msg("Drawing new agent.");
         break;
       }

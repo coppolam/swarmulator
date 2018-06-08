@@ -126,13 +126,15 @@ void start_simulation(int argc, char *argv[])
   vector<float> y0 = generate_random_vector_zeromean(nagents);
 
   // Set the model. This main should just spawn n agents at random positions/states.
-  for (int ID = 0; ID < nagents; ID++) {
+  for (uint8_t ID = 0; ID < nagents; ID++)
+  {
     vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
     s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   }
 
   // Launch agent threads
-  for (int ID = 0; ID < nagents; ID++) {
+  for (uint8_t ID = 0; ID < nagents; ID++)
+  {
     thread agent(start_agent_simulation, ID);
     agent.detach();
   }

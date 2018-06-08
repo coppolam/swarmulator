@@ -146,7 +146,7 @@ void draw::draw_agent(uint8_t ID, float x, float y, float z)
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, z); // ENU to NED
   glRotatef(90.0, 0.0, 0, 1);
-  draw_circle(param->scale());
+  draw_triangle(param->scale());
   draw_circle_loop(param->scale());
   draw_agent_number(ID);
   glPopMatrix();
