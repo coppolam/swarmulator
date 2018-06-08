@@ -83,7 +83,6 @@ void get_number_of_agents(int argc, char *argv[])
   else
   {
     nagents = stoi(argv[1]);
-    // s.reserve(nagents); // Reserve spots for the expected amount of agents
   }
 }
 
@@ -129,7 +128,6 @@ void start_simulation(int argc, char *argv[])
   for (uint8_t ID = 0; ID < nagents; ID++)
   {
     thread agent(start_agent_simulation, ID);
-    // threads.emplace_back(start_agent_simulation, ID);
     agent.detach();
   }
 
@@ -137,6 +135,7 @@ void start_simulation(int argc, char *argv[])
   // Gather enironment data (walls?!)
   // Launch a thread that handles all environment data
   // vector<float> wallpoints = {0, 0, 2, 2};
+  
   while (true)
   {
     run_simulation();
