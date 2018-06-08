@@ -15,7 +15,6 @@
 #include "terminalinfo.h"
 #include "kill_functions.h"
 #include "agent_thread.h"
-#include "settings.h"
 
 bool simulation_running = false;
 
@@ -129,14 +128,7 @@ void start_simulation(int argc, char *argv[])
   // Set the model. This main should just spawn n agents at random positions/states.
   for (int ID = 0; ID < nagents; ID++) {
     vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
-    // Agent *a = );
-    s.push_back(new Particle(ID, states, 1.0 / param->simulation_updatefreq()));
-  }
-
-  for (int ID = 0; ID < nagents; ID++)
-  {
-    s[ID]->update_position();
-    cout << "debug" << endl;
+    s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   }
 
   // Launch agent threads

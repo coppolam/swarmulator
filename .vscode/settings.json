@@ -37,5 +37,6 @@
         "slist": "cpp",
         "*.ixx": "cpp",
         "*.txx": "cpp"
-    }
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Enabled"
 }

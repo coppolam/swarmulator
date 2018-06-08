@@ -3,7 +3,6 @@
 #include "kill_functions.h"
 #include "terminalinfo.h"
 
-#include "particle.h"
 #include "agent.h"
 #include "main.h"
 

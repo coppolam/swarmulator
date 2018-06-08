@@ -4,8 +4,7 @@
 #include <mutex>
 #include <vector>
 #include "agent.h"
-#include "settings.h"
-#include "parameters.hxx"
+#include "parameters.hxx" // auto generated file at compile time
 
 // Simulation variables
 extern int nagents; // Number of agents in the swarm

@@ -39,7 +39,9 @@
                 "${workspaceRoot}/sw/math",
                 "${workspaceRoot}/sw/simulation",
                 "${workspaceRoot}/sw/simulation/agents",
-                "${workspaceRoot}/sw/simulation/controllers"
+                "${workspaceRoot}/sw/simulation/controllers",
+                "${workspaceFolder}/sw/simulation/controllers/lattice",
+                "${workspaceFolder}/build"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
