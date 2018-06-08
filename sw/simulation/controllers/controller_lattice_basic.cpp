@@ -68,17 +68,20 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
 
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
 {
-  if (o->request_distance(ID, closest[0]) > d_safe)
+  if (!state_ID.empty())
   {
-    for (size_t i = 0; i < state_ID.size(); i++)
+    if (o->request_distance(ID, closest[0]) > d_safe)
     {
-      get_lattice_motion(ID, state_ID[i], v_x, v_y);
+      for (size_t i = 0; i < state_ID.size(); i++)
+      {
+        get_lattice_motion(ID, state_ID[i], v_x, v_y);
+      }
+      v_x = v_x / (float)state_ID.size();
+      v_y = v_y / (float)state_ID.size();
     }
-    v_x = v_x / (float)state_ID.size();
-    v_y = v_y / (float)state_ID.size();
-  }
-  else
-  {
-    get_lattice_motion(ID, state_ID[0], v_x, v_y);
+    else
+    {
+      get_lattice_motion(ID, state_ID[0], v_x, v_y);
+    }
   }
 }
