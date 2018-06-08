@@ -1,6 +1,6 @@
 #include "particle.h"
 
-Particle::Particle(int i, vector<float> &s, float tstep)
+Particle::Particle(int i, vector<float> s, float tstep)
 {
   state = s;
   ID = i;

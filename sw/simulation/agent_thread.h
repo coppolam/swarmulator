@@ -6,7 +6,9 @@
 #include <functional>
 #include <cctype>
 #include <algorithm>
+
 #include "particle.h"
+#include "wheeled.h"
 
 void run_agent_simulation_step(const int &id)
 {

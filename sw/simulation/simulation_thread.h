@@ -79,34 +79,49 @@ vector<float> generate_random_vector_zeromean(const int &length)
   return v;
 }
 
-void start_simulation(int argc, char *argv[])
+void get_number_of_agents(int argc, char *argv[])
 {
-
-  terminalinfo ti;
-
   // Extract number of agents from the argument
-  if (argc <= 1) {
+  terminalinfo ti;
+  if (argc <= 1)
+  {
     ti.debug_msg("Please specify the amount of agents.\n\n");
     exit(1);
-  } else {
-    nagents = stoi(argv[1]);
-    s.reserve(nagents); // Reserve spots for the expected amount of agents
   }
+  else
+  {
+    nagents = stoi(argv[1]);
+    // s.reserve(nagents); // Reserve spots for the expected amount of agents
+  }
+}
 
-
-  if (argc <= 2) {
+void get_nearest_neighbors(int argc, char *argv[])
+{
+  terminalinfo ti;
+  if (argc <= 2)
+  {
     ti.debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
     knearest = nagents - 1;
-  } else {
+  }
+  else
+  {
     knearest = stoi(argv[2]);
-    if (knearest > (nagents - 1)) {
+    if (knearest > (nagents - 1))
+    {
       ti.debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
       exit(1);
     }
   }
+}
+
+void start_simulation(int argc, char *argv[])
+{
+  get_number_of_agents(argc, argv);
+  get_nearest_neighbors(argc, argv);
 
   // Generate random initial positions with zero mean
-  void randomgen_init();
+  void
+  randomgen_init();
   srand(time(NULL));
   vector<float> x0 = generate_random_vector_zeromean(nagents);
   vector<float> y0 = generate_random_vector_zeromean(nagents);
@@ -114,22 +129,26 @@ void start_simulation(int argc, char *argv[])
   // Set the model. This main should just spawn n agents at random positions/states.
   for (int ID = 0; ID < nagents; ID++) {
     vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
-    Particle p(ID, states, 1.0 / param->simulation_updatefreq());
-    s.push_back(&p);
+    // Agent *a = );
+    s.push_back(new Particle(ID, states, 1.0 / param->simulation_updatefreq()));
+  }
 
+  for (int ID = 0; ID < nagents; ID++)
+  {
+    s[ID]->update_position();
+    cout << "debug" << endl;
   }
 
   // Launch agent threads
   for (int ID = 0; ID < nagents; ID++) {
-  thread agent(start_agent_simulation, ID);
-  agent.detach();
+    thread agent(start_agent_simulation, ID);
+    agent.detach();
   }
 
   // TODO: Launch enironment threads
   // Gather enironment data (walls?!)
   // Launch a thread that handles all environment data
   // vector<float> wallpoints = {0, 0, 2, 2};
-
   simulation_start(); // Begin the simulation
 
 }

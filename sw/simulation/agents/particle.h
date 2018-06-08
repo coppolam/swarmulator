@@ -11,8 +11,8 @@ using namespace std;
 class Particle: public Agent
 {
   public:
-    Particle(int i, vector<float> &state, float tstep);
-    virtual void update_position();
+    Particle(int i, vector<float> state, float tstep);
+    void update_position();
 };
 
 #endif /*PARTICLE_H*/

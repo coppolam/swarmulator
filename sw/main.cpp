@@ -46,8 +46,6 @@ int backgroundcolor; // Use if you want a white background (can be nice for pape
 */
 int main(int argc, char *argv[])
 {
-  s.reserve(nagents);
-
   program_running = true; // Program is running
   window_height = param->window_height();
   window_width = param->window_width();
