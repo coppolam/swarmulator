@@ -21,8 +21,8 @@ void Particle::update_position()
   keepbounded(v_y, -1.0, 1.0);
 
   // Acceleration
-  state.at(4) = -15 * (state[2] - v_x); // Acceleration x
-  state.at(5) = -15 * (state[3] - v_y);  // Acceleration y
+  state.at(4) = 15 * (v_x - state[2]); // Acceleration x
+  state.at(5) = 15 * (v_y - state[3]);  // Acceleration y
 
   // Velocity
   state.at(2) = state[4] * dt; // velocity x

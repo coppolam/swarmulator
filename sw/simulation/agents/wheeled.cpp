@@ -20,20 +20,15 @@ void Wheeled::update_position()
     keepbounded(v_x, -1.0, 1.0);
     keepbounded(v_y, -1.0, 1.0);
 
-    // Acceleration
-    // state[4] = -15 * (state[2] - v_x); // Acceleration x
-    // state[5] = -15 * (state[3] - v_y); // Acceleration y
-
     float v, w;
-    cout << v_x << " " << v_y << endl;
     cart2polar(v_x, v_y, v, w);
 
-    orientation += -5.0 * (orientation - w) * dt;
-    // wrapToPi(orientation);
+    orientation += -5.0 * (w - orientation) * dt;
 
     // Acceleration
-    state.at(4) = -15 * (state[2] - v * cos(orientation)); // Acceleration x
-    state.at(5) = -15 * (state[3] - v * sin(orientation)); // Acceleration y
+    state.at(4) = 15 * (v * cos(orientation) - state[2]); // Acceleration x
+    state.at(5) = 15 * (v * sin(orientation) - state[3]); // Acceleration y
+
     // Velocity
     state.at(2) = state[4] * dt; // velocity x
     state.at(3) = state[5] * dt; // velocity y
