@@ -43,25 +43,18 @@ void main_loop_function()
   }
 
   // Draw all agents
-  for (uint8_t i = 0; i < nagents; i++)
+  for (uint8_t ID = 0; ID < nagents; ID++)
   {
-    drawer.draw_agent(
-        i,
-        s[i]->state.at(0),
-        s[i]->state.at(1),
-        s[i]->orientation);
-  }
-
-  // Draw velocity directions
-  for (uint8_t i = 0; i < nagents; ++i)
-  {
-    drawer.draw_velocity_arrow(
-        i,
-        s[i]->state.at(0),  // p_x
-        s[i]->state.at(1),  // p_y
-        0.0,                // p_z
-        s[i]->state.at(2),  // v_x
-        s[i]->state.at(3)); // v_y
+    drawer.draw_agent( ID,
+        s[ID]->state.at(0),
+        s[ID]->state.at(1),
+        s[ID]->orientation);
+    drawer.draw_velocity_arrow( ID,
+        s[ID]->state.at(0),  // p_x
+        s[ID]->state.at(1),  // p_y
+        0.0,                 // p_z
+        s[ID]->state.at(2),  // v_x
+        s[ID]->state.at(3)); // v_y
   }
 
 

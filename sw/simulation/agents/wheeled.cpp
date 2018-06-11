@@ -23,7 +23,7 @@ void Wheeled::update_position()
     float v, w;
     cart2polar(v_x, v_y, v, w);
 
-    orientation += -5.0 * (w - orientation) * dt;
+    orientation += 5.0 * (w - orientation) * dt;
 
     // Acceleration
     state.at(4) = 15 * (v * cos(orientation) - state[2]); // Acceleration x
