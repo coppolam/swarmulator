@@ -9,7 +9,7 @@
 // Simulation variables
 extern uint nagents; // Number of agents in the swarm
 extern uint knearest;  // Knearest neighbours
-extern std::vector<Agent*> s; // Set up a vector of particles
+extern std::vector<Agent *> s; // Set up a vector of particles
 // extern std::vector<Wall> w; // Set up a vector of walls
 extern float simulation_time; // Simulation time (our time)
 extern float simtime_seconds; // Adjusted simulation time (time according to simulation)

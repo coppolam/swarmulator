@@ -51,7 +51,7 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
     if (state_action_row != state_action_matrix.end()) {
       if (motion_dir == 0 || state_action_row->second.size() < 2) {
         selected_action = *select_randomly(state_action_row->second.begin(),
-                                               state_action_row->second.end());
+                                           state_action_row->second.end());
       } else {
         // Possible actions
         vector<int> possibleactions = state_action_row->second;
@@ -82,7 +82,7 @@ void Controller_Keep_Aggregate::get_velocity_command(const uint8_t ID, float &v_
           selected_action = possibleactions[0] - 1;
         } else {
           selected_action = *select_randomly(possibleactions.begin(),
-                                                 possibleactions.begin() + 1) - 1;
+                                             possibleactions.begin() + 1) - 1;
         }
       }
 

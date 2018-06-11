@@ -22,8 +22,7 @@ Controller::~Controller() {};
 
 void Controller::saturate(float &f)
 {
-  if (saturation)
-  {
+  if (saturation) {
     keepbounded(f, -saturation_limits, saturation_limits);
   }
 }

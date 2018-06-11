@@ -47,10 +47,9 @@ void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v
 bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
 {
   bool canImove = true;
-  for (uint8_t i = 0; i < state_ID.size(); i++)
-  {
-    if (o->see_if_moving(state_ID[i]))
-    { // Somebody nearby is already moving
+  for (uint8_t i = 0; i < state_ID.size(); i++) {
+    if (o->see_if_moving(state_ID[i])) {
+      // Somebody nearby is already moving
       canImove = false;
     }
   }
@@ -59,7 +58,7 @@ bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
 
 void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
 {
-  float v_b,b_eq,v_r;
+  float v_b, b_eq, v_r;
   v_b = wrapToPi_f(o->request_bearing(ID, state_ID));
   b_eq = t.get_preferred_bearing(beta_des, v_b);
   v_r = get_attraction_velocity(o->request_distance(ID, state_ID), b_eq);
@@ -68,19 +67,14 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
 
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
 {
-  if (!state_ID.empty())
-  {
-    if (o->request_distance(ID, closest[0]) > d_safe)
-    {
-      for (size_t i = 0; i < state_ID.size(); i++)
-      {
+  if (!state_ID.empty()) {
+    if (o->request_distance(ID, closest[0]) > d_safe) {
+      for (size_t i = 0; i < state_ID.size(); i++) {
         get_lattice_motion(ID, state_ID[i], v_x, v_y);
       }
       v_x = v_x / (float)state_ID.size();
       v_y = v_y / (float)state_ID.size();
-    }
-    else
-    {
+    } else {
       get_lattice_motion(ID, state_ID[0], v_x, v_y);
     }
   }

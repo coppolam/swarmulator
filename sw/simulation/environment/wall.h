@@ -8,9 +8,10 @@
 
 using namespace std;
 
-class Wall {
+class Wall
+{
 public:
-  Wall(){};
+  Wall() {};
 };
 
 #endif /*WALL_H*/

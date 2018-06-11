@@ -15,11 +15,10 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 {
   stringstream t;
   t << simtime_seconds;
-  vector<Agent*> state_buff = s;
+  vector<Agent *> state_buff = s;
 
-  for (uint8_t i = 0; i < nagents; i++)
-  {
-    logfile << i+1 << " ";
+  for (uint8_t i = 0; i < nagents; i++) {
+    logfile << i + 1 << " ";
     logfile << t.str() << " "; // divide by 1000000.0
     logfile << state_buff[i]->state.at(0) << " "
             << state_buff[i]->state.at(1) << " "
@@ -30,10 +29,9 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 
 void txtwrite::txtwrite_summary(ofstream &logfile)
 {
-  #ifdef REMAIN_CONNECTED
+#ifdef REMAIN_CONNECTED
   OmniscientObserver *o;
-  if (!o->connected_graph_range(1.8))
-  {
+  if (!o->connected_graph_range(1.8)) {
     logfile << o->connected_graph_range(1.8)
             << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;
     killer k;
@@ -41,5 +39,5 @@ void txtwrite::txtwrite_summary(ofstream &logfile)
     ti.debug_msg("broke");
     k.kill_switch();
   }
-  #endif
+#endif
 }

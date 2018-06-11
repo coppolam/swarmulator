@@ -7,8 +7,7 @@ vector<float> Agent::get_states()
 
 float Agent::get_position(uint8_t dim)
 {
-  if (dim < 3)
-  {
+  if (dim < 3) {
     return state[dim];
   }
 

@@ -60,12 +60,12 @@ bool Template_Calculator::fill_template(vector<bool> &q, const float &b_i, const
   // Determine link (cycle through all options)
   if (u < dmax) { // If in range of sensor
     for (int j = 0; j < (int)blink.size(); j++) { // For all angle options
-      if ( abs(b_i - blink[j]) < deg2rad(angle_err) && !q[j] ) { // If in the right angle and not already taken by another agent
+      if (abs(b_i - blink[j]) < deg2rad(angle_err) && !q[j]) {   // If in the right angle and not already taken by another agent
         q[j] = true;
         return true;
-        }
       }
     }
+  }
   return false;
 }
 

@@ -30,7 +30,7 @@ class Controller_Keep_Aggregate : public Controller_Lattice_Basic
 
 public:
   Controller_Keep_Aggregate();
-  ~Controller_Keep_Aggregate(){};
+  ~Controller_Keep_Aggregate() {};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 

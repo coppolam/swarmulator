@@ -8,7 +8,8 @@
 
 using namespace std;
 
-class txtwrite {
+class txtwrite
+{
 public:
   string filename;
   void setfilename(const string &s);

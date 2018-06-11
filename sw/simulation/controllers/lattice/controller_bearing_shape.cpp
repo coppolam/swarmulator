@@ -43,7 +43,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // Can I move or are my neighbors moving?
   bool canImove = check_motion(state_ID);
 
-  if (!canImove){
+  if (!canImove) {
     selected_action = -2;   // Reset actions
     moving_timer = twait_1; // Reset moving timer
   }
@@ -51,12 +51,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;
   state_action_row = t.state_action_matrix.find(state_index);
-  if (!o->see_if_moving(ID) && state_action_row != t.state_action_matrix.end())
-  {
+  if (!o->see_if_moving(ID) && state_action_row != t.state_action_matrix.end()) {
     selected_action = *select_randomly(state_action_row->second.begin(), state_action_row->second.end());
-  }
-  else if (!o->see_if_moving(ID))
-  {
+  } else if (!o->see_if_moving(ID)) {
     selected_action = -2;
   }
 
@@ -66,8 +63,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.2) {
       actionmotion(selected_action, v_x, v_y);
       moving = true;
-    }
-    else { 
+    } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
     }
 

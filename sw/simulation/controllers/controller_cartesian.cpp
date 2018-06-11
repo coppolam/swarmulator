@@ -47,8 +47,7 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
     i++;
   }
 
-  for (i = 0; i < nagents; i++)
-  {
+  for (i = 0; i < nagents; i++) {
     if (i != ID) {
       v_x += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID * nagents + i]);
       v_y += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID * nagents + i]);

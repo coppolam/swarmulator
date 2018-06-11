@@ -49,14 +49,14 @@ inline static void wrapTo2Pi(float &ang)
 
 inline static int wraptosequence(int x, int min, int max)
 {
-  if (x>max){
-  while (x > max) {
-    x -= max;
-  }}
-  else{
-  while (x < min) {
-    x += max;
-  }
+  if (x > max) {
+    while (x > max) {
+      x -= max;
+    }
+  } else {
+    while (x < min) {
+      x += max;
+    }
   }
   return x;
 }

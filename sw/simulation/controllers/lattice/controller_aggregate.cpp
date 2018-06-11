@@ -37,14 +37,14 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
   int n_neighbors = state_ID.size(); // number of neighbors
-  
+
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Can I move or are my neighbors moving?
   bool canImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
-    if (o->see_if_moving(state_ID[i]))
-    { // Somebody nearby is already moving
+    if (o->see_if_moving(state_ID[i])) {
+      // Somebody nearby is already moving
       canImove = false;
       selected_action = -2; // Reset actions
       moving_timer = twait_1; // Reset moving timer
@@ -57,12 +57,11 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
 
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
-  if (!o->see_if_moving(ID))
-  {
+  if (!o->see_if_moving(ID)) {
     if (state_action_row != t.state_action_matrix.end()) {
       if (motion_dir == 0 || state_action_row->second.size() < 2) {
         selected_action = *select_randomly(state_action_row->second.begin(),
-                                               state_action_row->second.end());
+                                           state_action_row->second.end());
       } else {
         // Possible actions
         vector<int> possibleactions = state_action_row->second;
@@ -93,28 +92,24 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
           selected_action = possibleactions[0] - 1;
         } else {
           selected_action = *select_randomly(possibleactions.begin(),
-                                                 possibleactions.begin() + 1) - 1;
+                                             possibleactions.begin() + 1) - 1;
         }
       }
 
     } else {
-      selected_action = -2; // State not found... no action to take.
+      selected_action = -2; // State not found... no action to take
     }
   }
 
   // Controller logic
   moving = false;
-  if (canImove)
-  {
-    if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.6)
-    {
+  if (canImove) {
+    if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.6) {
       actionmotion(selected_action, v_x, v_y);
       moving = true;
-    }
-    else
-    {
+    } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
     }
-    increase_counter(moving_timer,twait_2);
+    increase_counter(moving_timer, twait_2);
   }
 }

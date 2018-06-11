@@ -26,8 +26,7 @@ void run_simulation()
     simulation_running = true;
   }
 
-  if (!paused)
-  {
+  if (!paused) {
     int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
     this_thread::sleep_for(chrono::microseconds(t_wait));
     simulation_time = t_wait;
@@ -46,10 +45,8 @@ float vector_mean(const vector<float> &v)
 float vector_std(const vector<float> &v)
 {
   vector<double> diff(v.size());
-  std::transform(
-    v.begin(), v.end(), diff.begin(),
-    std::bind2nd(std::minus<double>(), vector_mean(v))
-  );
+  std::transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), vector_mean(v))
+                );
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   return sqrt(sq_sum / v.size());
 }
@@ -76,13 +73,10 @@ void get_number_of_agents(int argc, char *argv[])
 {
   // Extract number of agents from the argument
   terminalinfo ti;
-  if (argc <= 1)
-  {
+  if (argc <= 1) {
     ti.debug_msg("Please specify the amount of agents.\n\n");
     exit(1);
-  }
-  else
-  {
+  } else {
     nagents = stoi(argv[1]);
   }
 }
@@ -90,16 +84,12 @@ void get_number_of_agents(int argc, char *argv[])
 void get_nearest_neighbors(int argc, char *argv[])
 {
   terminalinfo ti;
-  if (argc <= 2)
-  {
+  if (argc <= 2) {
     ti.debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
     knearest = nagents - 1;
-  }
-  else
-  {
+  } else {
     knearest = stoi(argv[2]);
-    if (knearest > (nagents - 1))
-    {
+    if (knearest > (nagents - 1)) {
       ti.debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
       exit(1);
     }
@@ -112,22 +102,19 @@ void start_simulation(int argc, char *argv[])
   get_nearest_neighbors(argc, argv);
 
   // Generate random initial positions with zero mean
-  void
   randomgen_init();
   srand(time(NULL));
   vector<float> x0 = generate_random_vector_zeromean(nagents);
   vector<float> y0 = generate_random_vector_zeromean(nagents);
 
-  // Set the model. This main should just spawn n agents at random positions/states.
-  for (uint8_t ID = 0; ID < nagents; ID++)
-  {
+  // Set up the models. This main should just spawn n agents at random positions/states.
+  for (uint8_t ID = 0; ID < nagents; ID++) {
     vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
     s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   }
 
   // Launch agent threads
-  for (uint8_t ID = 0; ID < nagents; ID++)
-  {
+  for (uint8_t ID = 0; ID < nagents; ID++) {
     thread agent(start_agent_simulation, ID);
     agent.detach();
   }
@@ -135,9 +122,8 @@ void start_simulation(int argc, char *argv[])
   // TODO: Launch enironment threads
   // Gather enironment data (walls?!)
   // Launch a thread that handles all environment data
-  
-  while (true)
-  {
+
+  while (true) {
     run_simulation();
   };
 

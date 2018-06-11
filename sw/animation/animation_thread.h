@@ -43,18 +43,17 @@ void main_loop_function()
   }
 
   // Draw all agents
-  for (uint8_t ID = 0; ID < nagents; ID++)
-  {
-    drawer.draw_agent( ID,
-        s[ID]->state.at(0),
-        s[ID]->state.at(1),
-        s[ID]->orientation);
-    drawer.draw_velocity_arrow( ID,
-        s[ID]->state.at(0),  // p_x
-        s[ID]->state.at(1),  // p_y
-        0.0,                 // p_z
-        s[ID]->state.at(2),  // v_x
-        s[ID]->state.at(3)); // v_y
+  for (uint8_t ID = 0; ID < nagents; ID++) {
+    drawer.draw_agent(ID,
+                      s[ID]->state.at(0),
+                      s[ID]->state.at(1),
+                      s[ID]->orientation);
+    drawer.draw_velocity_arrow(ID,
+                               s[ID]->state.at(0),  // p_x
+                               s[ID]->state.at(1),  // p_y
+                               0.0,                 // p_z
+                               s[ID]->state.at(2),  // v_x
+                               s[ID]->state.at(3)); // v_y
   }
 
 
@@ -103,7 +102,7 @@ void start_animation()
 
   // Set up simulation window
   int argc = 1;
-  char *argv[1] = {(char*)"Something"};
+  char *argv[1] = {(char *)"Something"};
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
   glutInitWindowSize(window_width, window_height);
@@ -113,7 +112,7 @@ void start_animation()
   GL_Setup(window_width, window_height); // Set up window parameters
 
   glutSetIconTitle("./logo.ico");
-  
+
 #ifdef whitebackground
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
 #endif

@@ -22,7 +22,7 @@ class Controller_Bearing_Shape : public Controller_Lattice_Basic
 
 public:
   Controller_Bearing_Shape();
-  ~Controller_Bearing_Shape(){};
+  ~Controller_Bearing_Shape() {};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 

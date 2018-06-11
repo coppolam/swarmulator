@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   program_running = true; // Program is running
   window_height = param->window_height();
   window_width = param->window_width();
-  
+
   thread simulation(start_simulation, argc, argv); // Launch simulation
   simulation.detach();
 

@@ -77,14 +77,14 @@ void draw::draw_circle_loop(double d)
   int num_segments = 100;
   glPushMatrix();
   glLineWidth(1);
-    glBegin(GL_LINE_LOOP);
-    for(int ii = 0; ii < num_segments; ii++) {
-      float theta = 2.0f * M_PI * float(ii) / float(num_segments);//get the current angle
-      float x = 1.8 * yrat  * cosf(theta);//calculate the x component
-      float y = 1.8 * xrat  * sinf(theta);//calculate the y component
-      glVertex2d(x, y);
-    }
-    glEnd();
+  glBegin(GL_LINE_LOOP);
+  for (int ii = 0; ii < num_segments; ii++) {
+    float theta = 2.0f * M_PI * float(ii) / float(num_segments);//get the current angle
+    float x = 1.8 * yrat  * cosf(theta);//calculate the x component
+    float y = 1.8 * xrat  * sinf(theta);//calculate the y component
+    glVertex2d(x, y);
+  }
+  glEnd();
 
   glColor3ub(255, 255, 255); // White
   glPopMatrix();
@@ -118,7 +118,7 @@ void draw::draw_axes()
   float lineintensity = 0.9;
 #endif
   glLineWidth(2.5);
-  
+
   glBegin(GL_LINES);
 #ifdef whitebackground
   glColor3ub(0, 0, 0); // black
@@ -137,7 +137,7 @@ void draw::draw_axes()
 #endif
   glVertex3f(0.0, -1000.0, 0.0);
   glVertex3f(0.0,  1000.0, 0.0);
-  glEnd();  
+  glEnd();
 }
 
 // TODO: Add different options dependending on agent type

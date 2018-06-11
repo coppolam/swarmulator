@@ -26,7 +26,7 @@ void run_logger(ofstream &logfile, string filename)
     ti.info_msg("Logger started.");
     logger_running = true;
   }
-  
+
   mtx.lock();
   if (!paused && simtime_seconds > 1.0) {
     writer.txtwrite_state(logfile);

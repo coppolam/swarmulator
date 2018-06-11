@@ -21,7 +21,7 @@ using namespace std;
 class Agent
 {
 public:
-  virtual ~Agent(){};
+  virtual ~Agent() {};
 
   CONTROLLER controller;
 
@@ -30,7 +30,7 @@ public:
   vector<float> state;
   bool moving;
   float orientation;
-  
+
   vector<float> get_states();
   float get_position(uint8_t dim);
   uint8_t get_ID();

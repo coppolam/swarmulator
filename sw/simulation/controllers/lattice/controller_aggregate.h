@@ -22,7 +22,7 @@ class Controller_Aggregate : public Controller_Lattice_Basic
 
 public:
   Controller_Aggregate();
-  ~Controller_Aggregate(){};
+  ~Controller_Aggregate() {};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 

@@ -12,13 +12,15 @@
 
 using namespace std;
 
-class Graph {
+class Graph
+{
 private:
   int V;
   list<int> *adj;
 
 public:
-  Graph(int V) {
+  Graph(int V)
+  {
     this->V = V;
     adj = new list<int>[V];
   }
