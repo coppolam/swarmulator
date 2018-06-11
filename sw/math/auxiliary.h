@@ -85,6 +85,21 @@ inline static float rad2deg(float rad) { return 180.0 / M_PI * rad; }
 
 inline static float deg2rad(float deg) { return M_PI / 180.0 * deg; }
 
+// *Compliments of http : //stackoverflow.com/questions/29089710/pointers-in-c-programming-coordinate-conversion */
+inline static void polar2cart(const float &radius, float &radians, float &x, float &y)
+{
+  wrapToPi(radians);
+  x = radius * cos(radians);
+  y = radius * sin(radians);
+}
+
+/* Function to convert cartesian coordinates to polar */
+inline static void cart2polar(const float &x, const float &y, float &radius, float &radians)
+{
+  radius = sqrt(pow(x, 2) + pow(y, 2));
+  radians = atan2(y, x);
+}
+
 template <typename Iter, typename RandomGenerator>
 inline static Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
 {

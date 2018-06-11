@@ -49,8 +49,7 @@ void main_loop_function()
         i,
         s[i]->state.at(0),
         s[i]->state.at(1),
-        0.0);
-    // TODO: Add orientation once model becomes more complex
+        s[i]->orientation);
   }
 
   // Draw velocity directions

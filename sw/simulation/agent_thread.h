@@ -8,11 +8,11 @@
 #include <algorithm>
 #include <condition_variable>
 
+#include "settings.h"
+
 // Include all agents here
 #include "particle.h"
 #include "wheeled.h"
-
-#include "settings.h"
 
 void run_agent_simulation_step(const int &id)
 {

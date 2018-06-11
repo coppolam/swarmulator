@@ -36,6 +36,7 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
+  int n_neighbors = state_ID.size();
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
@@ -105,7 +106,7 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   moving = false;
   if (canImove)
   {
-    if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.2)
+    if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.6)
     {
       actionmotion(selected_action, v_x, v_y);
       moving = true;

@@ -5,6 +5,7 @@ Particle::Particle(int i, vector<float> s, float tstep)
   state = s;
   ID = i;
   dt = tstep;
+  orientation = 0.0;
 }
 
 void Particle::update_position()
