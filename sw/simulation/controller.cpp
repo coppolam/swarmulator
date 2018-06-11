@@ -10,15 +10,22 @@
 #include "randomgenerator.h"
 #include "auxiliary.h"
 
-Controller::Controller() {};
+Controller::Controller()
+{
+  _ddes = 1.0;
+  _kr = 1;
+  _ka = 5;
+  saturation = false;
+};
+
 Controller::~Controller() {};
 
-float Controller::saturate(float f)
+void Controller::saturate(float &f)
 {
-  if (saturation) {
+  if (saturation)
+  {
     keepbounded(f, -saturation_limits, saturation_limits);
   }
-  return f;
 }
 
 float Controller::f_repulsion(float u)

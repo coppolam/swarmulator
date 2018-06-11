@@ -8,6 +8,12 @@
 
 using namespace std;
 
+inline static void increase_counter(int &counter, int limit)
+{
+  if (counter > limit) {counter = 1;}
+  else {counter++;}
+}
+
 inline static int bool2int(vector<bool> t)
 {
   int n = 0; //initialize

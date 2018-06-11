@@ -22,6 +22,7 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   v_x = 0;
   v_y = 0;
 
+  // TODO: Move these elsewhere
   float timelim = 1.8 * param->simulation_updatefreq();
   float twait_1 = timelim * 2;
   float twait_2 = twait_1 * 2;
@@ -32,12 +33,11 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   }
 
   vector<bool> state(8, 0);
-  vector<int>  state_ID;
-  // The ID is just used for simulation purposes
+  vector<int>  state_ID; // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
-  int n_neighbors = state_ID.size();
-
+  int n_neighbors = state_ID.size(); // number of neighbors
+  
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Can I move or are my neighbors moving?
@@ -102,7 +102,7 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
     }
   }
 
-  // Controller
+  // Controller logic
   moving = false;
   if (canImove)
   {
@@ -115,14 +115,6 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
     {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
     }
-
-    if (moving_timer > twait_2)
-    {
-      moving_timer = 1;
-    }
-    else
-    {
-      moving_timer++;
-    }
+    increase_counter(moving_timer,twait_2);
   }
 }
