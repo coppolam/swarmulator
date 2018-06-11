@@ -14,7 +14,6 @@ Template_Calculator::Template_Calculator()
   blink.push_back(deg2rad(180 + 45));
   blink.push_back(deg2rad(180 + 90));
   blink.push_back(deg2rad(180 + 135));
-  blink.push_back(2 * M_PI);
 };
 
 void Template_Calculator::set_state_action_matrix(string filename)
@@ -56,25 +55,21 @@ void Template_Calculator::set_state_action_matrix(string filename)
   }
 }
 
-bool Template_Calculator::fill_template(vector<bool> &q, const float b_i, const float u, float dmax, float angle_err, int &d)
+bool Template_Calculator::fill_template(vector<bool> &q, const float &b_i, const float &u, const float &dmax, const float &angle_err)
 {
   // Determine link (cycle through all options)
-  if (u < dmax) {
-    for (int j = 0; j < (int)blink.size(); j++) {
-      if (abs(b_i - blink[j]) < deg2rad(angle_err)) {
-        if (j == (int)blink.size() - 1) {
-          // last element is back to 0
-          j = 0;
-        }
+  if (u < dmax) { // If in range of sensor
+    for (int j = 0; j < (int)blink.size(); j++) { // For all angle options
+      if ( abs(b_i - blink[j]) < deg2rad(angle_err) && !q[j] ) { // If in the right angle and not already taken by another agent
         q[j] = true;
-        d = j;
         return true;
+        }
       }
     }
-  }
   return false;
 }
 
+// TODO: Make smarter
 float Template_Calculator::get_preferred_bearing(const vector<float> &bdes, const float v_b)
 {
   // Define in bv all equilibrium angles at which the agents can organize themselves
@@ -120,20 +115,17 @@ void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<i
 {
   q.clear();
   q.assign(8, false);
+  q_ID.clear();
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbor IDs from closest to furthest
-  vector<int> dir;
-  dir.clear();
 
-  int j;
   // Fill the template with respect to the agent in question
   for (uint8_t i = 0; i < nagents - 1; i++) {
-    if (fill_template(q,                                               // Vector to fill
+    if (fill_template(q, // Vector to fill
                       wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
-                      o->request_distance(ID, closest[i]),             // Distance
-                      1.7, 22.499, j)) {
-      // Sensor range, bearing precision
-      q_ID.push_back(closest[i]);
+                      o->request_distance(ID, closest[i]), // Distance
+                      1.7, 22.499)) { // Sensor range, bearing precision
+      q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }
   }
 }

@@ -26,7 +26,7 @@ public:
   std::map<int, vector<int>> state_action_matrix;
   void set_state_action_matrix(string filename);
   float get_preferred_bearing(const vector<float> &bdes, const float v_b);
-  bool fill_template(vector<bool> &q, const float b_i, const float u, float dmax, float angle_err, int &j);
+  bool  fill_template(vector<bool> &q, const float &b_i, const float &u, const float &dmax, const float &angle_err);
   void assess_situation(uint8_t ID, vector<bool> &q_old, vector<int> &q_old_ID);
 };
 
