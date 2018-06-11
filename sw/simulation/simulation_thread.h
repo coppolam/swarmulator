@@ -25,9 +25,10 @@ void run_simulation()
     ti.info_msg("Simulation started.");
     simulation_running = true;
   }
+
   if (!paused)
   {
-    int t_wait = (int) 1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
+    int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
     this_thread::sleep_for(chrono::microseconds(t_wait));
     simulation_time = t_wait;
     simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1000000.0;
@@ -134,11 +135,11 @@ void start_simulation(int argc, char *argv[])
   // TODO: Launch enironment threads
   // Gather enironment data (walls?!)
   // Launch a thread that handles all environment data
-  // vector<float> wallpoints = {0, 0, 2, 2};
   
   while (true)
   {
     run_simulation();
   };
+
 }
 #endif /*SIMULATION_H*/

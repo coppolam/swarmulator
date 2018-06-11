@@ -30,14 +30,16 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 
 void txtwrite::txtwrite_summary(ofstream &logfile)
 {
-  OmniscientObserver o;
-  if (!o.connected_graph_range(1.8))
+  #ifdef REMAIN_CONNECTED
+  OmniscientObserver *o;
+  if (!o->connected_graph_range(1.8))
   {
-    logfile << o.connected_graph_range(1.8)
+    logfile << o->connected_graph_range(1.8)
             << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;
     killer k;
     terminalinfo ti;
     ti.debug_msg("broke");
     k.kill_switch();
   }
+  #endif
 }

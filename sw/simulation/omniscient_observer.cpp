@@ -123,7 +123,6 @@ void OmniscientObserver::adjacency_matrix_knearest()
 
 bool OmniscientObserver::connected_graph_range(float range)
 {
-#ifdef REMAIN_CONNECTED
   Graph g(nagents);
 
   for (uint8_t i = 0; i < nagents; i++) {
@@ -138,9 +137,6 @@ bool OmniscientObserver::connected_graph_range(float range)
     return true;
   }
   return false;
-#else
-  return true; // ignore function
-#endif
 }
 
 float OmniscientObserver::get_centroid(uint8_t dim)
