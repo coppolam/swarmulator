@@ -5,7 +5,6 @@
 TARGET = swarmulator # application name
 BUILD_FOLDER = build
 SRC_FOLDER = sw
-OBJ_FOLDER = $(BUILD_FOLDER)/obj
 
 # Compiler parameters
 # Thanks to the help from
@@ -23,7 +22,6 @@ INC = -I. -I$(SRC_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS) # All include paths
 SOURCES = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp files
 MAKE = $(CC) $(CFLAGS) $(INC)
 OBJECTS=$(SOURCES:.cpp=.o)
-OBJ = $(shell ls *.o)
 
 # Build the executable
 # Using @...; suppresses the output of the arguments
@@ -38,7 +36,7 @@ xsd:
 	@mkdir -p $(BUILD_FOLDER);
 	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 
-%.o: %.cpp
+%.o: %.cpp # This rule defines how to go from CPP file to Object file
 	# Compiling $<
 	@$(MAKE) -c $< -o $@ $(OPT);
 
