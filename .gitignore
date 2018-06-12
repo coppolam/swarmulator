@@ -4,3 +4,4 @@ conf/*.xml
 conf/*.txt
 parameters.*
 build/
+*.o
