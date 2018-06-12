@@ -23,37 +23,35 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   v_x = 0;
   v_y = 0;
 
-  // TODO: Move these elsewhere
-  float twait_1 = timelim * 2;
-  float twait_2 = twait_1 * 2;
-
   vector<bool> state;
   vector<int>  state_ID; // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
   int n_neighbors = state_ID.size(); // number of neighbors
-  int n_cliques;
+  int n_cliques = 0;
   bool onclique;
-  onclique = true;
+
   // This only makes sense if you have between 2 and 6 neighbors, else #cliques = 1;
   if (n_neighbors > 1 && n_neighbors < 7) {
     onclique = false;
     for (size_t i = 0; i < state.size(); i++) {
-      if (state[i]) {
-        if (!onclique) {
-          onclique = true;
-          n_cliques++;
-        }
-      } else {
+      if (state[i] && !onclique) {
+        onclique = true;
+        n_cliques++;
+      } else if (!state[i]) {
         onclique = false;
       }
     }
-    if (state[0] && state[7] && n_cliques > 1) {
+    if (state[0] && state[state.size() - 1] && n_cliques > 1) {
       n_cliques--;
     }
   } else {
     n_cliques = 1;
   }
+
+  // TODO: Move these elsewhere
+  int twait_1 = timelim * 2 ; //(n_neighbors) / (n_cliques) ;
+  int twait_2 = twait_1 * 2 ; //(n_neighbors) / (n_cliques);
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 

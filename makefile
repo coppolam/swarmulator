@@ -25,9 +25,9 @@ OBJECTS=$(SOURCES:.cpp=.o)
 
 # Build the executable
 # Using @...; suppresses the output of the arguments
-all: xsd $(OBJECTS) $(TARGET)
+all: $(TARGET)
 
-$(TARGET): 
+$(TARGET): xsd $(OBJECTS)
 	# Building target
 	@$(MAKE) $(BUILD_FOLDER)/*.cxx $(OBJECTS) -o $@ $(OPT);
 
@@ -43,4 +43,4 @@ xsd:
 clean:
 	# Cleaning $(TARGET)...
 	@$(RM) -r $(BUILD_FOLDER); # Remove build folder
-	@$(RM) -r $(TARGET); # Remove application
+	@$(RM) -r $(TARGET) $(OBJECTS); # Remove application
