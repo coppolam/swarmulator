@@ -19,7 +19,8 @@ class Controller_Aggregate : public Controller_Lattice_Basic
   int moving_timer;
   int selected_action;
   int motion_dir = 0;   // Use 0 for random or 1-8 to specify a direction.
-
+  float timelim;
+  
 public:
   Controller_Aggregate();
   ~Controller_Aggregate() {};

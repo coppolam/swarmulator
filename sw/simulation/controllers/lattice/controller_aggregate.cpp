@@ -10,7 +10,8 @@ Controller_Aggregate::Controller_Aggregate() : Controller_Lattice_Basic()
 {
   string s = "./conf/state_action_matrices/state_action_matrix_free.txt";
   t.set_state_action_matrix(s);
-  moving_timer = 0;
+  timelim = 1.8 * param->simulation_updatefreq();
+  moving_timer = rand() % (int)timelim;
   beta_des.push_back(0.0);
   beta_des.push_back(M_PI / 4.0);
   beta_des.push_back(M_PI / 2.0);
@@ -23,21 +24,35 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   v_y = 0;
 
   // TODO: Move these elsewhere
-  float timelim = 1.8 * param->simulation_updatefreq();
   float twait_1 = timelim * 2;
   float twait_2 = twait_1 * 2;
 
-  // Initialize moving_timer with random variable
-  if (moving_timer == 0) {
-    moving_timer = rand() % (int)timelim;
-  }
-
-  vector<bool> state(8, 0);
+  vector<bool> state;
   vector<int>  state_ID; // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
   int n_neighbors = state_ID.size(); // number of neighbors
-
+  int n_cliques;
+  bool onclique;
+  onclique = false;
+  // This only makes sense if you have between 2 and 6 neighbors, else #cliques = 1;
+  if (n_neighbors > 1 && n_neighbors < 7) {
+    onclique = false;
+    for (size_t i = 0; i < state.size(); i++) {
+      if (state[i]) {
+        if (!onclique) {
+          onclique = true;
+          n_cliques++;
+        }
+      }
+      else {
+        onclique = false;
+      }
+    }
+  }
+  else {
+    n_cliques = 1;
+  }
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Can I move or are my neighbors moving?
@@ -101,7 +116,7 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
     }
   }
 
-  // Controller logic
+  // Controller Logic
   moving = false;
   if (canImove) {
     if (selected_action > -1 && moving_timer < timelim && o->request_distance(ID, closest[0]) < 1.6) {
