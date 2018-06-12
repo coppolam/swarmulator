@@ -44,15 +44,17 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
           onclique = true;
           n_cliques++;
         }
-      }
-      else {
+      } else {
         onclique = false;
       }
     }
-  }
-  else {
+    if (state[0] && state[7] && n_cliques > 1) {
+      n_cliques--;
+    }
+  } else {
     n_cliques = 1;
   }
+
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
   // Can I move or are my neighbors moving?
