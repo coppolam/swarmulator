@@ -24,28 +24,25 @@ SOURCES = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp fil
 MAKE = $(CC) $(CFLAGS) $(INC)
 OBJECTS=$(SOURCES:.cpp=.o)
 OBJ = $(shell ls *.o)
+
 # Build the executable
-# Using @ suppresses the output of the arguments
-all: $(TARGET)
+# Using @...; suppresses the output of the arguments
+all: xsd $(OBJECTS) $(TARGET)
+
+$(TARGET): 
+	# Building target
+	@$(MAKE) $(BUILD_FOLDER)/*.cxx $(OBJECTS) -o $@ $(OPT);
 
 xsd:
 	# Generating parameters XSD file
 	@mkdir -p $(BUILD_FOLDER);
 	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 
-# $(OBJECTS): $(SOURCES)
-	# Building logger
-	# $(MAKE) -c $^;
-.cpp.o:
-	#echo Compiling $<
-	$(MAKE) -c $< $(OPT)
-
-$(TARGET): xsd $(OBJECTS)
-	# Building target
-	$(MAKE) $(BUILD_FOLDER)/*.cxx $(OBJ) -o $(TARGET) $(OPT);
+%.o: %.cpp
+	# Compiling $<
+	@$(MAKE) -c $< -o $@ $(OPT);
 
 clean:
 	# Cleaning $(TARGET)...
 	@$(RM) -r $(BUILD_FOLDER); # Remove build folder
 	@$(RM) -r $(TARGET); # Remove application
-	@echo "Done";

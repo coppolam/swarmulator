@@ -34,7 +34,7 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   int n_neighbors = state_ID.size(); // number of neighbors
   int n_cliques;
   bool onclique;
-  onclique = false;
+  onclique = true;
   // This only makes sense if you have between 2 and 6 neighbors, else #cliques = 1;
   if (n_neighbors > 1 && n_neighbors < 7) {
     onclique = false;
