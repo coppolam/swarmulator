@@ -14,6 +14,7 @@ Template_Calculator::Template_Calculator()
   blink.push_back(deg2rad(180 + 45));
   blink.push_back(deg2rad(180 + 90));
   blink.push_back(deg2rad(180 + 135));
+  blink.push_back(2*M_PI);
 };
 
 void Template_Calculator::set_state_action_matrix(string filename)
@@ -61,6 +62,9 @@ bool Template_Calculator::fill_template(vector<bool> &q, const float &b_i, const
   if (u < dmax) { // If in range of sensor
     for (int j = 0; j < (int)blink.size(); j++) { // For all angle options
       if (abs(b_i - blink[j]) < deg2rad(angle_err) && !q[j]) {   // If in the right angle and not already taken by another agent
+        if (j == (int)blink.size() - 1) { // last element is back to 0
+          j = 0;
+        }
         q[j] = true;
         return true;
       }
