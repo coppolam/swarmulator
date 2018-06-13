@@ -35,10 +35,10 @@ bool program_running = false;
 uint window_width, window_height;
 float realtimefactor;
 float rangesensor = 1.6;
-
-// Parameters parser
-unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
 int backgroundcolor; // Use if you want a white background (can be nice for papers)
+
+// Parameters XML parser
+unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
 
 /*
   The main function launches separate threads that control independent
@@ -51,16 +51,16 @@ int main(int argc, char *argv[])
   window_height = param->window_height();
   window_width = param->window_width();
 
-  thread simulation(main_simulation_thread, argc, argv); // Launch simulation
+  thread simulation(main_simulation_thread, argc, argv);
   simulation.detach();
 
 #ifdef ANIMATE
-  thread animation(main_animation_thread); // Launch animation thread
+  thread animation(main_animation_thread);
   animation.detach();
 #endif
 
 #ifdef LOG
-  thread logger(main_logger_thread); // Launch logger to file logs/log<date><time>.txt
+  thread logger(main_logger_thread);
   logger.detach();
 #endif
 
