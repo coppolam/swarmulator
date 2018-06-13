@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef LOGGER_THREAD_H
+#define LOGGER_THREAD_H
 
 #include <fstream>
 #include <numeric>
@@ -53,7 +53,7 @@ const std::string currentDateTime()
   return buf;
 }
 
-void start_logger()
+void main_logger_thread()
 {
   string filename = "logs/log_" + currentDateTime() + ".txt";
 
@@ -65,4 +65,4 @@ void start_logger()
   };
 }
 
-#endif /*SIMULATION_H*/
+#endif /*LOGGER_THREAD_H*/

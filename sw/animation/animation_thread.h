@@ -1,5 +1,5 @@
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#ifndef ANIMATION_THREAD_H
+#define ANIMATION_THREAD_H
 
 #include "main.h"
 #include "glincludes.h"
@@ -77,7 +77,7 @@ void GL_Setup(int width, int height)
 /*
   Thread function that initiates the animation
 */
-void start_animation()
+void main_animation_thread()
 {
   // Initialize all variables
   mx = 0;
@@ -115,4 +115,4 @@ void start_animation()
   glutMainLoop(); // Initiate main drawing loop
 }
 
-#endif /*ANIMATION_H*/
+#endif /*ANIMATION_THREAD_H*/

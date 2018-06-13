@@ -1,5 +1,5 @@
-#ifndef SIMULATION_H
-#define SIMULATION_H
+#ifndef SIMULATION_THREAD_H
+#define SIMULATION_THREAD_H
 
 #include <numeric>
 #include <string>
@@ -96,7 +96,7 @@ void get_nearest_neighbors(int argc, char *argv[])
   }
 }
 
-void start_simulation(int argc, char *argv[])
+void main_simulation_thread(int argc, char *argv[])
 {
   get_number_of_agents(argc, argv);
   get_nearest_neighbors(argc, argv);
@@ -128,4 +128,4 @@ void start_simulation(int argc, char *argv[])
   };
 
 }
-#endif /*SIMULATION_H*/
+#endif /*SIMULATION_THREAD_H*/

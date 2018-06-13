@@ -17,10 +17,9 @@
 
 // Internal Includes
 #include "main.h" // Contains extern defines for global variables
-#include "animation_thread.h" // Animation thread
-#include "simulation_thread.h" // Simulation thread
-#include "logger.h" // Logger thread
-#include "omniscient_observer.h" // Class used to simulate sensing
+#include "animation_thread.h"
+#include "simulation_thread.h"
+#include "logger_thread.h"
 
 using namespace std;
 
@@ -52,16 +51,16 @@ int main(int argc, char *argv[])
   window_height = param->window_height();
   window_width = param->window_width();
 
-  thread simulation(start_simulation, argc, argv); // Launch simulation
+  thread simulation(main_simulation_thread, argc, argv); // Launch simulation
   simulation.detach();
 
 #ifdef ANIMATE
-  thread animation(start_animation); // Launch animation thread
+  thread animation(main_animation_thread); // Launch animation thread
   animation.detach();
 #endif
 
 #ifdef LOG
-  thread logger(start_logger); // Launch logger to file logs/log<date><time>.txt
+  thread logger(main_logger_thread); // Launch logger to file logs/log<date><time>.txt
   logger.detach();
 #endif
 
