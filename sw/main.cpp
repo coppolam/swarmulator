@@ -35,6 +35,7 @@ float simtime_seconds = 0;
 bool program_running = false;
 uint window_width, window_height;
 float realtimefactor;
+float rangesensor = 1.6;
 
 // Parameters parser
 unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));

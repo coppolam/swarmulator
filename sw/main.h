@@ -18,5 +18,6 @@ extern bool program_running; // True if the program is (or should be) running. I
 extern unique_ptr<parameters_t> param; // XML parameters from conf file
 extern uint window_width, window_height;
 extern float realtimefactor;
+extern float rangesensor;
 
 #endif /*MAIN_H*/
