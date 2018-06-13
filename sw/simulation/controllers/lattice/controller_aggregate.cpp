@@ -11,7 +11,7 @@ Controller_Aggregate::Controller_Aggregate() : Controller_Lattice_Basic()
   string s = "./conf/state_action_matrices/state_action_matrix_free.txt";
   t.set_state_action_matrix(s);
   timelim = 1.8 * param->simulation_updatefreq();
-  twait = timelim*5.0;
+  twait = timelim * 3.0;
   moving_timer = rand() % twait;
   beta_des.push_back(0.0);
   beta_des.push_back(M_PI / 4.0);
@@ -52,10 +52,9 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
   bool canImove = check_motion(state_ID);
-  if (!canImove)
-  {
+  if (!canImove) {
     selected_action = -2;
-    moving_timer = timelim;  
+    moving_timer = timelim;
   }
 
   // Action
@@ -73,7 +72,7 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
       selected_action = -2; // State not found... no action to take
     }
   }
-  
+
   // Controller Logic
   moving = false;
   if (canImove) {

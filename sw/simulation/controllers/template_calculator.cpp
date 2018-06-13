@@ -14,7 +14,7 @@ Template_Calculator::Template_Calculator()
   blink.push_back(deg2rad(180 + 45));
   blink.push_back(deg2rad(180 + 90));
   blink.push_back(deg2rad(180 + 135));
-  blink.push_back(2*M_PI);
+  blink.push_back(2 * M_PI);
 };
 
 void Template_Calculator::set_state_action_matrix(string filename)
