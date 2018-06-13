@@ -8,7 +8,7 @@
 
 Controller_Aggregate::Controller_Aggregate() : Controller_Lattice_Basic()
 {
-  string s = "./conf/state_action_matrices/state_action_matrix_free.txt";
+  string s = "./conf/state_action_matrices/state_action_matrix_free_test.txt";
   t.set_state_action_matrix(s);
   timelim = 1.8 * param->simulation_updatefreq();
   twait = timelim * 3.0;
