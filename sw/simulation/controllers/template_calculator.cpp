@@ -56,6 +56,7 @@ void Template_Calculator::set_state_action_matrix(string filename)
   }
 }
 
+// TODO: Make smarter
 bool Template_Calculator::fill_template(vector<bool> &q, const float &b_i, const float &u, const float &dmax, const float &angle_err)
 {
   // Determine link (cycle through all options)
@@ -121,9 +122,8 @@ void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<i
   q.assign(8, false);
   q_ID.clear();
 
-  vector<int> closest = o->request_closest(ID); // Get vector of all neighbor IDs from closest to furthest
-
   // Fill the template with respect to the agent in question
+  vector<int> closest = o->request_closest(ID);
   for (uint8_t i = 0; i < nagents - 1; i++) {
     if (fill_template(q, // Vector to fill
                       wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing

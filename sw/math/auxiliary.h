@@ -8,7 +8,7 @@
 
 using namespace std;
 
-inline static void increase_counter(int &counter, int limit)
+inline static void increase_counter(uint &counter, const uint &limit)
 {
   if (counter > limit) {counter = 1;}
   else {counter++;}

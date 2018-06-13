@@ -16,12 +16,14 @@ using namespace std;
 
 class Controller_Aggregate : public Controller_Lattice_Basic
 {
-  int moving_timer;
   int selected_action;
   int motion_dir = 0;   // Use 0 for random or 1-8 to specify a direction.
-  float timelim;
+  uint moving_timer;
+  uint timelim;
+  uint twait;
 
 public:
+
   Controller_Aggregate();
   ~Controller_Aggregate() {};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
