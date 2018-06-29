@@ -5,3 +5,4 @@ conf/*.txt
 parameters.*
 build/
 *.o
+state_action_matrix_free_test*.txt
