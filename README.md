@@ -8,9 +8,13 @@ Swarmulator was built and tested on Ubuntu 14.04. At the moment, it has not been
 Download/clone the repository.
 
 ### Packages Required
-As the animation runs using OpenGl, you will need the following packages prior to installation. Run the following:
+Swarmulator runs using OpenGl and XML parsing.
+You will need the following packages. Run the following to make sure you have everything you need:
 
-	sudo apt-get install libglfw3 libglfw3-dev libglfw-dev 
+	sudo apt-get install libglfw-dev
+    sudo apt-get install libglfw3 libglfw3-dev freeglut3 freeglut3-dev
+    sudo apt-get install libxerces-c-dev
+    sudo apt-get install xsdcxx
 
 ### Build instructions
 Once you have all the packages needed to build Swarmulator, you can build it with:

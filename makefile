@@ -34,7 +34,7 @@ $(TARGET): xsd $(OBJECTS)
 xsd:
 	# Generating parameters XSD file
 	@mkdir -p $(BUILD_FOLDER);
-	@xsd cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
+	@xsdcxx cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 
 %.o: %.cpp # This rule defines how to go from CPP file to Object file
 	# Compiling $<
