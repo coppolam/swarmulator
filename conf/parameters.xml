@@ -1,22 +1,21 @@
-<?xml version="1.0" encoding = "UTF-8"?>
+<?xml version="1.0"?>
+<parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="parameters.xsd">
 
 <!-- Simulation global variables -->
-<simulation>
-    <node name="simulation_updatefreq" value="30"/>
-    <node name="simulation_realtimefactor" value="30"/>
-</simulation>
+<simulation_updatefreq>30</simulation_updatefreq>
+<simulation_realtimefactor>50</simulation_realtimefactor>
 
 <!-- Animation global variables -->
-<animation>
-    <node name="window_width"  value="500"/>
-    <node name="window_height" value="500"/>
-    <node name="scale" value="0.3"/>
-    <node name="mouse_drag_speed" value="1.0"/>
-    <node name="mouse_zoom_speed" value="0.5"/>
-    <node name="animation_updatefreq" value="25"/>
-</animation>
+<window_width>800</window_width>
+<window_height>800</window_height>
+<scale>0.3</scale>
+<mouse_drag_speed>1.0</mouse_drag_speed>
+<mouse_zoom_speed>0.5</mouse_zoom_speed>
+<animation_updatefreq>25</animation_updatefreq>
+<visible_centroid>1</visible_centroid>
 
 <!-- Logger global variables -->
-<logger>
-    <node name="logger_updatefreq" value="1"/>
-</logger>
+<logger_updatefreq>1</logger_updatefreq>
+
+</parameters>
