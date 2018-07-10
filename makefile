@@ -28,11 +28,11 @@ OBJECTS=$(SOURCES:.cpp=.o)
 all: $(TARGET)
 
 $(TARGET): xsd $(OBJECTS)
-	# Building target
+	# Building $(TARGET)
 	@$(MAKE) $(BUILD_FOLDER)/*.cxx $(OBJECTS) -o $@ $(OPT);
 
 xsd:
-	# Generating parameters XSD file
+	# Generating parameters file
 	@mkdir -p $(BUILD_FOLDER);
 	@xsdcxx cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 

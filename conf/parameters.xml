@@ -18,4 +18,7 @@
 <!-- Logger global variables -->
 <logger_updatefreq>1</logger_updatefreq>
 
+<!-- Additional Parameters-->
+<!--new_parameter_name>default value</new_parameter_name-->
+
 </parameters>
