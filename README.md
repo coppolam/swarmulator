@@ -1,10 +1,10 @@
 # Swarmulator
-A lightweight C++ simulator designed for simulating swarms.
+Swarmulator is a lightweight C++ simulator for simulating swarms.
 Swarmulator offers a simple platform to prototype swarm behaviors.
 
-Swarmulator was built and tested on Ubuntu 14.04. At the moment, it has not been proven on any other system.
 
 ## Install Instructions
+_Note: Swarmulator was built and tested on Ubuntu 14.04 and 16.04. At the moment, it has not been proven on any other system._
 
 #### Download the repository
 Download/clone the repository.
@@ -16,7 +16,7 @@ Download/clone the repository.
 Swarmulator runs using OpenGl and XML parsing.
 You will need the following packages. Run the following to make sure you have everything you need:
 
-	  sudo apt-get install libglfw-dev
+    sudo apt-get install libglfw-dev
     sudo apt-get install libglfw3 libglfw3-dev freeglut3 freeglut3-dev
     sudo apt-get install libxerces-c-dev
     sudo apt-get install xsdcxx
