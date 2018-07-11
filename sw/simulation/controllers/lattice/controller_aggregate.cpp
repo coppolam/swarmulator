@@ -34,11 +34,11 @@ void Controller_Aggregate::get_velocity_command(const uint8_t ID, float &v_x, fl
   bool action_available = true;
   if (!o->see_if_moving(ID) && state_action_row != t.state_action_matrix.end()) {
     selected_action = *select_randomly(state_action_row->second.begin(), state_action_row->second.end());
-  } else if (!o->see_if_moving(ID)){
+  } else if (!o->see_if_moving(ID)) {
     action_available = false;
   }
 
-  if (!canImove){
+  if (!canImove) {
     action_available = false;
     moving_timer = timelim;
   }
