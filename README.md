@@ -4,7 +4,7 @@ Swarmulator offers a simple platform to prototype swarm behaviors.
 
 
 ## Install Instructions
-_Note: Swarmulator was built and tested on Ubuntu 14.04 and 16.04. At the moment, it has not been proven on any other system._
+_Note: Swarmulator was built and tested on Ubuntu 16.04. At the moment, it has not been proven on any other system._
 
 #### Download the repository
 Download/clone the repository.
@@ -13,7 +13,7 @@ Download/clone the repository.
     cd swarmulator
     
 #### Packages Required
-Swarmulator runs using OpenGl and XML parsing.
+Swarmulator runs using OpenGL and XML parsing.
 You will need the following packages. Run the following to make sure you have everything you need:
 
     sudo apt-get install libglfw-dev
