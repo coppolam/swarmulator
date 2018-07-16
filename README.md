@@ -14,12 +14,13 @@ Download/clone the repository.
     
 #### Packages Required
 Swarmulator runs using OpenGL and XML parsing.
-You will need the following packages. Run the following to make sure you have everything you need:
+You will need the following packages. Run the following to make sure you have everything you need, installed in order:
 
     sudo apt-get install libglfw-dev
     sudo apt-get install libglfw3 libglfw3-dev freeglut3 freeglut3-dev
     sudo apt-get install libxerces-c-dev
     sudo apt-get install xsdcxx
+    sudo apt-get install libeigen3-dev
 
 #### Build instructions
 Once you have all the packages needed to build Swarmulator, you can build it with:

@@ -1,9 +1,10 @@
 #include "omniscient_observer.h"
 #include "main.h"
 #include "graph.h"
+#include <eigen3/Eigen/Dense>
+using namespace Eigen;
 
-// struct indexed_array;
-/* Structure holding values and indexes of an array, used for sorting while keeping original index*/
+typedef Matrix<bool, Dynamic, Dynamic> MatrixXb;
 bool printed = false;
 
 int compare_index(const void *p1, const void *p2)
@@ -71,26 +72,9 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
   return ind;
 }
 
-void mat_print(int n_row, int n_col, bool a[])
-{
-  int row, col, ridx;
-  for (row = 0; row < n_row; row++) {
-    for (col = 0; col < n_col; col++) {
-      ridx = row * n_col + col;
-      if (a[ridx]) {
-        cout << 1 << " ";
-      } else {
-        cout << 0 << " ";
-      }
-
-    }
-    cout << ";" << endl;
-  }
-}
-
 void OmniscientObserver::adjacency_matrix_knearest()
 {
-  bool mat[nagents * nagents];
+  MatrixXb mat(nagents,nagents);
 
   for (uint8_t i = 0; i < nagents; i++) {
     vector<int> vr = request_closest(i);
@@ -98,11 +82,11 @@ void OmniscientObserver::adjacency_matrix_knearest()
 
     for (uint8_t j = 0; j < nagents; j++) {
       if (i == j) {
-        mat[i * nagents + j] = false;
+        mat(i,j) = false;
       } else if (find(v.begin(), v.end(), j) != end(v)) {
-        mat[i * nagents + j] = true;
+        mat(i,j) = true;
       } else {
-        mat[i * nagents + j] = false;
+        mat(i,j) = false;
       }
 
     }
@@ -110,10 +94,8 @@ void OmniscientObserver::adjacency_matrix_knearest()
 
   if (!printed &&
       ((param->simulation_realtimefactor() * simulation_time / 1000000.0) > 40.0)) {
-    cout << "A = [ " ;
-    mat_print(nagents, nagents, mat);
+    cout << "A = [ "  << mat << " ] " << endl;
     printed = true;
-    cout << " ] " << endl;
   }
 }
 
