@@ -74,7 +74,7 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
 
 void OmniscientObserver::adjacency_matrix_knearest()
 {
-  MatrixXb mat(nagents,nagents);
+  MatrixXb mat(nagents, nagents);
 
   for (uint8_t i = 0; i < nagents; i++) {
     vector<int> vr = request_closest(i);
@@ -82,11 +82,11 @@ void OmniscientObserver::adjacency_matrix_knearest()
 
     for (uint8_t j = 0; j < nagents; j++) {
       if (i == j) {
-        mat(i,j) = false;
+        mat(i, j) = false;
       } else if (find(v.begin(), v.end(), j) != end(v)) {
-        mat(i,j) = true;
+        mat(i, j) = true;
       } else {
-        mat(i,j) = false;
+        mat(i, j) = false;
       }
 
     }
