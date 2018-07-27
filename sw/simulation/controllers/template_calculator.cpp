@@ -21,7 +21,6 @@ void Template_Calculator::set_state_action_matrix(string filename)
 {
   state_action_matrix.clear();
   terminalinfo ti;
-  // ifstream state_action_matrix_file("./conf/state_action_matrices/state_action_matrix_triangle4.txt");
   ifstream state_action_matrix_file(filename);
 
   if (state_action_matrix_file.is_open()) {
