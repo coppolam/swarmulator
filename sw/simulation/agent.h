@@ -9,7 +9,7 @@
 #include "settings.h"
 #include "terminalinfo.h"
 
-// Include all controllers here
+// Include all controllers here, as any of them may be loaded
 #include "controller_cartesian.h"
 #include "controller_bearing_shape.h"
 #include "controller_lattice.h"
@@ -18,12 +18,15 @@
 
 using namespace std;
 
+/*
+* Parent class defining an agent. The dynamic implementation is handled in children classes.
+*/
 class Agent
 {
 public:
-  virtual ~Agent() {};
+  virtual ~Agent() {};   // Destructor
 
-  CONTROLLER controller;
+  CONTROLLER controller; // Controller used by the agent. Defined in settings.h.
 
   float dt;
   uint8_t ID;
@@ -34,8 +37,8 @@ public:
   vector<float> get_states();
   float get_position(uint8_t dim);
   uint8_t get_ID();
-
-  virtual void update_position() = 0; // Defined by lower level functions
+  
+  virtual void update_position() = 0;
 };
 
 #endif /*AGENT_H*/

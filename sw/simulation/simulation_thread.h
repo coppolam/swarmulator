@@ -2,12 +2,10 @@
 #define SIMULATION_THREAD_H
 
 #include <numeric>
-#include <string>
 #include <functional>
 #include <cctype>
 #include <algorithm>
-#include <thread>         // std::thread
-#include <mutex>
+#include <thread>
 
 #include "main.h"
 #include "randomgenerator.h"
@@ -35,6 +33,7 @@ void run_simulation()
 }
 
 /* Calculate the mean of a vector element */
+// TODO: Move to math
 float vector_mean(const vector<float> &v)
 {
   float sum = std::accumulate(v.begin(), v.end(), 0.0);
@@ -42,6 +41,7 @@ float vector_mean(const vector<float> &v)
 }
 
 /* Calculate the standard deviation of a vector element */
+// TODO: Move to math
 float vector_std(const vector<float> &v)
 {
   vector<double> diff(v.size());
@@ -52,6 +52,7 @@ float vector_std(const vector<float> &v)
 }
 
 /* Generate a random vector with zero mean */
+// TODO: Move to math
 vector<float> generate_random_vector_zeromean(const int &length)
 {
   // Generate the random vector
@@ -107,21 +108,17 @@ void main_simulation_thread(int argc, char *argv[])
   vector<float> x0 = generate_random_vector_zeromean(nagents);
   vector<float> y0 = generate_random_vector_zeromean(nagents);
 
-  // Set up the models. This main should just spawn n agents at random positions/states.
+  // Generate the agent models
   for (uint8_t ID = 0; ID < nagents; ID++) {
     vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
     s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   }
 
-  // Launch agent threads
+  // Launch agent threads to simulate each agent independetly
   for (uint8_t ID = 0; ID < nagents; ID++) {
     thread agent(start_agent_simulation, ID);
     agent.detach();
   }
-
-  // TODO: Launch enironment threads
-  // Gather enironment data (walls?!)
-  // Launch a thread that handles all environment data
 
   while (true) {
     run_simulation();

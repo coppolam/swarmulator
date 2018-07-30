@@ -2,6 +2,7 @@
 #include "main.h"
 #include "graph.h"
 #include <eigen3/Eigen/Dense>
+
 using namespace Eigen;
 
 typedef Matrix<bool, Dynamic, Dynamic> MatrixXb;

@@ -12,7 +12,6 @@
 
 float Controller_Cartesian::f_attraction(float u)
 {
-  // float w = log((_ddes/_kr-1)/exp(-_ka*_ddes))/_ka;
   float w = 1.5;
   return  1 / (1 + exp(-_ka * (u - w))) + 1 / (1 + exp(-_ka * (u + w))) - 1; //% sigmoid function -- long-range
 }

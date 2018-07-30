@@ -11,9 +11,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
-#include <vector>
-#include <thread> // std::thread
-#include <mutex>
+#include <thread>
 
 // Internal Includes
 #include "main.h" // Contains extern defines for global variables
@@ -23,19 +21,18 @@
 
 using namespace std;
 
-// Simulation default values
-uint nagents; // Number of agents in the simulation
-vector<Agent *> s; // Set up a vector of relative position filters
-// vector<Wall> w; // Set up a vector of walls
-uint knearest; // knearest objects
-mutex mtx; // Mutex needed to lock threads
-float simulation_time = 0;
-float simtime_seconds = 0;
-bool program_running = false;
+// Initialize and define simulation global variables
+uint nagents;                   // Number of agents in the simulation
+vector<Agent *> s;              // Set up a vector of relative position filters
+uint knearest;                  // knearest objects
+mutex mtx;                      // Mutex needed to lock threads
 uint window_width, window_height;
 float realtimefactor;
-float rangesensor = 1.6;
-int backgroundcolor; // Use if you want a white background (can be nice for papers)
+int backgroundcolor;
+float simulation_time = 0;
+float simtime_seconds = 0;
+float rangesensor     = 1.6;
+bool program_running  = false;
 
 // Parameters XML parser
 unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
@@ -49,22 +46,25 @@ int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
   window_height = param->window_height();
-  window_width = param->window_width();
+  window_width  = param->window_width();
 
+  // Start simulation
   thread simulation(main_simulation_thread, argc, argv);
   simulation.detach();
 
 #ifdef ANIMATE
+  // Start animation
   thread animation(main_animation_thread);
   animation.detach();
 #endif
 
 #ifdef LOG
+  // Start logger
   thread logger(main_logger_thread);
   logger.detach();
 #endif
 
   while (program_running) {}; // Keep the program running
-  cout << "Terminating swarmulator" << endl;
+  cout << "Swarmulator exited cleanly" << endl;
   return 0;
 }
