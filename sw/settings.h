@@ -5,7 +5,7 @@
  *     Note: this is on top of the main simulator thread
  *****/
 #define ANIMATE // Activate animation thread
-// #define LOG // Activate logger thread
+#define LOG // Activate logger thread
 // #define REMAIN_CONNECTED // Check that the swarm remains connected
 
 /***** Select the controller to be used ****/
@@ -18,5 +18,8 @@
 /***** Select the agent type that you want to use ****/
 #define AGENT Particle
 // #define AGENT Wheeled
+
+#define NOISE_R 0
+#define NOISE_B 0
 
 #endif /*SETTINGS_H*/

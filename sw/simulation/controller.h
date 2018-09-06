@@ -22,6 +22,8 @@ public:
   ~Controller(); // Destructor
 
   float _ddes; // Desired equilibrium distance
+  float _ddes_x; // Desired equilibrium distance
+  float _ddes_y; // Desired equilibrium distance
   float _kr;   // Repulsion gain
   float _ka;   // Attraction gain
   bool  saturation; // Define whether the controls are saturated

@@ -7,11 +7,19 @@
 float Controller_Lattice_Basic::f_attraction(const float &u, const float &b_eq)
 {
   float w;
-  // To do -- move general attraction equation to controller
-  if (!(abs(b_eq - M_PI / 4.0) < 0.1 || abs(b_eq - (3 * M_PI / 4.0)) < 0.1)) {
-    w = log((_ddes / _kr - 1) / exp(-_ka * _ddes)) / _ka;
-  } else {
-    w = log((sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)) / _kr - 1) / exp(-_ka * sqrt(pow(_ddes, 2.0) + pow(_ddes, 2.0)))) / _ka;
+  float ddes2 = sqrt(pow(_ddes_x, 2.0) + pow(_ddes_y, 2.0));
+  float tol = 0.1;
+
+  // TODO: move general attraction equation to controller
+  if ( abs(b_eq - atan(_ddes_y/_ddes_x)) < tol || // +- 45 deg
+       abs(b_eq - M_PI/2.0-atan(_ddes_x/_ddes_y)) < tol ) {     // +- 135 deg
+    w = log(( ddes2 / _kr - 1) / exp(-_ka * ddes2 )) / _ka;
+  }
+  else if ( abs(b_eq) - deg2rad(180) < tol ) { // 0,180
+    w = log((_ddes_y / _kr - 1) / exp(-_ka * _ddes_y)) / _ka;
+  }
+  else if ( abs(b_eq - deg2rad(90)) < tol ){
+    w = log((_ddes_x / _kr - 1) / exp(-_ka * _ddes_x)) / _ka;
   }
 
   return 1 / (1 + exp(-_ka * (u - w)));
@@ -38,8 +46,8 @@ void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_ad
 
 void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v_x, float &v_y)
 {
-  float actionspace_y[8] = {0, sqrt(1), 1, sqrt(1), 0, -sqrt(1), -1, -sqrt(1)};
-  float actionspace_x[8] = {1, sqrt(1), 0, -sqrt(1), -1, -sqrt(1), 0, sqrt(1)};
+  float actionspace_y[8] = {0, sqrt(_ddes_y), _ddes_y, sqrt(_ddes_y), 0, -sqrt(_ddes_y), -_ddes_y, -sqrt(_ddes_y)};
+  float actionspace_x[8] = {_ddes_x, sqrt(_ddes_x), 0, -sqrt(_ddes_x), -_ddes_x, -sqrt(_ddes_x), 0, sqrt(_ddes_x)};
   v_x = _v_adj * actionspace_x[selected_action];
   v_y = _v_adj * actionspace_y[selected_action];
 }
@@ -59,9 +67,9 @@ bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
 void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
 {
   float v_b, b_eq, v_r;
-  v_b = wrapToPi_f(o->request_bearing(ID, state_ID));
+  v_b  = wrapToPi_f(o->request_bearing(ID, state_ID));
   b_eq = t.get_preferred_bearing(beta_des, v_b);
-  v_r = get_attraction_velocity(o->request_distance(ID, state_ID), b_eq);
+  v_r  = get_attraction_velocity(o->request_distance(ID, state_ID), b_eq);
   latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
 }
 

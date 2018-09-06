@@ -13,7 +13,9 @@
 Controller::Controller()
 {
   _ddes = 1.0;
-  _kr = 1;
+  _ddes_x = 1.5;
+  _ddes_y = 1.0;
+  _kr = 1.0;
   _ka = 5;
   saturation = false;
 };
