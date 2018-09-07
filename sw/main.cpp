@@ -31,7 +31,7 @@ float realtimefactor;
 int backgroundcolor;
 float simulation_time = 0;
 float simtime_seconds = 0;
-float rangesensor     = 2.0;
+float rangesensor     = 1.6;
 bool program_running  = false;
 
 // Parameters XML parser

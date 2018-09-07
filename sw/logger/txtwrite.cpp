@@ -16,7 +16,7 @@ void txtwrite::txtwrite_state(ofstream &logfile)
   stringstream t;
   t << simtime_seconds;
   vector<Agent *> state_buff = s;
-
+  
   for (uint8_t i = 0; i < nagents; i++) {
     logfile << i + 1 << " ";
     logfile << t.str() << " "; // divide by 1000000.0

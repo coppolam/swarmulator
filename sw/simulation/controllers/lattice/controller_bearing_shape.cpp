@@ -9,13 +9,13 @@
 
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic()
 {
-  string s = "./conf/state_action_matrices/state_action_matrix_triangle3.txt";
+  string s = "./conf/state_action_matrices/state_action_matrix_bigcross.txt";
   t.set_state_action_matrix(s);
   moving_timer = 0;
   beta_des.push_back(0.0);
   beta_des.push_back(atan(_ddes_y/_ddes_x));
   beta_des.push_back(M_PI / 2.0);
-  beta_des.push_back(M_PI / 2.0 - atan(_ddes_x/_ddes_y));
+  beta_des.push_back(M_PI / 2.0 + atan(_ddes_x/_ddes_y));
 }
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)

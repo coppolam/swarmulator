@@ -19,7 +19,6 @@ bool logger_running = false;
 void run_logger(ofstream &logfile, string filename)
 {
   static txtwrite writer;
-
   if (!logger_running) {
     terminalinfo ti;
     writer.setfilename(filename);

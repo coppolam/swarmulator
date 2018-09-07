@@ -1,6 +1,8 @@
 # Bash script to run a simulation multiple times and save all logs in a folder
 # This script expects swarmulator to have a kill-switch activated somewhere,
 # although manual quitting (pressing the 'q' key) is also fine.
+# $1 = number of trials
+# $2 = number of agents
 
 cd $SWARMULATOR_HOME
 
