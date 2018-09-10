@@ -127,7 +127,7 @@ void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<i
     if (fill_template(q, // Vector to fill
                       wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
                       o->request_distance(ID, closest[i]), // Distance
-                      rangesensor, 22.499)) { // Sensor range, bearing precision
+                      rangesensor, 22.5)) { // Sensor range, bearing precision
       // Use higher values of bearing sensor to handle higher noise values (even if there is overlap)
       q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }

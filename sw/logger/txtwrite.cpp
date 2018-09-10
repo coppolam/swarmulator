@@ -29,8 +29,8 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 
 void txtwrite::txtwrite_summary(ofstream &logfile)
 {
-OmniscientObserver *o;
 #ifdef REMAIN_CONNECTED
+  OmniscientObserver *o;
   if (!(o->connected_graph_range(rangesensor))) {
     logfile << o->connected_graph_range(rangesensor)
             << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;

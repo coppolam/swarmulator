@@ -29,7 +29,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // Initialize moving_timer with random variable
   if (moving_timer == 0) {
-    moving_timer = rand() % (int)timelim;
+    moving_timer = rand() % (int)twait_2;
   }
 
   vector<bool> state(8, 0);
@@ -40,12 +40,10 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
 
-  // Can I move or are my neighbors moving?
-  bool canImove = check_motion(state_ID);
-
+  bool canImove = check_motion(state_ID); // Can I move or are my neighbors moving?
   if (!canImove) {
     selected_action = -2;   // Reset actions
-    moving_timer = twait_1; // Reset moving timer
+    moving_timer = timelim; // Reset moving timer
   }
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
