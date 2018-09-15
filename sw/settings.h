@@ -4,9 +4,10 @@
 /***** Uncomment the main simulation threads and functions that run 
  *     Note: this is on top of the main simulator thread
  *****/
-#define ANIMATE // Activate animation thread
+// #define ANIMATE // Activate animation thread
 #define LOG // Activate logger thread
-// #define REMAIN_CONNECTED // Check that the swarm remains connected
+#define REMAIN_CONNECTED // Check that the swarm remains connected
+#define CHECK_HAPPY
 
 /***** Select the controller to be used ****/
 // #define CONTROLLER Controller_Cartesian

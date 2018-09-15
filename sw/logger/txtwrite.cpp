@@ -29,15 +29,32 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 
 void txtwrite::txtwrite_summary(ofstream &logfile)
 {
+  bool killflag = false;
+
+#if defined(REMAIN_CONNECTED) || defined(CHECK_HAPPY)
+  OmniscientObserver o;
+  terminalinfo ti;
+#endif
+
 #ifdef REMAIN_CONNECTED
-  OmniscientObserver *o;
-  if (!(o->connected_graph_range(rangesensor))) {
-    logfile << o->connected_graph_range(rangesensor)
-            << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;
-    killer k;
-    terminalinfo ti;
-    ti.debug_msg("broke");
-    k.kill_switch();
+  if (!(o.connected_graph_range(rangesensor))) {
+    logfile << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;
+    ti.debug_msg("Swarm broke");
+    killflag = true;
+    
   }
 #endif
+
+#ifdef CHECK_HAPPY
+  if (o.check_happy()) {
+    terminalinfo ti;
+    ti.debug_msg("Pattern completed");
+    killflag = true;
+  }
+#endif
+
+  if (killflag){
+    killer k;
+    k.kill_switch();
+  }
 }

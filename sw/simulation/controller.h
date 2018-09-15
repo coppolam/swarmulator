@@ -28,7 +28,7 @@ public:
   bool  saturation; // Define whether the controls are saturated
   float saturation_limits; // Define the saturation of the controls
   bool  moving; // Internal state of whether the robot is actively moving or not
-  
+  bool happy;
   // Set the saturation to true and set the saturation limits
   void set_saturation(const float &saturation_limits);
   

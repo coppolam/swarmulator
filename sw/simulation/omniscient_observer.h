@@ -30,6 +30,7 @@ public:
   bool connected_graph_range(float range);
   float get_centroid(uint8_t dim);
   bool see_if_moving(uint8_t ID);
+  bool check_happy(void);
 };
 
 #endif /*OMNISCIENT_OBSERVER_H*/

@@ -75,6 +75,17 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
   return ind;
 }
 
+bool OmniscientObserver::check_happy()
+{
+  bool happy = true;
+  for (uint8_t i = 1; i < nagents; i++) {
+    if (!s[i]->happy)
+      return false;
+  }
+
+  return happy;
+}
+
 void OmniscientObserver::adjacency_matrix_knearest()
 {
   MatrixXb mat(nagents, nagents);

@@ -32,6 +32,7 @@ public:
   uint8_t ID;
   vector<float> state;
   bool moving;
+  bool happy;
   float orientation;
 
   vector<float> get_states();
