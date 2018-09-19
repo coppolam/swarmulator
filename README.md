@@ -18,8 +18,7 @@ Download/clone the repository.
 Swarmulator runs using OpenGL and XML parsing.
 You will need the following packages. Run the following to make sure you have everything you need, installed in order:
 
-    sudo apt-get install libglfw-dev
-    sudo apt-get install libglfw3 libglfw3-dev freeglut3 freeglut3-dev
+    sudo apt-get install freeglut3 freeglut3-dev
     sudo apt-get install libxerces-c-dev
     sudo apt-get install xsdcxx
     sudo apt-get install libeigen3-dev
@@ -77,7 +76,6 @@ Additionally, there are a number of keyboard commands for the following:
 * Pause (`p`). The simulation can be paused by pressing the `p` key.
 * Resume (`r`). Resume the simulation. Pressing `r` while the simulation is running normally will cause it to pause.
 * Step-through (`s`). This will run the simulation for a very small time step and then pause. It can be pressed repeatedly to slowly step through the simulation.
-* Re-start the simulation (`n`). This will re-start the simulation.
 * Quit (`q`). This will quit Swarmulator.
 
 ## Prototyping with Swarmulator
