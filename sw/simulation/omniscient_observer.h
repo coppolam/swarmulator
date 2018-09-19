@@ -8,6 +8,8 @@
 #include <algorithm>    // std::sort
 #include <mutex>
 
+#include "graph.h"
+
 using namespace std;
 
 struct indexed_array {
@@ -26,7 +28,6 @@ public:
   float request_distance_dim(uint8_t ID, uint8_t ID_tracked, uint8_t dim);
   float request_distance(uint8_t ID, uint8_t ID_tracked);
   float request_bearing(uint8_t ID, uint8_t ID_tracked);
-  void adjacency_matrix_knearest();
   bool connected_graph_range(float range);
   float get_centroid(uint8_t dim);
   bool see_if_moving(uint8_t ID);

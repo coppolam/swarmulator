@@ -28,7 +28,7 @@ int getrand_int(int min, int max)
 
 // <<complete Box-Muller function>>=
 // based on:
-//http://en.literateprograms.org/Box-Muller_transform_%28C%29#chunk%20def:scale%20and%20translate%20to%20get%20desired%20mean%20and%20standard%20deviation
+// http://en.literateprograms.org/Box-Muller_transform_%28C%29#chunk%20def:scale%20and%20translate%20to%20get%20desired%20mean%20and%20standard%20deviation
 //
 // Polar form of Box-Muller transform:
 // http://www.design.caltech.edu/erik/Misc/Gaussian.html

@@ -1,7 +1,7 @@
 #include "omniscient_observer.h"
 #include "main.h"
-#include "graph.h"
 #include "randomgenerator.h"
+// #include "iterator.h"
 
 #include <eigen3/Eigen/Dense>
 
@@ -84,33 +84,6 @@ bool OmniscientObserver::check_happy()
   }
 
   return happy;
-}
-
-void OmniscientObserver::adjacency_matrix_knearest()
-{
-  MatrixXb mat(nagents, nagents);
-
-  for (uint8_t i = 0; i < nagents; i++) {
-    vector<int> vr = request_closest(i);
-    vector<int> v(vr.begin(), vr.begin() + knearest); // cut to knearest
-
-    for (uint8_t j = 0; j < nagents; j++) {
-      if (i == j) {
-        mat(i, j) = false;
-      } else if (find(v.begin(), v.end(), j) != end(v)) {
-        mat(i, j) = true;
-      } else {
-        mat(i, j) = false;
-      }
-
-    }
-  }
-
-  if (!printed &&
-      ((param->simulation_realtimefactor() * simulation_time / 1000000.0) > 40.0)) {
-    cout << "A = [ "  << mat << " ] " << endl;
-    printed = true;
-  }
 }
 
 bool OmniscientObserver::connected_graph_range(float range)

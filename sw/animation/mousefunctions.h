@@ -5,8 +5,6 @@
 
 #include <thread>
 #include <mutex>
-#include <iostream>
-#include <assert.h>     /* assert */
 #include "terminalinfo.h"
 #include "agent_thread.h"
 
@@ -34,25 +32,18 @@ void keyboard_callback(unsigned char key, int x, int y)
 {
   terminalinfo ti;
 
-  stringstream ss;
   switch (key) {
     case 'c':
+      ti.info_msg("Recentering Animation.");
       mx = 0;
       my = 0;
-      ti.info_msg("Recentering Animation.");
-      break;
-    case 'n':
-      mtx.try_lock();
-      ti.info_msg("Restarting.");
-      ss << "pkill swarmulator && ./swarmulator " << nagents << " " << knearest;
-      system(ss.str().c_str());
       break;
     case 'z':
-      zms = 0;
       ti.info_msg("Resetting zoom.");
+      zms = 0;
       break;
     case 'q':
-      ti.info_msg("Quitting.");
+      ti.info_msg("Quitting Swarmulator.");
       mtx.try_lock();
       program_running = false;
       break;
@@ -65,13 +56,13 @@ void keyboard_callback(unsigned char key, int x, int y)
       break;
     case 'r':
       if (paused) {
-        ti.info_msg("Resume.");
+        ti.info_msg("Resuming.");
         mtx.unlock();
         paused = false;
         break;
       }
     case 's':
-      ti.info_msg("Stepping through.");
+      ti.info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
       mtx.try_lock();
       mtx.unlock();
       this_thread::sleep_for(chrono::microseconds(1000));
@@ -80,20 +71,20 @@ void keyboard_callback(unsigned char key, int x, int y)
       break;
     case 'a':
       if (!paused) {
+        ti.info_msg("Drawing new agent.");
         mtx.lock(); // TODO: Change so that this creates a new agent regardless of agent type
         create_new_agent(nagents, py, px);
         mtx.unlock();
-        ti.info_msg("Drawing new agent.");
         break;
       }
     case 'm':
+      ti.info_msg("Toggle realtime factor between 1 and the specified value.");
       if (param->simulation_realtimefactor() != 1) {
         realtimefactor = param->simulation_realtimefactor();
         param->simulation_realtimefactor() = 1;
       } else {
         param->simulation_realtimefactor() = realtimefactor;
       }
-
       break;
   }
 }

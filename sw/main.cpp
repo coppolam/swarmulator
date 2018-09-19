@@ -15,16 +15,15 @@
 
 // Internal Includes
 #include "main.h" // Contains extern defines for global variables
-#include "animation_thread.h"
-#include "simulation_thread.h"
-#include "logger_thread.h"
+#include "simulation_thread.h" // Thread that handles the simulation
+#include "animation_thread.h"   // Thread that handles animation
+#include "logger_thread.h"      // Thread that handles the logger
 
 using namespace std;
 
 // Initialize and define simulation global variables
-uint nagents;                   // Number of agents in the simulation
-vector<Agent *> s;              // Set up a vector of relative position filters
-uint knearest;                  // knearest objects
+uint nagents;                   // Number of agents in the simulation at t=0
+vector<Agent *> s;              // Set up the agents
 mutex mtx;                      // Mutex needed to lock threads
 uint window_width, window_height;
 float realtimefactor;

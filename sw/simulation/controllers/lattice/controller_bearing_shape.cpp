@@ -3,7 +3,6 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "auxiliary.h"
-#include "kill_functions.h"
 
 #include <algorithm> // std::find
 

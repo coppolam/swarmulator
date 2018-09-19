@@ -1,6 +1,5 @@
 #include "txtwrite.h"
 #include "omniscient_observer.h"
-#include "kill_functions.h"
 #include "terminalinfo.h"
 
 #include "agent.h"
@@ -54,7 +53,6 @@ void txtwrite::txtwrite_summary(ofstream &logfile)
 #endif
 
   if (killflag){
-    killer k;
-    k.kill_switch();
+    program_running = false;
   }
 }

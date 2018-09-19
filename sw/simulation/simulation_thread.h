@@ -11,8 +11,8 @@
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 #include "terminalinfo.h"
-#include "kill_functions.h"
 #include "agent_thread.h"
+#include "drawingparams.h"
 
 bool simulation_running = false;
 
@@ -75,32 +75,16 @@ void get_number_of_agents(int argc, char *argv[])
   // Extract number of agents from the argument
   terminalinfo ti;
   if (argc <= 1) {
-    ti.debug_msg("Please specify the amount of agents.\n\n");
+    ti.debug_msg("Please specify the number of agents.\n\n");
     exit(1);
   } else {
     nagents = stoi(argv[1]);
   }
 }
 
-void get_nearest_neighbors(int argc, char *argv[])
-{
-  terminalinfo ti;
-  if (argc <= 2) {
-    ti.debug_msg("No nearest-neighbor rule specified. Assuming full connectivity. \n");
-    knearest = nagents - 1;
-  } else {
-    knearest = stoi(argv[2]);
-    if (knearest > (nagents - 1)) {
-      ti.debug_msg("You can't have more nearest-neighbors that the number of observable agents. Quitting. \n");
-      exit(1);
-    }
-  }
-}
-
 void main_simulation_thread(int argc, char *argv[])
 {
   get_number_of_agents(argc, argv);
-  get_nearest_neighbors(argc, argv);
 
   // Generate random initial positions with zero mean
   randomgen_init();
@@ -120,7 +104,7 @@ void main_simulation_thread(int argc, char *argv[])
     agent.detach();
   }
 
-  while (true) {
+  while (program_running) {
     run_simulation();
   };
 

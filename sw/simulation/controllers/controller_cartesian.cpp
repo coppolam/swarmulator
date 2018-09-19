@@ -6,9 +6,7 @@
 
 // Only one of the following can work
 // #define FORCED    // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt"
-#define KNEAREST // Use a k-nearest topology according to the second argument
-// #define ROGUE     // Would you like an agent to go rogue?
-// #define rogueID 0 // ID of agent that goes rogue.
+// #define KNEAREST // Use a k-nearest topology according to the second argument
 
 float Controller_Cartesian::f_attraction(float u)
 {
@@ -29,7 +27,7 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
 #ifdef KNEAREST
 
   vector<int> closest = o->request_closest(ID);
-  for (uint8_t i = 0; i < knearest; i++) {
+  for (uint8_t i = 0; i < nagents-1; i++) {
     v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0));
     v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1));
   }
@@ -54,9 +52,4 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
   }
 #endif
 
-#ifdef ROGUE
-  if (ID == rogueID && (simulation_realtimefactor * simulation_time / 1000000.0) > 5.0) {
-    v += 0.5;
-  }
-#endif
 };
