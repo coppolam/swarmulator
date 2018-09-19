@@ -25,7 +25,6 @@ using namespace std;
 uint nagents;                   // Number of agents in the simulation at t=0
 vector<Agent *> s;              // Set up the agents
 mutex mtx;                      // Mutex needed to lock threads
-uint window_width, window_height;
 float realtimefactor;
 int backgroundcolor;
 float simulation_time = 0;
@@ -44,8 +43,6 @@ unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::fla
 int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
-  window_height = param->window_height();
-  window_width  = param->window_width();
 
   // Start simulation
   thread simulation(main_simulation_thread, argc, argv);

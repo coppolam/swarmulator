@@ -1,8 +1,9 @@
 #ifndef ANIMATION_THREAD_H
 #define ANIMATION_THREAD_H
 
+#include <GL/freeglut.h>
+
 #include "main.h"
-#include "glincludes.h"
 #include "draw.h"
 #include "mousefunctions.h"
 #include "terminalinfo.h"
@@ -28,8 +29,8 @@ void main_loop_function()
   glLoadIdentity();
 
   // Get current window size w.r.t. beginning
-  xrat = (float)window_width / (float)glutGet(GLUT_WINDOW_WIDTH);
-  yrat = (float)window_height / (float)glutGet(GLUT_WINDOW_HEIGHT);
+  xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
+  yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
 
   mouse_draganddrop(); // Activate mouse functions
 
@@ -89,24 +90,19 @@ void main_animation_thread()
   pointer_x = 0;
   pointer_y = 0;
   paused = false;
-  xrat = 0;
-  yrat = 0;
+  xrat = 1.0;
+  yrat = 1.0;
 
   // Set up simulation window
   int argc = 1;
-  char *argv[1] = {(char *)"Something"};
+  char *argv[1] = {(char *)"  "};
   glutInit(&argc, argv);
   glutInitWindowPosition(0, 0);
-  glutInitWindowSize(window_width, window_height);
+  glutInitWindowSize(param->window_width(), param->window_height());
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
   glutCreateWindow("Swarmulator");
-  glutIconifyWindow();
   glutIdleFunc(main_loop_function);
-  GL_Setup(window_width, window_height); // Set up window parameters
-
-  xrat = (float)window_width / (float)glutGet(GLUT_WINDOW_WIDTH);
-  yrat = (float)window_height / (float)glutGet(GLUT_WINDOW_HEIGHT);
-
+  GL_Setup(param->window_width(), param->window_height()); // Set up window parameters
   glutMainLoop(); // Initiate main drawing loop
 }
 

@@ -1,7 +1,7 @@
 #ifndef DRAW_H
 #define DRAW_H
 
-#include "glincludes.h"
+#include <GL/freeglut.h>
 #include <vector>
 #include <sstream>      // std::stringstream
 #include <mutex>
