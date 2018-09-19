@@ -14,25 +14,9 @@
 #include "agent_thread.h"
 #include "drawingparams.h"
 
-bool simulation_running = false;
-
-void run_simulation()
-{
-  if (!simulation_running) {
-    terminalinfo ti;
-    ti.info_msg("Simulation started.");
-    simulation_running = true;
-  }
-
-  if (!paused) {
-    int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
-    this_thread::sleep_for(chrono::microseconds(t_wait));
-    simulation_time = t_wait;
-    simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1000000.0;
-  }
-}
-
-/* Calculate the mean of a vector element */
+/*
+ * Calculate the mean of all elements in a vector 
+ */
 // TODO: Move to math
 float vector_mean(const vector<float> &v)
 {
@@ -40,7 +24,9 @@ float vector_mean(const vector<float> &v)
   return sum / v.size();
 }
 
-/* Calculate the standard deviation of a vector element */
+/* 
+ * Calculate the standard deviation of all elements in a vector
+ */
 // TODO: Move to math
 float vector_std(const vector<float> &v)
 {
@@ -51,7 +37,9 @@ float vector_std(const vector<float> &v)
   return sqrt(sq_sum / v.size());
 }
 
-/* Generate a random vector with zero mean */
+/*
+ * Generate a random vector with zero mean
+ */
 // TODO: Move to math
 vector<float> generate_random_vector_zeromean(const int &length)
 {
@@ -71,23 +59,36 @@ vector<float> generate_random_vector_zeromean(const int &length)
   return v;
 }
 
+/*
+ * Extract the number of agents from the argument list.
+ * Else, return an error.
+ */
 void get_number_of_agents(int argc, char *argv[])
 {
-  // Extract number of agents from the argument
   terminalinfo ti;
   if (argc <= 1) {
-    ti.debug_msg("Please specify the number of agents.\n\n");
-    exit(1);
+    ti.info_msg("Please specify the number of agents.");
+    program_running = false;
   } else {
     nagents = stoi(argv[1]);
   }
 }
 
+/*
+ * This function initiates the simulation.
+ * All agents in the beginning initiate randomly with a mean position around the (0,0) point.
+ * Once the vector of agents is created, each agent is launched in a separate thread.
+ */
+
 void main_simulation_thread(int argc, char *argv[])
 {
+  terminalinfo ti;
+  ti.info_msg("Simulation started.");
+
+  // Read the number of agents from the argument input
   get_number_of_agents(argc, argv);
 
-  // Generate random initial positions with zero mean
+  // Generate the random initial positions with (0,0) mean
   randomgen_init();
   srand(time(NULL));
   vector<float> x0 = generate_random_vector_zeromean(nagents);
@@ -95,7 +96,10 @@ void main_simulation_thread(int argc, char *argv[])
 
   // Generate the agent models
   for (uint8_t ID = 0; ID < nagents; ID++) {
-    vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 }; // Initial positions/states
+    // Initial positions/states
+    vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0 };
+    // The data of the swarm is stored in a vector
+    // AGENT is a stand-in for the agent of choice. This is selected in setting.h
     s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   }
 
@@ -105,8 +109,17 @@ void main_simulation_thread(int argc, char *argv[])
     agent.detach();
   }
 
+  // Keep global clock running.
+  // This is only used by the animation and the logger.
+  // The robots operate by their own clock)
   while (program_running) {
-    run_simulation();
+    if (!paused)
+    {
+      int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
+      this_thread::sleep_for(chrono::microseconds(t_wait));
+      simulation_time = t_wait;
+      simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1000000.0;
+    }
   };
 
 }

@@ -25,7 +25,7 @@ float Controller_Lattice_Basic::f_attraction(const float &u, const float &b_eq)
   return 1 / (1 + exp(-_ka * (u - w)));
 }
 
-// To do -- move general sum to controller
+// TODO -- move general sum to controller
 float Controller_Lattice_Basic::get_attraction_velocity(const float &u, const float &b_eq)
 {
   return f_attraction(u, b_eq) + f_repulsion(u);

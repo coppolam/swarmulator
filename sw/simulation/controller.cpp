@@ -19,8 +19,6 @@ Controller::Controller()
   saturation = false; // Controller saturation
 };
 
-Controller::~Controller() {};
-
 void Controller::saturate(float &f)
 {
   if (saturation) {

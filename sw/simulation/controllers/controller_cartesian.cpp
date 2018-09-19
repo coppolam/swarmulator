@@ -10,8 +10,9 @@
 
 float Controller_Cartesian::f_attraction(float u)
 {
+  //% sigmoid function -- long-range
   float w = 1.5;
-  return  1 / (1 + exp(-_ka * (u - w))) + 1 / (1 + exp(-_ka * (u + w))) - 1; //% sigmoid function -- long-range
+  return  1 / (1 + exp(-_ka * (u - w))) + 1 / (1 + exp(-_ka * (u + w))) - 1;
 }
 
 float Controller_Cartesian::get_attraction_velocity(float u)

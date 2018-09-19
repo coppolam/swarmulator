@@ -22,9 +22,9 @@ using namespace std;
 class Agent
 {
 public:
-  virtual ~Agent() {};   // Destructor
-
-  CONTROLLER controller; // Controller used by the agent. Defined in settings.h.
+  // The constructor of agent is not defined here, but in the child class.
+  // This makes it so that the agent to be used can be selected in settings.h
+  virtual ~Agent(){}; // Destructor
 
   float dt;
   uint8_t ID;
@@ -33,10 +33,18 @@ public:
   bool happy;
   float orientation;
 
-  vector<float> get_states();
+  CONTROLLER controller; // Controller used by the agent. Defined in settings.h.
+
+  /*
+   * Returns the position of the agent along a certain dimension (i.e., North(0) and East(1))
+   * This is used by the OmniscientObserver class in order to simulate the presence of sensors.
+   */
   float get_position(uint8_t dim);
-  uint8_t get_ID();
-  
+
+  /*
+   * The agent class is only the parent class of a child class that specifies the dynamics and control
+   * of a given agent (robot/animal/whatever). The state_update function is handled by the child class.
+   */
   virtual void state_update() = 0;
 };
 

@@ -12,14 +12,22 @@
 using namespace std;
 
 /* 
-This is a parent class for a controller. All controllers are children functions that must contain an implementation of get_velocity_command, which is declared virtual here.
-*/
+ * This is a parent class for a controller.
+ * All controllers are children functions that must contain an implementation of get_velocity_command, which is declared virtual here.
+ */
 class Controller
 {
 
 public:
-  Controller();  // Constructor
-  ~Controller(); // Destructor
+  /*
+   * Constructor
+   */
+  Controller();
+
+  /*
+   * Destructor
+   */
+  ~Controller(){};
 
   float _ddes_x; // Desired equilibrium distance_x
   float _ddes_y; // Desired equilibrium distance_y
@@ -29,16 +37,27 @@ public:
   float saturation_limits; // Define the saturation of the controls
   bool  moving; // Internal state of whether the robot is actively moving or not
   bool happy;
-  // Set the saturation to true and set the saturation limits
+  
+  /* 
+   * Set the saturation to true and set the saturation limits
+   */
   void set_saturation(const float &saturation_limits);
   
-  // Function to saturate the commands
+  /* 
+   * Function to saturate the commands
+   */
   void saturate(float &f);
   
-  // Repulsion function. This is defined here as a basic for collision avoidance
+  /* 
+   * Repulsion function. 
+   * This is defined here as a basic for collision avoidance
+   */
   float f_repulsion(float u);
 
-  // Virtual function to be implemented by child class that defines the controller, outputs desired v_x and v_y
+  /* 
+   * Virtual function to be implemented by child class that defines the controller
+   * The outputs are the desired v_x and v_y velocities
+   */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
 };
 

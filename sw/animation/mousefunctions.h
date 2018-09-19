@@ -28,11 +28,11 @@ bool paused = false;
 float xrat = 0;
 float yrat = 0;
 
-/** 
-   * keyboard_callback reads keyboard commands from the animation window of Swarmulator.
-   * In this way, it becomes easies and intuitive to interact with the simulation of the swarm.
-   * Functions include pausing, quitting, adding agents, zoom, etc.
-   */
+/* 
+ * keyboard_callback reads keyboard commands from the animation window of Swarmulator.
+ * In this way, it becomes easies and intuitive to interact with the simulation of the swarm.
+ * Functions include pausing, quitting, adding agents, zoom, etc.
+ */
 void keyboard_callback(unsigned char key, int x, int y)
 {
   terminalinfo ti;
@@ -77,7 +77,7 @@ void keyboard_callback(unsigned char key, int x, int y)
     case 'a':
       if (!paused) {
         ti.info_msg("Drawing new agent.");
-        mtx.lock(); // TODO: Change so that this creates a new agent regardless of agent type
+        mtx.lock();
         create_new_agent(nagents, pointer_x, pointer_y);
         mtx.unlock();
         break;
@@ -94,25 +94,38 @@ void keyboard_callback(unsigned char key, int x, int y)
   }
 }
 
+/*
+ * Detects the mouse motion and adjusts the center of the animation
+ */
 void mouse_motion_callback(int x, int y)
 {
   center_x += param->mouse_drag_speed() / zoom_scale * ((float)x / ((float)param->window_width() / xrat) - sx);
   center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / ((float)param->window_height() / yrat) - sy);
 }
 
+/*
+ * Keeps track of the location of the pointer.
+ * This is used for launching new agents at specified locations intuitively.
+ */
 void mouse_motion_callback_passive(int x, int y)
 {
   pointer_x = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zoom_scale * xrat)) - 4 / (zoom_scale * xrat)) - center_x;
   pointer_y = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 / (zoom_scale * yrat))) - center_y;
 }
 
+/*
+ * Detects that the mouse has been clicked (for dragging)
+ * Or else detects that the zoom wheel is in use
+ */
 void mouse_click_callback(int button, int state, int x, int y)
 {
+  // Click
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
     sx =  (float)x / ((float)param->window_width () / xrat);
     sy = -(float)y / ((float)param->window_height() / yrat);
   }
 
+  // Zoom wheel
   if (button == GLUT_WHEEL_UP) {
     zoom +=  param->mouse_zoom_speed();
   } else if (button == GLUT_WHEEL_DOWN) {
@@ -130,6 +143,9 @@ void mouse_click_callback(int button, int state, int x, int y)
   }
 }
 
+/* 
+ * mouse_draganddrop handles the drag and drop functionality.
+ */
 void mouse_draganddrop()
 {
   glutMotionFunc(mouse_motion_callback);

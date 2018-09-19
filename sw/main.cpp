@@ -6,7 +6,6 @@
   Copyright Mario Coppola, 2017-2018.
 */
 
-// External includes
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -14,17 +13,19 @@
 #include <thread>
 
 // Internal Includes
-#include "main.h" // Contains extern defines for global variables
-#include "simulation_thread.h" // Thread that handles the simulation
-#include "animation_thread.h"   // Thread that handles animation
-#include "logger_thread.h"      // Thread that handles the logger
+#include "main.h"               /* Contains extern defines for global variables */
+#include "simulation_thread.h"  /* Thread that handles the simulation */
+#include "animation_thread.h"   /* Thread that handles animation */
+#include "logger_thread.h"      /* Thread that handles the logger */
 
 using namespace std;
 
-// Initialize and define simulation global variables
-uint nagents;                   // Number of agents in the simulation at t=0
-vector<Agent *> s;              // Set up the agents
-mutex mtx;                      // Mutex needed to lock threads
+/**
+ * Global variables used throughout simulation
+ */
+uint nagents;                   /* Number of agents in the simulation */
+vector<Agent *> s;              /* Set up the agents */
+mutex mtx;                      /* Mutex needed to lock threads */
 float realtimefactor;
 int backgroundcolor;
 float simulation_time = 0;
@@ -32,18 +33,20 @@ float simtime_seconds = 0;
 float rangesensor     = 1.6;
 bool program_running  = false;
 
-// Parameters XML parser
+/**
+ * Parameters from the XML file
+ */
 unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
 
-/*
-  The main function launches separate threads that control independent
-  functions of the code. All threads are designed to be optional with the
-  exception of the simulation thread.
-*/
+/**
+ * The main function launches separate threads that control independent
+ * functions of the code. All threads are designed to be optional with the
+ * exception of the simulation thread.
+ */
 int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
-
+  
   // Start simulation
   thread simulation(main_simulation_thread, argc, argv);
   simulation.detach();
@@ -60,8 +63,11 @@ int main(int argc, char *argv[])
   logger.detach();
 #endif
 
-  while (program_running) {}; // Keep the program running
+  // Keep the program running
+  while (program_running) {};
+
+  // Exit
   terminalinfo ti;
-  ti.debug_msg("Swarmulator exiting");
+  ti.info_msg("Swarmulator exiting");
   return 0;
 }

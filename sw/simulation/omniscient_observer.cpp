@@ -1,10 +1,8 @@
 #include "omniscient_observer.h"
 #include "main.h"
 #include "randomgenerator.h"
-// #include "iterator.h"
 
 #include <eigen3/Eigen/Dense>
-
 using namespace Eigen;
 
 typedef Matrix<bool, Dynamic, Dynamic> MatrixXb;

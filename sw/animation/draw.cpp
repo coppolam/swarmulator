@@ -126,13 +126,12 @@ void draw::draw_axes()
   glEnd();
 }
 
-// TODO: Add different options dependending on agent type
 void draw::draw_agent(uint8_t ID, float x, float y, float orientation)
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
   glRotatef(90.0 - rad2deg(orientation), 0.0, 0, 1);
-  draw_circle(param->scale()); // Todo: fix drawing to agent type
+  draw_circle(param->scale()); // Todo: Add different options dependending on agent type
   draw_circle_loop(param->scale());
   // draw_agent_number(ID);
   glPopMatrix();

@@ -5,13 +5,20 @@
 
 using namespace std;
 
+/*
+ * This controller handles attraction and velocity in North and East separately
+ */
 class Controller_Cartesian: public Controller
 {
-  OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
+  // The omniscient observer is used to simulate sensing the other agents.
+  OmniscientObserver *o;
 
 public:
+  /*
+   * Construction. Controller_Cartesian is a child class of Controller.
+   */
   Controller_Cartesian(): Controller() {};
-
+  
   float f_attraction(float u);
 
   float get_attraction_velocity(float u);

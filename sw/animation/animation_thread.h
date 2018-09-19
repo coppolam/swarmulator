@@ -11,9 +11,9 @@
 bool animation_running = false;
 
 /*
-  Main animation loop.
-  Takes care of drawing the agents in their corrective location.
-*/
+ * Main animation loop.
+ * Takes care of drawing the agents in their corrective location.
+ */
 void main_loop_function()
 {
   if (!animation_running) {
@@ -64,8 +64,8 @@ void main_loop_function()
 }
 
 /*
-  Initialze OpenGL perspective matrix
-*/
+ * Initialze OpenGL perspective matrix
+ */
 void GL_Setup(int width, int height)
 {
   glViewport(0, 0, width, height);
@@ -76,8 +76,8 @@ void GL_Setup(int width, int height)
 }
 
 /*
-  Thread function that initiates the animation
-*/
+ * Thread function that initiates the animation
+ */
 void main_animation_thread()
 {
   // Initialize all variables
