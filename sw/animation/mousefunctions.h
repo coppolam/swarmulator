@@ -28,6 +28,11 @@ bool paused = false;
 float xrat = 0;
 float yrat = 0;
 
+/** 
+   * keyboard_callback reads keyboard commands from the animation window of Swarmulator.
+   * In this way, it becomes easies and intuitive to interact with the simulation of the swarm.
+   * Functions include pausing, quitting, adding agents, zoom, etc.
+   */
 void keyboard_callback(unsigned char key, int x, int y)
 {
   terminalinfo ti;

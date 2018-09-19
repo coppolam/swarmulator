@@ -8,14 +8,33 @@
 
 using namespace std;
 
+/**
+ * terminalinfo is used to print info commands to the terminal.
+ * These can come in the form of info messages or debug messages
+ * The debug and info flags are activated (or deactivated) in the makefile
+ */
 class terminalinfo
 {
 
 public:
-  terminalinfo() {}; // Make two versions for random initialization
+  /** 
+   * Constructor
+   */
+  terminalinfo() {};
+
+  /** 
+   * Destructor
+   */
   ~terminalinfo() {};
 
+  /** 
+   * Print a debug message
+   */
   void debug_msg(string str);
+
+  /** 
+   * Print an info message
+   */
   void info_msg(string str);
 };
 
