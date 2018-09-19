@@ -1,3 +1,5 @@
+# Swarmulator
+
 <img align="left" src="https://raw.githubusercontent.com/coppolam/swarmulator/SI_PatternFormation/logo.png">
 
 Swarmulator is a lightweight C++ simulator for simulating swarms.
