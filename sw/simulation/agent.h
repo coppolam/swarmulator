@@ -13,8 +13,6 @@
 #include "controller_cartesian.h"
 #include "controller_bearing_shape.h"
 #include "controller_lattice.h"
-#include "controller_aggregate.h"
-#include "controller_keep_aggregate.h"
 
 using namespace std;
 

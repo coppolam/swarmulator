@@ -17,7 +17,7 @@ using namespace std;
 
 class Controller_Bearing_Shape : public Controller_Lattice_Basic
 {
-  int moving_timer;
+  uint moving_timer;
   int selected_action;
 
 public:

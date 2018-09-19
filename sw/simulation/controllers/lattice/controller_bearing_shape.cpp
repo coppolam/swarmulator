@@ -3,11 +3,11 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "auxiliary.h"
-
 #include <algorithm> // std::find
 
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic()
 {
+  // Define here the state-action matrix used by the agents
   string s = "./conf/state_action_matrices/state_action_matrix_free.txt";
   t.set_state_action_matrix(s);
   moving_timer = 0;
@@ -26,20 +26,23 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   float twait_1 = timelim * 2;
   float twait_2 = twait_1 * 2;
 
-  // Initialize moving_timer with random variable
+  // Initialize local moving_timer with random variable
   if (moving_timer == 0) {
     moving_timer = rand() % (int)twait_2;
   }
 
   vector<bool> state(8, 0);
   vector<int>  state_ID;
+
   // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
 
-  vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
+  // Get vector of all neighbors from closest to furthest
+  vector<int> closest = o->request_closest(ID); 
 
-  bool canImove = check_motion(state_ID); // Can I move or are my neighbors moving?
+ // Can I move or are my neighbors moving?
+  bool canImove = check_motion(state_ID);
   if (!canImove) {
     selected_action = -2;   // Reset actions
     moving_timer = timelim; // Reset moving timer
@@ -54,12 +57,6 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     selected_action = -2;
   }
 
-  vector<uint> sdes = {4, 68, 64}; // TODO: make this not a hack
-  happy = false;
-  if (std::find(sdes.begin(), sdes.end(), state_index) != sdes.end()) {
-    happy = true;
-  }
-
   // Controller
   moving = false;
   if (canImove) {
@@ -69,12 +66,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
     }
-
-    if (moving_timer > twait_2) {
-      moving_timer = 1;
-    } else {
-      moving_timer++;
-    }
+    increase_counter(moving_timer,twait_2);
   }
 
 }

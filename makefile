@@ -19,9 +19,10 @@ OPT=-lglut -lGLU -lGL -lXi -lXmu -lglfw -lpthread -lxerces-c -Wno-deprecated-dec
 INC_DIRS = $(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should be enough.
 INC_PARAMS = $(foreach d, $(INC_DIRS), -I$d) #Each include folder must have a -I before it
 INC = -I. -I$(SRC_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS) # All include paths
-SOURCES = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp files
+SOURCES = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp 
+SOURCES_NAMES = $(shell find $(SRC_FOLDER) -name *.cpp -exec basename {} \;) # Recursively find all cpp 
 MAKE = $(CC) $(CFLAGS) $(INC)
-OBJECTS=$(SOURCES:.cpp=.o)
+OBJECTS=$(SOURCES:%.cpp=$(BUILD_FOLDER)/%.o)
 
 # Build the executable
 # Using @...; suppresses the output of the arguments
@@ -36,11 +37,12 @@ xsd:
 	@mkdir -p $(BUILD_FOLDER);
 	@xsdcxx cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 
-%.o: %.cpp # This rule defines how to go from CPP file to Object file
+$(BUILD_FOLDER)/%.o: %.cpp # This rule defines how to go from CPP file to Object file
 	# Compiling $<
+	@mkdir -p $(@D)
 	@$(MAKE) -c $< -o $@ $(OPT);
 
 clean:
 	# Cleaning $(TARGET)...
 	@$(RM) -r $(BUILD_FOLDER); # Remove build folder
-	@$(RM) -r $(TARGET) $(OBJECTS); # Remove application
+	@$(RM) -r $(TARGET); # Remove application
