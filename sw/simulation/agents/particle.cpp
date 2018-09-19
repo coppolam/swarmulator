@@ -9,7 +9,7 @@ Particle::Particle(int i, vector<float> s, float tstep)
   controller.set_saturation(1.0);
 }
 
-void Particle::update_position()
+void Particle::state_update()
 {
   // NED frame
   // x+ towards North

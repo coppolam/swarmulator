@@ -12,11 +12,11 @@
 
 Controller::Controller()
 {
-  _ddes_x = 1.0;
-  _ddes_y = 1.0;
-  _kr = 1.0;
-  _ka = 5.0;
-  saturation = false;
+  _ddes_x = 1.0; // Desired distance at North
+  _ddes_y = 1.0; // Desired distance at East
+  _kr = 1.0;     // Repulsion gain
+  _ka = 5.0;     // Attraction gain
+  saturation = false; // Controller saturation
 };
 
 Controller::~Controller() {};

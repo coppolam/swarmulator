@@ -3,7 +3,7 @@
 
 void draw::draw_data()
 {
-  glRasterPos2f((-3.9 / zscale - mx), (-3.9 / zscale - my));
+  glRasterPos2f((-3.9 / zoom_scale - center_x), (-3.9 / zoom_scale - center_y));
   glColor3f(0, 0, 1); // Red
   stringstream ss;
   ss << "Time[s]:" << simtime_seconds;
@@ -15,11 +15,11 @@ void draw::draw_axes_text(uint8_t dim)
   stringstream ss;
 
   if (dim == 0) {
-    glRasterPos2f(3.9 / zscale - mx, 0.1 / zscale);
-    ss << "y";
+    glRasterPos2f(3.9 / zoom_scale - center_x, 0.1 / zoom_scale);
+    ss << "E";
   } else if (dim == 1) {
-    glRasterPos2f(0.1 / zscale, 3.9 / zscale - my);
-    ss << "x";
+    glRasterPos2f(0.1 / zoom_scale, 3.9 / zoom_scale - center_y);
+    ss << "N";
   }
 
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
@@ -28,11 +28,7 @@ void draw::draw_axes_text(uint8_t dim)
 void draw::draw_agent_number(uint8_t ID)
 {
   glRasterPos2f(-0.01, 0.035);
-#ifdef whitebackground
-  glColor3f(0.0, 0.0, 0.0); // Black
-#else
-  glColor3f(1.0, 1.0, 1.0); // White
-#endif
+  glColor3f(1.0, 1.0, 1.0); // Background color
 
   stringstream ss;
   ss << (int)ID;
@@ -114,27 +110,17 @@ void draw::draw_point()
 
 void draw::draw_axes()
 {
-#ifndef whitebackground
   float lineintensity = 0.9;
-#endif
   glLineWidth(2.5);
 
   glBegin(GL_LINES);
-#ifdef whitebackground
-  glColor3ub(0, 0, 0); // black
-#else
   glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
-#endif
   glVertex3f(-1000,  0.0, 0.0);
   glVertex3f(1000.0,  0.0, 0.0);
   glEnd();
 
   glBegin(GL_LINES);
-#ifdef whitebackground
-  glColor3ub(0, 0, 0); // black
-#else
   glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
-#endif
   glVertex3f(0.0, -1000.0, 0.0);
   glVertex3f(0.0,  1000.0, 0.0);
   glEnd();

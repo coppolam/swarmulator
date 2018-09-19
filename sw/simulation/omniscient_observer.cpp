@@ -8,7 +8,6 @@
 using namespace Eigen;
 
 typedef Matrix<bool, Dynamic, Dynamic> MatrixXb;
-bool printed = false;
 
 int compare_index(const void *p1, const void *p2)
 {
@@ -58,7 +57,7 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
   vector<int> ind;
   for (uint8_t i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
-                      pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
+                        pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
                       + pow(s[i]->get_position(1) - s[ID]->get_position(1), 2.0)
                     ));
     dm[i].index = i;
@@ -130,7 +129,7 @@ float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
 
 float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 {
-  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) + rand_normal(0.0,NOISE_B);
+  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) + rand_normal(0.0, NOISE_B);
 }
 
 bool OmniscientObserver::see_if_moving(uint8_t ID)

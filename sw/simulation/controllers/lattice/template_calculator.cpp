@@ -24,8 +24,6 @@ void Template_Calculator::set_state_action_matrix(string filename)
   ifstream state_action_matrix_file(filename);
 
   if (state_action_matrix_file.is_open()) {
-    ti.info_msg("Opened state action matrix file.");
-
     // Collect the data inside the a stream, do this line by line
     while (!state_action_matrix_file.eof()) {
       string line;

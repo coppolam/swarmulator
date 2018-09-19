@@ -8,7 +8,7 @@
 
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic()
 {
-  string s = "./conf/state_action_matrices/state_action_matrix_lineNE.txt";
+  string s = "./conf/state_action_matrices/state_action_matrix_free.txt";
   t.set_state_action_matrix(s);
   moving_timer = 0;
   beta_des.push_back(0.0);

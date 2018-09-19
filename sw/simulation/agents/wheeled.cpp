@@ -9,7 +9,7 @@ Wheeled::Wheeled(int i, const vector<float> &s, float tstep)
   controller.set_saturation(1.0);
 }
 
-void Wheeled::update_position()
+void Wheeled::state_update()
 {
   // NED frame
   // x+ towards North

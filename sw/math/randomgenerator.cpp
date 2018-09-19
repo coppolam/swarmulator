@@ -10,7 +10,6 @@ void randomgen_init()
 {
   int temp;
   uintptr_t t = (uintptr_t)&temp;
-
   srand(t);
 }
 

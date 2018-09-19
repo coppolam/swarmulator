@@ -1,13 +1,11 @@
 #ifndef DRAWINGPARAMS_H
 #define DRAWINGPARAMS_H
 
-extern float mx;
-extern float my;
-extern float sx;
-extern float sy;
-extern float zms;
-extern float zscale;
-extern float px, py;
+extern float center_x,center_y;
+extern float sx,sy;
+extern float zoom;
+extern float zoom_scale;
+extern float pointer_x, pointer_y;
 extern float xrat;
 extern float yrat;
 extern bool paused;

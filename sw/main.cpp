@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
 #endif
 
   while (program_running) {}; // Keep the program running
-  cout << "Swarmulator exited cleanly" << endl;
+  terminalinfo ti;
+  ti.debug_msg("Swarmulator exiting");
   return 0;
 }

@@ -39,7 +39,7 @@ public:
   float get_position(uint8_t dim);
   uint8_t get_ID();
   
-  virtual void update_position() = 0;
+  virtual void state_update() = 0;
 };
 
 #endif /*AGENT_H*/

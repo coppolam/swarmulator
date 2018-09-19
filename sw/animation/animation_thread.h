@@ -80,14 +80,14 @@ void GL_Setup(int width, int height)
 void main_animation_thread()
 {
   // Initialize all variables
-  mx = 0;
-  my = 0;
+  center_x = 0;
+  center_y = 0;
   sx = 0;
   sy = 0;
-  zms = 0;
-  zscale = 0;
-  px = 0;
-  py = 0;
+  zoom = 0;
+  zoom_scale = 0;
+  pointer_x = 0;
+  pointer_y = 0;
   paused = false;
   xrat = 0;
   yrat = 0;
@@ -100,14 +100,9 @@ void main_animation_thread()
   glutInitWindowSize(window_width, window_height);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
   glutCreateWindow("Swarmulator");
+  glutIconifyWindow();
   glutIdleFunc(main_loop_function);
   GL_Setup(window_width, window_height); // Set up window parameters
-
-  glutSetIconTitle("./logo.ico");
-
-#ifdef whitebackground
-  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   // White background
-#endif
 
   xrat = (float)window_width / (float)glutGet(GLUT_WINDOW_WIDTH);
   yrat = (float)window_height / (float)glutGet(GLUT_WINDOW_HEIGHT);

@@ -16,7 +16,7 @@ inline static void increase_counter(uint &counter, const uint &limit)
 
 inline static int bool2int(vector<bool> t)
 {
-  int n = 0; //initialize
+  int n = 0; //Initialize
   for (int i = 0; i < 8; i++) {
     n += (int)t[i] * (int)pow(2, 7 - i);
   }

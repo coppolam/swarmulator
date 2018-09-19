@@ -7,8 +7,8 @@
 #define ANIMATE // Activate animation thread
 #define LOG // Activate logger thread
 
-#define REMAIN_CONNECTED // Check that the swarm remains connected
-#define CHECK_HAPPY
+// #define REMAIN_CONNECTED // Check that the swarm remains connected
+// #define CHECK_HAPPY
 
 /***** Select the controller to be used ****/
 // #define CONTROLLER Controller_Cartesian

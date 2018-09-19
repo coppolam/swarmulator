@@ -12,7 +12,7 @@ class Particle: public Agent
 {
 public:
   Particle(int i, vector<float> state, float tstep);
-  void update_position();
+  void state_update();
 };
 
 #endif /*PARTICLE_H*/

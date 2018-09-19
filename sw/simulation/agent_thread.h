@@ -16,9 +16,10 @@
 // Update the agent simulation
 void run_agent_simulation_step(const int &id)
 {
+  // Update the position of the agent in the simulation
   // Lock mutex to avoid conflicts
   mtx.lock();
-  s.at(id)->update_position(); // Update the position of the agent in the simulation
+  s.at(id)->state_update();
   mtx.unlock();
   
   // Wait according to define frequency
@@ -29,8 +30,14 @@ void run_agent_simulation_step(const int &id)
 // Start the simulation of an agent
 void start_agent_simulation(int id)
 {
-  std::cout << "Agent" << id << "started" << endl;
-  while (true) {
+  // Info message
+  terminalinfo ti;
+  stringstream ss;
+  ss << "Robot " << id << " intiated"; 
+  ti.info_msg(ss.str());
+
+  // Run the new robot
+  while (program_running) {
     run_agent_simulation_step(id);
   }
 };
@@ -38,11 +45,16 @@ void start_agent_simulation(int id)
 // Generates new agent + simulation thread at given position x0 y0
 void create_new_agent(int ID, float x0, float y0)
 {
+  // Initiate a new agent at the given position
   vector<float> states = {x0, y0, 0.0, 0.0, 0.0, 0.0}; // Initial positions/states
   s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   nagents++;
+
+  // Wait a bit before animating the new agent
   this_thread::sleep_for(chrono::microseconds(1000));
-  thread agent(start_agent_simulation, ID);
-  agent.detach();
+
+  // Initate and detach the threads
+  thread agent(start_agent_simulation, ID); // Initiate the thread that controls the agent
+  agent.detach(); // Detach thread so that it runs independently
 }
 #endif /*AGENTTHREAD_H*/

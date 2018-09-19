@@ -17,13 +17,13 @@
 #  define GLUT_WHEEL_RIGHT 6
 #endif
 
-float mx = 0;
-float my = 0;
+float center_x = 0;
+float center_y = 0;
 float sx = 0;
 float sy = 0;
-float zms = 0;
-float zscale = 0;
-float px, py;
+float zoom = 0;
+float zoom_scale = 0;
+float pointer_x, pointer_y;
 bool paused = false;
 float xrat = 0;
 float yrat = 0;
@@ -35,12 +35,12 @@ void keyboard_callback(unsigned char key, int x, int y)
   switch (key) {
     case 'c':
       ti.info_msg("Recentering Animation.");
-      mx = 0;
-      my = 0;
+      center_x = 0;
+      center_y = 0;
       break;
     case 'z':
       ti.info_msg("Resetting zoom.");
-      zms = 0;
+      zoom = 0;
       break;
     case 'q':
       ti.info_msg("Quitting Swarmulator.");
@@ -73,7 +73,7 @@ void keyboard_callback(unsigned char key, int x, int y)
       if (!paused) {
         ti.info_msg("Drawing new agent.");
         mtx.lock(); // TODO: Change so that this creates a new agent regardless of agent type
-        create_new_agent(nagents, py, px);
+        create_new_agent(nagents, pointer_x, pointer_y);
         mtx.unlock();
         break;
       }
@@ -91,14 +91,14 @@ void keyboard_callback(unsigned char key, int x, int y)
 
 void mouse_motion_callback(int x, int y)
 {
-  mx += param->mouse_drag_speed() / zscale * ((float)x / ((float)window_width / xrat) - sx);
-  my += param->mouse_drag_speed() / zscale * (-(float)y / ((float)window_height / yrat) - sy);
+  center_x += param->mouse_drag_speed() / zoom_scale * ((float)x / ((float)window_width / xrat) - sx);
+  center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / ((float)window_height / yrat) - sy);
 }
 
 void mouse_motion_callback_passive(int x, int y)
 {
-  px = ((((float)x / ((float)window_width / xrat)) * 8 / (zscale * xrat)) - 4 / (zscale * xrat)) - mx;
-  py = (-((((float)y / ((float)window_height / yrat)) * 8 / (zscale * yrat)) - 4 / (zscale * yrat))) - my;
+  pointer_x = ((((float)x / ((float)window_width / xrat)) * 8 / (zoom_scale * xrat)) - 4 / (zoom_scale * xrat)) - center_x;
+  pointer_y = (-((((float)y / ((float)window_height / yrat)) * 8 / (zoom_scale * yrat)) - 4 / (zoom_scale * yrat))) - center_y;
 }
 
 void mouse_click_callback(int button, int state, int x, int y)
@@ -109,16 +109,19 @@ void mouse_click_callback(int button, int state, int x, int y)
   }
 
   if (button == GLUT_WHEEL_UP) {
-    zms += param->mouse_zoom_speed();
+    zoom += param->mouse_zoom_speed();
   } else if (button == GLUT_WHEEL_DOWN) {
-    zms += -param->mouse_zoom_speed();
+    zoom += -param->mouse_zoom_speed();
   }
 
   // Guard on too much / too little zoom
-  if (zms > 9) {
-    zms = 9;
-  } else if (zms < -90) {
-    zms = -90;
+  if (zoom > 9)
+  {
+    zoom = 9;
+  }
+  else if (zoom < -90)
+  {
+    zoom = -90;
   }
 }
 
@@ -128,8 +131,8 @@ void mouse_draganddrop()
   glutPassiveMotionFunc(mouse_motion_callback_passive);
   glutMouseFunc(mouse_click_callback);
   glutKeyboardFunc(keyboard_callback);
-  zscale = -10 / (-10 + zms);
-  glTranslatef(mx, my, -10 + zms);
+  zoom_scale = -10 / (-10 + zoom);
+  glTranslatef(center_x, center_y, -10 + zoom);
 }
 
 #endif /* MOUSEFUNCTIONS_H */
