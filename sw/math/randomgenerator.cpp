@@ -1,19 +1,20 @@
 #include "randomgenerator.h"
 #include "stdint.h"
+#include "auxiliary.h"
 
-void randomgen_init()
+random_generator::random_generator()
 {
   int temp;
   uintptr_t t = (uintptr_t)&temp;
   srand(t);
 }
 
-float getrand_float(float min, float max)
+float uniform_float(float min, float max)
 {
   return min + ((float)rand() / (RAND_MAX / (max - min))) ;
 };
 
-int getrand_int(int min, int max)
+int uniform_int(int min, int max)
 {
   return min + (rand() / (RAND_MAX / (max - min))) ;
 };
@@ -24,7 +25,7 @@ int getrand_int(int min, int max)
 //
 // Polar form of Box-Muller transform:
 // http://www.design.caltech.edu/erik/Misc/Gaussian.html
-float rand_normal(float mean, float stddev)
+float gaussian_float(float mean, float stddev)
 {
   static float n2 = 0.0;
   static int n2_cached = 0;
@@ -48,4 +49,24 @@ float rand_normal(float mean, float stddev)
     return n2 * stddev + mean;
   }
 
+};
+
+vector<float> gaussian_float_vector(const int &length, const float &mean, const float &min, const float &max)
+{
+  // Generate the random vector
+  vector<float> v(length, 0);
+  for (uint8_t i = 0; i < length; i++)
+  {
+    v[i] = gaussian_float(-min, max);
+  }
+
+  // Adjust to zero mean
+  vector<float> temp = v;
+  for (uint8_t i = 0; i < length; i++)
+  {
+    v[i] = v[i] - vector_mean(temp) + mean;
+  }
+
+  return v;
 }
+

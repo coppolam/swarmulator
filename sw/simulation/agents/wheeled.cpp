@@ -1,4 +1,5 @@
 #include "wheeled.h"
+#include "trigonometry.h"
 
 Wheeled::Wheeled(int i, const vector<float> &s, float tstep)
 {

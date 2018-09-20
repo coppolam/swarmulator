@@ -8,7 +8,6 @@
 #include <iterator>
 
 #include "terminalinfo.h"
-#include "auxiliary.h"
 #include "omniscient_observer.h"
 
 using namespace std;

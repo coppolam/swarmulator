@@ -1,4 +1,5 @@
 #include "draw.h"
+#include "trigonometry.h"
 #include <cmath>
 
 void draw::draw_data()

@@ -15,50 +15,6 @@
 #include "drawingparams.h"
 
 /*
- * Calculate the mean of all elements in a vector
- */
-// TODO: Move to math
-float vector_mean(const vector<float> &v)
-{
-  float sum = std::accumulate(v.begin(), v.end(), 0.0);
-  return sum / v.size();
-}
-
-/*
- * Calculate the standard deviation of all elements in a vector
- */
-// TODO: Move to math
-float vector_std(const vector<float> &v)
-{
-  vector<double> diff(v.size());
-  std::transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), vector_mean(v))
-                );
-  double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
-  return sqrt(sq_sum / v.size());
-}
-
-/*
- * Generate a random vector with zero mean
- */
-// TODO: Move to math
-vector<float> generate_random_vector_zeromean(const int &length)
-{
-  // Generate the random vector
-  vector<float> v(length, 0);
-  for (uint8_t i = 0; i < length; i++) {
-    v[i] = getrand_float(-0.5, 0.5);
-  }
-
-  // Adjust to zero mean
-  vector<float> temp = v;
-  for (uint8_t i = 0; i < length; i++) {
-    v[i] = v[i] - vector_mean(temp);
-  }
-
-  return v;
-}
-
-/*
  * Extract the number of agents from the argument list.
  * Else, return an error.
  */
@@ -88,10 +44,9 @@ void main_simulation_thread(int argc, char *argv[])
   get_number_of_agents(argc, argv);
 
   // Generate the random initial positions with (0,0) mean
-  randomgen_init();
-  srand(time(NULL));
-  vector<float> x0 = generate_random_vector_zeromean(nagents);
-  vector<float> y0 = generate_random_vector_zeromean(nagents);
+  random_generator rg;
+  vector<float> x0 = rg.gaussian_float_vector(nagents, 0.0, -0.5, 0.5);
+  vector<float> y0 = rg.gaussian_float_vector(nagents, 0.0, -0.5, 0.5);
 
   // Generate the agent models
   for (uint8_t ID = 0; ID < nagents; ID++) {

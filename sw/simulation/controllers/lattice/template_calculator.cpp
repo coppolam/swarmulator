@@ -1,6 +1,6 @@
 #include "template_calculator.h"
 #include "main.h"
-#include "auxiliary.h"
+#include "trigonometry.h"
 #include <algorithm> // std::find
 
 Template_Calculator::Template_Calculator()

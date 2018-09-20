@@ -10,7 +10,6 @@
 #include <iterator>
 
 #include "terminalinfo.h"
-#include "auxiliary.h"
 #include "template_calculator.h"
 
 using namespace std;

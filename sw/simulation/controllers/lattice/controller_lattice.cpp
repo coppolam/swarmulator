@@ -2,7 +2,7 @@
 #include "agent.h"
 #include "main.h"
 #include "randomgenerator.h"
-#include "auxiliary.h"
+#include "trigonometry.h"
 
 Controller_Lattice::Controller_Lattice() : Controller_Lattice_Basic()
 {

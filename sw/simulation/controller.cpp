@@ -8,6 +8,7 @@
 
 #include "main.h"
 #include "randomgenerator.h"
+#include "trigonometry.h"
 #include "auxiliary.h"
 
 Controller::Controller()

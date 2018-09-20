@@ -1,30 +1,49 @@
-#ifndef RANDOMGENERATOR_H
-#define RANDOMGENERATOR_H
+/*
+* C++ Program to Check whether Undirected Graph is Connected using BFS
+* Code extracted from Sanfoundry Global Education & Learning Series
+* http://www.sanfoundry.com/cpp-program-check-undirected-graph-connected-bfs/
+*/
+#ifndef RANDOM_GENERATOR_H
+#define RANDOM_GENERATOR_H
 
 #include "stdlib.h"
 #include "math.h"
+#include <vector>
+
+using namespace std;
 
 /*
- * Initilizer function.
- * Run this at the beginning of the code and before running any of the functions  below.
- * It will create an initial random seed that is used later on, tuned to the current time AND to the process ID
- * (this is because it was found that only using the time is not sufficient, and two nodes spawned at the same time will actually end with the same seed unless the process ID is also included).
+ * Defines a graph structure that can be used to assess the topology of the swarm
  */
-extern void randomgen_init(void);
+class random_generator
+{
+  public:
+    /*
+   * Constructor instatiates a list of all connections in the graph.
+   */
+    random_generator();
 
-/*
- * Get a random value of type float between a min and max
- */
-extern float getrand_float(float min, float max);
+    /*
+    * Get a random value of type float between a min and max
+    */
+    float uniform_float(float min, float max);
 
-/*
+    /*
+    * Get a random value of type int between a min and a max
+    */
+    int uniform_int(int min, int max);
+
+    /*
  * Get a random value of type int between a min and a max
  */
-extern int getrand_int(int min, int max);
+    float gaussian_float(float mean, float stddev);
 
-/*
- * Get a random value of type int between a min and a max
+    /*
+ * Generate a random vector with zero mean
  */
-extern float rand_normal(float mean, float stddev);
+    vector<float> gaussian_float_vector(const int &length, const float &mean, const float &min, const float &max);
+};
 
-#endif
+
+#endif /* GRAPH_H */
+

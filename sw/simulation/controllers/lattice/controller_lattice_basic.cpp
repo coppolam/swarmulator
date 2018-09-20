@@ -2,7 +2,7 @@
 #include "agent.h"
 #include "main.h"
 #include "randomgenerator.h"
-#include "auxiliary.h"
+#include "trigonometry.h"
 
 float Controller_Lattice_Basic::f_attraction(const float &u, const float &b_eq)
 {
