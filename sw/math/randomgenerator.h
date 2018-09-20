@@ -41,7 +41,7 @@ public:
   /*
   * Generate a random vector with zero mean
   */
-  vector<float> gaussian_float_vector(const int &length, const float &mean, const float &min, const float &max);
+  vector<float> gaussian_float_vector(const int &length, const float &mean, const float &std);
 };
 
 

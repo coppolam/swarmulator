@@ -14,8 +14,6 @@
 // #define CONTROLLER Controller_Cartesian
 #define CONTROLLER Controller_Bearing_Shape
 // #define CONTROLLER Controller_Lattice
-// #define CONTROLLER Controller_Aggregate
-// #define CONTROLLER Controller_Keep_Aggregate
 
 /***** Select the agent type that you want to use ****/
 #define AGENT Particle

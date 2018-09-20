@@ -43,10 +43,10 @@ void main_simulation_thread(int argc, char *argv[])
   // Read the number of agents from the argument input
   get_number_of_agents(argc, argv);
 
-  // Generate the random initial positions with (0,0) mean
+  // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
   random_generator rg;
-  vector<float> x0 = rg.gaussian_float_vector(nagents, 0.0, -0.5, 0.5);
-  vector<float> y0 = rg.gaussian_float_vector(nagents, 0.0, -0.5, 0.5);
+  vector<float> x0 = rg.gaussian_float_vector(nagents, 0.0, 0.5);
+  vector<float> y0 = rg.gaussian_float_vector(nagents, 0.0, 0.5);
 
   // Generate the agent models
   for (uint8_t ID = 0; ID < nagents; ID++) {

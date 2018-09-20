@@ -51,18 +51,12 @@ float random_generator::gaussian_float(float mean, float stddev)
 
 };
 
-vector<float> random_generator::gaussian_float_vector(const int &length, const float &mean, const float &min, const float &max)
+vector<float> random_generator::gaussian_float_vector(const int &length, const float &mean, const float &std)
 {
   // Generate the random vector
   vector<float> v(length, 0);
   for (uint8_t i = 0; i < length; i++) {
-    v[i] = gaussian_float(-min, max);
-  }
-
-  // Adjust to zero mean
-  vector<float> temp = v;
-  for (uint8_t i = 0; i < length; i++) {
-    v[i] = v[i] - vector_mean(temp) + mean;
+    v[i] = gaussian_float(mean, std);
   }
 
   return v;
