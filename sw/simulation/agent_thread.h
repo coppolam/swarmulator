@@ -10,8 +10,7 @@
 #include "settings.h"
 
 // Include all agents here
-#include "particle.h"
-#include "wheeled.h"
+#include "includes_agents.h"
 
 // Update the agent simulation
 void run_agent_simulation_step(const int &id)

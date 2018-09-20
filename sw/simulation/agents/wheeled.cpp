@@ -1,5 +1,6 @@
 #include "wheeled.h"
 #include "trigonometry.h"
+#include "draw.h"
 
 Wheeled::Wheeled(int i, const vector<float> &s, float tstep)
 {
@@ -42,3 +43,10 @@ void Wheeled::state_update()
   state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // position x
   state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // position y
 };
+
+void Wheeled::animation()
+{
+  draw d;
+  d.draw_triangle(param->scale());
+  d.draw_circle_loop(param->scale());
+}

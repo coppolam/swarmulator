@@ -1,4 +1,5 @@
 #include "particle.h"
+#include "draw.h"
 
 Particle::Particle(int i, vector<float> s, float tstep)
 {
@@ -35,3 +36,10 @@ void Particle::state_update()
   state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y
 
 };
+
+void Particle::animation()
+{
+  draw d;
+  d.draw_circle(param->scale());
+  d.draw_circle_loop(param->scale());
+}

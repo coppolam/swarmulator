@@ -46,6 +46,7 @@ public:
    * of a given agent (robot/animal/whatever). The state_update function is handled by the child class.
    */
   virtual void state_update() = 0;
+  virtual void animation() = 0;
 };
 
 #endif /*AGENT_H*/

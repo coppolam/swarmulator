@@ -13,6 +13,7 @@ class Particle: public Agent
 public:
   Particle(int i, vector<float> state, float tstep);
   void state_update();
+  void animation();
 };
 
 #endif /*PARTICLE_H*/

@@ -6,9 +6,10 @@
 #include <sstream>      // std::stringstream
 #include <mutex>
 
-#include "agent.h"
 #include "main.h"
 #include "drawingparams.h"
+#include "settings.h"
+#include "includes_agents.h"
 
 using namespace std;
 

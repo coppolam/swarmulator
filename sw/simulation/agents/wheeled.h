@@ -13,6 +13,7 @@ class Wheeled : public Agent
 public:
   Wheeled(int i, const vector<float> &state, float tstep);
   void state_update();
+  void animation();
 };
 
 #endif /*WHEELED_H*/
