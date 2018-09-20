@@ -1,10 +1,10 @@
 #include "controller_bearing_shape.h"
+#include <algorithm> // std::find
 #include "agent.h"
 #include "main.h"
 #include "randomgenerator.h"
 #include "trigonometry.h"
 #include "auxiliary.h"
-#include <algorithm> // std::find
 
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic()
 {

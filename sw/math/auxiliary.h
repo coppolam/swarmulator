@@ -5,7 +5,8 @@
 #include <cmath>
 #include <vector>
 #include <string>
-#include <numeric>
+#include <random>
+#include <algorithm> // std::transform
 
 using namespace std;
 

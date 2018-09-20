@@ -124,7 +124,7 @@ float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
     u += pow(dd, 2);
   }
   random_generator rg;
-  rg.gaussian_float(0.0, NOISE_R);
+  return sqrt(u) + rg.gaussian_float(0.0, NOISE_R);
 }
 
 float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)

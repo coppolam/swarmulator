@@ -7,14 +7,14 @@ random_generator::random_generator()
   int temp;
   uintptr_t t = (uintptr_t)&temp;
   srand(t);
-}
+};
 
-float uniform_float(float min, float max)
+float random_generator::uniform_float(float min, float max)
 {
   return min + ((float)rand() / (RAND_MAX / (max - min))) ;
 };
 
-int uniform_int(int min, int max)
+int random_generator::uniform_int(int min, int max)
 {
   return min + (rand() / (RAND_MAX / (max - min))) ;
 };
@@ -25,7 +25,7 @@ int uniform_int(int min, int max)
 //
 // Polar form of Box-Muller transform:
 // http://www.design.caltech.edu/erik/Misc/Gaussian.html
-float gaussian_float(float mean, float stddev)
+float random_generator::gaussian_float(float mean, float stddev)
 {
   static float n2 = 0.0;
   static int n2_cached = 0;
@@ -51,7 +51,7 @@ float gaussian_float(float mean, float stddev)
 
 };
 
-vector<float> gaussian_float_vector(const int &length, const float &mean, const float &min, const float &max)
+vector<float> random_generator::gaussian_float_vector(const int &length, const float &mean, const float &min, const float &max)
 {
   // Generate the random vector
   vector<float> v(length, 0);
