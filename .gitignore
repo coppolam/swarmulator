@@ -6,3 +6,8 @@ parameters.*
 build/
 *.o
 state_action_matrix_free_test*.txt
+.vscode/
+Doxyfile
+dox/
+html/
+latex/

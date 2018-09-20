@@ -1,18 +1,25 @@
 /*
-  Swarmulator is a swarm simulation environment.
-  Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents.
-  To program specific behaviors, you can do so in the controller.cpp/controller.h file.
+ * 
+ * Swarmulator is a swarm simulation environment.
+ * Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents.
+ * To program specific behaviors, you can do so in the controller.cpp/controller.h file.
+ * 
+ * Mario Coppola, 2017-2018.
+ * 
+ */
 
-  Copyright Mario Coppola, 2017-2018.
-*/
-
+/**
+ * Include standard and thread libraries 
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <iostream>
 #include <thread>
 
-// Internal Includes
+/**
+ * Include top level threads 
+ */
 #include "main.h"               /* Contains extern defines for global variables */
 #include "simulation_thread.h"  /* Thread that handles the simulation */
 #include "animation_thread.h"   /* Thread that handles animation */
@@ -26,10 +33,9 @@ using namespace std;
 uint nagents;                   /* Number of agents in the simulation */
 vector<Agent *> s;              /* Set up the agents */
 mutex mtx;                      /* Mutex needed to lock threads */
-float realtimefactor;
-int backgroundcolor;
-float simulation_time = 0;
-float simtime_seconds = 0;
+float realtimefactor;           /* Real time factor of simulation */
+float simulation_time = 0;      /* Initial simulation time (fake time) */
+float simtime_seconds = 0;      /* Initial simulation time */
 float rangesensor     = 1.6;
 bool program_running  = false;
 

@@ -78,7 +78,7 @@ void keyboard_callback(unsigned char key, int x, int y)
       if (!paused) {
         ti.info_msg("Drawing new agent.");
         mtx.lock();
-        create_new_agent(nagents, pointer_x, pointer_y);
+        create_new_agent(nagents, pointer_y, pointer_x);
         mtx.unlock();
         break;
       }
