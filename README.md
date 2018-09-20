@@ -18,7 +18,7 @@ Download/clone the repository.
 Swarmulator runs using OpenGL and XML parsing.
 You will need the following packages. Run the following to make sure you have everything you need, installed in order:
 
-    sudo apt-get install freeglut3 freeglut3-dev
+    sudo apt-get install freeglut3-dev
     sudo apt-get install libxerces-c-dev
     sudo apt-get install xsdcxx
     sudo apt-get install libeigen3-dev
@@ -28,17 +28,15 @@ Once you have all the packages needed to build Swarmulator, you can build it wit
 
 	make clean && make
 
+If you want it to build fast, use `make -j', but this will take up more memory.
+
 ## Running Swarmulator
 Swarmulator can be launched from the terminal. To run Swarmulator, use the following command: 
 
     .\swarmulator <nagents>
 
-Where <nagents> is the number of agents you would like to have at the start of the simulation.  <knearest> is the number of agents that each agent can observe starting with the closest from itself.
-So for instance, to run a simulation with 3 agents which can all observe each other, run:
-
-    .\swarmulator 3 2
-
-If <knearest> is unspecified, the agents will be able to observe all other agents up to the limit range.
+Where <nagents> is the number of agents you would like to have at the start of the simulation.
+    .\swarmulator 3
 
 #### Setting up the runtime parameters
 Swarmulator uses a configuration file called `parameters.xml` in order to load run-time parameters. These are loaded when Swarmulator starts.
