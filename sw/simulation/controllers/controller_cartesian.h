@@ -18,7 +18,7 @@ public:
    * Construction. Controller_Cartesian is a child class of Controller.
    */
   Controller_Cartesian(): Controller() {};
-  
+
   float f_attraction(float u);
 
   float get_attraction_velocity(float u);

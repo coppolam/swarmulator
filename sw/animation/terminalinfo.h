@@ -17,22 +17,22 @@ class terminalinfo
 {
 
 public:
-  /** 
+  /**
    * Constructor
    */
   terminalinfo() {};
 
-  /** 
+  /**
    * Destructor
    */
   ~terminalinfo() {};
 
-  /** 
+  /**
    * Print a debug message
    */
   void debug_msg(string str);
 
-  /** 
+  /**
    * Print an info message
    */
   void info_msg(string str);

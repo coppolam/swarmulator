@@ -46,7 +46,7 @@ unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::fla
 int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
-  
+
   // Start simulation
   thread simulation(main_simulation_thread, argc, argv);
   simulation.detach();

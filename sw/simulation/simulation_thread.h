@@ -15,7 +15,7 @@
 #include "drawingparams.h"
 
 /*
- * Calculate the mean of all elements in a vector 
+ * Calculate the mean of all elements in a vector
  */
 // TODO: Move to math
 float vector_mean(const vector<float> &v)
@@ -24,7 +24,7 @@ float vector_mean(const vector<float> &v)
   return sum / v.size();
 }
 
-/* 
+/*
  * Calculate the standard deviation of all elements in a vector
  */
 // TODO: Move to math
@@ -51,8 +51,7 @@ vector<float> generate_random_vector_zeromean(const int &length)
 
   // Adjust to zero mean
   vector<float> temp = v;
-  for (uint8_t i = 0; i < length; i++)
-  {
+  for (uint8_t i = 0; i < length; i++) {
     v[i] = v[i] - vector_mean(temp);
   }
 
@@ -113,8 +112,7 @@ void main_simulation_thread(int argc, char *argv[])
   // This is only used by the animation and the logger.
   // The robots operate by their own clock)
   while (program_running) {
-    if (!paused)
-    {
+    if (!paused) {
       int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
       this_thread::sleep_for(chrono::microseconds(t_wait));
       simulation_time = t_wait;

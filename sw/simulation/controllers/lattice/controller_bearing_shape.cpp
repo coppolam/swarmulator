@@ -12,9 +12,9 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic(
   t.set_state_action_matrix(s);
   moving_timer = 0;
   beta_des.push_back(0.0);
-  beta_des.push_back(atan(_ddes_y/_ddes_x));
+  beta_des.push_back(atan(_ddes_y / _ddes_x));
   beta_des.push_back(M_PI / 2.0);
-  beta_des.push_back(M_PI / 2.0 + atan(_ddes_x/_ddes_y));
+  beta_des.push_back(M_PI / 2.0 + atan(_ddes_x / _ddes_y));
 }
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
@@ -39,9 +39,9 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   int state_index = bool2int(state);
 
   // Get vector of all neighbors from closest to furthest
-  vector<int> closest = o->request_closest(ID); 
+  vector<int> closest = o->request_closest(ID);
 
- // Can I move or are my neighbors moving?
+// Can I move or are my neighbors moving?
   bool canImove = check_motion(state_ID);
   if (!canImove) {
     selected_action = -2;   // Reset actions
@@ -66,7 +66,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
     }
-    increase_counter(moving_timer,twait_2);
+    increase_counter(moving_timer, twait_2);
   }
 
 }

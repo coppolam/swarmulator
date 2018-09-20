@@ -28,7 +28,7 @@ bool paused = false;
 float xrat = 0;
 float yrat = 0;
 
-/* 
+/*
  * keyboard_callback reads keyboard commands from the animation window of Swarmulator.
  * In this way, it becomes easies and intuitive to interact with the simulation of the swarm.
  * Functions include pausing, quitting, adding agents, zoom, etc.
@@ -121,7 +121,7 @@ void mouse_click_callback(int button, int state, int x, int y)
 {
   // Click
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-    sx =  (float)x / ((float)param->window_width () / xrat);
+    sx = (float)x / ((float)param->window_width() / xrat);
     sy = -(float)y / ((float)param->window_height() / yrat);
   }
 
@@ -133,17 +133,14 @@ void mouse_click_callback(int button, int state, int x, int y)
   }
 
   // Guard on too much / too little zoom
-  if (zoom > 9)
-  {
+  if (zoom > 9) {
     zoom = 9;
-  }
-  else if (zoom < -90)
-  {
+  } else if (zoom < -90) {
     zoom = -90;
   }
 }
 
-/* 
+/*
  * mouse_draganddrop handles the drag and drop functionality.
  */
 void mouse_draganddrop()

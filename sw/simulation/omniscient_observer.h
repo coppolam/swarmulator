@@ -25,9 +25,9 @@ class OmniscientObserver
 public:
   /*
    * Constructor
-   */ 
+   */
   OmniscientObserver() {};
-  
+
   /*
    * Destructor
    */

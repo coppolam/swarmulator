@@ -21,7 +21,7 @@ void run_agent_simulation_step(const int &id)
   mtx.lock();
   s.at(id)->state_update();
   mtx.unlock();
-  
+
   // Wait according to define frequency
   int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
   this_thread::sleep_for(chrono::microseconds(t_wait));
@@ -33,7 +33,7 @@ void start_agent_simulation(int id)
   // Info message
   terminalinfo ti;
   stringstream ss;
-  ss << "Robot " << id << " intiated"; 
+  ss << "Robot " << id << " intiated";
   ti.info_msg(ss.str());
 
   // Run the new robot

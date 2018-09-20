@@ -55,7 +55,7 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
   vector<int> ind;
   for (uint8_t i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
-                        pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
+                      pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
                       + pow(s[i]->get_position(1) - s[ID]->get_position(1), 2.0)
                     ));
     dm[i].index = i;
@@ -76,8 +76,9 @@ bool OmniscientObserver::check_happy()
 {
   bool happy = true;
   for (uint8_t i = 1; i < nagents; i++) {
-    if (!s[i]->happy)
+    if (!s[i]->happy) {
       return false;
+    }
   }
 
   return happy;
@@ -122,7 +123,7 @@ float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
     float dd = s[ID_tracked]->get_position(i) - s[ID]->get_position(i);
     u += pow(dd, 2);
   }
-  return sqrt(u) + rand_normal(0.0,NOISE_R);
+  return sqrt(u) + rand_normal(0.0, NOISE_R);
 }
 
 float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)

@@ -28,7 +28,7 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
 #ifdef KNEAREST
 
   vector<int> closest = o->request_closest(ID);
-  for (uint8_t i = 0; i < nagents-1; i++) {
+  for (uint8_t i = 0; i < nagents - 1; i++) {
     v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0));
     v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1));
   }

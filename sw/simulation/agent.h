@@ -24,7 +24,7 @@ class Agent
 public:
   // The constructor of agent is not defined here, but in the child class.
   // This makes it so that the agent to be used can be selected in settings.h
-  virtual ~Agent(){}; // Destructor
+  virtual ~Agent() {}; // Destructor
 
   float dt;
   uint8_t ID;

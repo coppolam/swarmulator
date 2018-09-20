@@ -21,7 +21,7 @@ void Particle::state_update()
   controller.saturate(v_y);
   moving = controller.moving;
   happy = controller.happy;
-  
+
   // Acceleration
   state.at(4) = 15 * (v_x - state[2]); // Acceleration x
   state.at(5) = 15 * (v_y - state[3]); // Acceleration y

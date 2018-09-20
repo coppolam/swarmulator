@@ -1,7 +1,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-/***** Uncomment the main simulation threads and functions that run 
+/***** Uncomment the main simulation threads and functions that run
  *     Note: this is on top of the main simulator thread
  *****/
 #define ANIMATE // Activate animation thread

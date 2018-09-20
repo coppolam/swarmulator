@@ -15,7 +15,7 @@ void txtwrite::txtwrite_state(ofstream &logfile)
   stringstream t;
   t << simtime_seconds;
   vector<Agent *> state_buff = s;
-  
+
   for (uint8_t i = 0; i < nagents; i++) {
     logfile << i + 1 << " ";
     logfile << t.str() << " "; // divide by 1000000.0
@@ -40,7 +40,7 @@ void txtwrite::txtwrite_summary(ofstream &logfile)
     logfile << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;
     ti.debug_msg("Swarm broke");
     killflag = true;
-    
+
   }
 #endif
 
@@ -52,7 +52,7 @@ void txtwrite::txtwrite_summary(ofstream &logfile)
   }
 #endif
 
-  if (killflag){
+  if (killflag) {
     program_running = false;
   }
 }
