@@ -46,8 +46,13 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print n"::"n"(int i, vector<float> state, float tstep)\n{" >> cN;
 	print "  state = s;\n  ID = i;\n  dt = tstep;\n  orientation = 0.0;" > cN;
 	print "}\n" >> cN;
-	print "void "n"::state_update()\n{ \n}\n" > cN;
-	print "void "n"::animation()()\n{ \n}" > cN;
+	print "void "n"::state_update()\n{ "> cN;
+	print "  float v_x, v_y;"> cN;
+	print "  controller.get_velocity_command(ID, v_x, v_y);" > cN;
+	print "  /*** Include your model here ***/ \n}\n" > cN;
+	print "void "n"::animation()\n{" > cN
+	print "  draw d;" > cN
+	print "  /*** Draw your agent here ***/\n}" > cN;
 }'
 
 exit 0;

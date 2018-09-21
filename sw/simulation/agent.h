@@ -8,11 +8,7 @@
 
 #include "settings.h"
 #include "terminalinfo.h"
-
-// Include all controllers here, as any of them may be loaded
-#include "controller_cartesian.h"
-#include "controller_bearing_shape.h"
-#include "controller_lattice.h"
+#include "includes_controllers.h"
 
 using namespace std;
 
