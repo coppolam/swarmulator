@@ -3,10 +3,10 @@
 #     - glc
 #     - mencoder
   
-cd $SWARMULATOR_HOME
+cd ..
 
 md=$(date +%Y-%m-%d-%T);
-glc-capture -o rec_$md.glc  --fps=60 --disable-audio -s ./swarmulator $1 $2
+glc-capture -o rec_$md.glc  --fps=60 --disable-audio -s ./swarmulator $1
 
 glc-play rec_$md.glc -o - -y 1 | avconv -i - -video_size 300x300 -pix_fmt yuv444p \
 								 -threads auto -pix_fmt yuv444p -preset ultrafast -qp 0 -y rec_$md.mp4

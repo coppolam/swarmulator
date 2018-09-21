@@ -4,7 +4,7 @@
 # $1 = number of trials
 # $2 = number of agents
 
-cd $SWARMULATOR_HOME
+cd ..
 
 # Make logs directory
 min=$(date +%Y-%m-%d-%T);
@@ -19,7 +19,7 @@ for (( i = 1; i <= $1; i++ )); do
 
 	# Run code
 	md=$(date +%Y-%m-%d-%T);
-	./swarmulator $2 1
+	./swarmulator $2
 	
 	# Move latest log to directory
 	fn=$(ls -t logs| head -n1)
