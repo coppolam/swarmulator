@@ -15,7 +15,8 @@ using namespace std;
 /**
  * Parent class defining an agent. The dynamic implementation is handled in children classes.
  */
-class Agent {
+class Agent
+{
 public:
   /**
    * The constructor of agent is not defined here, but in the child class.

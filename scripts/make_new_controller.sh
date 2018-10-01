@@ -1,6 +1,5 @@
-#!/bin/bash
-
-#echo The script that creates the header file (*.h) and source (*.cpp).
+# Bash script to create the header file (*.h) and source (*.cpp) of a new controller
+# $1: Name of the controller
 
 if [ "$1" = "" ]; then
 	echo "Please specify the name of the controller.\n";

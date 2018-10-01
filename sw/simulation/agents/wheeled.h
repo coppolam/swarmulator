@@ -14,19 +14,19 @@ using namespace std;
 class Wheeled : public Agent
 {
 public:
-	/**
+  /**
    * Constructor
    */
   Wheeled(int i, const vector<float> &state, float tstep);
-  
-    /**
-   * State update implementation
-   */
+
+  /**
+  * State update implementation
+  */
   void state_update();
 
-    /**
-   * Animation openGL implementation for visualization
-   */
+  /**
+  * Animation openGL implementation for visualization
+  */
   void animation();
 };
 

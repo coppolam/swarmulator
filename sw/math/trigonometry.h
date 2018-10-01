@@ -9,7 +9,7 @@
 using namespace std;
 
 /**
- * Wraps an angle in radians between -PI and +PI, overwrites onto the variable 
+ * Wraps an angle in radians between -PI and +PI, overwrites onto the variable
  */
 inline static void wrapToPi(float &ang)
 {
@@ -31,7 +31,7 @@ inline static void wrapTo2Pi(float &ang)
 }
 
 /**
- * Wraps an angle in radians between -PI and +PI, returns the wrapped value 
+ * Wraps an angle in radians between -PI and +PI, returns the wrapped value
  */
 inline static float wrapToPi_f(float ang)
 {

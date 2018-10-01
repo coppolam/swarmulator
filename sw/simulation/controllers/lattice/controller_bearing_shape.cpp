@@ -48,7 +48,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     selected_action = -2;   // Reset actions
     moving_timer = timelim; // Reset moving timer
   }
-  
+
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;

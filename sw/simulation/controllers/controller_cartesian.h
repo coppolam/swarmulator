@@ -26,7 +26,7 @@ public:
 
   /**
    * Function to get the total attraction/repulsion velocity
-   */ 
+   */
   float get_attraction_velocity(float u);
 
   /**

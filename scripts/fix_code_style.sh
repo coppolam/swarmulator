@@ -1,12 +1,12 @@
-#!/bin/bash
+# Bash script to fix the code style of a given cpp or h file according to preferred specifications
 
 if ! type "astyle" > /dev/null; then
-    echo "You need to install astyle to use this script!"
+    echo "Install astyle in order to use this script"
     exit 1
 fi
 
 if [ $# -eq 0 ]; then
-    echo "Please provide one or multiple files as arguments!"
+    echo "Please provide one or multiple files as arguments"
     exit 1
 fi
 

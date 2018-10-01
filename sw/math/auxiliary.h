@@ -17,8 +17,7 @@ inline static void increase_counter(uint &counter, const uint &limit)
 {
   if (counter > limit) {
     counter = 1;
-  }
-  else {
+  } else {
     counter++;
   }
 }
@@ -35,7 +34,7 @@ inline static int bool2int(vector<bool> t)
   return n;
 }
 
-/** 
+/**
  * Bind a value between a minimum and a maximum
  */
 inline static void keepbounded(float &value, float min, float max)
@@ -44,7 +43,7 @@ inline static void keepbounded(float &value, float min, float max)
   else if (value > max) { value = max; }
 }
 
-/** 
+/**
  * Wrap an integer value to a sequence.
  * For instance if min = 1 and max = 8, and x = 10, then the function returns 2. Because it loops 8+2=10
  */

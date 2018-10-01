@@ -1,6 +1,5 @@
-#!/bin/bash
-
-#echo The script that creates the header file (*.h) and source (*.cpp).
+# Bash script to create the header file (*.h) and source (*.cpp) of a new agent
+# $1: Name of the agent
 
 if [ "$1" = "" ]; then
 	echo "Please specify the name of the agent.\n";

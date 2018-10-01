@@ -31,7 +31,7 @@ public:
    * Draw a red circle of radius r
    */
   void draw_circle(double r);
-  
+
   /**
    * Draw a white unfilled circle
    */
@@ -41,7 +41,7 @@ public:
    * Draw a white line from (0,0) to (x,y)
    */
   void draw_line(float x, float y);
-  
+
   /**
    * Draw the global x and y axes at (0,0)
    */
@@ -53,7 +53,7 @@ public:
   void draw_point();
 
   /******* Swarmulator higher level functions ********/
-  
+
   /**
    * Draw relevant simulation data in the bottom left corner (like the time of simulation)
    */
