@@ -63,6 +63,8 @@ inline static int wraptosequence(int x, int min, int max)
 
 /**
  * Select a random value
+ * Compliments of Christopher Smith
+ * https://stackoverflow.com/questions/6942273/how-to-get-a-random-element-from-a-c-container
  */
 template <typename Iter, typename RandomGenerator>
 inline static Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
@@ -74,6 +76,8 @@ inline static Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
 
 /**
  * Select a random value
+ * Compliments of Christopher Smith
+ * https://stackoverflow.com/questions/6942273/how-to-get-a-random-element-from-a-c-container
  */
 template <typename Iter>
 inline static Iter select_randomly(Iter start, Iter end)
