@@ -132,8 +132,7 @@ void draw::draw_agent(uint8_t ID, float x, float y, float orientation)
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
   glRotatef(90.0 - rad2deg(orientation), 0.0, 0, 1);
-  // AGENT *p = s[ID];
-  s[ID]->animation(); // Todo: Add different options dependending on agent type
+  s[ID]->animation(); // Uses the animation function defined by the agent in use
   // draw_agent_number(ID);
   glPopMatrix();
 }

@@ -10,12 +10,22 @@
 
 using namespace std;
 
+/**
+ * Increase a counter by 1, or reset to 1 if above a given limit
+ */
 inline static void increase_counter(uint &counter, const uint &limit)
 {
-  if (counter > limit) {counter = 1;}
-  else {counter++;}
+  if (counter > limit) {
+    counter = 1;
+  }
+  else {
+    counter++;
+  }
 }
 
+/**
+ * Convert an 8bit boolean vector to an unsigned integer
+ */
 inline static int bool2int(vector<bool> t)
 {
   int n = 0; //Initialize
@@ -25,13 +35,19 @@ inline static int bool2int(vector<bool> t)
   return n;
 }
 
-/* Keeps a value between two bounds */
+/** 
+ * Bind a value between a minimum and a maximum
+ */
 inline static void keepbounded(float &value, float min, float max)
 {
   if (value < min) { value = min; }
   else if (value > max) { value = max; }
 }
 
+/** 
+ * Wrap an integer value to a sequence.
+ * For instance if min = 1 and max = 8, and x = 10, then the function returns 2. Because it loops 8+2=10
+ */
 inline static int wraptosequence(int x, int min, int max)
 {
   if (x > max) {
@@ -46,6 +62,9 @@ inline static int wraptosequence(int x, int min, int max)
   return x;
 }
 
+/**
+ * Select a random value
+ */
 template <typename Iter, typename RandomGenerator>
 inline static Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
 {
@@ -54,6 +73,9 @@ inline static Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
   return start;
 }
 
+/**
+ * Select a random value
+ */
 template <typename Iter>
 inline static Iter select_randomly(Iter start, Iter end)
 {

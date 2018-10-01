@@ -42,12 +42,13 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // Get vector of all neighbors from closest to furthest
   vector<int> closest = o->request_closest(ID);
 
-// Can I move or are my neighbors moving?
+  // Can I move or are my neighbors moving?
   bool canImove = check_motion(state_ID);
   if (!canImove) {
     selected_action = -2;   // Reset actions
     moving_timer = timelim; // Reset moving timer
   }
+  
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
   // If you are already busy with an action, then don't change the action
   std::map<int, vector<int>>::iterator state_action_row;

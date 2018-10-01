@@ -10,7 +10,7 @@
 
 bool animation_running = false;
 
-/*
+/**
  * Main animation loop.
  * Takes care of drawing the agents in their corrective location.
  */
@@ -63,7 +63,7 @@ void main_loop_function()
   this_thread::sleep_for(chrono::milliseconds(t_wait));
 }
 
-/*
+/**
  * Initialze OpenGL perspective matrix
  */
 void GL_Setup(int width, int height)
@@ -75,7 +75,7 @@ void GL_Setup(int width, int height)
   glMatrixMode(GL_MODELVIEW);
 }
 
-/*
+/**
  * Thread function that initiates the animation
  */
 void main_animation_thread()

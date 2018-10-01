@@ -13,28 +13,76 @@
 
 using namespace std;
 
-/*
-  Object that takes care of OpenGL drawing for all elements of interest
-  It is launched and managed by the animation thread.
-*/
+/**
+ * Object that takes care of OpenGL drawing for all elements of interest
+ * It is launched and managed by the animation thread.
+ */
 class draw
 {
 public:
-  // General functions
-  void draw_triangle(double); // Draw a simple triangle
-  void draw_circle(double r);
-  void draw_circle_loop(double d);
-  void draw_line(float x, float y);
-  void draw_axes(); // Draw global x and y axes
-  void draw_point(); // Draw a white point
+  /******* General openGL functions ********/
 
-  // Swarmulator specific functions
-  void draw_data(); // Draw relevant data in the corner
+  /**
+   * Draw a simple triangle of size scl
+   */
+  void draw_triangle(double s);
+
+  /**
+   * Draw a red circle of radius r
+   */
+  void draw_circle(double r);
+  
+  /**
+   * Draw a white unfilled circle
+   */
+  void draw_circle_loop(double d);
+
+  /**
+   * Draw a white line from (0,0) to (x,y)
+   */
+  void draw_line(float x, float y);
+  
+  /**
+   * Draw the global x and y axes at (0,0)
+   */
+  void draw_axes();
+
+  /**
+   * Draw a small white point
+   */
+  void draw_point();
+
+  /******* Swarmulator higher level functions ********/
+  
+  /**
+   * Draw relevant simulation data in the bottom left corner (like the time of simulation)
+   */
+  void draw_data();
+
+  /**
+   * Write the x,y label on the global axis along the given dimension dim
+   */
   void draw_axes_text(uint8_t dim);
-  void draw_agent_number(uint8_t ID); // Draw an agent number in the location of the agent
-  void draw_agent(uint8_t ID, float x, float y, float z); // Draw the actual agent
+
+  /**
+   * Draw the ID number of an agent on top of the agent
+   */
+  void draw_agent_number(uint8_t ID);
+
+  /**
+   * Draw the agent (uses internal function defined by the agent class)
+   */
+  void draw_agent(uint8_t ID, float x, float y, float z);
+
+  /**
+   * Draw a line showing the velocity of the agent
+   */
   void draw_velocity_arrow(uint8_t ID, float x, float y, float z, float v_x, float v_y); // Draw velocity arrow
-  void draw_centroid(float x, float y, float z); // Draw a dot at the swarm centroid
+
+  /**
+   * Draw a dot at the swarm centroid position (x,y,z)
+   */
+  void draw_centroid(float x, float y, float z); //
 };
 
 #endif /*DRAW_H*/

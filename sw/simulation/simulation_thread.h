@@ -14,7 +14,7 @@
 #include "agent_thread.h"
 #include "drawingparams.h"
 
-/*
+/**
  * Extract the number of agents from the argument list.
  * Else, return an error.
  */
@@ -29,12 +29,11 @@ void get_number_of_agents(int argc, char *argv[])
   }
 }
 
-/*
+/**
  * This function initiates the simulation.
  * All agents in the beginning initiate randomly with a mean position around the (0,0) point.
  * Once the vector of agents is created, each agent is launched in a separate thread.
  */
-
 void main_simulation_thread(int argc, char *argv[])
 {
   terminalinfo ti;

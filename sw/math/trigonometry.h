@@ -8,13 +8,18 @@
 
 using namespace std;
 
-/* Wraps an angle in radians between -PI and +PI */
+/**
+ * Wraps an angle in radians between -PI and +PI, overwrites onto the variable 
+ */
 inline static void wrapToPi(float &ang)
 {
   if (ang >  M_PI) { while (ang >  M_PI) { ang = ang - 2 * M_PI;} }
   else if (ang < -M_PI) { while (ang < -M_PI) { ang = ang + 2 * M_PI;} }
 }
 
+/**
+ * Wraps an angle in radians between 0 and +2PI, overwrites onto the variable
+ */
 inline static void wrapTo2Pi(float &ang)
 {
   while (ang > 2 * M_PI) {
@@ -25,6 +30,9 @@ inline static void wrapTo2Pi(float &ang)
   }
 }
 
+/**
+ * Wraps an angle in radians between -PI and +PI, returns the wrapped value 
+ */
 inline static float wrapToPi_f(float ang)
 {
   if (ang > M_PI) {
@@ -39,6 +47,9 @@ inline static float wrapToPi_f(float ang)
   return ang;
 }
 
+/**
+ * Wraps an angle in radians between 0 and +2PI, returns the wrapped value
+ */
 inline static float wrapTo2Pi_f(float ang)
 {
   if (ang > 2 * M_PI) {
@@ -51,11 +62,19 @@ inline static float wrapTo2Pi_f(float ang)
   return ang;
 }
 
+/**
+ * Converts an angle from radians to degrees
+ */
 inline static float rad2deg(float rad) { return 180.0 / M_PI * rad; }
 
+/**
+ * Converts an angle from degrees to radians
+ */
 inline static float deg2rad(float deg) { return M_PI / 180.0 * deg; }
 
-// *Compliments of http : //stackoverflow.com/questions/29089710/pointers-in-c-programming-coordinate-conversion */
+/**
+ * Convert polar (r,theta) coordinates to cartesian (x,y) coordinates
+ */
 inline static void polar2cart(const float &radius, float &radians, float &x, float &y)
 {
   wrapToPi(radians);
@@ -63,7 +82,9 @@ inline static void polar2cart(const float &radius, float &radians, float &x, flo
   y = radius * sin(radians);
 }
 
-/* Function to convert cartesian coordinates to polar */
+/**
+ * Convert cartesian (x,y) coordinates to polar (r,theta) coordinates
+ */
 inline static void cart2polar(const float &x, const float &y, float &radius, float &radians)
 {
   radius = sqrt(pow(x, 2) + pow(y, 2));

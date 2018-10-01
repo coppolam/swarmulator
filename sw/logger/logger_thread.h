@@ -16,6 +16,9 @@ using namespace std;
 
 bool logger_running = false;
 
+/**
+ * Run the logger
+ */
 void run_logger(ofstream &logfile, string filename)
 {
   static txtwrite writer;
@@ -39,9 +42,11 @@ void run_logger(ofstream &logfile, string filename)
   this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 
-/* Get current date/time, format is YYYY-MM-DD-hh:mm:ss */
-// Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-// for more information about date/time format
+/**
+ * Get current date/time, format is YYYY-MM-DD-hh:mm:ss
+ * Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+ * for more information about date/time format
+ */
 const std::string currentDateTime()
 {
   time_t now = time(0); // Read in the time
@@ -54,6 +59,9 @@ const std::string currentDateTime()
   return buf;
 }
 
+/**
+ * Logger thread that logs the simulation to a txt file
+ */
 void main_logger_thread()
 {
   // Log filename

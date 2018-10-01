@@ -14,14 +14,24 @@ class Controller_Cartesian: public Controller
   OmniscientObserver *o;
 
 public:
-  /*
+  /**
    * Construction. Controller_Cartesian is a child class of Controller.
    */
   Controller_Cartesian(): Controller() {};
 
+  /**
+   * Attraction function at distance u
+   */
   float f_attraction(float u);
 
+  /**
+   * Function to get the total attraction/repulsion velocity
+   */ 
   float get_attraction_velocity(float u);
+
+  /**
+   * Implementation of method to get the commanded velocity
+   */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 

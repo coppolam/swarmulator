@@ -14,6 +14,6 @@ extern std::mutex mtx;          // Mutex object
 extern bool program_running;    // True if the program is (or should be) running. If false the program shuts down.
 extern unique_ptr<parameters_t> param; // XML parameters from conf file
 extern float realtimefactor;    // Real time factor of simulation
-extern float rangesensor;
+extern float rangesensor;       // How far each robot can sense
 
 #endif /*MAIN_H*/

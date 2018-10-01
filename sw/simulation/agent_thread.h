@@ -12,7 +12,9 @@
 // Include all agents here
 #include "includes_agents.h"
 
-// Update the agent simulation
+/**
+ * Update the agent simulation
+ */
 void run_agent_simulation_step(const int &id)
 {
   // Update the position of the agent in the simulation
@@ -41,13 +43,15 @@ void start_agent_simulation(int id)
   }
 };
 
-// Generates new agent + simulation thread at given position x0 y0
+/**
+ * Generates new agent + simulation thread at given position x0 y0
+ */
 void create_new_agent(int ID, float x0, float y0)
 {
   // Initiate a new agent at the given position
   vector<float> states = {x0, y0, 0.0, 0.0, 0.0, 0.0}; // Initial positions/states
   s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
-  nagents++;
+  nagents++; // Increase agent counter
 
   // Wait a bit before animating the new agent
   this_thread::sleep_for(chrono::microseconds(1000));

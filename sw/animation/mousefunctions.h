@@ -28,7 +28,7 @@ bool paused = false;
 float xrat = 0;
 float yrat = 0;
 
-/*
+/**
  * keyboard_callback reads keyboard commands from the animation window of Swarmulator.
  * In this way, it becomes easies and intuitive to interact with the simulation of the swarm.
  * Functions include pausing, quitting, adding agents, zoom, etc.
@@ -94,7 +94,7 @@ void keyboard_callback(unsigned char key, int x, int y)
   }
 }
 
-/*
+/**
  * Detects the mouse motion and adjusts the center of the animation
  */
 void mouse_motion_callback(int x, int y)
@@ -103,7 +103,7 @@ void mouse_motion_callback(int x, int y)
   center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / ((float)param->window_height() / yrat) - sy);
 }
 
-/*
+/**
  * Keeps track of the location of the pointer.
  * This is used for launching new agents at specified locations intuitively.
  */
@@ -113,7 +113,7 @@ void mouse_motion_callback_passive(int x, int y)
   pointer_y = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 / (zoom_scale * yrat))) - center_y;
 }
 
-/*
+/**
  * Detects that the mouse has been clicked (for dragging)
  * Or else detects that the zoom wheel is in use
  */
@@ -140,7 +140,7 @@ void mouse_click_callback(int button, int state, int x, int y)
   }
 }
 
-/*
+/**
  * mouse_draganddrop handles the drag and drop functionality.
  */
 void mouse_draganddrop()

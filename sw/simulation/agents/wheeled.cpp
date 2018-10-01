@@ -25,10 +25,7 @@ void Wheeled::state_update()
 
   float v, w;
   cart2polar(v_x, v_y, v, w);
-  if (v < 0.1) { // if velocity is too small keep orientation
-    w = orientation;
-  }
-
+  
   orientation += 5.0 * (w - orientation) * dt; // Orientation
 
   // Acceleration

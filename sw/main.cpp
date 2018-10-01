@@ -36,8 +36,8 @@ mutex mtx;                      /* Mutex needed to lock threads */
 float realtimefactor;           /* Real time factor of simulation */
 float simulation_time = 0;      /* Initial simulation time (fake time) */
 float simtime_seconds = 0;      /* Initial simulation time */
-float rangesensor     = 1.6;
-bool program_running  = false;
+float rangesensor     = 1.6;    /* How far each robot can sense */
+bool program_running  = false;  /* Program running, initiated false until the beginning */
 
 /**
  * Parameters from the XML file
