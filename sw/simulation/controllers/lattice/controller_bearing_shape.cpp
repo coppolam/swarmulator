@@ -24,12 +24,12 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   v_y = 0;
 
   float timelim = 1.8 * param->simulation_updatefreq();
-  float twait_1 = timelim * 2;
-  float twait_2 = twait_1 * 2;
+  float tadj    = timelim * 2; // This is actually time for action + t_adj, thus t_adj = time for action
+  float twait   = tadj    * 2; // This is actually time for action + t_adj + t_wait
 
   // Initialize local moving_timer with random variable
   if (moving_timer == 0) {
-    moving_timer = rand() % (int)twait_2;
+    moving_timer = rand() % (int)twait;
   }
 
   vector<bool> state(8, 0);
@@ -46,7 +46,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   bool canImove = check_motion(state_ID);
   if (!canImove) {
     selected_action = -2;   // Reset actions
-    moving_timer = timelim; // Reset moving timer
+    moving_timer = tadj;   // Reset moving timer
   }
 
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
@@ -68,7 +68,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
     } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
     }
-    increase_counter(moving_timer, twait_2);
+    increase_counter(moving_timer, twait);
   }
 
 }
