@@ -11,3 +11,6 @@ Doxyfile
 dox/
 html/
 latex/
+movies/
+*.mp4
+*.glc
