@@ -6,6 +6,7 @@ parameters.*
 build/
 *.o
 state_action_matrix_free_test*.txt
+state_action_matrix*.txt
 .vscode/
 Doxyfile
 dox/

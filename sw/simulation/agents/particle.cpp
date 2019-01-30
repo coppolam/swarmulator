@@ -1,4 +1,5 @@
 #include "particle.h"
+#include "trigonometry.h"
 #include "draw.h"
 
 Particle::Particle(int i, vector<float> s, float tstep)
@@ -22,10 +23,13 @@ void Particle::state_update()
   controller.saturate(v_y);
   moving = controller.moving;
   happy = controller.happy;
+  
+  float vxr,vyr;
+  rotate(v_x, v_y, orientation, vxr, vyr);
 
   // Acceleration
-  state.at(4) = 15 * (v_x - state[2]); // Acceleration x
-  state.at(5) = 15 * (v_y - state[3]); // Acceleration y
+  state.at(4) = 15 * (vxr - state[2]); // Acceleration x
+  state.at(5) = 15 * (vyr - state[3]); // Acceleration y
 
   // Velocity
   state.at(2) = state[4] * dt; // Velocity x
@@ -40,6 +44,13 @@ void Particle::state_update()
 void Particle::animation()
 {
   draw d;
-  d.draw_circle(param->scale());
+  
+  if (abs(orientation - 0.0) < 0.01) {
+    d.draw_circle(param->scale());
+  }
+  else {
+    d.draw_triangle(param->scale());
+  }
+
   d.draw_circle_loop(param->scale());
 }
