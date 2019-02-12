@@ -127,10 +127,15 @@ float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
   return sqrt(u) + rg.gaussian_float(0.0, NOISE_R);
 }
 
+float OmniscientObserver::own_bearing(uint8_t ID)
+{
+  return s[ID]->get_orientation();
+}
+
 float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 {
   random_generator rg;
-  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) + rg.random_generator::gaussian_float(0.0, NOISE_B);
+  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) - own_bearing(ID) + rg.random_generator::gaussian_float(0.0, NOISE_B);
 }
 
 bool OmniscientObserver::see_if_moving(uint8_t ID)

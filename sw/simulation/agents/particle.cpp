@@ -1,5 +1,6 @@
 #include "particle.h"
 #include "trigonometry.h"
+#include "randomgenerator.h"
 #include "draw.h"
 
 Particle::Particle(int i, vector<float> s, float tstep)
@@ -7,7 +8,8 @@ Particle::Particle(int i, vector<float> s, float tstep)
   state = s;
   ID = i;
   dt = tstep;
-  orientation = 0.0;
+  random_generator rg;
+  orientation = state[6];
   controller.set_saturation(1.0);
 }
 
@@ -23,9 +25,10 @@ void Particle::state_update()
   controller.saturate(v_y);
   moving = controller.moving;
   happy = controller.happy;
-  
-  float vxr,vyr;
-  rotate(v_x, v_y, orientation, vxr, vyr);
+
+  float vxr, vyr;
+  rotate(v_x, v_y, state[6], vxr, vyr);
+  state[6] = wrapToPi_f(state[6] + 0.1); // Orientation
 
   // Acceleration
   state.at(4) = 15 * (vxr - state[2]); // Acceleration x
@@ -45,12 +48,11 @@ void Particle::animation()
 {
   draw d;
   
-  if (abs(orientation - 0.0) < 0.01) {
+  if (abs(state[6] - 0.0) < 0.01) {
     d.draw_circle(param->scale());
   }
   else {
     d.draw_triangle(param->scale());
   }
-
   d.draw_circle_loop(param->scale());
 }

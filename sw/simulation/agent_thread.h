@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <condition_variable>
 #include "settings.h"
+#include "randomgenerator.h"
 
 // Include all agents here
 #include "includes_agents.h"
@@ -49,7 +50,8 @@ void start_agent_simulation(int id)
 void create_new_agent(int ID, float x0, float y0)
 {
   // Initiate a new agent at the given position
-  vector<float> states = {x0, y0, 0.0, 0.0, 0.0, 0.0}; // Initial positions/states
+  random_generator rg;
+  vector<float> states = {x0, y0, 0.0, 0.0, 0.0, 0.0, rg.uniform_float(-M_PI, M_PI)}; // Initial positions/states
   s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   nagents++; // Increase agent counter
 

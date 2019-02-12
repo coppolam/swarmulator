@@ -53,6 +53,11 @@ public:
   float get_centroid(uint8_t dim);
 
   /**
+   * Returns own bearing
+   */
+  float own_bearing(uint8_t ID);
+
+  /**
    * This function returns true if the agent with the specified ID is declared as moving
    * It is used to simulate the fact that a robot may detect motion by another robot
    */

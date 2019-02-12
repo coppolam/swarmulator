@@ -130,4 +130,5 @@ void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<i
       q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }
   }
+
 }

@@ -39,9 +39,14 @@ public:
   float gaussian_float(float mean, float stddev);
 
   /**
-   * Generate a random vector with zero mean
+   * Generate a random vector with zero mean from a gaussian distribution
    */
   vector<float> gaussian_float_vector(const int &length, const float &mean, const float &std);
+
+  /**
+   * Generate a random vector with zero mean from a uniform distribution
+   */
+  vector<float> uniform_float_vector(const int &length, const float &min, const float &max);
 };
 
 
