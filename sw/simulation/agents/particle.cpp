@@ -28,7 +28,7 @@ void Particle::state_update()
 
   float vxr, vyr;
   rotate(v_x, v_y, state[6], vxr, vyr);
-  state[6] = wrapToPi_f(state[6] + 0.1); // Orientation
+  state[6] = wrapToPi_f(state[6] + 0); // Orientation
 
   // Acceleration
   state.at(4) = 15 * (vxr - state[2]); // Acceleration x

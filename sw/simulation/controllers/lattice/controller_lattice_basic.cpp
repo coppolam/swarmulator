@@ -31,15 +31,15 @@ float Controller_Lattice_Basic::get_attraction_velocity(const float &u, const fl
 
 void Controller_Lattice_Basic::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
 {
-  v_x += v_r;// * cos(v_b);
-  v_y += v_r;// * sin(v_b);
+  v_x += v_r * cos(v_b);
+  v_y += v_r * sin(v_b);
 }
 
 void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
   attractionmotion(v_r, v_b, v_x, v_y);
-  v_x += -1.0 * cos(bdes * 2 - v_b);
-  v_y += -1.0 * sin(bdes * 2 - v_b);
+  v_x += -v_r * cos(bdes * 2 - v_b);
+  v_y += -v_r * sin(bdes * 2 - v_b);
 }
 
 void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v_x, float &v_y)

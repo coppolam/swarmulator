@@ -37,10 +37,10 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
-  cout << (int)ID << ": ";
-  for (int i = 0; i < state.size(); ++i)
-    std::cout << state[i] << ' ';
-  cout << endl;
+  // cout << (int)ID << ": ";
+  // for (int i = 0; i < state.size(); ++i)
+  //   std::cout << state[i] << ' ';
+  // cout << endl;
   int state_index = bool2int(state);
 
   // Get vector of all neighbors from closest to furthest
@@ -64,15 +64,16 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
 
   // Controller
-  // moving = false;
-  // if (canImove) {
-  //   if (selected_action > -1 && moving_timer < timelim) {
-  //     actionmotion(selected_action, v_x, v_y);
-  //     moving = true;
-  //   } else {
+  moving = false;
+  if (canImove) {
+    if (selected_action > -1 && moving_timer < timelim) {
+      cout << (int)ID << " taking action" << endl;
+      actionmotion(selected_action, v_x, v_y);
+      moving = true;
+    } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
-    // }
-    // increase_counter(moving_timer, twait);
-  // }
+    }
+    increase_counter(moving_timer, twait);
+  }
 
 }
