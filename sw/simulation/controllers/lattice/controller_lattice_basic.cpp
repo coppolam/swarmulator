@@ -38,14 +38,14 @@ void Controller_Lattice_Basic::attractionmotion(const float &v_r, const float &v
 void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
   attractionmotion(v_r, v_b, v_x, v_y);
-  v_x += -v_r * cos(bdes * 2 - v_b);
-  v_y += -v_r * sin(bdes * 2 - v_b);
+  v_x += -0.1 * cos(bdes * 2 - v_b);
+  v_y += -0.1 * sin(bdes * 2 - v_b);
 }
 
 void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v_x, float &v_y)
 {
-  float actionspace_y[8] = {0, sqrt(_ddes_y), _ddes_y, sqrt(_ddes_y), 0, -sqrt(_ddes_y), -_ddes_y, -sqrt(_ddes_y)};
-  float actionspace_x[8] = {_ddes_x, sqrt(_ddes_x), 0, -sqrt(_ddes_x), -_ddes_x, -sqrt(_ddes_x), 0, sqrt(_ddes_x)};
+  float actionspace_y[8] = {0, sqrt(_ddes_y) / 2, _ddes_y, sqrt(_ddes_y) / 2, 0, -sqrt(_ddes_y) / 2, -_ddes_y, -sqrt(_ddes_y) / 2};
+  float actionspace_x[8] = {_ddes_x, sqrt(_ddes_x) / 2, 0, -sqrt(_ddes_x) / 2, -_ddes_x, -sqrt(_ddes_x) / 2, 0, sqrt(_ddes_x) / 2};
   v_x = _v_adj * actionspace_x[selected_action];
   v_y = _v_adj * actionspace_y[selected_action];
 }

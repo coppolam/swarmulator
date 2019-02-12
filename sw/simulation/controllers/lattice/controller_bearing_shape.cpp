@@ -9,7 +9,7 @@
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic()
 {
   // Define here the state-action matrix used by the agents
-  string s = "./conf/state_action_matrices/state_action_matrix_free.txt";
+  string s = "./conf/state_action_matrices/state_action_matrix_triangle4_nonorth.txt";
   t.set_state_action_matrix(s);
   moving_timer = 0;
   beta_des.push_back(0.0);
@@ -37,20 +37,29 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
 
   // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
-  // cout << (int)ID << ": ";
-  // for (int i = 0; i < state.size(); ++i)
-  //   std::cout << state[i] << ' ';
-  // cout << endl;
   int state_index = bool2int(state);
+  int rot = 0;
+  if (state_index > 0) {
+    while (!state[0]) {
+      std::rotate(state.begin(), state.begin() + 1, state.end());
+      rot++;
+    }
+  }
+  state_index = bool2int(state);
 
+  cout << (int)ID << ": " << state_index << " ";
+  for (int i = 0; i < state.size(); i++)
+    std::cout << state[i] << ' ';
+  cout << endl;
   // Get vector of all neighbors from closest to furthest
   vector<int> closest = o->request_closest(ID);
 
   // Can I move or are my neighbors moving?
   bool canImove = check_motion(state_ID);
-  if (!canImove) {
-    selected_action = -2;   // Reset actions
-    moving_timer = tadj;   // Reset moving timer
+  if (!canImove)
+  {
+    selected_action = -2; // Reset actions
+    moving_timer = tadj;  // Reset moving timer
   }
 
   // Try to find an action that suits the state, if available (otherwise you are in Sdes or Sblocked)
@@ -59,15 +68,19 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   state_action_row = t.state_action_matrix.find(state_index);
   if (!o->see_if_moving(ID) && state_action_row != t.state_action_matrix.end()) {
     selected_action = *select_randomly(state_action_row->second.begin(), state_action_row->second.end());
+    cout << selected_action;
+    selected_action = wraptosequence(selected_action + rot, 0, 7);
+    cout << " " << rot << " " << selected_action << endl;
   } else if (!o->see_if_moving(ID)) {
     selected_action = -2;
   }
+  cout << o->request_distance(ID, closest[0]) << endl;
 
   // Controller
   moving = false;
   if (canImove) {
     if (selected_action > -1 && moving_timer < timelim) {
-      cout << (int)ID << " taking action" << endl;
+      cout << (int)ID << " taking action " << selected_action << " " << rot << endl;
       actionmotion(selected_action, v_x, v_y);
       moving = true;
     } else {
