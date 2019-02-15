@@ -7,3 +7,8 @@ float Agent::get_position(uint8_t dim)
   }
   return 0;
 }
+
+float Agent::get_orientation()
+{
+  return state[6];
+}

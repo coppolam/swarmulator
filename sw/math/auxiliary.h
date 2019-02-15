@@ -46,6 +46,7 @@ inline static void keepbounded(float &value, float min, float max)
 /**
  * Wrap an integer value to a sequence.
  * For instance if min = 1 and max = 8, and x = 10, then the function returns 2. Because it loops 8+2=10
+ * TODO: this works only if min = 1 so adjust it
  */
 inline static int wraptosequence(int x, int min, int max)
 {

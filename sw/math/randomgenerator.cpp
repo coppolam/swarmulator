@@ -1,4 +1,6 @@
 #include "randomgenerator.h"
+#include <random>
+#include <iostream>
 #include "stdint.h"
 #include "auxiliary.h"
 
@@ -11,7 +13,11 @@ random_generator::random_generator()
 
 float random_generator::uniform_float(float min, float max)
 {
-  return min + ((float)rand() / (RAND_MAX / (max - min))) ;
+  random_device rd;  //Will be used to obtain a seed for the random number engine
+  mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()v
+  uniform_real_distribution<> dis(min, max);
+  return dis(gen);
+  // return min + ((float)rand() / (RAND_MAX / (max - min))) ;
 };
 
 int random_generator::uniform_int(int min, int max)
@@ -62,3 +68,14 @@ vector<float> random_generator::gaussian_float_vector(const int &length, const f
   return v;
 }
 
+vector<float> random_generator::uniform_float_vector(const int &length, const float &min, const float &max)
+{
+  // Generate the random vector
+  vector<float> v(length, 0);
+  for (uint8_t i = 0; i < length; i++)
+  {
+    v[i] = uniform_float(min, max);
+  }
+
+  return v;
+}

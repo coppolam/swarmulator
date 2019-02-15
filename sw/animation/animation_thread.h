@@ -44,9 +44,9 @@ void main_loop_function()
   // Draw all agents
   for (uint8_t ID = 0; ID < nagents; ID++) {
     drawer.draw_agent(ID,
-                      s[ID]->state.at(0),
-                      s[ID]->state.at(1),
-                      s[ID]->orientation);
+                      s[ID]->state.at(0), // pos x 
+                      s[ID]->state.at(1), // pos y
+                      s[ID]->state.at(6)); // orientation
     drawer.draw_velocity_arrow(ID,
                                s[ID]->state.at(0),  // p_x
                                s[ID]->state.at(1),  // p_y

@@ -41,7 +41,8 @@ public:
    * This is used by the OmniscientObserver class in order to simulate the presence of sensors.
    */
   float get_position(uint8_t dim);
-
+  float get_orientation();
+  
   /**
    * The agent class is only the parent class of a child class that specifies the dynamics and control
    * of a given agent (robot/animal/whatever). The state_update function is handled by the child class.
