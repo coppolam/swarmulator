@@ -47,10 +47,10 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   state_index = bool2int(state);
 
-  cout << (int)ID << ": " << state_index << " ";
-  for (int i = 0; i < state.size(); i++)
-    std::cout << state[i] << ' ';
-  cout << endl;
+  // cout << (int)ID << ": " << state_index << ". ";
+  // for (int i = 0; i < state.size(); i++)
+  //   std::cout << state[i] << ' ';
+  // cout << endl;
   // Get vector of all neighbors from closest to furthest
   vector<int> closest = o->request_closest(ID);
 
@@ -68,19 +68,19 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   state_action_row = t.state_action_matrix.find(state_index);
   if (!o->see_if_moving(ID) && state_action_row != t.state_action_matrix.end()) {
     selected_action = *select_randomly(state_action_row->second.begin(), state_action_row->second.end());
-    cout << selected_action;
-    selected_action = wraptosequence(selected_action + rot, 0, 7);
-    cout << " " << rot << " " << selected_action << endl;
+    selected_action = wraptosequence(selected_action + 1 + rot, 1, 8) - 1;
   } else if (!o->see_if_moving(ID)) {
     selected_action = -2;
   }
-  cout << o->request_distance(ID, closest[0]) << endl;
+  // cout << (int)ID << ": ";
+  // for (int i = 0; i < state_ID.size(); i++)
+  //   std::cout << o->request_distance(ID,closest[i]) << ' ';
+  // cout << endl;
 
   // Controller
   moving = false;
   if (canImove) {
     if (selected_action > -1 && moving_timer < timelim) {
-      cout << (int)ID << " taking action " << selected_action << " " << rot << endl;
       actionmotion(selected_action, v_x, v_y);
       moving = true;
     } else {

@@ -71,8 +71,6 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
   b_eq = t.get_preferred_bearing(beta_des, v_b);
   v_r = get_attraction_velocity(o->request_distance(ID, state_ID), b_eq);
   latticemotion(v_r, _v_adj, v_b, b_eq, v_x, v_y);
-  // cout << "ID: " <<  (int)ID << " v_x: " << v_x << " v_y: " << v_y;
-  // cout << endl;
 }
 
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
