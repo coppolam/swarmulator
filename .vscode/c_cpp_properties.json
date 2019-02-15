@@ -43,6 +43,7 @@
                 "${workspaceFolder}/sw/simulation/controllers/lattice",
                 "${workspaceFolder}/build",
                 "${workspaceFolder}/sw/simulation"
+                "${workspaceFolder}/sw/animation"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

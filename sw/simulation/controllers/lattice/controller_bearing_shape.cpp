@@ -20,12 +20,12 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic(
 
 void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
-  v_x = 0;
-  v_y = 0;
+  v_x = 0.0;
+  v_y = 0.0;
 
   float timelim = 1.8 * param->simulation_updatefreq();
-  float tadj    = timelim * 2; // This is actually time for action + t_adj, thus t_adj = time for action
-  float twait   = tadj    * 2; // This is actually time for action + t_adj + t_wait
+  float tadj    = timelim * 2.0; // This is actually time for action + t_adj, thus t_adj = time for action
+  float twait   = tadj    * 2.0; // This is actually time for action + t_adj + t_wait
 
   // Initialize local moving_timer with random variable
   if (moving_timer == 0) {
@@ -47,11 +47,11 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   }
   state_index = bool2int(state);
 
+  // Get vector of all neighbors from closest to furthest
   // cout << (int)ID << ": " << state_index << ". ";
   // for (int i = 0; i < state.size(); i++)
   //   std::cout << state[i] << ' ';
-  // cout << endl;
-  // Get vector of all neighbors from closest to furthest
+  // cout << endl;  
   vector<int> closest = o->request_closest(ID);
 
   // Can I move or are my neighbors moving?
@@ -72,16 +72,12 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   } else if (!o->see_if_moving(ID)) {
     selected_action = -2;
   }
-  // cout << (int)ID << ": ";
-  // for (int i = 0; i < state_ID.size(); i++)
-  //   std::cout << o->request_distance(ID,closest[i]) << ' ';
-  // cout << endl;
 
   // Controller
   moving = false;
   if (canImove) {
     if (selected_action > -1 && moving_timer < timelim) {
-      actionmotion(selected_action, v_x, v_y);
+      // actionmotion(selected_action, v_x, v_y);
       moving = true;
     } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
