@@ -11,14 +11,14 @@ float Controller_Lattice_Basic::f_attraction(const float &u, const float &b_eq)
   float tol = 0.1;
 
   // TODO: move general attraction equation to controller
-  // if (abs(b_eq - atan(_ddes_y / _ddes_x)) < tol || // +- 45 deg
-  // abs(b_eq - M_PI / 2.0 - atan(_ddes_x / _ddes_y)) < tol) { // +- 135 deg
-  // w = log((ddes2 / _kr - 1) / exp(-_ka * ddes2)) / _ka;
-  // } else if (abs(b_eq) - deg2rad(180) < tol) { // 0,180
-  //   w = log((_ddes_y / _kr - 1) / exp(-_ka * _ddes_y)) / _ka;
-  // } else if (abs(b_eq - deg2rad(90)) < tol) {
+  if (abs(b_eq - atan(_ddes_y / _ddes_x)) < tol || // +- 45 deg
+  abs(b_eq - M_PI / 2.0 - atan(_ddes_x / _ddes_y)) < tol) { // +- 135 deg
+  w = log((ddes2 / _kr - 1) / exp(-_ka * ddes2)) / _ka;
+  } else if (abs(b_eq) - deg2rad(180) < tol) { // 0,180
+    w = log((_ddes_y / _kr - 1) / exp(-_ka * _ddes_y)) / _ka;
+  } else if (abs(b_eq - deg2rad(90)) < tol) {
     w = log((_ddes_x / _kr - 1) / exp(-_ka * _ddes_x)) / _ka;
-  // }
+  }
   
   return 1 / (1 + exp(-_ka * (u - w)));
 }
@@ -85,12 +85,10 @@ void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vecto
       }
       v_x = v_x / (float)state_ID.size();
       v_y = v_y / (float)state_ID.size();
-      cout << (int)ID << " " << (float)state_ID.size() << endl;
     }
     else // Focus on the closest one only
     {
       get_lattice_motion(ID, state_ID[0], v_x, v_y);
-      cout << (int)ID << " " << (float)state_ID.size() << endl;
     }
   }
 }

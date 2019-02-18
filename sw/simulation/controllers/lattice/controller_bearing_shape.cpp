@@ -77,7 +77,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   moving = false;
   if (canImove) {
     if (selected_action > -1 && moving_timer < timelim) {
-      // actionmotion(selected_action, v_x, v_y);
+      actionmotion(selected_action, v_x, v_y);
       moving = true;
     } else {
       get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);

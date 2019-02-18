@@ -91,6 +91,13 @@ void keyboard_callback(unsigned char key, int x, int y)
         param->simulation_realtimefactor() = realtimefactor;
       }
       break;
+    case 'n':
+      mtx.try_lock();
+      ti.info_msg("Restarting.");
+      stringstream ss;
+      ss << "pkill swarmulator && ./swarmulator " << nagents;
+      system(ss.str().c_str());
+      break;
   }
 }
 
