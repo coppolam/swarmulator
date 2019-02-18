@@ -68,7 +68,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   state_action_row = t.state_action_matrix.find(state_index);
   if (!o->see_if_moving(ID) && state_action_row != t.state_action_matrix.end()) {
     selected_action = *select_randomly(state_action_row->second.begin(), state_action_row->second.end());
-    selected_action = wraptosequence(selected_action + 1 + rot, 1, 8) - 1;
+    selected_action = wraptosequence(selected_action + 1 + rot, 1, 8) - 1; // North correction
   } else if (!o->see_if_moving(ID)) {
     selected_action = -2;
   }
