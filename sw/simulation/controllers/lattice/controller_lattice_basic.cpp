@@ -69,6 +69,12 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
   b_eq = t.get_preferred_bearing(beta_des, beta);
   v_r = get_attraction_velocity(o->request_distance(ID, state_ID), b_eq);
   latticemotion(v_r, _v_adj, beta, b_eq, v_x, v_y);
+    float b,r, px,py;
+  b = wrapToPi_f(o->request_bearing(ID,  state_ID));
+  r = o->request_distance(ID,  state_ID);
+  polar2cart(r,b,px,py);
+  v_x += 1 * (cos(b) - sin(b));
+  v_y += 1 * (sin(b) + cos(b));
 }
 
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
@@ -88,13 +94,5 @@ void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vecto
     {
       get_lattice_motion(ID, state_ID[0], v_x, v_y);
     }
-  }
-
-  float b,r, px,py;
-  b = wrapToPi_f(o->request_bearing(ID,  closest[0]));
-  r = o->request_distance(ID,  closest[0]);
-  polar2cart(r,b,px,py);
-  v_x += 1 * (cos(b) - sin(b));
-  v_y += 1 * (sin(b) + cos(b));
-  
+  }  
 }
