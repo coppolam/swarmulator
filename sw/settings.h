@@ -5,7 +5,7 @@
  *     Note: this is on top of the main simulator thread
  *****/
 #define ANIMATE // Activate animation thread
-// #define LOG     // Activate logger thread
+#define LOG     // Activate logger thread
 
 // #define REMAIN_CONNECTED // Check that the swarm remains connected
 // #define CHECK_HAPPY // Check whether the global goal is completed

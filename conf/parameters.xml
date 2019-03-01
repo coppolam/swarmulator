@@ -16,7 +16,7 @@
 <visible_centroid>1</visible_centroid>
 
 <!-- Logger global variables -->
-<logger_updatefreq>1</logger_updatefreq>
+<logger_updatefreq>10</logger_updatefreq>
 
 <!-- Additional Parameters-->
 <!--new_parameter_name>default value</new_parameter_name-->

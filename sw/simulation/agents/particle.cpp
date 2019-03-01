@@ -26,21 +26,22 @@ void Particle::state_update()
   moving = controller.moving;
   happy = controller.happy;
 
-  float vxr, vyr;
-  rotate(v_x, v_y, state[6], vxr, vyr);
+  float vx_global, vy_global;
+  rotate_xy(v_x, v_y, state[6], vx_global, vy_global);
   state[6] = wrapToPi_f(state[6] + 0); // Orientation
-
-  // Acceleration
-  state.at(4) = 15 * (vxr - state[2]); // Acceleration x
-  state.at(5) = 15 * (vyr - state[3]); // Acceleration y
+  
+  // Acceleration control
+  float k_a = 15;
+  state.at(4) = k_a * (vx_global - (state[4] * dt)); // Acceleration x global frame
+  state.at(5) = k_a * (vy_global - (state[5] * dt)); // Acceleration y global frame
 
   // Velocity
-  state.at(2) = state[4] * dt; // Velocity x
-  state.at(3) = state[5] * dt; // Velocity y
+  state.at(2) = v_x; // Velocity x local frame
+  state.at(3) = v_y; // Velocity y local fram
 
   // Position
-  state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x
-  state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y
+  state.at(0) += (state[4] * dt) * dt + 0.5 * state[4] * pow(dt, 2); // Position x global frame
+  state.at(1) += (state[5] * dt) * dt + 0.5 * state[5] * pow(dt, 2); // Position y global frame
 
 };
 

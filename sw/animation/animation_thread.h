@@ -7,6 +7,7 @@
 #include "draw.h"
 #include "mousefunctions.h"
 #include "terminalinfo.h"
+#include "trigonometry.h"
 
 bool animation_running = false;
 
@@ -41,8 +42,10 @@ void main_loop_function()
     drawer.draw_axes_text(i);
   }
 
+  float vx,vy;
   // Draw all agents
   for (uint8_t ID = 0; ID < nagents; ID++) {
+    rotate_xy(s[ID]->state.at(2), s[ID]->state.at(3), s[ID]->state.at(6), vx, vy);
     drawer.draw_agent(ID,
                       s[ID]->state.at(0), // pos x 
                       s[ID]->state.at(1), // pos y
@@ -51,8 +54,8 @@ void main_loop_function()
                                s[ID]->state.at(0),  // p_x
                                s[ID]->state.at(1),  // p_y
                                0.0,                 // p_z
-                               s[ID]->state.at(2),  // v_x
-                               s[ID]->state.at(3)); // v_y
+                               vx,  // v_x
+                               vy); // v_y
   }
 
   // Swap buffers (color buffers, makes previous render visible)
