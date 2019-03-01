@@ -9,7 +9,7 @@
 Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic()
 {
   // Define here the state-action matrix used by the agents
-  string s = "./conf/state_action_matrices/state_action_matrix_triangle4_nonorth.txt";
+  string s = "./conf/state_action_matrices/state_action_matrix_disperse_greedy.txt";
   t.set_state_action_matrix(s);
   moving_timer = 0;
   beta_des.push_back(0.0);
