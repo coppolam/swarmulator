@@ -94,7 +94,7 @@ inline static void cart2polar(const float &x, const float &y, float &radius, flo
 /**
  * Convert cartesian (x,y) coordinates to polar (r,theta) coordinates
  */
-inline static void rotate(const float &x, const float &y, const float &theta, float &xr, float &yr)
+inline static void rotate_xy(const float &x, const float &y, const float &theta, float &xr, float &yr)
 {
   xr = x * cos(theta) - y * sin(theta);
   yr = x * sin(theta) + y * cos(theta);

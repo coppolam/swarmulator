@@ -17,12 +17,13 @@ void txtwrite::txtwrite_state(ofstream &logfile)
   vector<Agent *> state_buff = s;
 
   for (uint8_t i = 0; i < nagents; i++) {
-    logfile << i + 1 << " ";
-    logfile << t.str() << " "; // divide by 1000000.0
-    logfile << state_buff[i]->state.at(0) << " "
+    logfile << t.str() << " " // divide by 1000000.0
+            << i + 1 << " "
+            << state_buff[i]->state.at(0) << " "
             << state_buff[i]->state.at(1) << " "
             << state_buff[i]->state.at(2) << " "
-            << state_buff[i]->state.at(3) << endl;
+            << state_buff[i]->state.at(3) << " "
+            << state_buff[i]->state.at(6) << endl;
   }
 }
 
