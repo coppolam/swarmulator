@@ -48,11 +48,6 @@ void Particle::animation()
 {
   draw d;
   
-  if (abs(state[6] - 0.0) < 0.01) {
-    d.draw_circle(param->scale());
-  }
-  else {
-    d.draw_triangle(param->scale());
-  }
+  d.draw_triangle(param->scale());
   d.draw_circle_loop(param->scale());
 }
