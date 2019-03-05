@@ -17,13 +17,13 @@ void txtwrite::txtwrite_state(ofstream &logfile)
   vector<Agent *> state_buff = s;
 
   for (uint8_t i = 0; i < nagents; i++) {
-    logfile << t.str() << " " // divide by 1000000.0
-            << i + 1 << " "
-            << state_buff[i]->state.at(0) << " "
-            << state_buff[i]->state.at(1) << " "
-            << state_buff[i]->state.at(2) << " "
-            << state_buff[i]->state.at(3) << " "
-            << state_buff[i]->state.at(6) << endl;
+    logfile << t.str() << " " // time
+            << i + 1 << " " // ID
+            << state_buff[i]->state.at(0) << " " // p_x global
+            << state_buff[i]->state.at(1) << " " // p_y global
+            << state_buff[i]->state.at(2) << " " // v_x local frame
+            << state_buff[i]->state.at(3) << " " // v_y local frame
+            << state_buff[i]->state.at(6) << endl; // orientation global
   }
 }
 

@@ -34,6 +34,8 @@ public:
   float orientation;   // Orientation vector
   bool moving;
   bool happy;
+  float manualx,manualy;
+  bool manual;
   CONTROLLER controller; // Controller used by the agent. Defined in settings.h.
 
   /**
