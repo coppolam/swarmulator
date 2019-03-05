@@ -147,23 +147,49 @@ void mouse_click_callback(int button, int state, int x, int y)
   }
 }
 
-void catchKey(int key, int x, int y)
-{
-    s[0]->manual = true;
-
-    if(key == GLUT_KEY_LEFT){
-        s[0]->manualy = -3;}
-    else if(key == GLUT_KEY_RIGHT){
-        s[0]->manualy = 3;
-        }
-    else if(key == GLUT_KEY_DOWN){
-        s[0]->manualx = -3;}
-
-    else if(key == GLUT_KEY_UP){
-        s[0]->manualx = 3;
-    } 
+void catchKey_arrow(int key, int x,int y) {
+  s[0]->manual = true;
+  if(key == GLUT_KEY_LEFT){
+    s[0]->manualy = -0.1;
+    s[0]->manualx = 0;
+  }
+  else if(key == GLUT_KEY_RIGHT){
+    s[0]->manualy = 0.1;
+    s[0]->manualx = 0;
+  }
+  else if(key == GLUT_KEY_DOWN){
+    s[0]->manualx = -0.1;
+    s[0]->manualy = 0;
+  }
+  else if(key == GLUT_KEY_UP){
+    s[0]->manualx = 0.1;
+    s[0]->manualy = 0;
+  }
 }
 
+void catckKey_arrow_up(int key, int x,int y)
+{
+  s[0]->manualx = 0;
+  s[0]->manualy = 0;
+}
+
+void psi_callback(unsigned char key, int x,int y)
+{
+switch (key) {
+    case '1':
+      s[0]->manualpsi_delta = 0.1;
+      break;
+    case '2':
+      s[0]->manualpsi_delta = -0.1;
+      break;
+}
+
+}
+void psi_callback_up(unsigned char key, int x,int y)
+{
+
+  s[0]->manualpsi_delta = 0;
+}
 /**
  * mouse_draganddrop handles the drag and drop functionality.
  */
@@ -172,8 +198,11 @@ void mouse_draganddrop()
   glutMotionFunc(mouse_motion_callback);
   glutPassiveMotionFunc(mouse_motion_callback_passive);
   glutMouseFunc(mouse_click_callback);
-  glutSpecialFunc(catchKey);
+  glutSpecialFunc(catchKey_arrow);
+  glutSpecialUpFunc(catckKey_arrow_up);
   glutKeyboardFunc(keyboard_callback);
+  glutKeyboardFunc(psi_callback);
+  glutKeyboardUpFunc(psi_callback_up);
   zoom_scale = -10 / (-10 + zoom);
   glTranslatef(center_x, center_y, -10 + zoom);
 }

@@ -18,12 +18,12 @@ void txtwrite::txtwrite_state(ofstream &logfile)
 
   for (uint8_t i = 0; i < nagents; i++) {
     logfile << t.str() << " " // time
-            << i + 1 << " " // ID
-            << state_buff[i]->state.at(0) << " " // p_x global
-            << state_buff[i]->state.at(1) << " " // p_y global
-            << state_buff[i]->state.at(2) << " " // v_x local frame
-            << state_buff[i]->state.at(3) << " " // v_y local frame
-            << state_buff[i]->state.at(6) << endl; // orientation global
+            << i + 1 << " "; // ID
+            // log states
+            for (uint8_t j = 0; j < 8; j++) {
+            logfile << state_buff[i]->state.at(j) << " ";
+            }
+            logfile << endl;
   }
 }
 

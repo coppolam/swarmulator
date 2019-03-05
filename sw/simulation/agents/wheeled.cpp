@@ -8,7 +8,7 @@ Wheeled::Wheeled(int i, const vector<float> &s, float tstep)
   ID = i;
   dt = tstep;
   orientation = 0.0;
-  controller.set_saturation(1.0);
+  controller.set_saturation(0.5);
 }
 
 void Wheeled::state_update()
