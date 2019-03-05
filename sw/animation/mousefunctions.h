@@ -147,6 +147,23 @@ void mouse_click_callback(int button, int state, int x, int y)
   }
 }
 
+void catchKey(int key, int x, int y)
+{
+    s[0]->manual = true;
+
+    if(key == GLUT_KEY_LEFT){
+        s[0]->manualy = -3;}
+    else if(key == GLUT_KEY_RIGHT){
+        s[0]->manualy = 3;
+        }
+    else if(key == GLUT_KEY_DOWN){
+        s[0]->manualx = -3;}
+
+    else if(key == GLUT_KEY_UP){
+        s[0]->manualx = 3;
+    } 
+}
+
 /**
  * mouse_draganddrop handles the drag and drop functionality.
  */
@@ -155,6 +172,7 @@ void mouse_draganddrop()
   glutMotionFunc(mouse_motion_callback);
   glutPassiveMotionFunc(mouse_motion_callback_passive);
   glutMouseFunc(mouse_click_callback);
+  glutSpecialFunc(catchKey);
   glutKeyboardFunc(keyboard_callback);
   zoom_scale = -10 / (-10 + zoom);
   glTranslatef(center_x, center_y, -10 + zoom);
