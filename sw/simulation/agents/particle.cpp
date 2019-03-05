@@ -36,7 +36,7 @@ void Particle::state_update()
   
   // state.at(6) += dpsi;
   // state.at(6) = wrapToPi_f(state[6]); // Orientation
-  state.at(7) += dpsi_rate;
+  state.at(7) = dpsi_rate;
   state.at(6) += dpsi_rate*dt;
   state.at(6) = wrapToPi_f(state[6]); // Orientation
 

@@ -64,8 +64,9 @@ void keyboard_callback(unsigned char key, int x, int y)
         ti.info_msg("Resuming.");
         mtx.unlock();
         paused = false;
-        break;
       }
+      s[0]->manual = false;
+      break;
     case 's':
       ti.info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
       mtx.try_lock();
@@ -91,6 +92,12 @@ void keyboard_callback(unsigned char key, int x, int y)
         param->simulation_realtimefactor() = realtimefactor;
       }
       break;
+    case '1':
+      s[0]->manualpsi_delta = 0.1;
+      break;
+    case '2':
+      s[0]->manualpsi_delta = -0.1;
+      break;
     case 'n':
       mtx.try_lock();
       ti.info_msg("Restarting.");
@@ -98,9 +105,9 @@ void keyboard_callback(unsigned char key, int x, int y)
       ss << "pkill swarmulator && ./swarmulator " << nagents;
       system(ss.str().c_str());
       break;
-  }
 }
 
+  }
 /**
  * Detects the mouse motion and adjusts the center of the animation
  */
@@ -173,23 +180,11 @@ void catckKey_arrow_up(int key, int x,int y)
   s[0]->manualy = 0;
 }
 
-void psi_callback(unsigned char key, int x,int y)
-{
-switch (key) {
-    case '1':
-      s[0]->manualpsi_delta = 0.1;
-      break;
-    case '2':
-      s[0]->manualpsi_delta = -0.1;
-      break;
-}
-
-}
 void psi_callback_up(unsigned char key, int x,int y)
 {
-
   s[0]->manualpsi_delta = 0;
 }
+
 /**
  * mouse_draganddrop handles the drag and drop functionality.
  */
@@ -201,7 +196,6 @@ void mouse_draganddrop()
   glutSpecialFunc(catchKey_arrow);
   glutSpecialUpFunc(catckKey_arrow_up);
   glutKeyboardFunc(keyboard_callback);
-  glutKeyboardFunc(psi_callback);
   glutKeyboardUpFunc(psi_callback_up);
   zoom_scale = -10 / (-10 + zoom);
   glTranslatef(center_x, center_y, -10 + zoom);
