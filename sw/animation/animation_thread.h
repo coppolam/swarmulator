@@ -42,11 +42,9 @@ void main_loop_function()
     drawer.draw_axes_text(i);
   }
 
-  float vx,vy;
   // Draw all agents
   for (uint8_t ID = 0; ID < nagents; ID++) {
     // Rotate local frame velocity (in state) to global frame
-    rotate_xy(s[ID]->state.at(2), s[ID]->state.at(3), s[ID]->state.at(6), vx, vy);
     drawer.draw_agent(ID,
                       s[ID]->state.at(0), // p_x global
                       s[ID]->state.at(1), // p_y global
@@ -55,8 +53,8 @@ void main_loop_function()
                                s[ID]->state.at(0), // p_x global
                                s[ID]->state.at(1), // p_y global
                                0.0, // p_z global
-                               vx,  // v_x global
-                               vy); // v_y global
+                               s[ID]->state.at(2),  // v_x global
+                               s[ID]->state.at(3)); // v_y global
   }
 
   // Swap buffers (color buffers, makes previous render visible)

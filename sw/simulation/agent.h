@@ -36,6 +36,7 @@ public:
   bool happy;
   float manualx,manualy;
   bool manual;
+  float manualpsi_delta;
   CONTROLLER controller; // Controller used by the agent. Defined in settings.h.
 
   /**
