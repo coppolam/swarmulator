@@ -4,7 +4,7 @@
 
 <!-- Simulation global variables -->
 <simulation_updatefreq>30</simulation_updatefreq>
-<simulation_realtimefactor>5</simulation_realtimefactor>
+<simulation_realtimefactor>10</simulation_realtimefactor>
 
 <!-- Animation global variables -->
 <window_width>800</window_width>

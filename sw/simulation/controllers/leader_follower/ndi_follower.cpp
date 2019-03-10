@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-
+#include "trigonometry.h"
 #define NDI_METHOD 1
 // method 0 is first order approximation, no acceleration or yaw rate used
 // method 1 is first order approximation, acceleration and yaw rate used, but yaw rate not taken into account in integral
@@ -15,10 +15,6 @@
 #define UWB_NDI_DELAY 4
 #endif
 
-#define TRAJ_EPS 0.5
-#define TRAJ_LENGTH 4
-
-
 extern "C" {
 #define MAKE_MATRIX_PTR(_ptr, _mat, _rows) \
   float * _ptr[_rows]; \
@@ -26,7 +22,15 @@ extern "C" {
     int __i; \
     for (__i = 0; __i < _rows; __i++) { _ptr[__i] = &_mat[__i][0]; } \
   }
-
+/** a = 0 */
+static inline void float_mat_print(float **a, int m, int n)
+{
+  int i, j;
+  for (i = 0; i < m; i++) {
+    for (j = 0; j < n; j++) { printf("%2.f",a[i][j]) ; }
+  }
+  printf("\n");
+}
 /** a = 0 */
 inline void float_mat_zero(float **a, int m, int n)
 {
@@ -80,7 +84,7 @@ bool ndi_following_leader = false;
 bool ndi_run_computation = true;
 int traj_targetindex = 0;
 
-#define UWB_LOWPASS_CUTOFF_FREQUENCY_YAWR 8
+// #define UWB_LOWPASS_CUTOFF_FREQUENCY_YAWR 8
 // Butterworth2LowPass uwb_butter_yawr;
 
 
@@ -126,6 +130,8 @@ void ndi_follower::uwb_follower_control_periodic(void)
     float oldv2 = accessCircularFloatArrElement(ndihandle.v2arr, 0);
     oldx = oldx - computeNdiFloatIntegral(ndihandle.u1arr, curtime);
     oldy = oldy - computeNdiFloatIntegral(ndihandle.v1arr, curtime);
+
+    cout << newu1 << " " << newv1 << " " <<endl;
 
     float Minv[2][2];
     MAKE_MATRIX_PTR(_MINV, Minv, 2);
@@ -178,40 +184,52 @@ void ndi_follower::uwb_follower_control_periodic(void)
 //   return !temp; // Exit false (for call in flight plan)
 // }
 
-OmniscientObserver *omn;
 void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &vy_des)
 {
   // int32_t ac_id, float time, float range, float xin, float yin, float zin __attribute__((unused)), 
   // float u1in, float v1in, float u2in, float v2in, float gammain, float trackedAx, float trackedAy, float trackedYawr){
   
+  if (ID > 0 && simtime_seconds > 10){
   // Store data from leader's position estimate
   if (ndihandle.data_entries == NDI_PAST_VALS) {
     ndihandle.data_entries--;
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
   }
-  ndihandle.xarr[ndihandle.data_end] = s[ID]->get_position(0);
-  ndihandle.yarr[ndihandle.data_end] = s[ID]->get_position(1);
-  ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
-  ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
-  ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
-  ndihandle.v2arr[ndihandle.data_end] = s[0]->get_state(3);
+
+  float px,py,vx,vy,ax,ay;
+
+  float vx0,vy0,ax0,ay0;
+  rotate_xy(o->request_distance_dim(ID,0,0), o->request_distance_dim(ID,0,1), s[ID]->get_state(6), px, py);
+  rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), s[ID]->get_state(6), vx, vy);
+  rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), s[ID]->get_state(6), ax, ay);
+
+  rotate_xy(s[0]->get_state(2), s[0]->get_state(3), s[0]->get_state(6), vx0, vy0);
+  rotate_xy(s[0]->get_state(4), s[0]->get_state(5), s[0]->get_state(6), ax0, ay0);
+  
+  ndihandle.xarr[ndihandle.data_end] = px;//o->request_distance_dim(ID,0,0);
+  ndihandle.yarr[ndihandle.data_end] = py;//o->request_distance_dim(ID,0,1);
+  ndihandle.u1arr[ndihandle.data_end] = vx; //s[ID]->get_state(2);
+  ndihandle.v1arr[ndihandle.data_end] = vy; //s[ID]->get_state(3);
+  ndihandle.u2arr[ndihandle.data_end] = vx0; //s[0]->get_state(2);
+  ndihandle.v2arr[ndihandle.data_end] = vx0; //s[0]->get_state(3);
   ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7); //update_butterworth_2_low_pass(&uwb_butter_yawr,stateGetBodyRates_f()->r);
   ndihandle.r2arr[ndihandle.data_end] = s[0]->get_state(7);
-  ndihandle.ax1arr[ndihandle.data_end] = s[ID]->get_state(4);
-  ndihandle.ay1arr[ndihandle.data_end] = s[ID]->get_state(5);
-  ndihandle.ax2arr[ndihandle.data_end] = s[0]->get_state(4);
-  ndihandle.ay2arr[ndihandle.data_end] = s[0]->get_state(5);
-  ndihandle.gamarr[ndihandle.data_end] = s[0]->get_state(6);
+  ndihandle.ax1arr[ndihandle.data_end] = ax;//s[ID]->get_state(4);
+  ndihandle.ay1arr[ndihandle.data_end] = ay;//s[ID]->get_state(5);
+  ndihandle.ax2arr[ndihandle.data_end] = ax0;//s[0]->get_state(4);
+  ndihandle.ay2arr[ndihandle.data_end] = ay0;//s[0]->get_state(5);
+  ndihandle.gamarr[ndihandle.data_end] = wrapToPi_f(o->request_bearing(ID,0)); //s[0]->reqiest_relativ(6);
   ndihandle.tarr[ndihandle.data_end] = simtime_seconds;
   ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
   ndihandle.data_entries++;
   
   uwb_follower_control_periodic();
 
-  if (ID > 0){
   vx_des = ndihandle.commands[0];
   vy_des = ndihandle.commands[1];
+  
+  // cout << ndihandle.gamarr[ndihandle.data_end] << " " << o->request_bearing(1,0) << endl;
+
   } 
 
-  cout << vx_des << " " << vy_des << endl;
 }
