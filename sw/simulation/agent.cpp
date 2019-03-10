@@ -12,3 +12,8 @@ float Agent::get_orientation()
 {
   return state[6];
 }
+
+float Agent::get_state(uint8_t i)
+{
+  return state[i];
+}

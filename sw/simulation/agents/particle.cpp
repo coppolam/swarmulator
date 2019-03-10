@@ -1,6 +1,9 @@
 #include "particle.h"
 #include "trigonometry.h"
 #include "randomgenerator.h"
+// extern "C" {
+#include "ndi_follower.h"
+// }
 #include "draw.h"
 
 Particle::Particle(int i, vector<float> s, float tstep)

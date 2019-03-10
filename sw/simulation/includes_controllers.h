@@ -4,5 +4,6 @@
 #include "controller_cartesian.h"
 #include "controller_bearing_shape.h"
 #include "controller_lattice.h"
+#include "ndi_follower.h"
 
 #endif /*INCLUDES_CONTROLLERS_H*/
