@@ -43,14 +43,14 @@ void Particle::state_update()
 
   // Acceleration control
   float ka = 1;
-  state.at(4) = ka * (vx_global - state[2]);
-  state.at(5) = ka * (vy_global - state[3]);
+  state.at(4) = ka * (vx_global - state[2]); // Acceleration global frame
+  state.at(5) = ka * (vy_global - state[3]); // Acceleration global frame
   moving = controller.moving;
   happy = controller.happy;
 
   // Velocity
-  state.at(2) += state[4] * dt; // Velocity x local frame
-  state.at(3) += state[5] * dt; // Velocity y local frame
+  state.at(2) += state[4] * dt; // Velocity x global frame
+  state.at(3) += state[5] * dt; // Velocity y global frame
   
   // Position
   state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x global frame
