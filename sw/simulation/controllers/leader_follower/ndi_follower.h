@@ -36,7 +36,7 @@ typedef struct ndihandler {
   int data_entries = 0;
   float commands[2];
   float commandscap[2];
-  float maxcommand;
+  float maxcommand = 1.5;
 } ndihandler;
 
 class ndi_follower: public Controller
@@ -50,28 +50,14 @@ public:
   ~ndi_follower() {};
 
   ndihandler ndihandle;
-// Tuned gains, as used in experiments from paper described in pre-amble comments
-// ndihandler ndihandle = {delay: 4,
-//                        tau_x: 3,
-//                        tau_y: 3,
-//                        wn_x: 0.9,
-//                        wn_y: 0.9,
-//                        eps_x: 0.28,
-//                        eps_y: 0.28,
-//                        Kp: -1.5,
-//                        Ki: 0,
-//                        Kd: -3
-  // data_start = 0,
-  // data_end = 0,
-  // data_entries = 0,
-  // maxcommand = 1.5
-  // };
+
   float accessCircularFloatArrElement(float arr[], int index);
   float computeNdiFloatIntegral(float ndiarr[], float curtime);
   void cleanNdiValues(float tcur);
   bool hover_guided(float h);
   bool ndi_follow_leader(void);
   void uwb_follower_control_periodic(void);
+  void bindNorm(void);
   virtual void get_velocity_command(const uint8_t ID, float &x_des, float &vy_des);
 };
 
