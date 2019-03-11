@@ -51,13 +51,12 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // cout << (int)ID << ": " << state_index << ". ";
   // for (int i = 0; i < state.size(); i++)
   //   std::cout << state[i] << ' ';
-  // cout << endl;  
+  // cout << endl;
   vector<int> closest = o->request_closest(ID);
 
   // Can I move or are my neighbors moving?
   bool canImove = check_motion(state_ID);
-  if (!canImove)
-  {
+  if (!canImove) {
     selected_action = -2; // Reset actions
     moving_timer = tadj;  // Reset moving timer
   }

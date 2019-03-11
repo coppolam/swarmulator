@@ -17,9 +17,9 @@ float Controller_Lattice_Basic::f_attraction(const float &u, const float &b_eq)
   // } else if (abs(b_eq) - deg2rad(180) < tol) { // 0,180
   //   w = log((_ddes_y / _kr - 1) / exp(-_ka * _ddes_y)) / _ka;
   // } else if (abs(b_eq - deg2rad(90)) < tol) {
-    // w = log((_ddes_x / _kr - 1) / exp(-_ka * _ddes_x)) / _ka;
+  // w = log((_ddes_x / _kr - 1) / exp(-_ka * _ddes_x)) / _ka;
   // }
-  
+
   return 1 / (1 + exp(-_ka * (u - w)));
 }
 
@@ -51,10 +51,8 @@ void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v
 bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
 {
   bool canImove = true;
-  for (uint8_t i = 0; i < state_ID.size(); i++)
-  {
-    if (o->see_if_moving(state_ID[i]))
-    {
+  for (uint8_t i = 0; i < state_ID.size(); i++) {
+    if (o->see_if_moving(state_ID[i])) {
       // Somebody nearby is already moving
       canImove = false;
     }
@@ -69,30 +67,25 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
   b_eq = t.get_preferred_bearing(beta_des, beta);
   v_r = get_attraction_velocity(o->request_distance(ID, state_ID), b_eq);
   latticemotion(v_r, _v_adj, beta, b_eq, v_x, v_y);
-  float b,r, px,py;
+  float b, r, px, py;
   b = wrapToPi_f(o->request_bearing(ID,  state_ID));
   r = o->request_distance(ID,  state_ID);
-  polar2cart(r,b,px,py);
-  v_x += 0.3 * (cos(b) - sin(b));
-  v_y += 0.3 * (sin(b) + cos(b));
+  polar2cart(r, b, px, py);
+  v_x += 1 * (cos(b) - sin(b));
+  v_y += 1 * (sin(b) + cos(b));
 }
 
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
 {
-  if (!state_ID.empty())
-  {
-    if (o->request_distance(ID, closest[0]) < d_safe) // If all are further than the safety distance
-    {
-      for (size_t i = 0; i < state_ID.size(); i++)
-      {
+  if (!state_ID.empty()) {
+    if (o->request_distance(ID, closest[0]) < d_safe) { // If all are further than the safety distance
+      for (size_t i = 0; i < state_ID.size(); i++) {
         get_lattice_motion(ID, state_ID[i], v_x, v_y);
       }
       v_x = v_x / (float)state_ID.size();
       v_y = v_y / (float)state_ID.size();
-    }
-    else // Focus on the closest one only
-    {
+    } else { // Focus on the closest one only
       get_lattice_motion(ID, state_ID[0], v_x, v_y);
     }
-  }  
+  }
 }
