@@ -73,8 +73,8 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
   b = wrapToPi_f(o->request_bearing(ID,  state_ID));
   r = o->request_distance(ID,  state_ID);
   polar2cart(r,b,px,py);
-  v_x += 1 * (cos(b) - sin(b));
-  v_y += 1 * (sin(b) + cos(b));
+  v_x += 0.3 * (cos(b) - sin(b));
+  v_y += 0.3 * (sin(b) + cos(b));
 }
 
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
