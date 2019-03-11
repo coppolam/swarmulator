@@ -16,9 +16,11 @@
 #define NDI_DELAY 4
 #endif
 
+/** Select method
+ Method 0: First order approximation, no acceleration or yaw rate used
+ Method 1: First order approximation, acceleration and yaw rate used, but yaw rate not taken into account in integral
+*/
 #define NDI_METHOD 1
-// method 0 is first order approximation, no acceleration or yaw rate used
-// method 1 is first order approximation, acceleration and yaw rate used, but yaw rate not taken into account in integral
 
 // Initilizer
 ndi_follower::ndi_follower(): Controller() {
@@ -178,14 +180,11 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     // All local frame values for position, velocity, acceleration
     float px, py, vx, vy, ax, ay;
     float vx0, vy0, ax0, ay0;
-    float r,b;
-    r = o->request_distance(ID,0);
-    b = o->request_bearing(ID,0);
-    polar2cart(r,b,px,py);
-    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx, vy);
-    rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), ax, ay);
-    rotate_xy(s[0]->get_state(2), s[0]->get_state(3), -s[0]->get_state(6), vx0, vy0);
-    rotate_xy(s[0]->get_state(4), s[0]->get_state(5), -s[0]->get_state(6), ax0, ay0);
+    polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0),px,py);
+    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
+    rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), ax,  ay);
+    rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[0 ]->get_state(6), vx0, vy0);
+    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0 ]->get_state(6), ax0, ay0);
 
 #if COMMAND_LOCAL
     ndihandle.xarr[ndihandle.data_end] = px;
@@ -219,7 +218,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
     ndihandle.data_entries++;
 
-    if (ID > 0 && simtime_seconds > 10) {
+    if (ID > 0 && simtime_seconds > NDI_DELAY) {
       uwb_follower_control_periodic();
       vx_des = ndihandle.commands[0];
       vy_des = ndihandle.commands[1];
