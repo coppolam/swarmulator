@@ -214,11 +214,11 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     r = o->request_distance(ID,0);
     b = o->request_bearing(ID,0);
     polar2cart(r,b,px,py);
-    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), s[ID]->get_state(6), vx, vy);
-    rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), s[ID]->get_state(6), ax, ay);
+    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx, vy);
+    rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), ax, ay);
 
-    rotate_xy(s[0]->get_state(2), s[0]->get_state(3), s[0]->get_state(6), vx0, vy0);
-    rotate_xy(s[0]->get_state(4), s[0]->get_state(5), s[0]->get_state(6), ax0, ay0);
+    rotate_xy(s[0]->get_state(2), s[0]->get_state(3), -s[0]->get_state(6), vx0, vy0);
+    rotate_xy(s[0]->get_state(4), s[0]->get_state(5), -s[0]->get_state(6), ax0, ay0);
     // px = o->request_distance_dim(ID, 0, 0);
     // py = o->request_distance_dim(ID, 1, 0);
     // vx = s[ID]->get_state(2);
