@@ -4,17 +4,24 @@
 #include <string>
 #include <sstream>
 #include "trigonometry.h"
-#define NDI_METHOD 0
+
 // method 0 is first order approximation, no acceleration or yaw rate used
 // method 1 is first order approximation, acceleration and yaw rate used, but yaw rate not taken into account in integral
 
 #define NDI_MOST_RECENT ndihandle.data_entries-1
 
-// Delay of trajectory with respect to the leader, if not specified in airframe file
-#ifndef UWB_NDI_DELAY
-#define UWB_NDI_DELAY 4
+// Delay of trajectory with respect to the leader
+#ifndef NDI_DELAY
+#define NDI_DELAY 4
 #endif
 
+#define NDI_METHOD 1
+
+ndi_follower::ndi_follower(): Controller() {
+  ndihandle.delay = NDI_DELAY;
+};
+
+// Imported from Paparazzi to double check /  verify code more natively
 extern "C" {
 #define MAKE_MATRIX_PTR(_ptr, _mat, _rows) \
   float * _ptr[_rows]; \
@@ -79,23 +86,6 @@ float ndi_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
   return integral;
 }
 
-
-bool ndi_following_leader = false;
-bool ndi_run_computation = true;
-int traj_targetindex = 0;
-
-// #define UWB_LOWPASS_CUTOFF_FREQUENCY_YAWR 8
-// Butterworth2LowPass uwb_butter_yawr;
-
-
-// static abi_event relative_localization_event;
-
-// extern void uwb_follower_control_init(void)
-// {
-// init_butterworth_2_low_pass(&uwb_butter_yawr, UWB_LOWPASS_CUTOFF_FREQUENCY_YAWR, 1. / PERIODIC_FREQUENCY, 0.0);
-// AbiBindMsgRELATIVE_LOCALIZATION(ABI_BROADCAST, &relative_localization_event, relative_localization_callback);
-// }
-
 void ndi_follower::cleanNdiValues(float tcur)
 {
   int curentries = ndihandle.data_entries;
@@ -129,8 +119,6 @@ void ndi_follower::uwb_follower_control_periodic(void)
     float oldv2 = accessCircularFloatArrElement(ndihandle.v2arr, 0);
     oldx = oldx - computeNdiFloatIntegral(ndihandle.u1arr, curtime);
     oldy = oldy - computeNdiFloatIntegral(ndihandle.v1arr, curtime);
-
-    // cout << newu1 << " " << newv1 << " " << endl;
 
     float Minv[2][2];
     MAKE_MATRIX_PTR(_MINV, Minv, 2);
@@ -166,49 +154,16 @@ void ndi_follower::uwb_follower_control_periodic(void)
   }
 }
 
-
-/**
-  * Set velocity in X Y Z for guided mode based on the NDI outputs.
-  * This can be called from the flight plan when desired.
-  */
-// bool ndi_follow_leader(void)
-// {
-//   bool temp = true;
-
-//   // Set horizontal speed X and Y
-//   if  (stateGetPositionEnu_f()->z > 1.0) {
-//     temp &= guidance_h_set_guided_vel(ndihandle.commands[0], ndihandle.commands[1]);
-//   }
-
-//   return !temp; // Exit false (for call in flight plan)
-// }
-
-void ndi_follower::bindNorm(void)
-{
-	float normcom = sqrt(ndihandle.commands[1]*ndihandle.commands[1] + ndihandle.commands[0]*ndihandle.commands[0]);
-	if(normcom>ndihandle.maxcommand){
-		ndihandle.commandscap[0] = ndihandle.commands[0] * ndihandle.maxcommand/normcom;
-		ndihandle.commandscap[1] = ndihandle.commands[1] * ndihandle.maxcommand/normcom;
-	}
-	else{
-		ndihandle.commandscap[0] = ndihandle.commands[0];
-		ndihandle.commandscap[1] = ndihandle.commands[1];
-	}
-}
-
 void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &vy_des)
 {
-  // int32_t ac_id, float time, float range, float xin, float yin, float zin __attribute__((unused)),
-  // float u1in, float v1in, float u2in, float v2in, float gammain, float trackedAx, float trackedAy, float trackedYawr){
-
     // Store data from leader's position estimate
     if (ndihandle.data_entries == NDI_PAST_VALS) {
       ndihandle.data_entries--;
       ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
     }
 
+    // All local frame values for position, velocity, acceleration
     float px, py, vx, vy, ax, ay;
-
     float vx0, vy0, ax0, ay0;
     float r,b;
     r = o->request_distance(ID,0);
@@ -216,24 +171,14 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     polar2cart(r,b,px,py);
     rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx, vy);
     rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), ax, ay);
-
     rotate_xy(s[0]->get_state(2), s[0]->get_state(3), -s[0]->get_state(6), vx0, vy0);
     rotate_xy(s[0]->get_state(4), s[0]->get_state(5), -s[0]->get_state(6), ax0, ay0);
-    // px = o->request_distance_dim(ID, 0, 0);
-    // py = o->request_distance_dim(ID, 1, 0);
-    // vx = s[ID]->get_state(2);
-    // vy = s[ID]->get_state(3);
-    // ax = s[ID]->get_state(4);
-    // ay = s[ID]->get_state(5);
-    // vx0 = s[0]->get_state(2);
-    // vy0 = s[0]->get_state(3);
-    // ax0 = s[0]->get_state(4);
-    // ay0 = s[0]->get_state(5);
+
     ndihandle.xarr[ndihandle.data_end] = px;//o->request_distance_dim(ID,0,0);
     ndihandle.yarr[ndihandle.data_end] = py;//o->request_distance_dim(ID,0,1);
-    ndihandle.u1arr[ndihandle.data_end] = vx; //s[ID]->get_state(2);
-    ndihandle.v1arr[ndihandle.data_end] = vy; //s[ID]->get_state(3);
-    ndihandle.u2arr[ndihandle.data_end] = vx0; //s[0]->get_state(2);
+    ndihandle.u1arr[ndihandle.data_end] = vx;//s[ID]->get_state(2);
+    ndihandle.v1arr[ndihandle.data_end] = vy;//s[ID]->get_state(3);
+    ndihandle.u2arr[ndihandle.data_end] = vx0;//s[0]->get_state(2);
     ndihandle.v2arr[ndihandle.data_end] = vy0; //s[0]->get_state(3);
     ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7); //update_butterworth_2_low_pass(&uwb_butter_yawr,stateGetBodyRates_f()->r);
     ndihandle.r2arr[ndihandle.data_end] = s[0]->get_state(7);
@@ -246,16 +191,9 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.data_entries++;
 
     if (ID > 0 && simtime_seconds > 10) {
-
-    // if (abs(px) > 3) {
-        // cout << ndihandle.gamarr[ndihandle.data_end]  << endl;
-      // }
-    uwb_follower_control_periodic();
-    bindNorm();
-    vx_des = ndihandle.commands[0];
-    vy_des = ndihandle.commands[1];
-          cout << vx_des << "  " << vy_des << " " << px << " " << py << endl;
-
+      uwb_follower_control_periodic();
+      vx_des = ndihandle.commands[0];
+      vy_des = ndihandle.commands[1];
   }
 
 }

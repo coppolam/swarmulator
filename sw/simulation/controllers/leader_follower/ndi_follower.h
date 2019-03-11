@@ -7,7 +7,7 @@ using namespace std;
 #define NDI_PAST_VALS 200 // Store the last 200 values in order to compute the control
 
 typedef struct ndihandler {
-  float delay = 4;
+  float delay = 4; // default value unless specified in constructor
   float tau_x = 3;
   float tau_y = 3;
   float wn_x = 0.9;
@@ -35,29 +35,23 @@ typedef struct ndihandler {
   int data_end = 0;
   int data_entries = 0;
   float commands[2];
-  float commandscap[2];
-  float maxcommand = 1.5;
 } ndihandler;
 
 class ndi_follower: public Controller
 {
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver *o;
-
+  ndihandler ndihandle;
 
 public:
-  ndi_follower(): Controller() {};
+  ndi_follower();
   ~ndi_follower() {};
-
-  ndihandler ndihandle;
 
   float accessCircularFloatArrElement(float arr[], int index);
   float computeNdiFloatIntegral(float ndiarr[], float curtime);
   void cleanNdiValues(float tcur);
-  bool hover_guided(float h);
   bool ndi_follow_leader(void);
   void uwb_follower_control_periodic(void);
-  void bindNorm(void);
   virtual void get_velocity_command(const uint8_t ID, float &x_des, float &vy_des);
 };
 
