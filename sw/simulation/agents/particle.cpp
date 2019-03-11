@@ -1,9 +1,6 @@
 #include "particle.h"
 #include "trigonometry.h"
 #include "randomgenerator.h"
-// extern "C" {
-#include "ndi_follower.h"
-// }
 #include "draw.h"
 
 Particle::Particle(int i, vector<float> s, float tstep)
@@ -35,7 +32,7 @@ void Particle::state_update()
   controller.saturate(vx_des);
   controller.saturate(vy_des);
   rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
-
+  
   state.at(7) = dpsi_rate;
   state.at(6) += dpsi_rate * dt;
   state.at(6) = wrapToPi_f(state[6]); // Orientation

@@ -20,19 +20,16 @@ INC_DIRS = $(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should b
 INC_PARAMS = $(foreach d, $(INC_DIRS), -I$d) #Each include folder must have a -I before it
 INC = -I. -I$(SRC_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS) # All include paths
 SOURCES = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp 
-# SOURCES_NAMES = $(shell find $(SRC_FOLDER) -name *.cpp *.c -exec basename {} \;) # Recursively find all c/cpp 
 MAKE = $(CC) $(CFLAGS) $(INC)
-OBJECTS_CPP=$(SOURCES:%.cpp=$(BUILD_FOLDER)/%.o)
-# OBJECTS_C=$(SOURCES:%.c=$(BUILD_FOLDER)/%.o)
+OBJECTS=$(SOURCES:%.cpp=$(BUILD_FOLDER)/%.o)
 
 # Build the executable
 # Using @...; suppresses the output of the arguments
 all: $(TARGET)
 
-$(TARGET): xsd $(OBJECTS_CPP) #$(OBJECTS_C)
+$(TARGET): xsd $(OBJECTS) #$(OBJECTS_C)
 	# Building $(TARGET)
-	# @$(MAKE) $(BUILD_FOLDER)/*.cxx $(OBJECTS_CPP) $(OBJECTS_C) -o $@ $(OPT);
-	@$(MAKE) $(BUILD_FOLDER)/*.cxx $(OBJECTS_CPP) -o $@ $(OPT);
+	@$(MAKE) $(BUILD_FOLDER)/*.cxx $(OBJECTS) -o $@ $(OPT);
 
 xsd:
 	# Generating parameters file

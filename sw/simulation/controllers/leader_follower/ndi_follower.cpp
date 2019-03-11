@@ -5,8 +5,9 @@
 #include <sstream>
 #include "trigonometry.h"
 
-// method 0 is first order approximation, no acceleration or yaw rate used
-// method 1 is first order approximation, acceleration and yaw rate used, but yaw rate not taken into account in integral
+#ifndef COMMAND_LOCAL
+#define COMMAND_LOCAL 1
+#endif
 
 #define NDI_MOST_RECENT ndihandle.data_entries-1
 
@@ -16,9 +17,21 @@
 #endif
 
 #define NDI_METHOD 1
+// method 0 is first order approximation, no acceleration or yaw rate used
+// method 1 is first order approximation, acceleration and yaw rate used, but yaw rate not taken into account in integral
 
+// Initilizer
 ndi_follower::ndi_follower(): Controller() {
   ndihandle.delay = NDI_DELAY;
+  ndihandle.tau_x = 3;
+  ndihandle.tau_y = 3;
+  ndihandle.wn_x = 0.9;
+  ndihandle.wn_y = 0.9;
+  ndihandle.eps_x = 0.28;
+  ndihandle.eps_y = 0.28;
+  ndihandle.Kp = -1.5;
+  ndihandle.Ki = 0;
+  ndihandle.Kd = -3;
 };
 
 // Imported from Paparazzi to double check /  verify code more natively
@@ -174,18 +187,34 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     rotate_xy(s[0]->get_state(2), s[0]->get_state(3), -s[0]->get_state(6), vx0, vy0);
     rotate_xy(s[0]->get_state(4), s[0]->get_state(5), -s[0]->get_state(6), ax0, ay0);
 
-    ndihandle.xarr[ndihandle.data_end] = px;//o->request_distance_dim(ID,0,0);
-    ndihandle.yarr[ndihandle.data_end] = py;//o->request_distance_dim(ID,0,1);
-    ndihandle.u1arr[ndihandle.data_end] = vx;//s[ID]->get_state(2);
-    ndihandle.v1arr[ndihandle.data_end] = vy;//s[ID]->get_state(3);
-    ndihandle.u2arr[ndihandle.data_end] = vx0;//s[0]->get_state(2);
-    ndihandle.v2arr[ndihandle.data_end] = vy0; //s[0]->get_state(3);
-    ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7); //update_butterworth_2_low_pass(&uwb_butter_yawr,stateGetBodyRates_f()->r);
+#if COMMAND_LOCAL
+    ndihandle.xarr[ndihandle.data_end] = px;
+    ndihandle.yarr[ndihandle.data_end] = py;
+    ndihandle.u1arr[ndihandle.data_end] = vx;
+    ndihandle.v1arr[ndihandle.data_end] = vy;
+    ndihandle.u2arr[ndihandle.data_end] = vx0;
+    ndihandle.v2arr[ndihandle.data_end] = vy0;
+    ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
     ndihandle.r2arr[ndihandle.data_end] = s[0]->get_state(7);
-    ndihandle.ax1arr[ndihandle.data_end] = ax;//s[ID]->get_state(4);
-    ndihandle.ay1arr[ndihandle.data_end] = ay;//s[ID]->get_state(5);
-    ndihandle.ax2arr[ndihandle.data_end] = ax0;//s[0]->get_state(4);
-    ndihandle.ay2arr[ndihandle.data_end] = ay0;//s[0]->get_state(5);
+    ndihandle.ax1arr[ndihandle.data_end] = ax;
+    ndihandle.ay1arr[ndihandle.data_end] = ay;
+    ndihandle.ax2arr[ndihandle.data_end] = ax0;
+    ndihandle.ay2arr[ndihandle.data_end] = ay0;
+#elif COMMAND_GLOBAL
+    ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID,0,0);
+    ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID,0,1);
+    ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
+    ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
+    ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
+    ndihandle.v2arr[ndihandle.data_end] = s[0]->get_state(3);
+    ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
+    ndihandle.r2arr[ndihandle.data_end] = s[0]->get_state(7);
+    ndihandle.ax1arr[ndihandle.data_end] = s[ID]->get_state(4);
+    ndihandle.ay1arr[ndihandle.data_end] = s[ID]->get_state(5);
+    ndihandle.ax2arr[ndihandle.data_end] = s[0]->get_state(4);
+    ndihandle.ay2arr[ndihandle.data_end] = s[0]->get_state(5);
+#endif
+
     ndihandle.tarr[ndihandle.data_end] = simtime_seconds;
     ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
     ndihandle.data_entries++;
