@@ -27,8 +27,7 @@ void Particle::state_update()
   if (!manual) {
     controller.get_velocity_command(ID, vx_des, vy_des); // Command comes out in the local frame
     dpsi_rate = 0;
-  }
-  else {
+  } else {
     vx_des = manualx;
     vy_des = manualy;
     dpsi_rate = manualpsi_delta;
@@ -36,9 +35,9 @@ void Particle::state_update()
   controller.saturate(vx_des);
   controller.saturate(vy_des);
   rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
-  
+
   state.at(7) = dpsi_rate;
-  state.at(6) += dpsi_rate*dt;
+  state.at(6) += dpsi_rate * dt;
   state.at(6) = wrapToPi_f(state[6]); // Orientation
 
   // Acceleration control
@@ -51,7 +50,7 @@ void Particle::state_update()
   // Velocity
   state.at(2) += state[4] * dt; // Velocity x global frame
   state.at(3) += state[5] * dt; // Velocity y global frame
-  
+
   // Position
   state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x global frame
   state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y global frame
@@ -60,7 +59,7 @@ void Particle::state_update()
 void Particle::animation()
 {
   draw d;
-  
+
   d.draw_triangle(param->scale());
   d.draw_circle_loop(param->scale());
 }
