@@ -5,8 +5,10 @@
 #include <sstream>
 #include "trigonometry.h"
 
-#ifndef COMMAND_LOCAL
-#define COMMAND_LOCAL 1
+#define COMMAND_LOCAL 1 // use COMMAND_LOCAL for local commands
+
+#ifdef COMMAND_GLOBAL
+#define COMMAND_LOCAL 0
 #endif
 
 #define NDI_MOST_RECENT ndihandle.data_entries-1
@@ -177,16 +179,15 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
       ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
     }
 
-    // All local frame values for position, velocity, acceleration
+    // All in local frame of follower!!!! values for position, velocity, acceleration
+#if COMMAND_LOCAL
     float px, py, vx, vy, ax, ay;
     float vx0, vy0, ax0, ay0;
     polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0),px,py);
     rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
     rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), ax,  ay);
-    rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[0 ]->get_state(6), vx0, vy0);
-    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0 ]->get_state(6), ax0, ay0);
-
-#if COMMAND_LOCAL
+    rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
+    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
     ndihandle.xarr[ndihandle.data_end] = px;
     ndihandle.yarr[ndihandle.data_end] = py;
     ndihandle.u1arr[ndihandle.data_end] = vx;

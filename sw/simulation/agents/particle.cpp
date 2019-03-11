@@ -31,8 +31,13 @@ void Particle::state_update()
   }
   controller.saturate(vx_des);
   controller.saturate(vy_des);
+  #ifndef COMMAND_GLOBAL
   rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
-  
+  #else
+  vx_des = vx_global;
+  vy_des = vy_global;
+  #endif
+
   state.at(7) = dpsi_rate;
   state.at(6) += dpsi_rate * dt;
   state.at(6) = wrapToPi_f(state[6]); // Orientation
