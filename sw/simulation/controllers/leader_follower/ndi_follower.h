@@ -7,7 +7,8 @@ using namespace std;
 #define NDI_PAST_VALS 200 // Store the last 200 values in order to compute the control
 
 typedef struct ndihandler {
-  float delay = 4; // default value unless specified in constructor
+   // Default values unless specified in constructor
+  float delay = 4;
   float tau_x = 3;
   float tau_y = 3;
   float wn_x = 0.9;
