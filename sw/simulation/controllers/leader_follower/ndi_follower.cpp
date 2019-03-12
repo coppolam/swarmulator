@@ -139,6 +139,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
   }
 
+  float px_true, py_true;
   if (ID > 0) {
     if (!initialized) {
       float pxf, pyf;
@@ -153,20 +154,17 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     } else {
       // All in local frame of follower!!!! values for position, velocity, acceleration
 #if COMMAND_LOCAL
-
       float px, py, vx, vy;
       float vx0, vy0, ax0, ay0;
-
 #if STATE_ESTIMATOR
-
       float pxf, pyf, vxf, vyf, axf, ayf;
       float vx0f, vy0f;
       polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
       // Global to local, rotat the opposite of local to global
       rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vxf,  vyf);
       rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), axf,  ayf);
-      rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[0]->get_state(6),  vx0f, vy0f);
-      rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0]->get_state(6),  ax0, ay0);
+      rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[0 ]->get_state(6), vx0f, vy0f);
+      rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0 ]->get_state(6), ax0,  ay0);
       ekf_rl.dt = simtime_seconds - simtime_seconds_store;
       simtime_seconds_store = simtime_seconds;
       float U[EKF_L] = {axf, ayf, ax0, ay0, s[ID]->get_state(7), s[0]->get_state(7)};
@@ -177,13 +175,9 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
       py = ekf_rl.X[1];
       vx = ekf_rl.X[4];
       vy = ekf_rl.X[5];
-      // vx0f = ekf_rl.X[6];
-      // vy0f = ekf_rl.X[7];
-
       rotate_xy(ekf_rl.X[6], ekf_rl.X[7], -ekf_rl.X[8], vx0, vy0);
-      float px_true, py_true;
       polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0), px_true, py_true );
-      cout << px << " " <<  px_true <<  " " << py << " " << py_true << endl;
+      cout << px << " " <<  px_true <<  " " << py << " " << py_true << " " << ekf_rl.dt << endl;
 #else
       polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0), px, py );
       rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
@@ -216,7 +210,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
       ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
       ndihandle.data_entries++;
 
-      if (ID > 0 && simtime_seconds > NDI_DELAY) {
+      if (simtime_seconds > NDI_DELAY) {
         uwb_follower_control_periodic();
         vx_des = ndihandle.commands[0];
         vy_des = ndihandle.commands[1];
