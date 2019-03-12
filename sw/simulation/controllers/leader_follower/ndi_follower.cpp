@@ -187,10 +187,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
       py = ekf_rl.X[1];
       vx = ekf_rl.X[4];
       vy = ekf_rl.X[5];
-      float vt, yt;
-      rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vt, yt);
-      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], -ekf_rl.X[8], vx0, vy0);
-      cout << s[ID]->get_state(6) << " " << wrapToPi_f(s[0]->get_state(6)-ekf_rl.X[8]) << endl;
+      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], ekf_rl.X[8], vx0, vy0);
     }
 #else
     polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), px, py);
@@ -222,7 +219,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
     ndihandle.data_entries++;
     uwb_follower_control_periodic();
-    bindNorm(0.5);
+    bindNorm(0.1);
     vx_des = ndihandle.commands_lim[0];
     vy_des = ndihandle.commands_lim[1];
   }
