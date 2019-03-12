@@ -137,28 +137,28 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
   if (ndihandle.data_entries == NDI_PAST_VALS) {
     ndihandle.data_entries--;
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
-  }
+  } 
+  
+  float px, py, vx, vy, vx0, vy0, ax0, ay0;
 
-  float px_true, py_true;
+  // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
   if (ID > 0) {
+#if COMMAND_LOCAL
+
+#if STATE_ESTIMATOR
+    float pxf, pyf;
     if (!initialized) {
-      float pxf, pyf;
       polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
-      if (!(abs(pxf) < 0.01 || abs(pyf) < 0.01)){
+      // if (!(abs(pxf) < 0.01 || abs(pyf) < 0.01)){
         discrete_ekf_no_north_new(&ekf_rl);
         ekf_rl.X[0] = pxf;
         ekf_rl.X[1] = pyf;
         initialized = true;
         simtime_seconds_store = simtime_seconds;
-      }
+      // }
     } else {
       // All in local frame of follower!!!! values for position, velocity, acceleration
-#if COMMAND_LOCAL
-      float px, py, vx, vy;
-      float vx0, vy0, ax0, ay0;
-#if STATE_ESTIMATOR
-      float pxf, pyf, vxf, vyf, axf, ayf;
-      float vx0f, vy0f;
+      float vxf, vyf, vx0f, vy0f, axf, ayf;
       polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
       // Global to local, rotat the opposite of local to global
       rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vxf,  vyf);
@@ -175,16 +175,13 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
       py = ekf_rl.X[1];
       vx = ekf_rl.X[4];
       vy = ekf_rl.X[5];
-      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], -ekf_rl.X[8], vx0, vy0);
-      polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0), px_true, py_true );
-      cout << px << " " <<  px_true <<  " " << py << " " << py_true << " " << ekf_rl.dt << endl;
+      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], ekf_rl.X[8], vx0, vy0);
 #else
       polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0), px, py );
       rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
       rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
       rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
-
       ndihandle.xarr[ndihandle.data_end] = px;
       ndihandle.yarr[ndihandle.data_end] = py;
       ndihandle.u1arr[ndihandle.data_end] = vx;
