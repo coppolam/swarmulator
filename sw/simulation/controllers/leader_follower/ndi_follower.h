@@ -37,6 +37,7 @@ typedef struct ndihandler {
   int data_end = 0;
   int data_entries = 0;
   float commands[2];
+  float commands_lim[2];
 } ndihandler;
 
 class ndi_follower: public Controller
@@ -55,6 +56,7 @@ public:
   float computeNdiFloatIntegral(float ndiarr[], float curtime);
   void cleanNdiValues(float tcur);
   bool ndi_follow_leader(void);
+  void bindNorm(float max_command);
   void uwb_follower_control_periodic(void);
   virtual void get_velocity_command(const uint8_t ID, float &x_des, float &vy_des);
 };
