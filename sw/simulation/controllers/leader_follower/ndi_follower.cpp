@@ -6,6 +6,7 @@
 #include "trigonometry.h"
 
 #define COMMAND_LOCAL 1 // use COMMAND_LOCAL for local commands
+#define STATE_ESTIMATOR 1
 
 #ifdef COMMAND_GLOBAL
 #define COMMAND_LOCAL 0
@@ -25,7 +26,8 @@
 #define NDI_METHOD 1
 
 // Initilizer
-ndi_follower::ndi_follower(): Controller() {
+ndi_follower::ndi_follower(): Controller()
+{
   ndihandle.delay = NDI_DELAY;
   ndihandle.tau_x = 3;
   ndihandle.tau_y = 3;
@@ -36,51 +38,9 @@ ndi_follower::ndi_follower(): Controller() {
   ndihandle.Kp = -1.5;
   ndihandle.Ki = 0;
   ndihandle.Kd = -3;
+  initialized = false;
 };
 
-// Imported from Paparazzi to double check /  verify code more natively
-extern "C" {
-#define MAKE_MATRIX_PTR(_ptr, _mat, _rows) \
-  float * _ptr[_rows]; \
-  { \
-    int __i; \
-    for (__i = 0; __i < _rows; __i++) { _ptr[__i] = &_mat[__i][0]; } \
-  }
-  /** a = 0 */
-  static inline void float_mat_print(float **a, int m, int n)
-  {
-    int i, j;
-    for (i = 0; i < m; i++) {
-      for (j = 0; j < n; j++) { printf("%2.f", a[i][j]) ; }
-    }
-    printf("\n");
-  }
-  /** a = 0 */
-  inline void float_mat_zero(float **a, int m, int n)
-  {
-    int i, j;
-    for (i = 0; i < m; i++) {
-      for (j = 0; j < n; j++) { a[i][j] = 0.; }
-    }
-  }
-
-  /** o = a * b
-   *
-   * a: [m x n]
-   * b: [n x 1]
-   * o: [m x 1]
-   */
-  inline void float_mat_vect_mul(float *o, float **a, float *b, int m, int n)
-  {
-    int i, j;
-    for (i = 0; i < m; i++) {
-      o[i] = 0;
-      for (j = 0; j < n; j++) {
-        o[i] += a[i][j] * b[j];
-      }
-    }
-  }
-}
 float ndi_follower::accessCircularFloatArrElement(float arr[], int index)
 {
   float value;
@@ -173,56 +133,94 @@ void ndi_follower::uwb_follower_control_periodic(void)
 
 void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &vy_des)
 {
-    // Store data from leader's position estimate
-    if (ndihandle.data_entries == NDI_PAST_VALS) {
-      ndihandle.data_entries--;
-      ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
-    }
-
-    // All in local frame of follower!!!! values for position, velocity, acceleration
-#if COMMAND_LOCAL
-    float px, py, vx, vy, ax, ay;
-    float vx0, vy0, ax0, ay0;
-    polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0),px,py);
-    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
-    rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), ax,  ay);
-    rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
-    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
-    ndihandle.xarr[ndihandle.data_end] = px;
-    ndihandle.yarr[ndihandle.data_end] = py;
-    ndihandle.u1arr[ndihandle.data_end] = vx;
-    ndihandle.v1arr[ndihandle.data_end] = vy;
-    ndihandle.u2arr[ndihandle.data_end] = vx0;
-    ndihandle.v2arr[ndihandle.data_end] = vy0;
-    ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
-    ndihandle.r2arr[ndihandle.data_end] = s[0]->get_state(7);
-    ndihandle.ax1arr[ndihandle.data_end] = ax;
-    ndihandle.ay1arr[ndihandle.data_end] = ay;
-    ndihandle.ax2arr[ndihandle.data_end] = ax0;
-    ndihandle.ay2arr[ndihandle.data_end] = ay0;
-#elif COMMAND_GLOBAL
-    ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID,0,0);
-    ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID,0,1);
-    ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
-    ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
-    ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
-    ndihandle.v2arr[ndihandle.data_end] = s[0]->get_state(3);
-    ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
-    ndihandle.r2arr[ndihandle.data_end] = s[0]->get_state(7);
-    ndihandle.ax1arr[ndihandle.data_end] = s[ID]->get_state(4);
-    ndihandle.ay1arr[ndihandle.data_end] = s[ID]->get_state(5);
-    ndihandle.ax2arr[ndihandle.data_end] = s[0]->get_state(4);
-    ndihandle.ay2arr[ndihandle.data_end] = s[0]->get_state(5);
-#endif
-
-    ndihandle.tarr[ndihandle.data_end] = simtime_seconds;
-    ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
-    ndihandle.data_entries++;
-
-    if (ID > 0 && simtime_seconds > NDI_DELAY) {
-      uwb_follower_control_periodic();
-      vx_des = ndihandle.commands[0];
-      vy_des = ndihandle.commands[1];
+  // Store data from leader's position estimate
+  if (ndihandle.data_entries == NDI_PAST_VALS) {
+    ndihandle.data_entries--;
+    ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
   }
 
+  if (ID > 0) {
+    if (!initialized) {
+      float pxf, pyf;
+      polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
+      if (!(abs(pxf) < 0.01 || abs(pyf) < 0.01)){
+        discrete_ekf_no_north_new(&ekf_rl);
+        ekf_rl.X[0] = pxf;
+        ekf_rl.X[1] = pyf;
+        initialized = true;
+        simtime_seconds_store = simtime_seconds;
+      }
+    } else {
+      // All in local frame of follower!!!! values for position, velocity, acceleration
+#if COMMAND_LOCAL
+
+      float px, py, vx, vy;
+      float vx0, vy0, ax0, ay0;
+
+#if STATE_ESTIMATOR
+
+      float pxf, pyf, vxf, vyf, axf, ayf;
+      float vx0f, vy0f;
+      polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
+      // Global to local, rotat the opposite of local to global
+      rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vxf,  vyf);
+      rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), axf,  ayf);
+      rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[0]->get_state(6),  vx0f, vy0f);
+      rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0]->get_state(6),  ax0, ay0);
+      ekf_rl.dt = simtime_seconds - simtime_seconds_store;
+      simtime_seconds_store = simtime_seconds;
+      float U[EKF_L] = {axf, ayf, ax0, ay0, s[ID]->get_state(7), s[0]->get_state(7)};
+      float Z[EKF_M] = {o->request_distance(ID, 0), 0.0, 0.0, vxf, vyf, vx0f, vy0f};
+      discrete_ekf_no_north_predict(&ekf_rl, U);
+      discrete_ekf_no_north_update(&ekf_rl, Z);
+      px = ekf_rl.X[0];
+      py = ekf_rl.X[1];
+      vx = ekf_rl.X[4];
+      vy = ekf_rl.X[5];
+      // vx0f = ekf_rl.X[6];
+      // vy0f = ekf_rl.X[7];
+
+      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], -ekf_rl.X[8], vx0, vy0);
+      float px_true, py_true;
+      polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0), px_true, py_true );
+      cout << px << " " <<  px_true <<  " " << py << " " << py_true << endl;
+#else
+      polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0), px, py );
+      rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
+      rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
+      rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
+#endif
+
+      ndihandle.xarr[ndihandle.data_end] = px;
+      ndihandle.yarr[ndihandle.data_end] = py;
+      ndihandle.u1arr[ndihandle.data_end] = vx;
+      ndihandle.v1arr[ndihandle.data_end] = vy;
+      ndihandle.u2arr[ndihandle.data_end] = vx0;
+      ndihandle.v2arr[ndihandle.data_end] = vy0;
+      ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
+      ndihandle.ax2arr[ndihandle.data_end] = ax0;
+      ndihandle.ay2arr[ndihandle.data_end] = ay0;
+#elif COMMAND_GLOBAL
+      ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 0);
+      ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 1);
+      ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
+      ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
+      ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
+      ndihandle.v2arr[ndihandle.data_end] = s[0]->get_state(3);
+      ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
+      ndihandle.ax2arr[ndihandle.data_end] = s[0]->get_state(4);
+      ndihandle.ay2arr[ndihandle.data_end] = s[0]->get_state(5);
+#endif
+
+      ndihandle.tarr[ndihandle.data_end] = simtime_seconds;
+      ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
+      ndihandle.data_entries++;
+
+      if (ID > 0 && simtime_seconds > NDI_DELAY) {
+        uwb_follower_control_periodic();
+        vx_des = ndihandle.commands[0];
+        vy_des = ndihandle.commands[1];
+      }
+    }
+  }
 }

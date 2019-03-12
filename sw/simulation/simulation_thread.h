@@ -51,7 +51,7 @@ void main_simulation_thread(int argc, char *argv[])
   // Generate the agent models
   for (uint8_t ID = 0; ID < nagents; ID++) {
     // Initial positions/states
-    vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0 };
+    vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     // The data of the swarm is stored in a vector
     // AGENT is a stand-in for the agent of choice. This is selected in setting.h
     s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));

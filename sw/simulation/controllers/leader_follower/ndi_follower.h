@@ -2,12 +2,16 @@
 #define NDI_FOLLOWER_H
 #include "controller.h"
 
+extern "C" {
+#include "discrete_ekf_no_north.h"
+}
+
 using namespace std;
 
 #define NDI_PAST_VALS 200 // Store the last 200 values in order to compute the control
 
 typedef struct ndihandler {
-   // Default values unless specified in constructor
+  // Default values unless specified in constructor
   float delay = 4;
   float tau_x = 3;
   float tau_y = 3;
@@ -25,9 +29,6 @@ typedef struct ndihandler {
   float u2arr[NDI_PAST_VALS];
   float v2arr[NDI_PAST_VALS];
   float r1arr[NDI_PAST_VALS];
-  float r2arr[NDI_PAST_VALS];
-  float ax1arr[NDI_PAST_VALS];
-  float ay1arr[NDI_PAST_VALS];
   float ax2arr[NDI_PAST_VALS];
   float ay2arr[NDI_PAST_VALS];
   float tarr[NDI_PAST_VALS];
@@ -43,7 +44,9 @@ class ndi_follower: public Controller
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver *o;
   ndihandler ndihandle;
-
+  struct discrete_ekf_no_north ekf_rl;
+  bool initialized;
+  float simtime_seconds_store;
 public:
   ndi_follower();
   ~ndi_follower() {};
