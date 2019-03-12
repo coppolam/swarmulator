@@ -163,7 +163,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
         discrete_ekf_no_north_new(&ekf_rl);
         ekf_rl.X[0] = pxf;
         ekf_rl.X[1] = pyf;
-        ekf_rl.X[8] = wrapToPi_f(s[0]->get_state(6)-s[ID]->get_state(6));
+        ekf_rl.X[8] = wrapToPi_f(s[0]->get_state(6) - s[ID]->get_state(6));
         initialized = true;
         simtime_seconds_store = simtime_seconds;
       }
