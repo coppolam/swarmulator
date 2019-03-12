@@ -40,16 +40,16 @@ ndi_follower::ndi_follower(): Controller()
   ndihandle.Kd = -3;
   initialized = false;
 };
-void ndi_follower::bindNorm(float max_command){
-	float normcom = sqrt(ndihandle.commands[1]*ndihandle.commands[1] + ndihandle.commands[0]*ndihandle.commands[0]);
-	if(normcom>max_command){
-		ndihandle.commands_lim[0] = ndihandle.commands[0] * max_command/normcom;
-		ndihandle.commands_lim[1] = ndihandle.commands[1] * max_command/normcom;
-	}
-	else{
-		ndihandle.commands_lim[0] = ndihandle.commands[0];
-		ndihandle.commands_lim[1] = ndihandle.commands[1];
-	}
+void ndi_follower::bindNorm(float max_command)
+{
+  float normcom = sqrt(ndihandle.commands[1] * ndihandle.commands[1] + ndihandle.commands[0] * ndihandle.commands[0]);
+  if (normcom > max_command) {
+    ndihandle.commands_lim[0] = ndihandle.commands[0] * max_command / normcom;
+    ndihandle.commands_lim[1] = ndihandle.commands[1] * max_command / normcom;
+  } else {
+    ndihandle.commands_lim[0] = ndihandle.commands[0];
+    ndihandle.commands_lim[1] = ndihandle.commands[1];
+  }
 }
 float ndi_follower::accessCircularFloatArrElement(float arr[], int index)
 {
@@ -149,23 +149,21 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
   if (ndihandle.data_entries == NDI_PAST_VALS) {
     ndihandle.data_entries--;
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
-  } 
-  
+  }
+
   float px, py, vx, vy, vx0, vy0, ax0, ay0;
-
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
-  if (ID > 0) {
+  if (ID > 0 && simtime_seconds > 10) {
 #if COMMAND_LOCAL
-
 #if STATE_ESTIMATOR
     float pxf, pyf;
     if (!initialized) {
       polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
-      if (!(abs(pxf) < 0.01 || abs(pyf) < 0.01)){
+      if (!(abs(pxf) < 0.01 || abs(pyf) < 0.01)) {
         discrete_ekf_no_north_new(&ekf_rl);
         ekf_rl.X[0] = pxf;
         ekf_rl.X[1] = pyf;
-        ekf_rl.X[8] = o->request_bearing(ID, 0);
+        ekf_rl.X[8] = wrapToPi_f(s[0]->get_state(6)-s[ID]->get_state(6));
         initialized = true;
         simtime_seconds_store = simtime_seconds;
       }
@@ -184,50 +182,48 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
       float Z[EKF_M] = {o->request_distance(ID, 0), 0.0, 0.0, vxf, vyf, vx0f, vy0f};
       discrete_ekf_no_north_predict(&ekf_rl, U);
       discrete_ekf_no_north_update(&ekf_rl, Z);
+      ekf_rl.X[8] = wrapToPi_f(ekf_rl.X[8]);
       px = ekf_rl.X[0];
       py = ekf_rl.X[1];
       vx = ekf_rl.X[4];
       vy = ekf_rl.X[5];
-      // vx0 = ekf_rl.X[6];
-      // vy0 = ekf_rl.X[7];
-      float vt,yt;
+      float vt, yt;
       rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vt, yt);
-      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], ekf_rl.X[8], vx0, vy0);
-      cout << vt << " " << vx0 << endl;
+      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], -ekf_rl.X[8], vx0, vy0);
+      cout << s[ID]->get_state(6) << " " << wrapToPi_f(s[0]->get_state(6)-ekf_rl.X[8]) << endl;
     }
 #else
-      polar2cart(o->request_distance(ID,0),o->request_bearing(ID,0), px, py );
-      rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
-      rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
-      rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
+    polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), px, py);
+    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
+    rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
+    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
-      ndihandle.xarr[ndihandle.data_end] = px;
-      ndihandle.yarr[ndihandle.data_end] = py;
-      ndihandle.u1arr[ndihandle.data_end] = vx;
-      ndihandle.v1arr[ndihandle.data_end] = vy;
-      ndihandle.u2arr[ndihandle.data_end] = vx0;
-      ndihandle.v2arr[ndihandle.data_end] = vy0;
-      ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
-      ndihandle.ax2arr[ndihandle.data_end] = ax0;
-      ndihandle.ay2arr[ndihandle.data_end] = ay0;
+    ndihandle.xarr[ndihandle.data_end] = px;
+    ndihandle.yarr[ndihandle.data_end] = py;
+    ndihandle.u1arr[ndihandle.data_end] = vx;
+    ndihandle.v1arr[ndihandle.data_end] = vy;
+    ndihandle.u2arr[ndihandle.data_end] = vx0;
+    ndihandle.v2arr[ndihandle.data_end] = vy0;
+    ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
+    ndihandle.ax2arr[ndihandle.data_end] = ax0;
+    ndihandle.ay2arr[ndihandle.data_end] = ay0;
 #elif COMMAND_GLOBAL
-      ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 0);
-      ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 1);
-      ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
-      ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
-      ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
-      ndihandle.v2arr[ndihandle.data_end] = s[0]->get_state(3);
-      ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
-      ndihandle.ax2arr[ndihandle.data_end] = s[0]->get_state(4);
-      ndihandle.ay2arr[ndihandle.data_end] = s[0]->get_state(5);
+    ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 0);
+    ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 1);
+    ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
+    ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
+    ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
+    ndihandle.v2arr[ndihandle.data_end] = s[0]->get_state(3);
+    ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
+    ndihandle.ax2arr[ndihandle.data_end] = s[0]->get_state(4);
+    ndihandle.ay2arr[ndihandle.data_end] = s[0]->get_state(5);
 #endif
-
-      ndihandle.tarr[ndihandle.data_end] = simtime_seconds;
-      ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
-      ndihandle.data_entries++;
-      uwb_follower_control_periodic();
-      bindNorm(0.1);
-      vx_des = ndihandle.commands_lim[0];
-      vy_des = ndihandle.commands_lim[1];
+    ndihandle.tarr[ndihandle.data_end] = simtime_seconds;
+    ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
+    ndihandle.data_entries++;
+    uwb_follower_control_periodic();
+    bindNorm(0.5);
+    vx_des = ndihandle.commands_lim[0];
+    vy_des = ndihandle.commands_lim[1];
   }
 }
