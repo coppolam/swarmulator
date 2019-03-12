@@ -280,7 +280,7 @@ void c2d(int m, int nA, int nB, float **Fx, float **G, float dt, float **phi, fl
   MAKE_MATRIX_PTR(_Fx, Fx, EKF_N);
   float_mat_scale(_Fx, dt, EKF_N, EKF_N);
   
-  MAKE_MATRIX_PTR(_G, G, EKF_M);
+  MAKE_MATRIX_PTR(_G, G, EKF_L);
   MAKE_MATRIX_PTR(_phi, phi, m);
   MAKE_MATRIX_PTR(_gamma, gamma, m);
   MAKE_MATRIX_PTR(_combmat, combmat, totalsize);
