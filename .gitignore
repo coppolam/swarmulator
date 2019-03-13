@@ -12,3 +12,6 @@ Doxyfile
 dox/
 html/
 latex/
+gen*
+neat
+statout
