@@ -38,7 +38,6 @@ ndi_follower::ndi_follower(): Controller()
   ndihandle.Kp = -1.5;
   ndihandle.Ki = 0;
   ndihandle.Kd = -3;
-  initialized = false;
 };
 void ndi_follower::bindNorm(float max_command)
 {
@@ -141,8 +140,6 @@ void ndi_follower::uwb_follower_control_periodic(void)
   }
 }
 
-
-
 void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &vy_des)
 {
   // Store data from leader's position estimate
@@ -156,44 +153,19 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
   if (ID > 0 && simtime_seconds > 10) {
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
-    float pxf, pyf;
-    if (!initialized) {
-      polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
-      discrete_ekf_no_north_new(&ekf_rl);
-      ekf_rl.X[0] = pxf;
-      ekf_rl.X[1] = pyf;
-      ekf_rl.X[8] = wrapToPi_f(s[0]->get_state(6) - s[ID]->get_state(6));
-      initialized = true;
-      simtime_seconds_store = simtime_seconds;
-      ndihandle.delay = ndihandle.delay * ID; 
-    } else {
-      // All in local frame of follower!!!! values for position, velocity, acceleration
-      float vxf, vyf, vx0f, vy0f, axf, ayf;
-      polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
-      // Global to local, rotate the opposite of local to global, hence the negative
-      rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vxf,  vyf);
-      rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), axf,  ayf);
-      rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[0 ]->get_state(6), vx0f, vy0f);
-      rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0 ]->get_state(6), ax0,  ay0);
-      ekf_rl.dt = simtime_seconds - simtime_seconds_store;
-      simtime_seconds_store = simtime_seconds;
-      float U[EKF_L] = {axf, ayf, ax0, ay0, s[ID]->get_state(7), s[0]->get_state(7)};
-      float Z[EKF_M] = {o->request_distance(ID, 0), 0.0, 0.0, vxf, vyf, vx0f, vy0f};
-      discrete_ekf_no_north_predict(&ekf_rl, U);
-      discrete_ekf_no_north_update(&ekf_rl, Z);
-      ekf_rl.X[8] = wrapToPi_f(ekf_rl.X[8]);
-      px = ekf_rl.X[0];
-      py = ekf_rl.X[1];
-      vx = ekf_rl.X[4];
-      vy = ekf_rl.X[5];
-      rotate_xy(ekf_rl.X[6], ekf_rl.X[7], ekf_rl.X[8], vx0, vy0);
-    }
+    filter.run(ID,0);
+    px = filter.ekf_rl.X[0];
+    py = filter.ekf_rl.X[1];
+    vx = filter.ekf_rl.X[4];
+    vy = filter.ekf_rl.X[5];
+    rotate_xy(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
 #else
     polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), px, py);
     rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
     rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
     rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
+    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0 ]->get_state(6), ax0,  ay0);
     ndihandle.xarr[ndihandle.data_end] = px;
     ndihandle.yarr[ndihandle.data_end] = py;
     ndihandle.u1arr[ndihandle.data_end] = vx;

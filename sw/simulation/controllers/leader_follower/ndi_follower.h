@@ -1,10 +1,7 @@
 #ifndef NDI_FOLLOWER_H
 #define NDI_FOLLOWER_H
 #include "controller.h"
-
-extern "C" {
-#include "discrete_ekf_no_north.h"
-}
+#include "ekf_state_estimator.h"
 
 using namespace std;
 
@@ -45,9 +42,7 @@ class ndi_follower: public Controller
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver *o;
   ndihandler ndihandle;
-  struct discrete_ekf_no_north ekf_rl;
-  bool initialized;
-  float simtime_seconds_store;
+  ekf_state_estimator filter;
 public:
   ndi_follower();
   ~ndi_follower() {};
