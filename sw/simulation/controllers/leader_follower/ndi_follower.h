@@ -8,7 +8,7 @@ extern "C" {
 
 using namespace std;
 
-#define NDI_PAST_VALS 200 // Store the last 200 values in order to compute the control
+#define NDI_PAST_VALS 500 // Store the last 200 values in order to compute the control
 
 typedef struct ndihandler {
   // Default values unless specified in constructor
