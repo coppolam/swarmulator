@@ -19,10 +19,11 @@ OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inl
 INC_DIRS = $(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should be enough.
 INC_PARAMS = $(foreach d, $(INC_DIRS), -I$d) #Each include folder must have a -I before it
 INC = -I. -I$(SRC_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS) # All include paths
-SOURCES = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp 
+SOURCES_CPP = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp 
+SOURCES_CPP := $(filter-out sw/math/NEAT_v1.2.1/sw/%.cpp, $(SOURCES_CPP)) # Exclude NEAT if not relevant
 SOURCES_C = $(shell find $(SRC_FOLDER) -name *.c) # Recursively find all cpp 
 MAKE = $(CC) $(CFLAGS) $(INC)
-OBJECTS_CPP=$(SOURCES:%.cpp=$(BUILD_FOLDER)/%.o)
+OBJECTS_CPP=$(SOURCES_CPP:%.cpp=$(BUILD_FOLDER)/%.o)
 OBJECTS_C=$(SOURCES_C:%.c=$(BUILD_FOLDER)/%.o)
 
 # Build the executable
