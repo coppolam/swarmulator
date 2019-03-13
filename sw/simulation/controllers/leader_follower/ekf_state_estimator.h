@@ -17,11 +17,11 @@ class ekf_state_estimator
 
 public:
   struct discrete_ekf_no_north ekf_rl;
-    ekf_state_estimator();
-    ~ekf_state_estimator() {};
-    void init_ekf_filter();
-    void run_ekf_filter();
-    void run(uint8_t ID_in,uint8_t ID_tracked_in);
+  ekf_state_estimator();
+  ~ekf_state_estimator() {};
+  void init_ekf_filter();
+  void run_ekf_filter();
+  void run(uint8_t ID_in, uint8_t ID_tracked_in);
 };
 
 #endif /*EKF_STATE_ESTIMATOR_H*/
