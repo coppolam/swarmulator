@@ -159,14 +159,13 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     float pxf, pyf;
     if (!initialized) {
       polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), pxf, pyf);
-      if (!(abs(pxf) < 0.01 || abs(pyf) < 0.01)) {
-        discrete_ekf_no_north_new(&ekf_rl);
-        ekf_rl.X[0] = pxf;
-        ekf_rl.X[1] = pyf;
-        ekf_rl.X[8] = wrapToPi_f(s[0]->get_state(6) - s[ID]->get_state(6));
-        initialized = true;
-        simtime_seconds_store = simtime_seconds;
-      }
+      discrete_ekf_no_north_new(&ekf_rl);
+      ekf_rl.X[0] = pxf;
+      ekf_rl.X[1] = pyf;
+      ekf_rl.X[8] = wrapToPi_f(s[0]->get_state(6) - s[ID]->get_state(6));
+      initialized = true;
+      simtime_seconds_store = simtime_seconds;
+      ndihandle.delay = ndihandle.delay * ID; 
     } else {
       // All in local frame of follower!!!! values for position, velocity, acceleration
       float vxf, vyf, vx0f, vy0f, axf, ayf;
