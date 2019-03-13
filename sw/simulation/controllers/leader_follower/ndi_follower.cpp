@@ -151,21 +151,22 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
   float px, py, vx, vy, vx0, vy0, ax0, ay0;
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
   if (ID > 0 && simtime_seconds > 10) {
+    uint8_t ID_tracked = ID-1;
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
-    filter.run(ID,0);
+    filter.run(ID,ID_tracked);
     px = filter.ekf_rl.X[0];
     py = filter.ekf_rl.X[1];
     vx = filter.ekf_rl.X[4];
     vy = filter.ekf_rl.X[5];
     rotate_xy(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
 #else
-    polar2cart(o->request_distance(ID, 0), o->request_bearing(ID, 0), px, py);
+    polar2cart(o->request_distance(ID, ID_tracked), o->request_bearing(ID, ID_tracked), px, py);
     rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
-    rotate_xy(s[0 ]->get_state(2), s[0 ]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
-    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
+    rotate_xy(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
+    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
-    rotate_xy(s[0 ]->get_state(4), s[0 ]->get_state(5), -s[0 ]->get_state(6), ax0,  ay0);
+    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0,  ay0);
     ndihandle.xarr[ndihandle.data_end] = px;
     ndihandle.yarr[ndihandle.data_end] = py;
     ndihandle.u1arr[ndihandle.data_end] = vx;
@@ -176,8 +177,8 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.ax2arr[ndihandle.data_end] = ax0;
     ndihandle.ay2arr[ndihandle.data_end] = ay0;
 #elif COMMAND_GLOBAL
-    ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 0);
-    ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID, 0, 1);
+    ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID, ID_tracked, 0);
+    ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID, ID_tracked, 1);
     ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
     ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
     ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
