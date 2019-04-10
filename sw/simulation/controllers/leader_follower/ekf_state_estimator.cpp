@@ -47,6 +47,7 @@ void ekf_state_estimator::run(uint8_t ID_in, uint8_t ID_tracked_in)
     ID = ID_in;
     ID_tracked = ID_tracked_in;
     init_ekf_filter();
+    printf("Launched EKF instance for %d to %d\n", ID, ID_tracked);
   } else {
     run_ekf_filter();
   }

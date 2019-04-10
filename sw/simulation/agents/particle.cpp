@@ -20,10 +20,10 @@ void Particle::state_update()
   // x+ towards North
   // y+ towards East
   float vx_des, vy_des;
-  float vx_global, vy_global, dpsi_rate;
+  float vx_global, vy_global, dpsi, dpsi_rate;
   if (!manual) {
     controller.get_velocity_command(ID, vx_des, vy_des); // Command comes out in the local frame
-    dpsi_rate = 0;
+    // controller.get_psirate_command(ID, dpsi);
   } else {
     vx_des = manualx;
     vy_des = manualy;
