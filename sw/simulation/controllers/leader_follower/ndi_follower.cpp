@@ -92,6 +92,7 @@ void ndi_follower::uwb_follower_control_periodic(void)
   // Re-initialize commands
   ndihandle.commands[0] = 0;
   ndihandle.commands[1] = 0;
+  ndihandle.commands[2] = 0;
 
   // Get current values
   float curtime = simtime_seconds;
@@ -101,17 +102,23 @@ void ndi_follower::uwb_follower_control_periodic(void)
     float oldy = accessCircularFloatArrElement(ndihandle.yarr, 0);
     float newu1 = accessCircularFloatArrElement(ndihandle.u1arr, NDI_MOST_RECENT);
     float newv1 = accessCircularFloatArrElement(ndihandle.v1arr, NDI_MOST_RECENT);
+    float newr1 = accessCircularFloatArrElement(ndihandle.r1arr, NDI_MOST_RECENT);
     float oldu2 = accessCircularFloatArrElement(ndihandle.u2arr, 0);
     float oldv2 = accessCircularFloatArrElement(ndihandle.v2arr, 0);
     oldx = oldx - computeNdiFloatIntegral(ndihandle.u1arr, curtime);
     oldy = oldy - computeNdiFloatIntegral(ndihandle.v1arr, curtime);
 
-    float Minv[2][2];
-    MAKE_MATRIX_PTR(_MINV, Minv, 2);
-    float_mat_zero(_MINV, 2, 2); //fmat_make_zeros(Minv, 2, 2);
+    float newr2 = accessCircularFloatArrElement(ndihandle.r2arr, NDI_MOST_RECENT);
+    float oldr2 = accessCircularFloatArrElement(ndihandle.r2arr, 0);
+    oldr2 = oldr2 - computeNdiFloatIntegral(ndihandle.r2arr, curtime);
+    
+    float Minv[3][3];
+    MAKE_MATRIX_PTR(_MINV, Minv, 3);
+    float_mat_zero(_MINV, 3, 3);
     Minv[0][0] = -ndihandle.tau_x;
     Minv[1][1] = -ndihandle.tau_y;
-    float l[2], oldxed, oldyed;
+    Minv[2][2] = -3;
+    float l[3], oldxed, oldyed, oldr2ed;
 
 #if(NDI_METHOD==0)
     l[0] = newu1 / ndihandle.tau_x;
@@ -119,24 +126,27 @@ void ndi_follower::uwb_follower_control_periodic(void)
     oldxed = oldu2 - newu1;
     oldyed = oldv2 - newv1;
 #elif(NDI_METHOD==1)
-    float newr1 = accessCircularFloatArrElement(ndihandle.r1arr, NDI_MOST_RECENT);
     float oldax2 = accessCircularFloatArrElement(ndihandle.ax2arr, 0);
     float olday2 = accessCircularFloatArrElement(ndihandle.ay2arr, 0);
     l[0] = (newu1 - newr1 * newr1 * oldx - newr1 * ndihandle.tau_x * newv1 + oldax2 * ndihandle.tau_x + 2 * newr1 * ndihandle.tau_x * oldv2) / ndihandle.tau_x;
     l[1] = (newv1 - newr1 * newr1 * oldy + newr1 * ndihandle.tau_y * newu1 + olday2 * ndihandle.tau_y - 2 * newr1 * ndihandle.tau_y * oldu2) / ndihandle.tau_y;
+    l[2] = newr2 / 3;
     oldxed = oldu2 - newu1 + newr1 * oldy;
     oldyed = oldv2 - newv1 - newr1 * oldx;
+    oldr2ed = oldr2 - newr2;
 #endif
 
-    float v[2];
+    float v[3];
     v[0] = ndihandle.Kp * oldx + ndihandle.Kd * oldxed;
     v[1] = ndihandle.Kp * oldy + ndihandle.Kd * oldyed;
+    v[2] = ndihandle.Kp * oldr2 + ndihandle.Kd * oldr2ed;
 
-    float sig[2];
+    float sig[3];
     sig[0] = v[0] - l[0];
     sig[1] = v[1] - l[1];
+    sig[2] = v[2] - l[2];
 
-    float_mat_vect_mul(ndihandle.commands, _MINV, sig, 2, 2);
+    float_mat_vect_mul(ndihandle.commands, _MINV, sig, 3, 3);
   }
 }
 
@@ -151,7 +161,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
   float px, py, vx, vy, vx0, vy0, ax0, ay0;
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
   if (ID > 0 && simtime_seconds > 10) {
-    uint8_t ID_tracked = ID-1;
+    uint8_t ID_tracked = 0;// ID - 1;
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
     filter.run(ID,ID_tracked);
@@ -174,6 +184,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.u2arr[ndihandle.data_end] = vx0;
     ndihandle.v2arr[ndihandle.data_end] = vy0;
     ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
+    ndihandle.r2arr[ndihandle.data_end] = s[ID_tracked]->get_state(6);
     ndihandle.ax2arr[ndihandle.data_end] = ax0;
     ndihandle.ay2arr[ndihandle.data_end] = ay0;
 #elif COMMAND_GLOBAL
@@ -195,4 +206,9 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     vx_des = ndihandle.commands_lim[0];
     vy_des = ndihandle.commands_lim[1];
   }
+}
+
+void ndi_follower::get_psirate_command(const uint8_t ID, float &psirate)
+{
+  psirate = ndihandle.commands[2];
 }
