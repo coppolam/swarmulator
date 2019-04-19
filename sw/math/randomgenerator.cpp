@@ -5,7 +5,8 @@
 
 random_generator::random_generator()
 {
-  srand(static_cast<unsigned>(time(0)));
+  random_device rd;
+  generator.seed(rd());
 };
 
 float random_generator::uniform_float(float min, float max)

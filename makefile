@@ -5,14 +5,14 @@
 TARGET = swarmulator # application name
 BUILD_FOLDER = build
 SRC_FOLDER = sw
-
+MAKEINPUT?=P1
 # Compiler parameters
 # Thanks to the help from
 # https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_makefiles.html#creating
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
 CC = g++ # chosen compiler
-CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR
+CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR -D$(MAKEINPUT)=0
 OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions
 
 # General parameters to include all cpp files and all subfolders
