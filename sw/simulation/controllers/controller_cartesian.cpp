@@ -56,10 +56,9 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
     v_y = v_y / (float)q_ID.size();
   }
   float vmean = 0.5;
-  
-  if (moving_timer == 1 && walltimer > 2 * timelim)
-  {
-    if (rg.bernoulli(1.0 - motion_p[q_ID.size()])){
+
+  if (moving_timer == 1 && walltimer > 2 * timelim) {
+    if (rg.bernoulli(1.0 - motion_p[q_ID.size()])) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;
       moving = false;
@@ -74,37 +73,32 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
     }
   }
 
-// #ifdef CHECK_HAPPY
-//   if (q_ID.size()>1){
-//     happy = true;
-//   }
-//   else{
-//     happy = false;
-//   }
-// #endif
+#ifdef CHECK_HAPPY
+  if (q_ID.size() > 1) {
+    happy = true;
+  } else {
+    happy = false;
+  }
+#endif
 
 #ifdef ARENAWALLS
   walltimer++;
-  if (s[ID]->get_position(0) > ARENAWALLS / 3 && walltimer > 2 * timelim)
-  {
+  if (s[ID]->get_position(0) > ARENAWALLS / 3 && walltimer > 2 * timelim) {
     walltimer = 1;
     v_x_ref = -vmean;
   }
 
-  if (s[ID]->get_position(0) < -ARENAWALLS / 3 && walltimer > 2 * timelim)
-  {
+  if (s[ID]->get_position(0) < -ARENAWALLS / 3 && walltimer > 2 * timelim) {
     walltimer = 1;
     v_x_ref = vmean;
   }
 
-  if (s[ID]->get_position(1) > ARENAWALLS / 3 && walltimer > 2 * timelim)
-  {
+  if (s[ID]->get_position(1) > ARENAWALLS / 3 && walltimer > 2 * timelim) {
     walltimer = 1;
     v_y_ref = -vmean;
   }
 
-  if (s[ID]->get_position(1) < -ARENAWALLS / 3 && walltimer > 2 * timelim)
-  {
+  if (s[ID]->get_position(1) < -ARENAWALLS / 3 && walltimer > 2 * timelim) {
     walltimer = 1;
     v_y_ref = vmean;
   }
@@ -114,7 +108,7 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
     moving_timer = 0;
   }
   moving_timer++;
-  
+
   v_x += v_x_ref;
   v_y += v_y_ref;
 }

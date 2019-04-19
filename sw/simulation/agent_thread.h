@@ -35,7 +35,7 @@ void start_agent_simulation(int id)
   // Info message
   terminalinfo ti;
   stringstream ss;
-  ss << "Robot " << id << " intiated";
+  ss << "Robot " << id << " initiated";
   ti.info_msg(ss.str());
 
   // Run the new robot

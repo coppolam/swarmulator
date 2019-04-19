@@ -111,7 +111,7 @@ void ndi_follower::uwb_follower_control_periodic(void)
     float newr2 = accessCircularFloatArrElement(ndihandle.r2arr, NDI_MOST_RECENT);
     float oldr2 = accessCircularFloatArrElement(ndihandle.r2arr, 0);
     oldr2 = oldr2 - computeNdiFloatIntegral(ndihandle.r2arr, curtime);
-    
+
     float Minv[3][3];
     MAKE_MATRIX_PTR(_MINV, Minv, 3);
     float_mat_zero(_MINV, 3, 3);
@@ -164,7 +164,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     uint8_t ID_tracked = 0;// ID - 1;
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
-    filter.run(ID,ID_tracked);
+    filter.run(ID, ID_tracked);
     px = filter.ekf_rl.X[0];
     py = filter.ekf_rl.X[1];
     vx = filter.ekf_rl.X[4];
