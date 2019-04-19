@@ -18,8 +18,9 @@ using namespace std;
  */
 class random_generator
 {
-public:
   default_random_engine generator;
+
+public:
 
   /**
    * Constructor instatiates a list of all connections in the graph.
@@ -40,6 +41,11 @@ public:
    * Get a random value of type int between a min and a max
    */
   float gaussian_float(float mean, float stddev);
+
+  /**
+   * Get a random bool value with probability p
+   */
+  bool bernoulli(float p);
 
   /**
    * Generate a random vector with zero mean from a gaussian distribution

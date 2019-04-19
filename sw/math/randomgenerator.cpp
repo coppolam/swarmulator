@@ -10,46 +10,27 @@ random_generator::random_generator()
 
 float random_generator::uniform_float(float min, float max)
 {
-  std::uniform_real_distribution<> dis(min, max);
-  return dis(generator);
+  uniform_real_distribution<> dist(min, max);
+  return dist(generator);
 };
 
 int random_generator::uniform_int(int min, int max)
 {
-  return min + (rand() / (RAND_MAX / (max - min))) ;
+  uniform_int_distribution<> dist(min, max);
+  return dist(generator);
 };
 
-// <<complete Box-Muller function>>=
-// based on:
-// http://en.literateprograms.org/Box-Muller_transform_%28C%29#chunk%20def:scale%20and%20translate%20to%20get%20desired%20mean%20and%20standard%20deviation
-//
-// Polar form of Box-Muller transform:
-// http://www.design.caltech.edu/erik/Misc/Gaussian.html
 float random_generator::gaussian_float(float mean, float stddev)
 {
-  static float n2 = 0.0;
-  static int n2_cached = 0;
-  if (!n2_cached) {
-    float x, y, r;
-    do {
-      x = 2.0 * rand() / RAND_MAX - 1;
-      y = 2.0 * rand() / RAND_MAX - 1;
-      r = x * x + y * y;
-    }  //
-    while (r == 0.0 || r > 1.0); {
-      float d = sqrt(-2.0 * log(r) / r);
-      float n1 = x * d;
-      n2 = y * d;
-      float result = n1 * stddev + mean;
-      n2_cached = 1;
-      return result;
-    }
-  } else {
-    n2_cached = 0;
-    return n2 * stddev + mean;
-  }
-
+  normal_distribution<> dist(mean, stddev);
+  return dist(generator);
 };
+
+bool random_generator::bernoulli(float p)
+{
+  bernoulli_distribution dist(p);
+  return dist(generator);
+}
 
 vector<float> random_generator::gaussian_float_vector(const int &length, const float &mean, const float &std)
 {

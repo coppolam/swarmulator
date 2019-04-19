@@ -2,7 +2,6 @@
 #define CONTROLLER_CARTESIAN_H
 
 #include "controller.h"
-#include <random>
 #include "randomgenerator.h"
 #include "trigonometry.h"
 
@@ -14,12 +13,11 @@ using namespace std;
 class Controller_Cartesian: public Controller
 {
   // The omniscient observer is used to simulate sensing the other agents.
-  OmniscientObserver *o;
+  OmniscientObserver o;
 
 public:
   bool moving;
   float v_x_ref, v_y_ref, ang;// v_x_ref_prev, v_y_ref_prev;
-  default_random_engine generator;
   vector<float> motion_p;
   int moving_timer;
   int walltimer;
@@ -31,7 +29,6 @@ public:
   Controller_Cartesian() : Controller()
   {
     moving = false;
-    random_generator rg;
     v_x_ref = rg.gaussian_float(0.0, 1.0);
     v_y_ref = rg.gaussian_float(0.0, 1.0);
     float r;

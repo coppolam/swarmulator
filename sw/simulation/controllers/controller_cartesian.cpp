@@ -3,9 +3,6 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
-// Only one of the following can work
-// #define FORCED    // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt"
-// #define KNEAREST // Use a k-nearest topology according to the second argument
 
 float Controller_Cartesian::f_attraction(float u)
 {
@@ -23,8 +20,8 @@ float Controller_Cartesian::get_attraction_velocity(float u)
 void Controller_Cartesian::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
 {
   float v_b, v_r;
-  v_b = wrapToPi_f(o->request_bearing(ID, state_ID));
-  v_r = get_attraction_velocity(o->request_distance(ID, state_ID));
+  v_b = wrapToPi_f(o.request_bearing(ID, state_ID));
+  v_r = get_attraction_velocity(o.request_distance(ID, state_ID));
   v_x += v_r * cos(v_b);
   v_y += v_r * sin(v_b);
 }
@@ -35,18 +32,18 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
   v_x = 0;
   v_y = 0;
 
-  float timelim = 2 * param->simulation_updatefreq();
+  float timelim = 2.0 * param->simulation_updatefreq();
   // Initialize local moving_timer with random variable
   if (moving_timer == 0) {
-    moving_timer = rand() % (int)timelim;
+    moving_timer = rg.uniform_int(0, timelim);
   }
 
   // Get vector of all neighbors from closest to furthest
-  vector<int> closest = o->request_closest(ID);
+  vector<int> closest = o.request_closest(ID);
   vector<int> q_ID;
   q_ID.clear();
   for (uint8_t i = 0; i < nagents - 1; i++) {
-    if (o->request_distance(ID, closest[i]) < rangesensor) {
+    if (o.request_distance(ID, closest[i]) < rangesensor) {
       q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }
   }
@@ -59,17 +56,15 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
     v_y = v_y / (float)q_ID.size();
   }
   float vmean = 0.5;
-  std::normal_distribution<> dist(0.0,0.5);
   
   if (moving_timer == 1 && walltimer > 2 * timelim)
   {
-    std::bernoulli_distribution distribution(1 - motion_p[q_ID.size()]);
-    if (distribution(generator)) {
+    if (rg.bernoulli(1.0 - motion_p[q_ID.size()])){
       v_x_ref = 0.0;
       v_y_ref = 0.0;
       moving = false;
     } else { // Else explore randomly, change heading
-      float ext = dist(generator);
+      float ext = rg.gaussian_float(0.0, 0.5);
       float temp;
       cart2polar(v_x_ref, v_y_ref, temp, ang);
       ang += ext;
@@ -79,14 +74,14 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
     }
   }
 
-#ifdef CHECK_HAPPY
-  if (q_ID.size()>1){
-    happy = true;
-  }
-  else{
-    happy = false;
-  }
-#endif
+// #ifdef CHECK_HAPPY
+//   if (q_ID.size()>1){
+//     happy = true;
+//   }
+//   else{
+//     happy = false;
+//   }
+// #endif
 
 #ifdef ARENAWALLS
   walltimer++;

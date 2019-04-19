@@ -46,7 +46,7 @@ void main_simulation_thread(int argc, char *argv[])
   random_generator rg;
   float spread = 0.5; // default
   #ifdef ARENAWALLS
-    spread = ARENAWALLS/3;
+    spread = (float)ARENAWALLS/(float)3.0;
   #endif
     vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
     vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
