@@ -127,13 +127,48 @@ void draw::draw_axes()
   glEnd();
 }
 
+void draw::draw_walls()
+{
+#ifdef ARENAWALLS
+  float lineintensity = 0.9;
+  glLineWidth(2.5);
+
+  float wall_f = ARENAWALLS / 2 * xrat;
+
+  glBegin(GL_LINES);
+  glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
+  glVertex3f(-wall_f, wall_f, 0.0);
+  glVertex3f(wall_f, wall_f, 0.0);
+  glEnd();
+
+  glBegin(GL_LINES);
+  glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
+  glVertex3f(-wall_f, wall_f, 0.0);
+  glVertex3f(-wall_f, -wall_f, 0.0);
+  glEnd();
+
+  glBegin(GL_LINES);
+  glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
+  glVertex3f(wall_f, -wall_f, 0.0);
+  glVertex3f(wall_f, wall_f, 0.0);
+  glEnd();
+
+  glBegin(GL_LINES);
+  glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
+  glVertex3f(-wall_f, -wall_f, 0.0);
+  glVertex3f(wall_f, -wall_f, 0.0);
+  glEnd();
+#endif
+}
+
+
 void draw::draw_agent(uint8_t ID, float x, float y, float orientation)
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
   glRotatef(90.0 - rad2deg(orientation), 0.0, 0, 1);
   s[ID]->animation(); // Uses the animation function defined by the agent in use
-  draw_agent_number(ID);
+  // draw_agent_number(ID);
   glPopMatrix();
 }
 
@@ -141,7 +176,7 @@ void draw::draw_velocity_arrow(uint8_t ID, float x, float y, float z, float v_x,
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, z); // ENU to NED
-  glRotatef(90.0, 0.0, 0.0, 1.0);
+  glRotatef(90.0, 0.0, 0, 1);
   draw_line(v_x, v_y);
   glPopMatrix();
 }
@@ -150,7 +185,7 @@ void draw::draw_centroid(float x, float y, float z)
 {
   glPushMatrix();
   glTranslatef(y, x, z);
-  glRotatef(90, 0.0, 0.0, 1.0);
+  glRotatef(90, 0.0, 0, 1);
   draw_point();
   glPopMatrix();
 }

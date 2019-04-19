@@ -23,6 +23,6 @@ for (( i = 1; i <= $1; i++ )); do
 	
 	# Move latest log to directory
 	fn=$(ls -t logs| head -n1)
-	mv -f -- logs/log_$md.txt $d/$fn
+	mv -f -- logs/log_$md.txt $d/log_$i.txt
 
 done

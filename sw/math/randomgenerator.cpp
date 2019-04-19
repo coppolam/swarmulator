@@ -1,23 +1,17 @@
 #include "randomgenerator.h"
-#include <random>
 #include <iostream>
 #include "stdint.h"
 #include "auxiliary.h"
 
 random_generator::random_generator()
 {
-  int temp;
-  uintptr_t t = (uintptr_t)&temp;
-  srand(t);
+  srand(static_cast<unsigned>(time(0)));
 };
 
 float random_generator::uniform_float(float min, float max)
 {
-  random_device rd;  //Will be used to obtain a seed for the random number engine
-  mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()v
-  uniform_real_distribution<> dis(min, max);
-  return dis(gen);
-  // return min + ((float)rand() / (RAND_MAX / (max - min))) ;
+  std::uniform_real_distribution<> dis(min, max);
+  return dis(generator);
 };
 
 int random_generator::uniform_int(int min, int max)

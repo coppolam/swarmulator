@@ -53,27 +53,29 @@ int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
 
-  // Start simulation
+  // Start simulation thread
   thread simulation(main_simulation_thread, argc, argv);
   simulation.detach();
 
 #ifdef ANIMATE
-  // Start animation
+  // Start animation thread
   thread animation(main_animation_thread);
   animation.detach();
 #endif
 
 #ifdef LOG
-  // Start logger
+  // Start logger thread
   thread logger(main_logger_thread);
   logger.detach();
 #endif
 
   // Keep the program running
-  while (program_running) {};
+  while (program_running) {
+  };
 
   // Exit
   terminalinfo ti;
   ti.info_msg("Swarmulator exiting");
+
   return 0;
 }

@@ -3,7 +3,6 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
-
 // Only one of the following can work
 // #define FORCED    // Forces to use a specific adjacency matrix as specified in "adjacencymatrix.txt"
 // #define KNEAREST // Use a k-nearest topology according to the second argument
@@ -11,8 +10,9 @@
 float Controller_Cartesian::f_attraction(float u)
 {
   //% Sigmoid function -- long-range
-  float w = 1.5;
-  return  1 / (1 + exp(-_ka * (u - w))) + 1 / (1 + exp(-_ka * (u + w))) - 1;
+  float ddes = 1.5;
+  float w = log((ddes / _kr - 1) / exp(-_ka * ddes)) / _ka;
+  return 1 / (1 + exp(-_ka * (u - w)));
 }
 
 float Controller_Cartesian::get_attraction_velocity(float u)
@@ -20,37 +20,106 @@ float Controller_Cartesian::get_attraction_velocity(float u)
   return f_attraction(u) + f_repulsion(u);
 }
 
+void Controller_Cartesian::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
+{
+  float v_b, v_r;
+  v_b = wrapToPi_f(o->request_bearing(ID, state_ID));
+  v_r = get_attraction_velocity(o->request_distance(ID, state_ID));
+  v_x += v_r * cos(v_b);
+  v_y += v_r * sin(v_b);
+}
+
+
 void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;
 
-#ifdef KNEAREST
+  float timelim = 2 * param->simulation_updatefreq();
+  // Initialize local moving_timer with random variable
+  if (moving_timer == 0) {
+    moving_timer = rand() % (int)timelim;
+  }
 
+  // Get vector of all neighbors from closest to furthest
   vector<int> closest = o->request_closest(ID);
+  vector<int> q_ID;
+  q_ID.clear();
   for (uint8_t i = 0; i < nagents - 1; i++) {
-    v_x += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 0));
-    v_y += get_attraction_velocity(o->request_distance_dim(ID, closest[i], 1));
-  }
-
-#endif
-
-#ifdef FORCED
-
-  uint8_t i = 0;
-  std::ifstream infile("adjacencymatrix.txt");
-  bool mat[nagents * nagents];
-  while (i < (nagents * nagents)) {
-    infile >> mat[i];
-    i++;
-  }
-
-  for (i = 0; i < nagents; i++) {
-    if (i != ID) {
-      v_x += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID * nagents + i]);
-      v_y += (get_attraction_velocity(o->request_distance(ID, i, 0)) * mat[ID * nagents + i]);
+    if (o->request_distance(ID, closest[i]) < rangesensor) {
+      q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }
   }
+
+  if (!q_ID.empty()) {
+    for (size_t i = 0; i < q_ID.size(); i++) {
+      get_lattice_motion(ID, q_ID[i], v_x, v_y);
+    }
+    v_x = v_x / (float)q_ID.size();
+    v_y = v_y / (float)q_ID.size();
+  }
+  float vmean = 0.5;
+  std::normal_distribution<> dist(0.0,0.5);
+  
+  if (moving_timer == 1 && walltimer > 2 * timelim)
+  {
+    std::bernoulli_distribution distribution(1 - motion_p[q_ID.size()]);
+    if (distribution(generator)) {
+      v_x_ref = 0.0;
+      v_y_ref = 0.0;
+      moving = false;
+    } else { // Else explore randomly, change heading
+      float ext = dist(generator);
+      float temp;
+      cart2polar(v_x_ref, v_y_ref, temp, ang);
+      ang += ext;
+      wrapTo2Pi(ang);
+      polar2cart(vmean, ang, v_x_ref, v_y_ref);
+      moving = true;
+    }
+  }
+
+#ifdef CHECK_HAPPY
+  if (q_ID.size()>1){
+    happy = true;
+  }
+  else{
+    happy = false;
+  }
 #endif
 
-};
+#ifdef ARENAWALLS
+  walltimer++;
+  if (s[ID]->get_position(0) > ARENAWALLS / 3 && walltimer > 2 * timelim)
+  {
+    walltimer = 1;
+    v_x_ref = -vmean;
+  }
+
+  if (s[ID]->get_position(0) < -ARENAWALLS / 3 && walltimer > 2 * timelim)
+  {
+    walltimer = 1;
+    v_x_ref = vmean;
+  }
+
+  if (s[ID]->get_position(1) > ARENAWALLS / 3 && walltimer > 2 * timelim)
+  {
+    walltimer = 1;
+    v_y_ref = -vmean;
+  }
+
+  if (s[ID]->get_position(1) < -ARENAWALLS / 3 && walltimer > 2 * timelim)
+  {
+    walltimer = 1;
+    v_y_ref = vmean;
+  }
+#endif
+
+  if (moving_timer > timelim) {
+    moving_timer = 0;
+  }
+  moving_timer++;
+  
+  v_x += v_x_ref;
+  v_y += v_y_ref;
+}

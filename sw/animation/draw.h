@@ -48,8 +48,13 @@ public:
   void draw_axes();
 
   /**
-   * Draw a small white point
+   * Draw arena walls
    */
+  void draw_walls();
+
+  /**
+  * Draw a small white point
+  */
   void draw_point();
 
   /******* Swarmulator higher level functions ********/

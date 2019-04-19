@@ -169,14 +169,14 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     py = filter.ekf_rl.X[1];
     vx = filter.ekf_rl.X[4];
     vy = filter.ekf_rl.X[5];
-    rotate_xy(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
+    rotate(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
 #else
     polar2cart(o->request_distance(ID, ID_tracked), o->request_bearing(ID, ID_tracked), px, py);
-    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
-    rotate_xy(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
-    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
+    rotate(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
+    rotate(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
+    rotate(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
-    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0,  ay0);
+    rotate(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0,  ay0);
     ndihandle.xarr[ndihandle.data_end] = px;
     ndihandle.yarr[ndihandle.data_end] = py;
     ndihandle.u1arr[ndihandle.data_end] = vx;

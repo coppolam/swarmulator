@@ -25,6 +25,11 @@ void txtwrite::txtwrite_state(ofstream &logfile)
     }
     logfile << endl;
   }
+
+  #ifdef LOGTIME
+  if (simtime_seconds > LOGTIME)
+    program_running = false;
+  #endif
 }
 
 void txtwrite::txtwrite_summary(ofstream &logfile)

@@ -44,17 +44,22 @@ void main_simulation_thread(int argc, char *argv[])
 
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
   random_generator rg;
-  vector<float> x0 = rg.gaussian_float_vector(nagents, 0.0, 0.5);
-  vector<float> y0 = rg.gaussian_float_vector(nagents, 0.0, 0.5);
-  vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
+  float spread = 0.5; // default
+  #ifdef ARENAWALLS
+    spread = ARENAWALLS/3;
+  #endif
+    vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
+    vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
+    vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
 
-  // Generate the agent models
-  for (uint8_t ID = 0; ID < nagents; ID++) {
-    // Initial positions/states
-    vector<float> states = { x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0 };
-    // The data of the swarm is stored in a vector
-    // AGENT is a stand-in for the agent of choice. This is selected in setting.h
-    s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
+    // Generate the agent models
+    for (uint8_t ID = 0; ID < nagents; ID++)
+    {
+      // Initial positions/states
+      vector<float> states = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
+      // The data of the swarm is stored in a vector
+      // AGENT is a stand-in for the agent of choice. This is selected in setting.h
+      s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   }
 
   // Launch agent threads to simulate each agent independetly

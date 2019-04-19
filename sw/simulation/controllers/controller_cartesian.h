@@ -2,6 +2,9 @@
 #define CONTROLLER_CARTESIAN_H
 
 #include "controller.h"
+#include <random>
+#include "randomgenerator.h"
+#include "trigonometry.h"
 
 using namespace std;
 
@@ -14,10 +17,29 @@ class Controller_Cartesian: public Controller
   OmniscientObserver *o;
 
 public:
+  bool moving;
+  float v_x_ref, v_y_ref, ang;// v_x_ref_prev, v_y_ref_prev;
+  default_random_engine generator;
+  vector<float> motion_p;
+  int moving_timer;
+  int walltimer;
+  random_generator rg;
   /**
+   *
    * Construction. Controller_Cartesian is a child class of Controller.
    */
-  Controller_Cartesian(): Controller() {};
+  Controller_Cartesian() : Controller()
+  {
+    moving = false;
+    random_generator rg;
+    v_x_ref = rg.gaussian_float(0.0, 1.0);
+    v_y_ref = rg.gaussian_float(0.0, 1.0);
+    float r;
+    cart2polar(v_x_ref, v_y_ref, r, ang);
+    motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
+    moving_timer = 0;
+    walltimer = 0;
+  };
 
   /**
    * Attraction function at distance u
@@ -28,7 +50,7 @@ public:
    * Function to get the total attraction/repulsion velocity
    */
   float get_attraction_velocity(float u);
-
+  void get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y);
   /**
    * Implementation of method to get the commanded velocity
    */

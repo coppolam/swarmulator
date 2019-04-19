@@ -9,6 +9,7 @@
 #include "stdlib.h"
 #include "math.h"
 #include <vector>
+#include <random>
 
 using namespace std;
 
@@ -18,6 +19,8 @@ using namespace std;
 class random_generator
 {
 public:
+  default_random_engine generator;
+
   /**
    * Constructor instatiates a list of all connections in the graph.
    */

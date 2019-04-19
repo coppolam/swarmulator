@@ -28,10 +28,10 @@ void ekf_state_estimator::run_ekf_filter()
   // All in local frame of follower!!!! values for position, velocity, acceleration
   float vxf, vyf, vx0f, vy0f, axf, ayf, ax0, ay0;
   // Global to local, rotate the opposite of local to global, hence the negative
-  rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vxf,  vyf);
-  rotate_xy(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), axf,  ayf);
-  rotate_xy(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID_tracked]->get_state(6), vx0f, vy0f);
-  rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID_tracked]->get_state(6), ax0,  ay0);
+  rotate(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vxf,  vyf);
+  rotate(s[ID]->get_state(4), s[ID]->get_state(5), -s[ID]->get_state(6), axf,  ayf);
+  rotate(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID_tracked]->get_state(6), vx0f, vy0f);
+  rotate(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID_tracked]->get_state(6), ax0,  ay0);
   ekf_rl.dt = simtime_seconds - simtime_seconds_store;
   simtime_seconds_store = simtime_seconds;
   float U[EKF_L] = {axf, ayf, ax0, ay0, s[ID]->get_state(7), s[0]->get_state(7)};

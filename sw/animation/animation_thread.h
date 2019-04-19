@@ -38,6 +38,10 @@ void main_loop_function()
   // Draw fixed one time objects
   drawer.draw_data(); // Put data in corner
   drawer.draw_axes(); // Put x and y global axes
+#ifdef ARENAWALLS
+  drawer.draw_walls(); // Put x and y global axes
+#endif
+
   for (int i = 0; i < 3; i++) {
     drawer.draw_axes_text(i);
   }

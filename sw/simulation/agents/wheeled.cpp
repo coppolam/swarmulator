@@ -1,14 +1,16 @@
 #include "wheeled.h"
 #include "trigonometry.h"
+#include "randomgenerator.h"
 #include "draw.h"
 
-Wheeled::Wheeled(int i, const vector<float> &s, float tstep)
+Wheeled::Wheeled(int i, vector<float> s, float tstep)
 {
   state = s;
   ID = i;
   dt = tstep;
-  orientation = 0.0;
+  orientation = state[6];
   controller.set_saturation(0.5);
+  manual = false;
 }
 
 void Wheeled::state_update()
@@ -16,34 +18,48 @@ void Wheeled::state_update()
   // NED frame
   // x+ towards North
   // y+ towards East
+  float vx_des, vy_des;
+  float vx_global, vy_global, dpsi_rate;
+  if (!manual) {
+    controller.get_velocity_command(ID, vx_des, vy_des); // Command comes out in the local frame
+    // controller.get_psirate_command(ID, dpsi);
+  } else {
+    vx_des = manualx;
+    vy_des = manualy;
+    dpsi_rate = manualpsi_delta;
+  }
+  controller.saturate(vx_des);
+  controller.saturate(vy_des);
+#ifndef COMMAND_GLOBAL
+  rotate(vx_des, vy_des, state[6], vx_global, vy_global);
+#else
+  vx_des = vx_global;
+  vy_des = vy_global;
+#endif
 
-  float v_x, v_y;
-  controller.get_velocity_command(ID, v_x, v_y);
-  controller.saturate(v_x);
-  controller.saturate(v_y);
+  state.at(7) = dpsi_rate;
+  state.at(6) += dpsi_rate * dt;
+
+  // Acceleration control
+  float ka = 1;
+  state.at(4) = ka * (vx_global - state[2]); // Acceleration global frame
+  state.at(5) = ka * (vy_global - state[3]); // Acceleration global frame
   moving = controller.moving;
-
-  float v, w;
-  cart2polar(v_x, v_y, v, w);
-
-  orientation += 5.0 * (w - orientation) * dt; // Orientation
-
-  // Acceleration
-  state.at(4) = 15 * (v * cos(orientation) - state[2]); // Acceleration x
-  state.at(5) = 15 * (v * sin(orientation) - state[3]); // Acceleration y
+  happy = controller.happy;
 
   // Velocity
-  state.at(2) = state[4] * dt; // velocity x
-  state.at(3) = state[5] * dt; // velocity y
+  state.at(2) += state[4] * dt; // Velocity x global frame
+  state.at(3) += state[5] * dt; // Velocity y global frame
 
   // Position
-  state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // position x
-  state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // position y
+  state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x global frame
+  state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y global frame
 };
 
 void Wheeled::animation()
 {
   draw d;
+
   d.draw_triangle(param->scale());
   d.draw_circle_loop(param->scale());
 }
