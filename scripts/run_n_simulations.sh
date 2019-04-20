@@ -20,7 +20,8 @@ for (( i = 1; i <= $1; i++ )); do
 	# Run code
 	md=$(date +%Y-%m-%d-%T);
 	./swarmulator $2
-	
+	sleep 1 # Give it some time to close
+
 	# Move latest log to directory
 	fn=$(ls -t logs| head -n1)
 	mv -f -- logs/log_$md.txt $d/log_$i.txt

@@ -1,5 +1,5 @@
 swarmulator
-logs/
+*logs*/
 conf/*.xml
 conf/*.txt
 parameters.*
@@ -19,3 +19,4 @@ build-swarmulator-Desktop-Debug/
 sw/window/swarmulator.pro.user
 sw/window/swarmulator_window.h.autosave
 sw/build-swarmulator-Desktop-Debug
+script.sh
