@@ -39,7 +39,7 @@ void main_loop_function()
   drawer.draw_data(); // Put data in corner
   drawer.draw_axes(); // Put x and y global axes
 #ifdef ARENAWALLS
-  drawer.draw_walls(); // Put x and y global axes
+  drawer.draw_walls(); // Draw the arena walls
 #endif
 
   for (int i = 0; i < 3; i++) {
