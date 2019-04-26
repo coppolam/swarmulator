@@ -5,6 +5,7 @@
 TARGET = swarmulator # application name
 BUILD_FOLDER = build
 SRC_FOLDER = sw
+# Use these to give input parameters
 # IP1?=
 # IP2?=
 # IAW?=
