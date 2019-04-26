@@ -11,7 +11,7 @@
 // #define REMAIN_CONNECTED // Check that the swarm remains connected (only if logging)
 #define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
 
-// #define ARENAWALLS 80
+#define ARENAWALLS 40
 
 /***** Select the controller to be used by uncommenting it ****/
 #define CONTROLLER Controller_Cartesian   // Basic x-y controller
