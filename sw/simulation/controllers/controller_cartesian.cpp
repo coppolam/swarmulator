@@ -63,10 +63,13 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
       v_y_ref = 0.0;
       moving = false;
     } else { // Else explore randomly, change heading
-      float ext = rg.gaussian_float(0.0, 0.5);
-      float temp;
-      cart2polar(v_x_ref, v_y_ref, temp, ang);
-      ang += ext;
+      ang = rg.uniform_float(0,2*M_PI);
+      if (moving) {
+        float ext = rg.gaussian_float(0.0, 0.5);
+        float temp;
+        cart2polar(v_x_ref, v_y_ref, temp, ang);
+        ang += ext;
+      }
       wrapTo2Pi(ang);
       polar2cart(vmean, ang, v_x_ref, v_y_ref);
       moving = true;
@@ -83,22 +86,22 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
 
 #ifdef ARENAWALLS
   walltimer++;
-  if (s[ID]->get_position(0) > ARENAWALLS / 3 && walltimer > 2 * timelim) {
+  if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
     v_x_ref = -vmean;
   }
 
-  if (s[ID]->get_position(0) < -ARENAWALLS / 3 && walltimer > 2 * timelim) {
+  if (s[ID]->get_position(0) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
     v_x_ref = vmean;
   }
 
-  if (s[ID]->get_position(1) > ARENAWALLS / 3 && walltimer > 2 * timelim) {
+  if (s[ID]->get_position(1) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
     v_y_ref = -vmean;
   }
 
-  if (s[ID]->get_position(1) < -ARENAWALLS / 3 && walltimer > 2 * timelim) {
+  if (s[ID]->get_position(1) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
     v_y_ref = vmean;
   }

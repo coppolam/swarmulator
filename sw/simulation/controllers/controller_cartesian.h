@@ -19,7 +19,7 @@ public:
   bool moving; // Robot sets it if it is moving.
   float v_x_ref, v_y_ref, ang;
   vector<float> motion_p; // Probability of motion
-  int moving_timer; // Timer measuring how long a robot has been moving 
+  int moving_timer; // Timer measuring how long a robot has been moving
   int walltimer; // Timer to set the time for a wall avoidance maneuver
   random_generator rg; // Random generator
 
@@ -33,8 +33,8 @@ public:
     v_y_ref = rg.gaussian_float(0.0, 1.0);
     float r; //temp
     cart2polar(v_x_ref, v_y_ref, r, ang);
-    // motion_p = {P1, P2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
+    motion_p = {P1, P2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    // motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
 
     moving_timer = 0;
     walltimer = 0;
