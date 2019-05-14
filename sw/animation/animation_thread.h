@@ -93,8 +93,8 @@ void main_animation_thread()
   sy = 0;
 #ifdef ARENAWALLS
   zoom = -ARENAWALLS;
-#elif
-  zoom = -10;
+#else
+  zoom = 0;
 #endif // ARENAWALLS
   zoom_scale = 0;
   pointer_x = 0;

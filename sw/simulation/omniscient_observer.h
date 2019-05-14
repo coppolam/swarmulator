@@ -40,9 +40,25 @@ public:
    * Get the closest
    */
   vector<int> request_closest(uint8_t ID); // request IDs of closest k neighbours and for your ID
+  
+  /**
+   * Get the closest within a range
+   */
   vector<int> request_closest_inrange(uint8_t ID, float range);
+
+  /**
+   * Get the relative distance between two agents along x or y
+   */
   float request_distance_dim(uint8_t ID, uint8_t ID_tracked, uint8_t dim);
+
+  /**
+   * Get the relative distance between two agents
+   */
   float request_distance(uint8_t ID, uint8_t ID_tracked);
+
+  /**
+   * Get the relative bearing between two agents
+   */
   float request_bearing(uint8_t ID, uint8_t ID_tracked);
 
   /**

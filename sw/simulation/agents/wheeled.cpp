@@ -8,6 +8,7 @@ Wheeled::Wheeled(int i, vector<float> s, float tstep)
   state = s;
   ID = i;
   dt = tstep;
+  random_generator rg;
   orientation = state[6];
   controller.set_saturation(0.5);
   manual = false;
@@ -22,7 +23,7 @@ void Wheeled::state_update()
   float vx_global, vy_global, dpsi_rate;
   if (!manual) {
     controller.get_velocity_command(ID, vx_des, vy_des); // Command comes out in the local frame
-    // controller.get_psirate_command(ID, dpsi);
+    dpsi_rate = 0;
   } else {
     vx_des = manualx;
     vy_des = manualy;
@@ -30,8 +31,8 @@ void Wheeled::state_update()
   }
   controller.saturate(vx_des);
   controller.saturate(vy_des);
-#ifndef COMMAND_GLOBAL
-  rotate(vx_des, vy_des, state[6], vx_global, vy_global);
+#if COMMAND_LOCAL
+  rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
 #else
   vx_des = vx_global;
   vy_des = vy_global;
@@ -39,6 +40,7 @@ void Wheeled::state_update()
 
   state.at(7) = dpsi_rate;
   state.at(6) += dpsi_rate * dt;
+  state.at(6) = wrapToPi_f(state[6]); // Orientation
 
   // Acceleration control
   float ka = 1;

@@ -9,7 +9,7 @@ extern "C" {
 class ekf_state_estimator
 {
   // The omniscient observer is used to simulate sensing the other agents.
-  OmniscientObserver *o;
+  OmniscientObserver o;
   bool initialized;
   uint8_t ID;
   uint8_t ID_tracked;

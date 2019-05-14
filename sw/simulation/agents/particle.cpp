@@ -25,7 +25,7 @@ void Particle::state_update()
   happy = controller.happy;
 
   float vxr, vyr;
-  rotate(v_x, v_y, orientation, vxr, vyr);
+  rotate_xy(v_x, v_y, orientation, vxr, vyr);
 
   // Acceleration
   state.at(4) = 15 * (vxr - state[2]); // Acceleration x
@@ -44,12 +44,6 @@ void Particle::state_update()
 void Particle::animation()
 {
   draw d;
-
-  if (abs(orientation - 0.0) < 0.01) {
-    d.draw_circle(param->scale());
-  } else {
-    d.draw_triangle(param->scale());
-  }
-
+  d.draw_circle(param->scale());
   d.draw_circle_loop(param->scale());
 }

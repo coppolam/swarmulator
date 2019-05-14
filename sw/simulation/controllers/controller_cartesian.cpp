@@ -63,7 +63,7 @@ void Controller_Cartesian::get_velocity_command(const uint8_t ID, float &v_x, fl
       v_y_ref = 0.0;
       moving = false;
     } else { // Else explore randomly, change heading
-      ang = rg.uniform_float(0,2*M_PI);
+      ang = rg.uniform_float(0.0,2*M_PI);
       if (moving) {
         float ext = rg.gaussian_float(0.0, 0.5);
         float temp;

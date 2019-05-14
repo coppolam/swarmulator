@@ -9,22 +9,23 @@
 // #define LOGTIME 1000 // If set, swarmulator will quite automatically after 1000 (or however many) simulated seconds. Requires logger.
 
 // #define REMAIN_CONNECTED // Check that the swarm remains connected (only if logging)
-#define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
+// #define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
 
-#define ARENAWALLS 30
+// #define ARENAWALLS 30
 
 /***** Select the controller to be used by uncommenting it ****/
-#define CONTROLLER Controller_Cartesian   // Basic x-y controller
+// #define CONTROLLER Controller_Cartesian   // Basic x-y controller
 // #define CONTROLLER Controller_Lattice   // Basic lattice controller
 // #define CONTROLLER Controller_Bearing_Shape  // Controller with Qf
-// #define CONTROLLER ndi_follower  // Controller with Qf
+#define CONTROLLER ndi_follower  // Controller with Qf
+#define COMMAND_LOCAL 1          // use COMMAND_LOCAL for local commands
 
 /***** Select the agent type that you want to use by uncommenting it****/
-#define AGENT Particle    // Accelerated particles
-// #define AGENT Wheeled    // Wheeled vehicles
+// #define AGENT Particle    // Accelerated particles
+#define AGENT Wheeled    // Wheeled vehicles
 
 /***** Noise in relative sensing *****/
-#define NOISE_R 0 // STDEV of noise in range
-#define NOISE_B 0 // STDEV of noise in bearing
+#define NOISE_R 0.1 // STDEV of noise in relative range sensor
+#define NOISE_B 0 // STDEV of noise in relative bearing sensor
 
 #endif /*SETTINGS_H*/

@@ -59,8 +59,6 @@ public:
    * The outputs are the desired v_x and v_y velocities
    */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
-
-  virtual void get_psirate_command(const uint8_t ID, float &psirate) {};
 };
 
 

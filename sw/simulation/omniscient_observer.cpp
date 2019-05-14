@@ -122,7 +122,8 @@ float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
     float dd = s[ID_tracked]->get_position(i) - s[ID]->get_position(i);
     u += pow(dd, 2);
   }
-  return sqrt(u) + rg.gaussian_float(0.0, NOISE_R);
+  float noise = rg.gaussian_float(0.0, NOISE_R);
+  return sqrt(u) + noise;
 }
 
 float OmniscientObserver::own_bearing(uint8_t ID)
@@ -132,7 +133,14 @@ float OmniscientObserver::own_bearing(uint8_t ID)
 
 float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 {
-  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) + rg.gaussian_float(0.0, NOISE_B);
+  float noise = rg.gaussian_float(0.0, NOISE_B);
+  float b = atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) + noise;
+  #if COMMAND_LOCAL
+      return b - own_bearing(ID);
+  #else
+    return b;
+  #endif
+
 }
 
 bool OmniscientObserver::see_if_moving(uint8_t ID)

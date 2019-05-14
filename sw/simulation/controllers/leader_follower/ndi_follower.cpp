@@ -5,14 +5,9 @@
 #include <sstream>
 #include "trigonometry.h"
 
-#define COMMAND_LOCAL 1 // use COMMAND_LOCAL for local commands
 #define STATE_ESTIMATOR 1
 
-#ifdef COMMAND_GLOBAL
-#define COMMAND_LOCAL 0
-#endif
-
-#define NDI_MOST_RECENT ndihandle.data_entries-1
+#define NDI_MOST_RECENT ndihandle.data_entries - 1
 
 // Delay of trajectory with respect to the leader
 #ifndef NDI_DELAY
@@ -26,26 +21,29 @@
 #define NDI_METHOD 1
 
 // Initilizer
-ndi_follower::ndi_follower(): Controller()
+ndi_follower::ndi_follower() : Controller()
 {
   ndihandle.delay = NDI_DELAY;
-  ndihandle.tau_x = 3;
-  ndihandle.tau_y = 3;
+  ndihandle.tau_x = 3.0;
+  ndihandle.tau_y = 3.0;
   ndihandle.wn_x = 0.9;
   ndihandle.wn_y = 0.9;
   ndihandle.eps_x = 0.28;
   ndihandle.eps_y = 0.28;
   ndihandle.Kp = -1.5;
-  ndihandle.Ki = 0;
-  ndihandle.Kd = -3;
+  ndihandle.Ki = 0.0;
+  ndihandle.Kd = -3.0;
 };
 void ndi_follower::bindNorm(float max_command)
 {
   float normcom = sqrt(ndihandle.commands[1] * ndihandle.commands[1] + ndihandle.commands[0] * ndihandle.commands[0]);
-  if (normcom > max_command) {
+  if (normcom > max_command)
+  {
     ndihandle.commands_lim[0] = ndihandle.commands[0] * max_command / normcom;
     ndihandle.commands_lim[1] = ndihandle.commands[1] * max_command / normcom;
-  } else {
+  }
+  else
+  {
     ndihandle.commands_lim[0] = ndihandle.commands[0];
     ndihandle.commands_lim[1] = ndihandle.commands[1];
   }
@@ -63,7 +61,8 @@ float ndi_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
 {
   float integral = 0;
   float dt;
-  for (int i = 0; i < ndihandle.data_entries - 1; i++) {
+  for (int i = 0; i < ndihandle.data_entries - 1; i++)
+  {
     dt = accessCircularFloatArrElement(ndihandle.tarr, i + 1) - accessCircularFloatArrElement(ndihandle.tarr, i);
     integral += dt * accessCircularFloatArrElement(ndiarr, i);
   }
@@ -75,8 +74,10 @@ float ndi_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
 void ndi_follower::cleanNdiValues(float tcur)
 {
   int curentries = ndihandle.data_entries;
-  for (int i = 0; i < curentries; i++) {
-    if ((tcur - ndihandle.tarr[ndihandle.data_start]) > ndihandle.delay) {
+  for (int i = 0; i < curentries; i++)
+  {
+    if ((tcur - ndihandle.tarr[ndihandle.data_start]) > ndihandle.delay)
+    {
       ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
       ndihandle.data_entries--;
     }
@@ -92,76 +93,69 @@ void ndi_follower::uwb_follower_control_periodic(void)
   // Re-initialize commands
   ndihandle.commands[0] = 0;
   ndihandle.commands[1] = 0;
-  ndihandle.commands[2] = 0;
 
   // Get current values
   float curtime = simtime_seconds;
   cleanNdiValues(curtime);
-  if (ndihandle.data_entries > 0) {
+  if (ndihandle.data_entries > 0)
+  {
     float oldx = accessCircularFloatArrElement(ndihandle.xarr, 0);
     float oldy = accessCircularFloatArrElement(ndihandle.yarr, 0);
     float newu1 = accessCircularFloatArrElement(ndihandle.u1arr, NDI_MOST_RECENT);
     float newv1 = accessCircularFloatArrElement(ndihandle.v1arr, NDI_MOST_RECENT);
-    float newr1 = accessCircularFloatArrElement(ndihandle.r1arr, NDI_MOST_RECENT);
     float oldu2 = accessCircularFloatArrElement(ndihandle.u2arr, 0);
     float oldv2 = accessCircularFloatArrElement(ndihandle.v2arr, 0);
     oldx = oldx - computeNdiFloatIntegral(ndihandle.u1arr, curtime);
     oldy = oldy - computeNdiFloatIntegral(ndihandle.v1arr, curtime);
 
-    float newr2 = accessCircularFloatArrElement(ndihandle.r2arr, NDI_MOST_RECENT);
-    float oldr2 = accessCircularFloatArrElement(ndihandle.r2arr, 0);
-    oldr2 = oldr2 - computeNdiFloatIntegral(ndihandle.r2arr, curtime);
-
-    float Minv[3][3];
-    MAKE_MATRIX_PTR(_MINV, Minv, 3);
-    float_mat_zero(_MINV, 3, 3);
+    float Minv[2][2];
+    MAKE_MATRIX_PTR(_MINV, Minv, 2);
+    float_mat_zero(_MINV, 2, 2); //fmat_make_zeros(Minv, 2, 2);
     Minv[0][0] = -ndihandle.tau_x;
     Minv[1][1] = -ndihandle.tau_y;
-    Minv[2][2] = -3;
-    float l[3], oldxed, oldyed, oldr2ed;
+    float l[2], oldxed, oldyed;
 
-#if(NDI_METHOD==0)
+#if (NDI_METHOD == 0)
     l[0] = newu1 / ndihandle.tau_x;
     l[1] = newv1 / ndihandle.tau_y;
     oldxed = oldu2 - newu1;
     oldyed = oldv2 - newv1;
-#elif(NDI_METHOD==1)
+#elif (NDI_METHOD == 1)
+    float newr1 = accessCircularFloatArrElement(ndihandle.r1arr, NDI_MOST_RECENT);
     float oldax2 = accessCircularFloatArrElement(ndihandle.ax2arr, 0);
     float olday2 = accessCircularFloatArrElement(ndihandle.ay2arr, 0);
     l[0] = (newu1 - newr1 * newr1 * oldx - newr1 * ndihandle.tau_x * newv1 + oldax2 * ndihandle.tau_x + 2 * newr1 * ndihandle.tau_x * oldv2) / ndihandle.tau_x;
     l[1] = (newv1 - newr1 * newr1 * oldy + newr1 * ndihandle.tau_y * newu1 + olday2 * ndihandle.tau_y - 2 * newr1 * ndihandle.tau_y * oldu2) / ndihandle.tau_y;
-    l[2] = newr2 / 3;
     oldxed = oldu2 - newu1 + newr1 * oldy;
     oldyed = oldv2 - newv1 - newr1 * oldx;
-    oldr2ed = oldr2 - newr2;
 #endif
 
-    float v[3];
+    float v[2];
     v[0] = ndihandle.Kp * oldx + ndihandle.Kd * oldxed;
     v[1] = ndihandle.Kp * oldy + ndihandle.Kd * oldyed;
-    v[2] = ndihandle.Kp * oldr2 + ndihandle.Kd * oldr2ed;
 
-    float sig[3];
+    float sig[2];
     sig[0] = v[0] - l[0];
     sig[1] = v[1] - l[1];
-    sig[2] = v[2] - l[2];
 
-    float_mat_vect_mul(ndihandle.commands, _MINV, sig, 3, 3);
+    float_mat_vect_mul(ndihandle.commands, _MINV, sig, 2, 2);
   }
 }
 
 void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &vy_des)
 {
   // Store data from leader's position estimate
-  if (ndihandle.data_entries == NDI_PAST_VALS) {
+  if (ndihandle.data_entries == NDI_PAST_VALS)
+  {
     ndihandle.data_entries--;
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
   }
 
   float px, py, vx, vy, vx0, vy0, ax0, ay0;
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
-  if (ID > 0 && simtime_seconds > 10) {
-    uint8_t ID_tracked = 0;// ID - 1;
+  if (ID > 0 && simtime_seconds > 10)
+  {
+    uint8_t ID_tracked = 0; //ID - 1;
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
     filter.run(ID, ID_tracked);
@@ -169,14 +163,14 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     py = filter.ekf_rl.X[1];
     vx = filter.ekf_rl.X[4];
     vy = filter.ekf_rl.X[5];
-    rotate(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
+    rotate_xy(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
 #else
-    polar2cart(o->request_distance(ID, ID_tracked), o->request_bearing(ID, ID_tracked), px, py);
-    rotate(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx,  vy);
-    rotate(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
-    rotate(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
+    polar2cart(o.request_distance(ID, ID_tracked), o.request_bearing(ID, ID_tracked), px, py);
+    rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx, vy);
+    rotate_xy(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
+    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
-    rotate(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0,  ay0);
+    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
     ndihandle.xarr[ndihandle.data_end] = px;
     ndihandle.yarr[ndihandle.data_end] = py;
     ndihandle.u1arr[ndihandle.data_end] = vx;
@@ -184,12 +178,11 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.u2arr[ndihandle.data_end] = vx0;
     ndihandle.v2arr[ndihandle.data_end] = vy0;
     ndihandle.r1arr[ndihandle.data_end] = s[ID]->get_state(7);
-    ndihandle.r2arr[ndihandle.data_end] = s[ID_tracked]->get_state(6);
     ndihandle.ax2arr[ndihandle.data_end] = ax0;
     ndihandle.ay2arr[ndihandle.data_end] = ay0;
-#elif COMMAND_GLOBAL
-    ndihandle.xarr[ndihandle.data_end] = o->request_distance_dim(ID, ID_tracked, 0);
-    ndihandle.yarr[ndihandle.data_end] = o->request_distance_dim(ID, ID_tracked, 1);
+#else
+    ndihandle.xarr[ndihandle.data_end] = o.request_distance_dim(ID, ID_tracked, 0);
+    ndihandle.yarr[ndihandle.data_end] = o.request_distance_dim(ID, ID_tracked, 1);
     ndihandle.u1arr[ndihandle.data_end] = s[ID]->get_state(2);
     ndihandle.v1arr[ndihandle.data_end] = s[ID]->get_state(3);
     ndihandle.u2arr[ndihandle.data_end] = s[0]->get_state(2);
@@ -206,9 +199,4 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     vx_des = ndihandle.commands_lim[0];
     vy_des = ndihandle.commands_lim[1];
   }
-}
-
-void ndi_follower::get_psirate_command(const uint8_t ID, float &psirate)
-{
-  psirate = ndihandle.commands[2];
 }

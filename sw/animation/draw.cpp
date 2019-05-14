@@ -168,7 +168,7 @@ void draw::draw_agent(uint8_t ID, float x, float y, float orientation)
   glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
   glRotatef(90.0 - rad2deg(orientation), 0.0, 0, 1);
   s[ID]->animation(); // Uses the animation function defined by the agent in use
-  // draw_agent_number(ID);
+  draw_agent_number(ID);
   glPopMatrix();
 }
 
@@ -176,7 +176,7 @@ void draw::draw_velocity_arrow(uint8_t ID, float x, float y, float z, float v_x,
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, z); // ENU to NED
-  glRotatef(90.0, 0.0, 0, 1);
+  glRotatef(90.0, 0.0, 0.0, 1.0);
   draw_line(v_x, v_y);
   glPopMatrix();
 }
@@ -185,7 +185,7 @@ void draw::draw_centroid(float x, float y, float z)
 {
   glPushMatrix();
   glTranslatef(y, x, z);
-  glRotatef(90, 0.0, 0, 1);
+  glRotatef(90, 0.0, 0.0, 1.0);
   draw_point();
   glPopMatrix();
 }
