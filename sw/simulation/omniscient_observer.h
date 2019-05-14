@@ -9,6 +9,7 @@
 #include <mutex>
 
 #include "graph.h"
+#include "randomgenerator.h"
 
 using namespace std;
 
@@ -23,6 +24,8 @@ struct indexed_array {
 class OmniscientObserver
 {
 public:
+  random_generator rg;
+
   /**
    * Constructor
    */

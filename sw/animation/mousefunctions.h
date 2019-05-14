@@ -65,7 +65,6 @@ void keyboard_callback(unsigned char key, int x, int y)
         mtx.unlock();
         paused = false;
       }
-      s[0]->manual = false;
       break;
     case 's':
       ti.info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
@@ -156,7 +155,6 @@ void mouse_click_callback(int button, int state, int x, int y)
 
 void catchKey_arrow(int key, int x, int y)
 {
-  s[0]->manual = true;
   if (key == GLUT_KEY_LEFT) {
     s[0]->manualy = -0.1;
     s[0]->manualx = 0;

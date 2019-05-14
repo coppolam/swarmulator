@@ -38,6 +38,10 @@ void main_loop_function()
   // Draw fixed one time objects
   drawer.draw_data(); // Put data in corner
   drawer.draw_axes(); // Put x and y global axes
+#ifdef ARENAWALLS
+  drawer.draw_walls(); // Draw the arena walls
+#endif
+
   for (int i = 0; i < 3; i++) {
     drawer.draw_axes_text(i);
   }
@@ -87,7 +91,11 @@ void main_animation_thread()
   center_y = 0;
   sx = 0;
   sy = 0;
-  zoom = 0;
+#ifdef ARENAWALLS
+  zoom = -ARENAWALLS;
+#elif
+  zoom = -10;
+#endif // ARENAWALLS
   zoom_scale = 0;
   pointer_x = 0;
   pointer_y = 0;

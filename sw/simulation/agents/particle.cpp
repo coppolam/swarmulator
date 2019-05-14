@@ -1,6 +1,5 @@
 #include "particle.h"
 #include "trigonometry.h"
-#include "randomgenerator.h"
 #include "draw.h"
 
 Particle::Particle(int i, vector<float> s, float tstep)
@@ -8,10 +7,8 @@ Particle::Particle(int i, vector<float> s, float tstep)
   state = s;
   ID = i;
   dt = tstep;
-  random_generator rg;
-  orientation = state[6];
-  controller.set_saturation(0.5);
-  manual = false;
+  orientation = 0.0;
+  controller.set_saturation(1.0);
 }
 
 void Particle::state_update()
@@ -19,49 +16,40 @@ void Particle::state_update()
   // NED frame
   // x+ towards North
   // y+ towards East
-  float vx_des, vy_des;
-  float vx_global, vy_global, dpsi, dpsi_rate;
-  if (!manual) {
-    controller.get_velocity_command(ID, vx_des, vy_des); // Command comes out in the local frame
-    // controller.get_psirate_command(ID, dpsi);
-  } else {
-    vx_des = manualx;
-    vy_des = manualy;
-    dpsi_rate = manualpsi_delta;
-  }
-  controller.saturate(vx_des);
-  controller.saturate(vy_des);
-#ifndef COMMAND_GLOBAL
-  rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
-#else
-  vx_des = vx_global;
-  vy_des = vy_global;
-#endif
 
-  state.at(7) = dpsi_rate;
-  state.at(6) += dpsi_rate * dt;
-  state.at(6) = wrapToPi_f(state[6]); // Orientation
-
-  // Acceleration control
-  float ka = 1;
-  state.at(4) = ka * (vx_global - state[2]); // Acceleration global frame
-  state.at(5) = ka * (vy_global - state[3]); // Acceleration global frame
+  float v_x, v_y;
+  controller.get_velocity_command(ID, v_x, v_y);
+  controller.saturate(v_x);
+  controller.saturate(v_y);
   moving = controller.moving;
   happy = controller.happy;
 
+  float vxr, vyr;
+  rotate(v_x, v_y, orientation, vxr, vyr);
+
+  // Acceleration
+  state.at(4) = 15 * (vxr - state[2]); // Acceleration x
+  state.at(5) = 15 * (vyr - state[3]); // Acceleration y
+
   // Velocity
-  state.at(2) += state[4] * dt; // Velocity x global frame
-  state.at(3) += state[5] * dt; // Velocity y global frame
+  state.at(2) += state[4] * dt; // Velocity x
+  state.at(3) += state[5] * dt; // Velocity y
 
   // Position
-  state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x global frame
-  state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y global frame
+  state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x
+  state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y
+
 };
 
 void Particle::animation()
 {
   draw d;
 
-  d.draw_triangle(param->scale());
+  if (abs(orientation - 0.0) < 0.01) {
+    d.draw_circle(param->scale());
+  } else {
+    d.draw_triangle(param->scale());
+  }
+
   d.draw_circle_loop(param->scale());
 }

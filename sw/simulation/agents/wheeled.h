@@ -9,25 +9,25 @@
 using namespace std;
 
 /**
- * This child class of agent implements the dynamics of simple wheeled vehicles with orientation
+ * This child class of agent implements the dynamics of simple accelerated wheeled vehicles using a kinematic model
  */
-class Wheeled : public Agent
+class Wheeled: public Agent
 {
 public:
   /**
    * Constructor
    */
-  Wheeled(int i, const vector<float> &state, float tstep);
+  Wheeled(int i, vector<float> state, float tstep);
 
   /**
-  * State update implementation
-  */
+   * State update implementation
+   */
   void state_update();
 
   /**
-  * Animation openGL implementation for visualization
-  */
+   * Animation openGL implementation for visualization
+   */
   void animation();
 };
 
-#endif /*WHEELED_H*/
+#endif /*Wheeled_H*/

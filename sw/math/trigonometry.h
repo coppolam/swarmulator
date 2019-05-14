@@ -75,10 +75,11 @@ inline static float deg2rad(float deg) { return M_PI / 180.0 * deg; }
 /**
  * Convert polar (r,theta) coordinates to cartesian (x,y) coordinates
  */
-inline static void polar2cart(const float &radius, const float &radians, float &x, float &y)
+inline static void polar2cart(const float &radius, float radians, float &x, float &y)
 {
-  x = radius * cos(wrapToPi_f(radians));
-  y = radius * sin(wrapToPi_f(radians));
+  wrapToPi(radians);
+  x = radius * cos(radians);
+  y = radius * sin(radians);
 }
 
 /**
@@ -93,7 +94,7 @@ inline static void cart2polar(const float &x, const float &y, float &radius, flo
 /**
  * Convert cartesian (x,y) coordinates to polar (r,theta) coordinates
  */
-inline static void rotate_xy(const float &x, const float &y, const float &theta, float &xr, float &yr)
+inline static void rotate(const float &x, const float &y, const float &theta, float &xr, float &yr)
 {
   xr = x * cos(theta) - y * sin(theta);
   yr = x * sin(theta) + y * cos(theta);

@@ -1,6 +1,5 @@
 #include "omniscient_observer.h"
 #include "main.h"
-#include "randomgenerator.h"
 
 #include <eigen3/Eigen/Dense>
 using namespace Eigen;
@@ -75,8 +74,8 @@ vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
 bool OmniscientObserver::check_happy()
 {
   bool happy = true;
-  for (uint8_t i = 1; i < nagents; i++) {
-    if (!s[i]->happy) {
+  for (uint8_t ID = 0; ID < nagents; ID++) {
+    if (!s[ID]->happy) {
       return false;
     }
   }
@@ -123,7 +122,6 @@ float OmniscientObserver::request_distance(uint8_t ID, uint8_t ID_tracked)
     float dd = s[ID_tracked]->get_position(i) - s[ID]->get_position(i);
     u += pow(dd, 2);
   }
-  random_generator rg;
   return sqrt(u) + rg.gaussian_float(0.0, NOISE_R);
 }
 
@@ -134,8 +132,7 @@ float OmniscientObserver::own_bearing(uint8_t ID)
 
 float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 {
-  random_generator rg;
-  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) - own_bearing(ID) + rg.random_generator::gaussian_float(0.0, NOISE_B);
+  return atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) + rg.gaussian_float(0.0, NOISE_B);
 }
 
 bool OmniscientObserver::see_if_moving(uint8_t ID)
