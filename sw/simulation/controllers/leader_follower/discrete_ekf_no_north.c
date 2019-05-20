@@ -278,22 +278,14 @@ void c2d(int m, int nA, int nB, float **Fx, float **G, float dt, float **phi, fl
   float expm[totalsize][totalsize];
 
   MAKE_MATRIX_PTR(_Fx, Fx, EKF_N);
-  float_mat_scale(_Fx, dt, EKF_N, EKF_N);
-  
   MAKE_MATRIX_PTR(_G, G, EKF_L);
   MAKE_MATRIX_PTR(_phi, phi, m);
   MAKE_MATRIX_PTR(_gamma, gamma, m);
   MAKE_MATRIX_PTR(_combmat, combmat, totalsize);
   MAKE_MATRIX_PTR(_expm, expm, totalsize);
 
-  // float_mat_scale(_G,  dt, m, nB);
-
-  int i, j;
-  for (i = 0; i < m; i++) {
-    for (j = 0; j < nB; j++) {
-      G[i][j] *= dt;
-    }
-  }
+  float_mat_scale(_Fx, dt, m, nA);
+  float_mat_scale(_G, dt, m, nB);
 
   float_mat_combine(_Fx, _G, _combmat, m, nA, nB);
   float_mat_exp(_combmat, _expm, totalsize);
