@@ -5,6 +5,17 @@
 Swarmulator is a lightweight C++ simulator for simulating swarms.
 Swarmulator offers a simple platform to prototype swarm behaviors.
 
+This branch holds the version of the simulator was used for the purposes of pattern formation in the paper:
+**"Provable self-organizing pattern formation by a swarm of robots with limited knowledge"**
+*Mario Coppola, Jian Guo, Eberhard Gill, Guido C. H. E. de Croon, 2019*
+Swarm Intelligence, March 2019, Volume 13, Issue 1, pp 59-94
+
+The paper is available open access here:
+https://link.springer.com/article/10.1007/s11721-019-00163-0
+
+PDF link:
+https://link.springer.com/content/pdf/10.1007%2Fs11721-019-00163-0.pdf
+
 ## Install Instructions
 _Note: Swarmulator was tested on Ubuntu 16.04 and 18.04._
 
