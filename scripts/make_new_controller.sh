@@ -6,7 +6,9 @@ if [ "$1" = "" ]; then
 	exit 1;
 fi
 
-folder=../sw/simulation/controllers;
+mkdir ../sw/simulation/controllers/$1
+
+folder=../sw/simulation/controllers/$1;
 
 if [ -f $folder/$1".h" ] || [ -f $folder/$1".cpp" ]; then
 	echo "A controller with this name already exists. Do you want to overwrite it? [yes]";
