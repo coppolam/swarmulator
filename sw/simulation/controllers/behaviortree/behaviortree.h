@@ -18,6 +18,7 @@ class behaviortree: public Controller
 public:
 	behaviortree();
 	composite *tree;
+	blackboard BB;
 	virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 

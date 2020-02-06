@@ -6,9 +6,11 @@ behaviortree::behaviortree() : Controller()
   // Load the behavior tree from the file
   tree = loadFile("/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml");
   cout << "Loaded the behavior tree successfully" << endl;
+  BB.set("wheelSpeed0",0.);
+  BB.set("wheelSpeed1",0.);
 }
 
-blackboard BB;
+
 void behaviortree::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   /**** Step 1 of 3: Set current state according to sensors ****/

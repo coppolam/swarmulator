@@ -22,6 +22,7 @@ BT_Status node::tick(blackboard *BLKB)
   if (m_eStatus == BH_INVALID) {
     onInitialise();
   }
+  
   // Run node behaviour
   m_eStatus = update(BLKB);
   returnStatus = m_eStatus;
