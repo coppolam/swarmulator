@@ -12,13 +12,13 @@
 #define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
 
 /***** Select the controller to be used by uncommenting it ****/
-// #define CONTROLLER Controller_Aggregation  // Aggregation controller
-// #define ARENAWALLS 30  // Define the area for the aggreagation controller!
+#define CONTROLLER Controller_Aggregation  // Aggregation controller
+#define ARENAWALLS 30  // Define the area for the aggreagation controller!
 
 // #define CONTROLLER Controller_Lattice  // Basic lattice controller
 // #define CONTROLLER Controller_Pattern  // Controller with Qf
 
-#define CONTROLLER ndi_follower  // NDI follower, needs AGENT Wheeled, to be defined below!
+// #define CONTROLLER ndi_follower  // NDI follower, needs AGENT Wheeled, to be defined below!
 // #define COMMAND_LOCAL 1  // use COMMAND_LOCAL for local commands
 
 // #define CONTROLLER behavior_tree  // Controller with Qf

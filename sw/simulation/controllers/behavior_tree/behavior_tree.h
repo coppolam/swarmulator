@@ -1,5 +1,5 @@
-#ifndef BEHAVIORTREE_H
-#define BEHAVIORTREE_H
+#ifndef BEHAVIOR_TREE_H
+#define BEHAVIOR_TREE_H
 
 #include <vector>
 #include <stdio.h>
@@ -13,7 +13,7 @@ using namespace std;
 #include "bt/btFile.h"
 using namespace BT;
 
-class behaviortree: public Controller
+class behavior_tree: public Controller
 {
 // public:
 // 	// Inputs
@@ -24,10 +24,10 @@ class behaviortree: public Controller
 //     float wheelSpeed1;
 
 public:
-	behaviortree();
+	behavior_tree();
 	composite *tree;
 	blackboard BLKB;
 	virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 
-#endif /*BEHAVIORTREE_H*/
+#endif /*BEHAVIOR_TREE_H*/
