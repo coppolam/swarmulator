@@ -76,6 +76,11 @@ void main_simulation_thread(int argc, char *argv[])
       this_thread::sleep_for(chrono::microseconds(t_wait));
       simulation_time = t_wait;
       simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1000000.0;
+#ifdef LOGTIME
+      if (simtime_seconds > LOGTIME) {
+        program_running = false;
+      }
+#endif
     }
   };
 

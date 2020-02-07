@@ -5,6 +5,17 @@
 Swarmulator is a lightweight C++ simulator for simulating swarms.
 Swarmulator offers a simple platform to prototype swarm behaviors.
 
+This branch holds the code that used for the aggregation simulations in the paper:
+**"The PageRank algorithm as a method to optimize swarm behavior through local analysis"**.
+*Mario Coppola, Jian Guo, Eberhard Gill, Guido de Croon, 2019.*
+Swarm Intelligence, December 2019, Volume 13, Issue 3–4, pp 277–319
+
+The paper is available open-access at this link: 
+https://link.springer.com/article/10.1007/s11721-019-00172-z
+
+Use the following link for a PDF:
+https://link.springer.com/content/pdf/10.1007%2Fs11721-019-00172-z.pdf
+
 ## Install Instructions
 _Note: Swarmulator was tested on Ubuntu 16.04 and 18.04._
 
