@@ -45,7 +45,7 @@ void start_agent_simulation(int id)
   ss << "Robot " << id << " initiated";
   ti.info_msg(ss.str());
 
-  char filename[15];
+  char filename[100];
   sprintf(filename, "logs/evaluation_time/timelog_%d.txt", nagents);
   ofstream file;
   file.open(filename);

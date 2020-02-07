@@ -151,7 +151,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
   }
 
-  float px, py, vx, vy, vx0, vy0, ax0, ay0;
+  // float px, py, vx, vy, vx0, vy0, ax0, ay0;
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
   if (ID > 0 && simtime_seconds > 10)
   {

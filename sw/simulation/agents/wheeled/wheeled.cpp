@@ -34,8 +34,8 @@ void Wheeled::state_update()
 #if COMMAND_LOCAL
   rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
 #else
-  vx_des = vx_global;
-  vy_des = vy_global;
+  vx_global = vx_des;
+  vy_global = vy_des;
 #endif
 
   state.at(7) = dpsi_rate;
