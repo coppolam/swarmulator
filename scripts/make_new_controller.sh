@@ -45,6 +45,11 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "#include \"draw.h\"\n" > cN;
 	print "void "n"::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)\n{" > cN;
 	print "  /*** Put your controller here ***/\n}" >> cN;
+
+	cN = p"/README.md";
+	print "Creating README file";
+	print "#"n"" > cN;
+	print "Please include a description of the controller here, both for yourself and for future users!" > cN;
 }'
 
 exit 0;
