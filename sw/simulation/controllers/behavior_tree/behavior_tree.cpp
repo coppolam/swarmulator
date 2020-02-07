@@ -8,7 +8,7 @@ behavior_tree::behavior_tree() : Controller()
   cout << "Loaded the behavior tree successfully" << endl;
   BLKB.set("wheelSpeed0",0.);
   BLKB.set("wheelSpeed1",0.);
-  BLKB.set("sensor0", 0.05);
+  BLKB.set("sensor0", 0.5);
 }
 
 
@@ -25,5 +25,5 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   v_y = BLKB.get("wheelSpeed1");
 
   // Debug
-  cout << int(ID) << " " << v_x << " " << v_y << endl;
+  cout << "Robot " << int(ID) << ": \t" << v_x << ", " << v_y << endl;
 }

@@ -1,3 +1,3 @@
-<BTtype>composite<function>sequence<vars><name>sequence<endl>
-	<BTtype>condition<function>greater_than<vars>0.1,0<name>khepera<endl>
-	<BTtype>action<function>wheelSpeed<vars>0.1066,0.1375<name>khepera<endl>
+<BTtype>composite<function>selector<vars><name>selector<endl>
+	<BTtype>condition<function>greater_than<vars>0,0.48<name>robot<endl>
+	<BTtype>action<function>wheelSpeed<vars>0.1066,0.1375<name>robot<endl>

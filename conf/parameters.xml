@@ -4,12 +4,12 @@
 
 <!-- Simulation global variables -->
 <simulation_updatefreq>20</simulation_updatefreq>
-<simulation_realtimefactor>30</simulation_realtimefactor>
+<simulation_realtimefactor>1</simulation_realtimefactor>
 
 <!-- Animation global variables -->
 <window_width>800</window_width>
 <window_height>800</window_height>
-<scale>0.3</scale>
+<scale>0.2</scale>
 <mouse_drag_speed>1.0</mouse_drag_speed>
 <mouse_zoom_speed>0.5</mouse_zoom_speed>
 <animation_updatefreq>25</animation_updatefreq>

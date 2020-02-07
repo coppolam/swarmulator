@@ -42,10 +42,10 @@ node *getCondition(std::string condition, size_t var)
 {
   node *task;
   if (condition.compare("less_than") == 0) {
-    task = (node *) new less_than("khepera", var);
+    task = (node *) new less_than("robot", var);
   } else if
   (condition.compare("greater_than") == 0) {
-    task = (node *) new greater_than("khepera", var);
+    task = (node *) new greater_than("robot", var);
   } else {
     task = NULL;
     std::cerr << "Something is really wrong in :BT::node* getCondition(std::string condition)" << std::endl;
@@ -58,9 +58,9 @@ node *getCondition(std::string condition, std::vector<double> inputs)
 {
   node *task;
   if (condition.compare("less_than") == 0) {
-    task = (node *) new less_than("khepera", static_cast<size_t>(inputs[0]), inputs[1]);
+    task = (node *) new less_than("robot", static_cast<size_t>(inputs[0]), inputs[1]);
   } else if (condition.compare("greater_than") == 0) {
-    task = (node *) new greater_than("khepera", static_cast<size_t>(inputs[0]), inputs[1]);
+    task = (node *) new greater_than("robot", static_cast<size_t>(inputs[0]), inputs[1]);
   } else {
     task = NULL;
     std::cerr << "Something is really wrong in :BT::node* getCondition(std::string condition, std::vector<double>* inputs)"
@@ -76,10 +76,10 @@ node *getCondition(size_t func /*= rand() % KCOND*/, size_t var /*= MAX_SIZE*/)
   node *task;
   switch (func) {
     case 0:
-      task = (node *) new greater_than("khepera", var);
+      task = (node *) new greater_than("robot", var);
       break;
     case 1:
-      task = (node *) new less_than("khepera", var);
+      task = (node *) new less_than("robot", var);
       break;
     default:
       std::cerr << "ERROR in getCondition(unsigned int func): number of conditions out of bounds" << std::endl;

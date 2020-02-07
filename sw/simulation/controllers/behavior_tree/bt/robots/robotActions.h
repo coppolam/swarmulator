@@ -1,5 +1,5 @@
-#ifndef KHEPERAACTIONS_H
-#define KHEPERAACTIONS_H
+#ifndef ROBOTACTIONS_H
+#define ROBOTACTIONS_H
 
 #include <stdlib.h>
 #include "../behaviour.h"
@@ -17,7 +17,7 @@ struct wheelSpeed : public node {
 
 public:
   wheelSpeed(double left, double right)
-    : node("khepera", "action", "wheelSpeed"),
+    : node("robot", "action", "wheelSpeed"),
       leftWheelSpeed(left),
       rightWheelSpeed(right)
   {
@@ -44,4 +44,4 @@ private:
 };
 
 }
-#endif // KHEPERAACTIONS_H
+#endif // ROBOTACTIONS_H

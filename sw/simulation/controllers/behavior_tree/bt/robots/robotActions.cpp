@@ -1,4 +1,4 @@
-#include "kheperaActions.h"
+#include "robotActions.h"
 
 size_t KACTION = 1;       // total number of actions
 
