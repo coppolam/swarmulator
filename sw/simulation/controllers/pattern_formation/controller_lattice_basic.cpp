@@ -35,7 +35,8 @@ void Controller_Lattice_Basic::attractionmotion(const float &v_r, const float &v
   v_y += v_r * sin(v_b);
 }
 
-void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
+void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes,
+    float &v_x, float &v_y)
 {
   attractionmotion(v_r + v_adj, v_b, v_x, v_y);
   v_x += -v_adj * cos(bdes * 2 - v_b);
@@ -78,7 +79,8 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
   // v_y += 1 * (sin(b) + cos(b));
 }
 
-void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
+void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID,
+    const vector<int> &closest, float &v_x, float &v_y)
 {
   if (!state_ID.empty()) {
     if (o.request_distance(ID, closest[0]) > d_safe) { // If all are further than the safety distance

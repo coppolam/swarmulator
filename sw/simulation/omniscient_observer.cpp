@@ -135,11 +135,11 @@ float OmniscientObserver::request_bearing(uint8_t ID, uint8_t ID_tracked)
 {
   float noise = rg.gaussian_float(0.0, NOISE_B);
   float b = atan2(request_distance_dim(ID, ID_tracked, 1), request_distance_dim(ID, ID_tracked, 0)) + noise;
-  #if COMMAND_LOCAL
-      return b - own_bearing(ID);
-  #else
-    return b;
-  #endif
+#if COMMAND_LOCAL
+  return b - own_bearing(ID);
+#else
+  return b;
+#endif
 
 }
 

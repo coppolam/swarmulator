@@ -37,13 +37,10 @@ ndi_follower::ndi_follower() : Controller()
 void ndi_follower::bindNorm(float max_command)
 {
   float normcom = sqrt(ndihandle.commands[1] * ndihandle.commands[1] + ndihandle.commands[0] * ndihandle.commands[0]);
-  if (normcom > max_command)
-  {
+  if (normcom > max_command) {
     ndihandle.commands_lim[0] = ndihandle.commands[0] * max_command / normcom;
     ndihandle.commands_lim[1] = ndihandle.commands[1] * max_command / normcom;
-  }
-  else
-  {
+  } else {
     ndihandle.commands_lim[0] = ndihandle.commands[0];
     ndihandle.commands_lim[1] = ndihandle.commands[1];
   }
@@ -61,8 +58,7 @@ float ndi_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
 {
   float integral = 0;
   float dt;
-  for (int i = 0; i < ndihandle.data_entries - 1; i++)
-  {
+  for (int i = 0; i < ndihandle.data_entries - 1; i++) {
     dt = accessCircularFloatArrElement(ndihandle.tarr, i + 1) - accessCircularFloatArrElement(ndihandle.tarr, i);
     integral += dt * accessCircularFloatArrElement(ndiarr, i);
   }
@@ -74,10 +70,8 @@ float ndi_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
 void ndi_follower::cleanNdiValues(float tcur)
 {
   int curentries = ndihandle.data_entries;
-  for (int i = 0; i < curentries; i++)
-  {
-    if ((tcur - ndihandle.tarr[ndihandle.data_start]) > ndihandle.delay)
-    {
+  for (int i = 0; i < curentries; i++) {
+    if ((tcur - ndihandle.tarr[ndihandle.data_start]) > ndihandle.delay) {
       ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
       ndihandle.data_entries--;
     }
@@ -97,8 +91,7 @@ void ndi_follower::uwb_follower_control_periodic(void)
   // Get current values
   float curtime = simtime_seconds;
   cleanNdiValues(curtime);
-  if (ndihandle.data_entries > 0)
-  {
+  if (ndihandle.data_entries > 0) {
     float oldx = accessCircularFloatArrElement(ndihandle.xarr, 0);
     float oldy = accessCircularFloatArrElement(ndihandle.yarr, 0);
     float newu1 = accessCircularFloatArrElement(ndihandle.u1arr, NDI_MOST_RECENT);
@@ -124,8 +117,10 @@ void ndi_follower::uwb_follower_control_periodic(void)
     float newr1 = accessCircularFloatArrElement(ndihandle.r1arr, NDI_MOST_RECENT);
     float oldax2 = accessCircularFloatArrElement(ndihandle.ax2arr, 0);
     float olday2 = accessCircularFloatArrElement(ndihandle.ay2arr, 0);
-    l[0] = (newu1 - newr1 * newr1 * oldx - newr1 * ndihandle.tau_x * newv1 + oldax2 * ndihandle.tau_x + 2 * newr1 * ndihandle.tau_x * oldv2) / ndihandle.tau_x;
-    l[1] = (newv1 - newr1 * newr1 * oldy + newr1 * ndihandle.tau_y * newu1 + olday2 * ndihandle.tau_y - 2 * newr1 * ndihandle.tau_y * oldu2) / ndihandle.tau_y;
+    l[0] = (newu1 - newr1 * newr1 * oldx - newr1 * ndihandle.tau_x * newv1 + oldax2 * ndihandle.tau_x + 2 * newr1 *
+            ndihandle.tau_x * oldv2) / ndihandle.tau_x;
+    l[1] = (newv1 - newr1 * newr1 * oldy + newr1 * ndihandle.tau_y * newu1 + olday2 * ndihandle.tau_y - 2 * newr1 *
+            ndihandle.tau_y * oldu2) / ndihandle.tau_y;
     oldxed = oldu2 - newu1 + newr1 * oldy;
     oldyed = oldv2 - newv1 - newr1 * oldx;
 #endif
@@ -145,16 +140,14 @@ void ndi_follower::uwb_follower_control_periodic(void)
 void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &vy_des)
 {
   // Store data from leader's position estimate
-  if (ndihandle.data_entries == NDI_PAST_VALS)
-  {
+  if (ndihandle.data_entries == NDI_PAST_VALS) {
     ndihandle.data_entries--;
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
   }
 
   // float px, py, vx, vy, vx0, vy0, ax0, ay0;
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
-  if (ID > 0 && simtime_seconds > 10)
-  {
+  if (ID > 0 && simtime_seconds > 10) {
     uint8_t ID_tracked = 0; //ID - 1;
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR

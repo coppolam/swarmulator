@@ -40,7 +40,7 @@ public:
    * Get the closest
    */
   vector<int> request_closest(uint8_t ID); // request IDs of closest k neighbours and for your ID
-  
+
   /**
    * Get the closest within a range
    */

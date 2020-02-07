@@ -6,11 +6,13 @@
 #include "trigonometry.h"
 
 // Initilizer
-ekf_state_estimator::ekf_state_estimator() {
+ekf_state_estimator::ekf_state_estimator()
+{
   initialized = false;
 };
 
-void ekf_state_estimator::init_ekf_filter() {
+void ekf_state_estimator::init_ekf_filter()
+{
   float pxf, pyf;
   polar2cart(o.request_distance(ID, ID_tracked), o.request_bearing(ID, ID_tracked), pxf, pyf);
   discrete_ekf_no_north_new(&ekf_rl);
@@ -21,7 +23,8 @@ void ekf_state_estimator::init_ekf_filter() {
   simtime_seconds_store = simtime_seconds;
 }
 
-void ekf_state_estimator::run_ekf_filter() {
+void ekf_state_estimator::run_ekf_filter()
+{
   // All in local frame of follower!!!! values for position, velocity, acceleration
   float vxf, vyf, vx0f, vy0f, axf, ayf, ax0, ay0;
   // Global to local, rotate the opposite of local to global, hence the negative

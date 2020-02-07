@@ -16,18 +16,18 @@ using namespace BT;
 class behavior_tree: public Controller
 {
 // public:
-// 	// Inputs
-// 	float* sensor;
+//  // Inputs
+//  float* sensor;
 
-// public:		////////////////////
+// public:    ////////////////////
 //     float wheelSpeed0;
 //     float wheelSpeed1;
 
 public:
-	behavior_tree();
-	composite *tree;
-	blackboard BLKB;
-	virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
+  behavior_tree();
+  composite *tree;
+  blackboard BLKB;
+  virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 
 #endif /*BEHAVIOR_TREE_H*/

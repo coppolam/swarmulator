@@ -46,7 +46,7 @@ class ndi_follower : public Controller
 
 public:
   ndi_follower();
-  ~ndi_follower(){};
+  ~ndi_follower() {};
 
   float accessCircularFloatArrElement(float arr[], int index);
   float computeNdiFloatIntegral(float ndiarr[], float curtime);

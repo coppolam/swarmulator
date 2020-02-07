@@ -123,8 +123,10 @@ void mouse_motion_callback(int x, int y)
  */
 void mouse_motion_callback_passive(int x, int y)
 {
-  pointer_x = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zoom_scale * xrat)) - 4 / (zoom_scale * xrat)) - center_x;
-  pointer_y = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 / (zoom_scale * yrat))) - center_y;
+  pointer_x = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zoom_scale * xrat)) - 4 /
+               (zoom_scale * xrat)) - center_x;
+  pointer_y = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 /
+                 (zoom_scale * yrat))) - center_y;
 }
 
 /**

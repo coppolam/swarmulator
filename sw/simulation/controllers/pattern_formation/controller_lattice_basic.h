@@ -25,7 +25,8 @@ public:
   void actionmotion(const int &selected_action, float &v_x, float &v_y);
   bool check_motion(const vector<int> &state_ID);
   void get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y);
-  void get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y);
+  void get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x,
+                              float &v_y);
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
 };
 
