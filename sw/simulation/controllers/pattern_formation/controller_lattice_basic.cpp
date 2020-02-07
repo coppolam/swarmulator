@@ -37,7 +37,9 @@ void Controller_Lattice_Basic::attractionmotion(const float &v_r, const float &v
 
 void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y)
 {
-  attractionmotion(v_r, v_b, v_x, v_y);
+  attractionmotion(v_r + v_adj, v_b, v_x, v_y);
+  v_x += -v_adj * cos(bdes * 2 - v_b);
+  v_y += -v_adj * sin(bdes * 2 - v_b);
 }
 
 void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v_x, float &v_y)

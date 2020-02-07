@@ -1,4 +1,4 @@
-#include "behaviortree.h"
+#include "behavior_tree.h"
 #include "draw.h"
 
 behaviortree::behaviortree() : Controller()

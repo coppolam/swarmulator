@@ -1,4 +1,4 @@
-#include "controller_bearing_shape.h"
+#include "controller_pattern.h"
 #include <algorithm> // std::find
 #include "agent.h"
 #include "main.h"
@@ -6,7 +6,7 @@
 #include "trigonometry.h"
 #include "auxiliary.h"
 
-Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic()
+Controller_Pattern::Controller_Pattern() : Controller_Lattice_Basic()
 {
   // Define here the state-action matrix used by the agents
   string s = "./conf/state_action_matrices/state_action_matrix_lineNE.txt";
@@ -18,12 +18,12 @@ Controller_Bearing_Shape::Controller_Bearing_Shape() : Controller_Lattice_Basic(
   beta_des.push_back(M_PI / 2.0 + atan(_ddes_x / _ddes_y));
 }
 
-void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void Controller_Pattern::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0.0;
   v_y = 0.0;
 
-  float timelim = 1.2 * param->simulation_updatefreq();
+  float timelim = 1.3 * param->simulation_updatefreq();
   float tadj    = timelim * 2.0; // This is actually time for action + t_adj, thus t_adj = time for action
   float twait   = tadj    * 2.0; // This is actually time for action + t_adj + t_wait
 

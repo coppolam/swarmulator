@@ -12,7 +12,7 @@ public:
   OmniscientObserver o; // The omniscient observer is used to simulate sensing the other agents.
   Template_Calculator t;
   vector<float> beta_des;
-  float _v_adj = 10; // Adjustment velocity
+  float _v_adj = 1; // Adjustment velocity
   float d_safe = 0.9;
 
   Controller_Lattice_Basic() {};

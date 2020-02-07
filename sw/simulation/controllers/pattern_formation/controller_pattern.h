@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_BEARING_SHAPE_H
-#define CONTROLLER_BEARING_SHAPE_H
+#ifndef CONTROLLER_PATTERN
+#define CONTROLLER_PATTERN
 
 #include "controller_lattice_basic.h"
 
@@ -14,15 +14,15 @@
 
 using namespace std;
 
-class Controller_Bearing_Shape : public Controller_Lattice_Basic
+class Controller_Pattern : public Controller_Lattice_Basic
 {
   uint moving_timer;
   int selected_action;
 
 public:
-  Controller_Bearing_Shape();
-  ~Controller_Bearing_Shape() {};
+  Controller_Pattern();
+  ~Controller_Pattern() {};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 
-#endif /*CONTROLLER_BEARING_SHAPE_H*/
+#endif /*CONTROLLER_PATTERN*/
