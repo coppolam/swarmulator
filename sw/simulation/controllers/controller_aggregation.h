@@ -10,7 +10,7 @@ using namespace std;
 /*
  * This controller handles attraction and velocity in North and East separately
  */
-class Controller_Cartesian: public Controller
+class Controller_Aggregation: public Controller
 {
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver o;
@@ -24,9 +24,9 @@ public:
   random_generator rg; // Random generator
 
   /**
-   * Construction. Controller_Cartesian is a child class of Controller.
+   * Construction. Controller_Aggregation is a child class of Controller.
    */
-  Controller_Cartesian() : Controller()
+  Controller_Aggregation() : Controller()
   {
     moving = false;
     v_x_ref = rg.gaussian_float(0.0, 1.0);

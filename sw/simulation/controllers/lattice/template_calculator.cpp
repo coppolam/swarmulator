@@ -120,11 +120,11 @@ void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<i
   q_ID.clear();
 
   // Fill the template with respect to the agent in question
-  vector<int> closest = o->request_closest(ID);
+  vector<int> closest = o.request_closest(ID);
   for (uint8_t i = 0; i < nagents - 1; i++) {
     if (fill_template(q, // Vector to fill
-                      wrapTo2Pi_f(o->request_bearing(ID, closest[i])), // Bearing
-                      o->request_distance(ID, closest[i]), // Distance
+                      wrapTo2Pi_f(o.request_bearing(ID, closest[i])), // Bearing
+                      o.request_distance(ID, closest[i]), // Distance
                       rangesensor, 22.5)) { // Sensor range, bearing precision
       // Use higher values of bearing sensor to handle higher noise values (even if there is overlap)
       q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)

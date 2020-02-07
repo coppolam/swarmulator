@@ -9,7 +9,7 @@ using namespace std;
 class Controller_Lattice_Basic : public Controller
 {
 public:
-  OmniscientObserver *o; // The omniscient observer is used to simulate sensing the other agents.
+  OmniscientObserver o; // The omniscient observer is used to simulate sensing the other agents.
   Template_Calculator t;
   vector<float> beta_des;
   float _v_adj = 10; // Adjustment velocity

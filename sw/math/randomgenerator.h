@@ -30,22 +30,22 @@ public:
   /**
    * Get a random value of type float between a min and max
    */
-  float uniform_float(const float &min, const float &max);
+  float uniform_float(float min, float max);
 
   /**
    * Get a random value of type int between a min and a max
    */
-  int uniform_int(const int &min, const int &max);
+  int uniform_int(int min, int max);
 
   /**
    * Get a random value of type int between a min and a max
    */
-  float gaussian_float(const float &mean, const float &stddev);
+  float gaussian_float(float mean, float stddev);
 
   /**
    * Get a random bool value with probability p
    */
-  bool bernoulli(const float &p);
+  bool bernoulli(float p);
 
   /**
    * Generate a random vector with zero mean from a gaussian distribution

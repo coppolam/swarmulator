@@ -52,7 +52,7 @@ bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
 {
   bool canImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
-    if (o->see_if_moving(state_ID[i])) {
+    if (o.see_if_moving(state_ID[i])) {
       // Somebody nearby is already moving
       canImove = false;
     }
@@ -63,13 +63,13 @@ bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
 void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
 {
   float beta, b_eq, v_r;
-  beta = wrapToPi_f(o->request_bearing(ID, state_ID));
+  beta = wrapToPi_f(o.request_bearing(ID, state_ID));
   b_eq = t.get_preferred_bearing(beta_des, beta);
-  v_r = get_attraction_velocity(o->request_distance(ID, state_ID), b_eq);
+  v_r = get_attraction_velocity(o.request_distance(ID, state_ID), b_eq);
   latticemotion(v_r, _v_adj, beta, b_eq, v_x, v_y);
   float b, r, px, py;
-  b = wrapToPi_f(o->request_bearing(ID,  state_ID));
-  r = o->request_distance(ID,  state_ID);
+  b = wrapToPi_f(o.request_bearing(ID,  state_ID));
+  r = o.request_distance(ID,  state_ID);
   polar2cart(r, b, px, py);
   v_x += 1 * (cos(b) - sin(b));
   v_y += 1 * (sin(b) + cos(b));
@@ -78,7 +78,7 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<int> &closest, float &v_x, float &v_y)
 {
   if (!state_ID.empty()) {
-    if (o->request_distance(ID, closest[0]) < d_safe) { // If all are further than the safety distance
+    if (o.request_distance(ID, closest[0]) < d_safe) { // If all are further than the safety distance
       for (size_t i = 0; i < state_ID.size(); i++) {
         get_lattice_motion(ID, state_ID[i], v_x, v_y);
       }

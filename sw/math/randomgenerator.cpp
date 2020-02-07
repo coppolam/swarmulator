@@ -9,25 +9,25 @@ random_generator::random_generator()
   generator.seed(rd());
 };
 
-float random_generator::uniform_float(const float &min, const float &max)
+float random_generator::uniform_float(float min, float max)
 {
   uniform_real_distribution<> dist(min, max);
   return dist(generator);
 };
 
-int random_generator::uniform_int(const int &min, const int &max)
+int random_generator::uniform_int(int min, int max)
 {
   uniform_int_distribution<> dist(min, max);
   return dist(generator);
 };
 
-float random_generator::gaussian_float(const float &mean, const float &stddev)
+float random_generator::gaussian_float(float mean, float stddev)
 {
   normal_distribution<> dist(mean, stddev);
   return dist(generator);
 };
 
-bool random_generator::bernoulli(const float &p)
+bool random_generator::bernoulli(float p)
 {
   bernoulli_distribution dist(p);
   return dist(generator);

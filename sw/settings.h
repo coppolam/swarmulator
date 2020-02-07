@@ -14,12 +14,12 @@
 #define ARENAWALLS 30
 
 /***** Select the controller to be used by uncommenting it ****/
-// #define CONTROLLER Controller_Cartesian   // Basic x-y controller
+// #define CONTROLLER Controller_Aggregation   // Aggregation controller
 // #define CONTROLLER Controller_Lattice   // Basic lattice controller
-// #define CONTROLLER Controller_Bearing_Shape  // Controller with Qf
+#define CONTROLLER Controller_Bearing_Shape  // Controller with Qf
 // #define CONTROLLER ndi_follower  // Controller with Qf
 // #define COMMAND_LOCAL 1          // use COMMAND_LOCAL for local commands
-#define CONTROLLER behaviortree  // Controller with Qf
+// #define CONTROLLER behaviortree  // Controller with Qf
 
 /***** Select the agent type that you want to use by uncommenting it****/
 #define AGENT Particle    // Accelerated particles

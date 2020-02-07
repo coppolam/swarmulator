@@ -4,7 +4,7 @@
 behaviortree::behaviortree() : Controller()
 {
   // Load the behavior tree from the file
-  tree = loadFile("./conf/beahviortrees/behaviortree_test.xml");
+  tree = loadFile("./conf/behaviortrees/behaviortree_test.xml");
   cout << "Loaded the behavior tree successfully" << endl;
   BLKB.set("wheelSpeed0",0.);
   BLKB.set("wheelSpeed1",0.);

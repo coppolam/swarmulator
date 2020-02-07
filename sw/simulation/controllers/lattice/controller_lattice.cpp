@@ -23,6 +23,6 @@ void Controller_Lattice::get_velocity_command(const uint8_t ID, float &v_x, floa
   v_y = 0;
 
   // Which neighbors can you sense within the range?
-  vector<int> closest = o->request_closest(ID); // Get vector of all neighbors from closest to furthest
+  vector<int> closest = o.request_closest(ID); // Get vector of all neighbors from closest to furthest
 
 }
