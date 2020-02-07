@@ -15,10 +15,18 @@ using namespace BT;
 
 class behaviortree: public Controller
 {
+// public:
+// 	// Inputs
+// 	float* sensor;
+
+// public:		////////////////////
+//     float wheelSpeed0;
+//     float wheelSpeed1;
+
 public:
 	behaviortree();
 	composite *tree;
-	blackboard BB;
+	blackboard BLKB;
 	virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 
