@@ -23,7 +23,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   v_x = 0.0;
   v_y = 0.0;
 
-  float timelim = 1.8 * param->simulation_updatefreq();
+  float timelim = 1.2 * param->simulation_updatefreq();
   float tadj    = timelim * 2.0; // This is actually time for action + t_adj, thus t_adj = time for action
   float twait   = tadj    * 2.0; // This is actually time for action + t_adj + t_wait
 
@@ -38,13 +38,13 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
   int state_index = bool2int(state);
-  int rot = 0;
-  if (state_index > 0) {
-    while (!state[0]) {
-      std::rotate(state.begin(), state.begin() + 1, state.end());
-      rot++;
-    }
-  }
+  // int rot = 0;
+  // if (state_index > 0) {
+  //   while (!state[0]) {
+  //     std::rotate(state.begin(), state.begin() + 1, state.end());
+  //     rot++;
+  //   }
+  // }
   state_index = bool2int(state);
 
   // Get vector of all neighbors from closest to furthest
@@ -67,7 +67,7 @@ void Controller_Bearing_Shape::get_velocity_command(const uint8_t ID, float &v_x
   state_action_row = t.state_action_matrix.find(state_index);
   if (!o.see_if_moving(ID) && state_action_row != t.state_action_matrix.end()) {
     selected_action = *select_randomly(state_action_row->second.begin(), state_action_row->second.end());
-    selected_action = wraptosequence(selected_action + 1 + rot, 1, 8) - 1; // North correction
+    // selected_action = wraptosequence(selected_action + 1 + rot, 1, 8) - 1; // North correction
   } else if (!o.see_if_moving(ID)) {
     selected_action = -2;
   }
