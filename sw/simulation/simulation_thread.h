@@ -71,7 +71,7 @@ void main_simulation_thread(int argc, char *argv[])
 
   // Keep global clock running.
   // This is only used by the animation and the logger.
-  // The robots operate by their own clock)
+  // The robots operate by their own clock.
   while (program_running) {
     if (!paused) {
       int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));

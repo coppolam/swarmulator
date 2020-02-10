@@ -5,7 +5,7 @@
 namespace BT
 {
 
-size_t KCOMP = 2;         // total number of composites
+size_t KCOMP;         // total number of composites
 
 // ************************************************************************
 // General composite methods

@@ -6,8 +6,11 @@
 #include "behaviour.h"
 #define MAX_SIZE (size_t) - 1
 
-extern size_t KCOND;        //total number of conditions
-extern size_t NUMBER_OF_VARS;   // total number of input variables
+// extern size_t KCOND;        //total number of conditions
+// extern size_t NUMBER_OF_VARS;   // total number of input variables
+
+#define KCOND 1          //total number of conditions
+#define NUMBER_OF_VARS 2 // total number of variables
 
 namespace BT
 {

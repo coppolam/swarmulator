@@ -13,7 +13,7 @@
 
 /***** Select the controller to be used by uncommenting it ****/
 // #define CONTROLLER Controller_Aggregation  // Aggregation controller
-// #define ARENAWALLS 30  // Define the area for the aggreagation controller!
+#define ARENAWALLS 30  // Define the area for the aggreagation controller!
 
 // #define CONTROLLER Controller_Lattice  // Basic lattice controller
 // #define CONTROLLER Controller_Pattern  // Controller with Qf

@@ -1,8 +1,5 @@
 #include "../conditions.h"
 
-size_t KCOND = 2;           //total number of conditions
-size_t NUMBER_OF_VARS = 10; // total number of variables
-
 namespace BT
 {
 
@@ -13,12 +10,12 @@ std::tuple<std::string, double, double, double> input(int i)
   double lower_lim;
   double upper_lim;
 
-  if (i < 8) {
+  if (i < KCOND) {
     sprintf(buff, "sensor%d", i);
     lower_lim = 0.;
     upper_lim = 1000;
-  } else if (i < 10) {
-    sprintf(buff, "wheelSpeed%d", i - 8);
+  } else if (i < NUMBER_OF_VARS) {
+    sprintf(buff, "wheelSpeed%d", i - KCOND);
     lower_lim = -0.5;
     upper_lim = 0.5;
   } else {
