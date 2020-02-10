@@ -21,7 +21,9 @@ public:
   int walltimer; // Timer to set the time for a wall avoidance maneuver
   composite *tree; // Tree structure.
   blackboard BLKB; // Blackboard structure that ticks the tree during runtime.
- 
+  int tickID;
+  int tickIDold;
+  float v_x_ref, v_y_ref;
   /** Initialize
    * Initialize the behavior tree
    */

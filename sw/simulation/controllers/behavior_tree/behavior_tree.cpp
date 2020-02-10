@@ -37,6 +37,9 @@ behavior_tree::behavior_tree() : Controller()
   BLKB.set("wheelSpeed0", 0.); // Output 0
   BLKB.set("wheelSpeed1", 0.); // Output 1
 
+  tickID = 0;
+  tickIDold = 0;
+
   #ifdef ARENAWALLS
   walltimer = 1;
   #endif
@@ -72,12 +75,17 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   BLKB.set("sensor0", 0.5);
 
   /**** Step 2 of 3: Tick the tree based on the current state ****/
-  tree->tick(&BLKB, &tickID);
-
+  tickIDold = tickID;
+  tree->tick(&BLKB, tickID);
+  
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
-  float v_x_ref = BLKB.get("wheelSpeed0");
-  float v_y_ref = BLKB.get("wheelSpeed1");
-
+  if (tickID == tickIDold){
+    v_x_ref = BLKB.get("wheelSpeed0");
+    v_y_ref = BLKB.get("wheelSpeed1");
+  }
+  else{
+    
+  }
 // #ifdef ARENAWALLS
   walltimer++;
   if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
