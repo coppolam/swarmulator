@@ -1,11 +1,12 @@
 #include "composites.h"
+#include "conditions.h"
 
 #include <assert.h>
 
 namespace BT
 {
 
-size_t KCOMP;         // total number of composites
+size_t KCOMP = 1;         // total number of composites
 
 // ************************************************************************
 // General composite methods

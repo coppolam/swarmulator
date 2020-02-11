@@ -10,7 +10,7 @@
 // extern size_t NUMBER_OF_VARS;   // total number of input variables
 
 #define KCOND 1          //total number of conditions
-#define NUMBER_OF_VARS 2 // total number of variables
+#define NUMBER_OF_VARS 1 // total number of variables
 
 namespace BT
 {

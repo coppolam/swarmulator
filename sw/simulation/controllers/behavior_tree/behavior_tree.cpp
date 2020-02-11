@@ -76,7 +76,7 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
 
   /**** Step 2 of 3: Tick the tree based on the current state ****/
   tickIDold = tickID;
-  tree->tick(&BLKB, tickID);
+  tree->tick(&BLKB);
   
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
   if (tickID == tickIDold){
