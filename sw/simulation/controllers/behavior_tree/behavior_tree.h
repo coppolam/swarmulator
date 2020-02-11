@@ -21,29 +21,28 @@ public:
   int walltimer; // Timer to set the time for a wall avoidance maneuver
   composite *tree; // Tree structure.
   blackboard BLKB; // Blackboard structure that ticks the tree during runtime.
-  int tickID;
-  int tickIDold;
   float v_x_ref, v_y_ref;
-  /** Initialize
+
+  /* Initialize
    * Initialize the behavior tree
    */
   behavior_tree();
-   /**
-   * Attraction function at distance u
-   */
+   /* Attraction
+    * Attraction function at distance u
+    */
   float f_attraction(float u);
 
-  /**
+  /*
    * Function to get the total attraction/repulsion velocity
    */
   float get_attraction_velocity(float u);
 
-  /**
+  /*
    * Function to give the commands for robots to stay in a lattice
    */
   void get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y);
 
-  /**
+  /*
    * Update the inputs and run the behavior tree command
    */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);

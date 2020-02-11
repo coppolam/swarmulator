@@ -37,9 +37,6 @@ behavior_tree::behavior_tree() : Controller()
   BLKB.set("wheelSpeed0", 0.); // Output 0
   BLKB.set("wheelSpeed1", 0.); // Output 1
 
-  tickID = 0;
-  tickIDold = 0;
-
   #ifdef ARENAWALLS
   walltimer = 1;
   #endif
@@ -72,21 +69,18 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   float vmean = 0.5;
 
   /**** Step 1 of 3: Set current state according to sensors ****/
-  BLKB.set("sensor0", 0.5);
+  BLKB.set("sensor0", v_x_ref);
 
   /**** Step 2 of 3: Tick the tree based on the current state ****/
-  tickIDold = tickID;
   tree->tick(&BLKB);
   
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
-  if (tickID == tickIDold){
+  if (walltimer == 2 * timelim){
     v_x_ref = BLKB.get("wheelSpeed0");
     v_y_ref = BLKB.get("wheelSpeed1");
   }
-  else{
-    
-  }
-// #ifdef ARENAWALLS
+
+#ifdef ARENAWALLS
   walltimer++;
   if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
@@ -96,28 +90,25 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
 
   if (s[ID]->get_position(0) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
-        cout << "out " <<2 << endl;
+    cout << "out " << 2 << endl;
     v_x_ref = vmean;
   }
 
   if (s[ID]->get_position(1) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
-        cout << "out " << 3 << endl;
-
+    cout << "out " << 3 << endl;
     v_y_ref = -vmean;
   }
 
   if (s[ID]->get_position(1) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
-        cout << "out " << 4 << endl;
-
+    cout << "out " << 4 << endl;
     v_y_ref = vmean;
   }
-// #endif
+#endif
 
   v_x += v_x_ref;
   v_y += v_y_ref;
 
-  // Debug
-  // cout << "Robot " << int(ID) << ": \t" << v_x << ", " << v_y << endl;
+  // cout << "Robot " << int(ID) << ": \t" << v_x << ", " << v_y << endl; // Debug
 }
