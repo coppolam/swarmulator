@@ -18,6 +18,9 @@ bool logger_running = false;
 
 /**
  * Run the logger
+ * 
+ * @param logfile The file ID (ofstream)
+ * @param filename The name of the logfile
  */
 void run_logger(ofstream &logfile, string filename)
 {
@@ -46,6 +49,8 @@ void run_logger(ofstream &logfile, string filename)
  * Get current date/time, format is YYYY-MM-DD-hh:mm:ss
  * Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
  * for more information about date/time format
+ * 
+ * @return A character string with the current date and time.
  */
 const std::string currentDateTime()
 {
@@ -61,6 +66,7 @@ const std::string currentDateTime()
 
 /**
  * Logger thread that logs the simulation to a txt file
+ * 
  */
 void main_logger_thread()
 {

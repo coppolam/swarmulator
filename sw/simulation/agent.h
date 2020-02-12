@@ -31,7 +31,7 @@ public:
   uint8_t ID; // ID of agent
   float dt;
   vector<float> state; // State vector
-  float orientation;   // Orientation vector
+  float orientation; // Orientation
   bool moving;
   bool happy;
   float manualx, manualy;
@@ -46,6 +46,7 @@ public:
   float get_position(uint8_t dim);
   float get_orientation();
   float get_state(uint8_t dim);
+
   /**
    * The agent class is only the parent class of a child class that specifies the dynamics and control
    * of a given agent (robot/animal/whatever). The state_update function is handled by the child class.

@@ -69,7 +69,7 @@ void draw::draw_circle(double d)
   glPopMatrix();
 }
 
-void draw::draw_circle_loop(double d)
+void draw::draw_circle_loop(double r)
 {
   int num_segments = 100;
   glPushMatrix();
@@ -77,8 +77,8 @@ void draw::draw_circle_loop(double d)
   glBegin(GL_LINE_LOOP);
   for (int ii = 0; ii < num_segments; ii++) {
     float theta = 2.0f * M_PI * float(ii) / float(num_segments);//get the current angle
-    float x = rangesensor * yrat * cosf(theta);                 //calculate the x component
-    float y = rangesensor * xrat * sinf(theta);                 //calculate the y component
+    float x = r * yrat * cosf(theta);                 //calculate the x component
+    float y = r * xrat * sinf(theta);                 //calculate the y component
     glVertex2d(x, y);
   }
   glEnd();

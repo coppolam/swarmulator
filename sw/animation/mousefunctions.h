@@ -8,15 +8,17 @@
 #include "terminalinfo.h"
 #include "agent_thread.h"
 
-// A bit of a hack for compatibility with old GLUT
-// http://iihm.imag.fr/blanch/software/glut-macosx/
+/** Compatibility with old GLUT for mapping the mouse wheel
+ * http://iihm.imag.fr/blanch/software/glut-macosx/
+ */
 #if !defined(GLUT_WHEEL_UP)
-#  define GLUT_WHEEL_UP    3
-#  define GLUT_WHEEL_DOWN  4
-#  define GLUT_WHEEL_LEFT  5
-#  define GLUT_WHEEL_RIGHT 6
+#  define GLUT_WHEEL_UP    3 // Mouse wheel scrolled up
+#  define GLUT_WHEEL_DOWN  4 // Mouse wheel scrolled down
+#  define GLUT_WHEEL_LEFT  5 // Mouse wheel to the left
+#  define GLUT_WHEEL_RIGHT 6 // Mouse wheel to the right
 #endif
 
+// Initialization of values declared in drawingparams.h
 float center_x = 0;
 float center_y = 0;
 float sx = 0;
@@ -29,30 +31,41 @@ float xrat = 0;
 float yrat = 0;
 
 /**
- * keyboard_callback reads keyboard commands from the animation window of Swarmulator.
+ * @brief keyboard_callback reads keyboard commands from the animation window of Swarmulator.
+ * 
+ * This function reads keyboard commands from the animation window of Swarmulator 
+ * and handles the commands.
  * In this way, it becomes easies and intuitive to interact with the simulation of the swarm.
  * Functions include pausing, quitting, adding agents, zoom, etc.
+ * 
+ * @param key The keyboard key that has been pressed
+ * @param a (unused) Required by callback structure 
+ * @param b (unused) Required by callback structure
  */
-void keyboard_callback(unsigned char key, int x, int y)
+void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attribute__((unused)) int b)
 {
-  terminalinfo ti;
+  terminalinfo ti; // Object to format runtime information on the terminal
 
   switch (key) {
     case 'c':
+      // Center the animation
       ti.info_msg("Recentering Animation.");
       center_x = 0;
       center_y = 0;
       break;
     case 'z':
+      // Reset the zoom to the default value 
       ti.info_msg("Resetting zoom.");
       zoom = 0;
       break;
     case 'q':
+      // End the simulation and quit
       ti.info_msg("Quitting Swarmulator.");
       mtx.try_lock();
       program_running = false;
       break;
     case 'p':
+      // Pause the simulation
       if (!paused) {
         ti.info_msg("Paused. Press `r' to resume or `s' to step forward.");
         mtx.try_lock();
@@ -60,6 +73,7 @@ void keyboard_callback(unsigned char key, int x, int y)
       }
       break;
     case 'r':
+      // Resume the simulation (if paused)
       if (paused) {
         ti.info_msg("Resuming.");
         mtx.unlock();
@@ -68,6 +82,7 @@ void keyboard_callback(unsigned char key, int x, int y)
       s[0]->manual = false;
       break;
     case 's':
+      // Step through the simulation. Very useful for debugging or analyzing what's going on.
       ti.info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
       mtx.try_lock();
       mtx.unlock();
@@ -76,6 +91,7 @@ void keyboard_callback(unsigned char key, int x, int y)
       paused = true;
       break;
     case 'a':
+      // Draw and simulate a new agent, initialized at the current pointer position
       if (!paused) {
         ti.info_msg("Drawing new agent.");
         mtx.lock();
@@ -84,6 +100,7 @@ void keyboard_callback(unsigned char key, int x, int y)
         break;
       }
     case 'm':
+      // Toggle the real time parameter between 1 and default, so as to better understand what's going on
       ti.info_msg("Toggle realtime factor between 1 and the specified value.");
       if (param->simulation_realtimefactor() != 1) {
         realtimefactor = param->simulation_realtimefactor();
@@ -99,6 +116,7 @@ void keyboard_callback(unsigned char key, int x, int y)
       s[0]->manualpsi_delta = -0.1;
       break;
     case 'n':
+      // Quit and restart swarmulator 
       mtx.try_lock();
       ti.info_msg("Restarting.");
       stringstream ss;
@@ -110,6 +128,9 @@ void keyboard_callback(unsigned char key, int x, int y)
 }
 /**
  * Detects the mouse motion and adjusts the center of the animation
+ * 
+ * @param x Pointer location in the animation window along x
+ * @param y Pointer location in the animation window along y
  */
 void mouse_motion_callback(int x, int y)
 {
@@ -120,6 +141,9 @@ void mouse_motion_callback(int x, int y)
 /**
  * Keeps track of the location of the pointer.
  * This is used for launching new agents at specified locations intuitively.
+ * 
+ * @param x Pointer location in the animation window along x
+ * @param y Pointer location in the animation window along y
  */
 void mouse_motion_callback_passive(int x, int y)
 {
@@ -131,7 +155,12 @@ void mouse_motion_callback_passive(int x, int y)
 
 /**
  * Detects that the mouse has been clicked (for dragging)
- * Or else detects that the zoom wheel is in use
+ * Or else detects that the zoom wheel is in use.
+ * 
+ * @param button Detects which button has been pressed on the mouse
+ * @param state State of the button (pressed on not)
+ * @param x Pointer location in the animation window along x
+ * @param y Pointer location in the animation window along y
  */
 void mouse_click_callback(int button, int state, int x, int y)
 {
@@ -156,7 +185,14 @@ void mouse_click_callback(int button, int state, int x, int y)
   }
 }
 
-void catchKey_arrow(int key, int x, int y)
+/**
+ * @brief Allows to take control of the 0th agent with the keyboard arrows
+ * 
+ * @param key Key being pressed
+ * @param a (unused) Required by callback structure 
+ * @param b (unused) Required by callback structure
+ */
+void catchKey_arrow(int key, __attribute__((unused)) int a, __attribute__((unused)) int b)
 {
   s[0]->manual = true;
   if (key == GLUT_KEY_LEFT) {
@@ -174,7 +210,14 @@ void catchKey_arrow(int key, int x, int y)
   }
 }
 
-void catckKey_arrow_up(int key, int x, int y)
+/**
+ * @brief Removes control of the 0th agent with the keyboard arrows (key is up!)
+ * 
+ * @param key Key being pressed
+ * @param a (unused) Required by callback structure 
+ * @param b (unused) Required by callback structure
+ */
+void catckKey_arrow_up(int key, __attribute__((unused)) int a, __attribute__((unused)) int b)
 {
   s[0]->manualx = 0;
   s[0]->manualy = 0;

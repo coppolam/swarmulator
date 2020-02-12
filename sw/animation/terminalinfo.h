@@ -15,7 +15,6 @@ using namespace std;
  */
 class terminalinfo
 {
-
 public:
   /**
    * Constructor
@@ -29,11 +28,15 @@ public:
 
   /**
    * Print a debug message
+   * 
+   * @param str Debug string to print
    */
   void debug_msg(string str);
 
   /**
    * Print an info message
+   * 
+   * @param str Info string to print
    */
   void info_msg(string str);
 };

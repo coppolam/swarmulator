@@ -45,5 +45,5 @@ void Particle::animation()
 {
   draw d;
   d.draw_circle(param->scale());
-  d.draw_circle_loop(param->scale());
+  d.draw_circle_loop(rangesensor);
 }

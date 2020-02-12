@@ -20,3 +20,5 @@ sw/window/swarmulator.pro.user
 sw/window/swarmulator_window.h.autosave
 sw/build-swarmulator-Desktop-Debug
 script.sh
+docs/
+logo_small.png

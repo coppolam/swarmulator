@@ -18,6 +18,9 @@
 /**
  * Extract the number of agents from the argument list.
  * Else, return an error.
+ * 
+ * @param argc Number of arguments from terminal input when launching swarmulator
+ * @param argv Content of arguments from terminal input when launching swarmulator
  */
 void get_number_of_agents(int argc, char *argv[])
 {
@@ -34,6 +37,9 @@ void get_number_of_agents(int argc, char *argv[])
  * This function initiates the simulation.
  * All agents in the beginning initiate randomly with a mean position around the (0,0) point.
  * Once the vector of agents is created, each agent is launched in a separate thread.
+ * 
+ * @param argc Number of arguments from terminal input when launching swarmulator
+ * @param argv Content of arguments from terminal input when launching swarmulator
  */
 void main_simulation_thread(int argc, char *argv[])
 {
@@ -72,6 +78,7 @@ void main_simulation_thread(int argc, char *argv[])
   // Keep global clock running.
   // This is only used by the animation and the logger.
   // The robots operate by their own clock.
+  // TODO: Perfectly sync global clock!
   while (program_running) {
     if (!paused) {
       int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));

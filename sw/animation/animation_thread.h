@@ -10,7 +10,6 @@
 #include "trigonometry.h"
 
 bool animation_running = false;
-
 /**
  * Main animation loop.
  * Takes care of drawing the agents in their corrective location.
@@ -71,6 +70,9 @@ void main_loop_function()
 
 /**
  * Initialze OpenGL perspective matrix
+ * 
+ * @param width Width of the animation window
+ * @param height Height of the animation window
  */
 void GL_Setup(int width, int height)
 {

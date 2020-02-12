@@ -1,8 +1,4 @@
-/*
-* C++ Program to Check whether Undirected Graph is Connected using BFS
-* Code extracted from Sanfoundry Global Education & Learning Series
-* http://www.sanfoundry.com/cpp-program-check-undirected-graph-connected-bfs/
-*/
+
 #ifndef GRAPH_H
 #define GRAPH_H
 
@@ -13,7 +9,10 @@
 using namespace std;
 
 /**
- * Defines a graph structure that can be used to assess the topology of the swarm
+ * @brief Defines a graph structure that can be used to assess the topology of the swarm
+ *
+ * Code in part extracted from Sanfoundry Global Education & Learning Series
+ * http://www.sanfoundry.com/cpp-program-check-undirected-graph-connected-bfs/
  */
 class Graph
 {
@@ -24,6 +23,8 @@ private:
 public:
   /**
    * Constructor instatiates a list of all connections in the graph.
+   * 
+   * @param V Total number of vertices
    */
   Graph(int V)
   {
@@ -32,12 +33,18 @@ public:
   }
 
   /**
-   * Function to add an edge in the topology graph between agent v and w
+   * Function to add an edge in the topology graph between node v and w
+   * 
+   * @param v ID of node v
+   * @param w ID of node w
    */
   void addEdge(int v, int w);
 
   /**
-   * Breadth-First Search
+   * Breadth-First Search (BFS) implementation. See how it is used in graph::isConnected() 
+   * 
+   * @param s first node to be visited (use s=0)
+   * @param visited visited nodes during BFS
    */
   void BFS(int s, bool visited[]);
 
@@ -47,7 +54,9 @@ public:
   Graph getTranspose();
 
   /**
-   * Checks that the topology is connected.
+   * @brief Checks that the topology is connected.
+   *  
+   * Check whether the undirected graph is connected using BFS
    * Returns true if connected, false if not connected
    */
   bool isConnected();

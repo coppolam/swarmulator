@@ -1,6 +1,9 @@
 #ifndef INCLUDES_CONTROLLERS_H
 #define INCLUDES_CONTROLLERS_H
 
+/**
+ * Include all the controllers here
+ */
 #include "controller_aggregation.h"
 #include "controller_pattern.h"
 #include "controller_lattice.h"

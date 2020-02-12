@@ -63,5 +63,5 @@ void Wheeled::animation()
   draw d;
 
   d.draw_triangle(param->scale());
-  d.draw_circle_loop(param->scale());
+  d.draw_circle_loop(rangesensor);
 }

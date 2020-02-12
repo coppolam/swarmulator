@@ -17,32 +17,40 @@
 
 /**
  * Update the agent simulation
+ * 
+ * @param ID The ID of the agent/robot
+ * @param logfile The file ID of the log
  */
-void run_agent_simulation_step(const int &id, ofstream &logfile)
+void run_agent_simulation_step(const int &ID, ofstream &logfile)
 {
   // Update the position of the agent in the simulation
   // Lock mutex to avoid conflicts
   auto start = chrono::steady_clock::now();
   mtx.lock();
-  s.at(id)->state_update();
+  s.at(ID)->state_update();
   auto end = chrono::steady_clock::now();
   auto test = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
   char a[20];
   sprintf(a, "%ld\n", test);
   logfile << a;
   mtx.unlock();
+
   // Wait according to define frequency
   int t_wait = (int)1000000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor())) - test;
   this_thread::sleep_for(chrono::nanoseconds(t_wait));
 }
 
-// Start the simulation of an agent
-void start_agent_simulation(int id)
+/**
+ * Start the simulation of an agent
+ * 
+ * @param ID The ID of the agent/robot
+ */
+void start_agent_simulation(int ID)
 {
   // Info message
   terminalinfo ti;
   stringstream ss;
-  ss << "Robot " << id << " initiated";
+  ss << "Robot " << ID << " initiated";
   ti.info_msg(ss.str());
 
   char filename[100];
@@ -52,12 +60,16 @@ void start_agent_simulation(int id)
 
   // Run the new robot
   while (program_running) {
-    run_agent_simulation_step(id, file);
+    run_agent_simulation_step(ID, file);
   }
 };
 
 /**
  * Generates new agent + simulation thread at given position x0 y0
+ * 
+ * @param ID The ID of the agent/robot
+ * @param x Initial position of the agent in x
+ * @param y Initial position of the agent in y
  */
 void create_new_agent(int ID, float x0, float y0)
 {

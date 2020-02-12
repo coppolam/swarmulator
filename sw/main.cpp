@@ -1,10 +1,10 @@
-/*
+/**
  *
  * Swarmulator is a swarm simulation environment.
  * Its design purpose is to be a simple testing platform to observe the emergent behavior of a group of agents.
  * To program specific behaviors, you can do so in the controller.cpp/controller.h file.
  *
- * Mario Coppola, 2017-2018.
+ * Mario Coppola, 2017-2020.
  *
  */
 
