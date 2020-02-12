@@ -30,13 +30,15 @@ void run_agent_simulation_step(const int &ID, ofstream &logfile)
   s.at(ID)->state_update();
   auto end = chrono::steady_clock::now();
   auto test = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+#ifdef LOGGER
   char a[20];
   sprintf(a, "%ld\n", test);
   logfile << a;
+#endif
   mtx.unlock();
 
-  // Wait according to define frequency
-  int t_wait = (int)1000000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor())) - test;
+  // Wait according to defined frequency (subtract execution time)
+  int t_wait = (int)1e9 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor())) - test;
   this_thread::sleep_for(chrono::nanoseconds(t_wait));
 }
 

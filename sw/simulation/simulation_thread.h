@@ -69,7 +69,7 @@ void main_simulation_thread(int argc, char *argv[])
     s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
   }
 
-  // Launch agent threads to simulate each agent independetly
+  // Launch agent threads to simulate each agent independently
   for (uint8_t ID = 0; ID < nagents; ID++) {
     thread agent(start_agent_simulation, ID);
     agent.detach();
@@ -77,16 +77,17 @@ void main_simulation_thread(int argc, char *argv[])
 
   // Keep global clock running.
   // This is only used by the animation and the logger.
-  // The robots operate by their own clock.
-  // TODO: Perfectly sync global clock!
+  // The robots operate by their own detached thread clock.
   while (program_running) {
     if (!paused) {
-      int t_wait = (int)1000000.0 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
-      this_thread::sleep_for(chrono::microseconds(t_wait));
+      int t_wait = (int)1e9 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
+      this_thread::sleep_for(chrono::nanoseconds(t_wait));
       simulation_time = t_wait;
-      simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1000000.0;
+      mtx.lock(); // Lock mutex to update global clock thread in relative sync
+      simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1e9;
+      mtx.unlock();
 #ifdef LOGTIME
-      if (simtime_seconds > LOGTIME) {
+      if (simtime_seconds > LOGTIME) { // Quit after a certain amount of time
         program_running = false;
       }
 #endif
