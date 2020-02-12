@@ -41,6 +41,15 @@ Once you have all the packages needed to build Swarmulator, you can build it wit
 
 If you want it to build fast, use `make -j', but this will take up more memory.
 
+#### Generate the doxygen documetation
+Swarmulator was commented using the doxygen format. To generate the doxygen documentation, use
+
+    doxygen doxyfile
+
+And access the documentation using
+
+    xdg-open docs/html/index.html 
+
 ## Running Swarmulator
 Swarmulator can be launched from the terminal. To run Swarmulator, use the following command: 
 
