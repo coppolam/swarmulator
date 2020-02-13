@@ -10,9 +10,7 @@
 #include <cstdlib> // system, NULL, EXIT_FAILURE
 #include <iostream>
 #include <sstream> // std::stringstream, std::stringbuf
-#include <thread>
 #include <future>
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h> 
@@ -26,8 +24,7 @@
 #include "drawingparams.h"
 #include "settings.h"
 
-#define BTEVO_FIFO_READ "/tmp/btevo_fifo"
-#define BTEVO_FIFO_WRITE "/tmp/btevo_fifo"
+#define FIFO_FILE "/tmp/btevo_fifo"
 
 float evaluate_fitness(){
   OmniscientObserver o;
@@ -78,8 +75,8 @@ void get_number_of_agents(int argc, char *argv[])
 void main_simulation_thread(int argc, char *argv[])
 {
   // create and open the FIFO (named pipe)
-  // char const *bt_fifo_read  = BTEVO_FIFO_READ;
-  char const *bt_fifo_write = BTEVO_FIFO_WRITE;
+  // char const *bt_fifo_read  = FIFO_FILE;
+  char const *bt_fifo_write = FIFO_FILE;
   // int fd_read;
   int fd_write;
 
