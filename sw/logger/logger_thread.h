@@ -15,6 +15,7 @@
 using namespace std;
 
 bool logger_running = false;
+bool sent = false;
 
 /**
  * Run the logger
@@ -34,14 +35,15 @@ void run_logger(ofstream &logfile, string filename)
 
   // Write the logfile
   mtx.lock();
-  if (!paused && simtime_seconds > 1.0) {
-    writer.txtwrite_state(logfile);
+  if (!paused && simtime_seconds > 1.0 && !sent) {
+    // writer.txtwrite_state(logfile);
     writer.txtwrite_summary(logfile);
+    sent = true;
   }
   mtx.unlock();
 
   // Wait
-  int t_wait = (int)1000000.0 / (param->logger_updatefreq() * param->simulation_realtimefactor());
+  int t_wait = (int)1e6 / (param->logger_updatefreq() * param->simulation_realtimefactor());
   this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 
@@ -66,7 +68,6 @@ const std::string currentDateTime()
 
 /**
  * Logger thread that logs the simulation to a txt file
- * 
  */
 void main_logger_thread()
 {

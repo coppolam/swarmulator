@@ -5,7 +5,7 @@
  *     Note: this is on top of the main simulator thread
  *****/
 #define ANIMATE // Activate animation thread
-// #define LOG     // Activate logger thread
+#define LOG     // Activate logger thread
 #define LOGTIME 1000 // If set, swarmulator will quite automatically after 1000 (or however many) simulated seconds. Requires logger.
 
 // #define REMAIN_CONNECTED // Check that the swarm remains connected (only if logging)
