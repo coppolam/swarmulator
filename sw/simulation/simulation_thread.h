@@ -42,7 +42,7 @@ float evaluate_fitness(){
 
 int send_fifo(int fd) {
   float fitness = evaluate_fitness();
-  cout << "fitness: " << fitness << endl;
+  // cout << "fitness: " << fitness << endl;
   uint8_t size = 8;
   char msg[size];
   sprintf(msg, "%f", fitness);
