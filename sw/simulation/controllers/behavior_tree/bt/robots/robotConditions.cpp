@@ -16,16 +16,16 @@ std::tuple<std::string, double, double, double> input(int i)
   if (i < KCOND) {
     sprintf(buff, "sensor%d", i);
     lower_lim = 0.;
-    upper_lim = 1000;
+    upper_lim = 8;
   } else if (i < NUMBER_OF_VARS) {
     sprintf(buff, "wheelSpeed%d", i - KCOND);
-    lower_lim = -0.5;
-    upper_lim = 0.5;
+    lower_lim = 0;
+    upper_lim = 1.0;
   } else {
-    std::cerr << "check number of variables, requested: " << i << std::endl;
+    std::cerr << "Check number of variables, requested: " << i << std::endl;
     sprintf(buff, "sensor");
     lower_lim = 0.;
-    upper_lim = 1000;
+    upper_lim = 8;
   }
 
   threshold = (upper_lim - lower_lim) * (rand() % 101) / 100. +

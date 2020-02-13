@@ -30,13 +30,17 @@ behavior_tree::behavior_tree() : Controller()
   // Load the behavior tree
   tree = loadFile(BEHAVIOR_TREE);
   
+  v_x_ref = rg.gaussian_float(0.0, 1.0);
+  v_y_ref = rg.gaussian_float(0.0, 1.0);
+
   // Initialize input sensors
   BLKB.set("sensor0", 0.); // Sensor 0
   
   // Initialize outputs
   BLKB.set("wheelSpeed0", 0.); // Output 0
   BLKB.set("wheelSpeed1", 0.); // Output 1
-
+  
+  moving_timer = 0;
   #ifdef ARENAWALLS
   walltimer = 1;
   #endif
@@ -48,65 +52,86 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   v_y = 0;
   
   float timelim = 2.0 * param->simulation_updatefreq();
+  // Initialize local moving_timer with random variable
+  if (moving_timer == 0) {
+    moving_timer = rg.uniform_int(0, timelim);
+  }
 
   // Get vector of all neighbors from closest to furthest
-  vector<int> closest = o.request_closest(ID);
-  vector<int> q_ID;
-  q_ID.clear();
-  for (uint8_t i = 0; i < nagents - 1; i++) {
-    if (o.request_distance(ID, closest[i]) < rangesensor) {
-      q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
+  vector<int> closest = o.request_closest_inrange(ID, rangesensor);
+  if (!closest.empty()) {
+    for (size_t i = 0; i < closest.size(); i++) {
+      get_lattice_motion(ID, closest[i], v_x, v_y);
     }
+    v_x = v_x / (float)closest.size();
+    v_y = v_y / (float)closest.size();
   }
 
-  if (!q_ID.empty()) {
-    for (size_t i = 0; i < q_ID.size(); i++) {
-      get_lattice_motion(ID, q_ID[i], v_x, v_y);
-    }
-    v_x = v_x / (float)q_ID.size();
-    v_y = v_y / (float)q_ID.size();
-  }
   float vmean = 0.5;
 
   /**** Step 1 of 3: Set current state according to sensors ****/
-  BLKB.set("sensor0", v_x_ref);
+  BLKB.set("sensor0", closest.size());
 
   /**** Step 2 of 3: Tick the tree based on the current state ****/
   tree->tick(&BLKB);
   
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
-  if (walltimer == 2 * timelim){
-    v_x_ref = BLKB.get("wheelSpeed0");
-    v_y_ref = BLKB.get("wheelSpeed1");
+  // if (walltimer == 2 * timelim){
+  //   p_motion = BLKB.get("wheelSpeed0");
+  // }
+
+  if (moving_timer == 1 && walltimer > 2 * timelim) {
+    if (rg.bernoulli(1.0 - BLKB.get("wheelSpeed0"))) {
+      v_x_ref = 0.0;
+      v_y_ref = 0.0;
+      moving = false;
+    } else { // Else explore randomly, change heading
+      ang = rg.uniform_float(0.0, 2 * M_PI);
+      if (moving) {
+        float ext = rg.gaussian_float(0.0, 0.5);
+        float temp;
+        cart2polar(v_x_ref, v_y_ref, temp, ang);
+        ang += ext;
+      }
+      wrapTo2Pi(ang);
+      polar2cart(vmean, ang, v_x_ref, v_y_ref);
+      moving = true;
+    }
   }
+
 
 #ifdef ARENAWALLS
   walltimer++;
   if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
-    cout << "out " << 1 << endl;
+    ti.debug_msg("Agent left the arena from the North side");
     v_x_ref = -vmean;
   }
 
   if (s[ID]->get_position(0) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
-    cout << "out " << 2 << endl;
+    ti.debug_msg("Agent left the arena from the South side");
     v_x_ref = vmean;
   }
 
   if (s[ID]->get_position(1) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
-    cout << "out " << 3 << endl;
+    ti.debug_msg("Agent left the arena from the East side");
     v_y_ref = -vmean;
   }
 
   if (s[ID]->get_position(1) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
     walltimer = 1;
-    cout << "out " << 4 << endl;
+    ti.debug_msg("Agent left the arena from the West side");
     v_y_ref = vmean;
   }
 #endif
 
+  if (moving_timer > timelim) {
+    moving_timer = 0;
+  }
+  moving_timer++;
+  
   v_x += v_x_ref;
   v_y += v_y_ref;
 

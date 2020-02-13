@@ -7,13 +7,11 @@
 #include <cctype>
 #include <algorithm>
 #include <condition_variable>
-#include "settings.h"
-#include "randomgenerator.h"
 #include <chrono>
 
-// Include all agents here
-#include "includes_agents.h"
-
+#include "settings.h"
+#include "randomgenerator.h"
+#include "includes_agents.h" // Include all agents here
 
 /**
  * Update the agent simulation

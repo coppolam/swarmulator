@@ -14,9 +14,22 @@ SRC_FOLDER = sw
 # https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_makefiles.html#creating
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
+
 CC = g++ # chosen compiler
-CFLAGS += -g -Wall -std=gnu++0x -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR #-DP1=$(IP1) -DP2=$(IP2) -DARENAWALLS=$(IAW)
+CFLAGS = -g -Wall -std=gnu++0x -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR #-DP1=$(IP1) -DP2=$(IP2) -DARENAWALLS=$(IAW)
 OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions
+
+ifeq ($(VERBOSE),ON)
+CFLAGS += -DDEBUG -DINFO
+endif
+
+ifeq ($(ANIMATION),ON)
+CFLAGS += -DANIMATION
+endif
+
+ifeq ($(LOGGER),ON)
+CFLAGS += -DLOGGER
+endif
 
 # General parameters to include all cpp files and all subfolders
 INC_DIRS = $(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should be enough.
