@@ -17,9 +17,6 @@
 #include <sstream> // std::stringstream, std::stringbuf
 #include "drawingparams.h"
 
-#define BTEVO_FIFO_READ "/tmp/btevo_fifo"
-#define BTEVO_FIFO_WRITE "/tmp/btevo_fifo"
-
 using namespace std;
 
 /**
@@ -29,11 +26,6 @@ class txtwrite
 {
 public:
   string filename;
-  // create and open the FIFO (named pipe)
-  char const *bt_fifo_read  = BTEVO_FIFO_READ;
-  char const *bt_fifo_write = BTEVO_FIFO_WRITE;
-  int fd_read;
-  int fd_write;
 
   txtwrite();
 

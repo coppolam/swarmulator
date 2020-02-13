@@ -36,7 +36,7 @@ void run_logger(ofstream &logfile, string filename)
   // Write the logfile
   mtx.lock();
   if (!paused && simtime_seconds > 1.0 && !sent) {
-    // writer.txtwrite_state(logfile);
+    writer.txtwrite_state(logfile);
     writer.txtwrite_summary(logfile);
     sent = true;
   }

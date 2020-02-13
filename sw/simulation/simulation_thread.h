@@ -7,6 +7,17 @@
 #include <algorithm>
 #include <thread>
 
+#include <cstdlib> // system, NULL, EXIT_FAILURE
+#include <iostream>
+#include <sstream> // std::stringstream, std::stringbuf
+#include <thread>
+#include <future>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h> 
+#include <unistd.h>
+
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
@@ -14,6 +25,29 @@
 #include "agent_thread.h"
 #include "drawingparams.h"
 #include "settings.h"
+
+#define BTEVO_FIFO_READ "/tmp/btevo_fifo"
+#define BTEVO_FIFO_WRITE "/tmp/btevo_fifo"
+
+float evaluate_fitness(){
+  OmniscientObserver o;
+  float f = 0;
+  for (size_t ID = 0; ID < nagents; ID++)
+  {
+    vector<int> closest = o.request_closest_inrange(ID, rangesensor);
+    f += (float)closest.size()/(float)nagents;
+  }
+  return f;
+}
+
+int send_fifo(int fd) {
+  float fitness = evaluate_fitness();
+  cout << "fitness: " << fitness << endl;
+  uint8_t size = 8;
+  char msg[size];
+  sprintf(msg, "%f", fitness);
+  return write(fd, (char *)msg, size * sizeof(char));
+}
 
 /**
  * Extract the number of agents from the argument list.
@@ -43,6 +77,23 @@ void get_number_of_agents(int argc, char *argv[])
  */
 void main_simulation_thread(int argc, char *argv[])
 {
+  // create and open the FIFO (named pipe)
+  // char const *bt_fifo_read  = BTEVO_FIFO_READ;
+  char const *bt_fifo_write = BTEVO_FIFO_WRITE;
+  // int fd_read;
+  int fd_write;
+
+  // if (access(bt_fifo_read, F_OK) == -1) {
+  // mkfifo(bt_fifo_read, 0666);
+  // }
+
+  if (access(bt_fifo_write, F_OK) == -1) {
+    mkfifo(bt_fifo_write, 0666);
+  }
+
+  fd_write = open(bt_fifo_write, O_RDWR | O_NONBLOCK);
+  // fd_read  = open(bt_fifo_read, O_RDWR | O_NONBLOCK);
+
   terminalinfo ti;
   ti.info_msg("Simulation started.");
 
@@ -86,8 +137,9 @@ void main_simulation_thread(int argc, char *argv[])
       mtx.lock(); // Lock mutex to update global clock thread in relative sync
       simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1e9;
       mtx.unlock();
-#ifdef LOGTIME
-      if (simtime_seconds > LOGTIME) { // Quit after a certain amount of time
+#ifdef MAX_TIME
+      if (simtime_seconds > MAX_TIME) { // Quit after a certain amount of time
+        send_fifo(fd_write);
         program_running = false;
       }
 #endif

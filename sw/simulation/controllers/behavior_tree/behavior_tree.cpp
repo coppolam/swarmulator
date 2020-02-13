@@ -131,7 +131,7 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
     moving_timer = 0;
   }
   moving_timer++;
-  
+
   v_x += v_x_ref;
   v_y += v_y_ref;
 
