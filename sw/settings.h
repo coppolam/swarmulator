@@ -4,7 +4,7 @@
 /***** Uncomment the main simulation threads and functions that run
  *     Note: this is on top of the main simulator thread
  *****/
-#define ANIMATE // Activate animation thread
+// #define ANIMATE // Activate animation thread
 // #define LOG     // Activate logger thread
 #define MAX_TIME 100 // If set, swarmulator will quite automatically after 100 (or however many) simulated seconds. Requires logger.
 

@@ -3,8 +3,8 @@
        xsi:noNamespaceSchemaLocation="parameters.xsd">
 
 <!-- Simulation global variables -->
-<simulation_updatefreq>20</simulation_updatefreq>
-<simulation_realtimefactor>30</simulation_realtimefactor>
+<simulation_updatefreq>10</simulation_updatefreq>
+<simulation_realtimefactor>100</simulation_realtimefactor>
 
 <!-- Animation global variables -->
 <window_width>800</window_width>
