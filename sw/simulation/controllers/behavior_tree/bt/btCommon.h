@@ -3,9 +3,9 @@
 
 #define __BEHAVIOURTREE
 
-#include "behaviour.h"
+#include "node.h"
 #include "composites.h"
-#include "conditions.h"
+#include "condition.h"
 
 #include "robots/robotActions.h"
 

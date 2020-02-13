@@ -4,7 +4,8 @@
 #include <string>
 #include "string.h"
 #include <map>
-/*
+
+/**
  * blackboard
  * Used to store all data for the Behaviour Tree to access
  * get() - returns the value in the blackboard with name "var"
@@ -16,11 +17,37 @@
  */
 struct blackboard {
 public:
+  /**
+   * @brief Construct a new blackboard object
+   *
+   */
   blackboard() {}
+
+  /**
+   * @brief Destroy the blackboard object
+   *
+   */
   ~blackboard() {}
+
+  /**
+   * @brief
+   *
+   * @param var
+   * @param k
+   * @return double
+   */
   double get(const char *var, const int k = -1);
+
+  /**
+   * @brief
+   *
+   * @param var
+   * @param data
+   * @param k
+   */
   void set(const char *var, double data, const int k = -1);
 private:
+
   std::map< std::string,  double > BB;
 };
 

@@ -1,5 +1,7 @@
 #include "robotActions.h"
 
+#include "wheelSpeed.h"
+
 size_t KACTION = 1;       // total number of actions
 
 namespace BT
@@ -9,11 +11,10 @@ BT_Status wheelSpeed::update(blackboard *BLKB)
 {
   BLKB->set("wheelSpeed0", leftWheelSpeed);
   BLKB->set("wheelSpeed1", rightWheelSpeed);
-
   return BH_SUCCESS;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////
+// Get action, when inputs are known
 node *getAction(std::string action, std::vector<double> inputs /*= NULL*/)
 {
   node *task;
@@ -34,6 +35,7 @@ node *getAction(std::string action, std::vector<double> inputs /*= NULL*/)
   return task;
 }
 
+// Get action, when inputs are known
 // Add all actions to the if else if list below
 node *getAction(size_t func /*= (size_t) - 1*/)
 {

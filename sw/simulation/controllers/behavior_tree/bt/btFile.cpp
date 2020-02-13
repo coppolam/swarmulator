@@ -22,28 +22,28 @@ composite *loadFile(const char *file)
 
   myfile.open(file);
   if (myfile.is_open()) {
-    //getfileInfo;
+    // GetfileInfo
 
-    // get root node
+    // Get root node
     std::getline(myfile, line);
     line.erase(std::remove(line.begin(), line.end(), ' '), line.end());   // remove white spaces
     root = decodeLine(line);
     tasks.push_back(root);
 
-    // read rest of BT
+    // Read rest of BT
     while (std::getline(myfile, line)) {
       line.erase(std::remove(line.begin(), line.end(), ' '), line.end());   // remove white spaces
-      // determine depth
+      // Determine depth
       i_tab = std::count(line.begin(), line.end(), '\t');
 
-      // new sub task
+      // New sub task
       if (i_tab > currentTab) {
         tasks.push_back(newTask(tasks.back(), line));
         currentTab = i_tab;
         continue; // read next line
       }
 
-      // end of sub tasks, move to new task
+      // End of sub tasks, move to new task
       else if (i_tab < currentTab) {
         while (i_tab != currentTab) {
           tasks.pop_back();

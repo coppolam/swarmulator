@@ -3,15 +3,19 @@
 
 #include <stdlib.h>
 #include <tuple>
-#include "behaviour.h"
+#include "node.h"
+#include "settings.h"
+
 #define MAX_SIZE (size_t) - 1
 
-// extern size_t KCOND;        //total number of conditions
-// extern size_t NUMBER_OF_VARS;   // total number of input variables
+#define KCOND 1 // Total number of conditions
+#define NUMBER_OF_VARS 1 // Total number of variables
 
-#define KCOND 1          //total number of conditions
-#define NUMBER_OF_VARS 1 // total number of variables
-
+/**
+ * @brief Behavior tree namespace
+ *
+ * Holds the behavior tree structure.
+ */
 namespace BT
 {
 
@@ -66,75 +70,6 @@ public:
   size_t k_var;   // Parameter number
   std::string var;  // Parameter name
   double limit;   // threshold
-};
-
-class less_than : public condition
-{
-public:
-  less_than(std::string vehicle_name, size_t param = MAX_SIZE)
-    : condition(vehicle_name, "less_than", param)
-  {
-  }
-  less_than(std::string vehicle_name, size_t param, double value)
-    : condition(vehicle_name, "less_than", param, value)
-  {
-  }
-
-  BT_Status update(blackboard *BLKB)
-  {
-    double data = BLKB->get(var.data());
-    if (data < limit) {
-      return BH_SUCCESS;
-    } else {
-      return BH_FAILURE;
-    }
-  }
-};
-
-class greater_than : public condition
-{
-public:
-  greater_than(std::string vehicle_name, size_t param = MAX_SIZE)
-    : condition(vehicle_name, "greater_than", param)
-  {
-  }
-  greater_than(std::string vehicle_name, size_t param, double value)
-    : condition(vehicle_name, "greater_than", param, value)
-  {
-  }
-
-  BT_Status update(blackboard *BLKB)
-  {
-    double data = BLKB->get(var.data());
-    if (data > limit) {
-      return BH_SUCCESS;
-    } else {
-      return BH_FAILURE;
-    }
-  }
-};
-
-class memory_set : public condition
-{
-public:
-  memory_set(std::string vehicle_name, size_t param = MAX_SIZE)
-    : condition(vehicle_name, "memory_set", param)
-  {
-  }
-  memory_set(std::string vehicle_name, size_t param, double value)
-    : condition(vehicle_name, "memory_set", param, value)
-  {
-  }
-
-  BT_Status update(blackboard *BLKB)
-  {
-    if (BLKB->get("memory")) {
-      return BH_SUCCESS;
-    } else {
-      return BH_FAILURE;
-    }
-
-  }
 };
 
 }

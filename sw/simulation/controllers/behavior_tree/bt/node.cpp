@@ -6,13 +6,11 @@
  *      Email:  kirkscheper@gmail.com
  */
 
-#include "behaviour.h"
+#include "node.h"
 #include <string.h>
 
 namespace BT
 {
-
-// ******************************************* //
 
 // Evaluate node
 BT_Status node::tick(blackboard *BLKB)

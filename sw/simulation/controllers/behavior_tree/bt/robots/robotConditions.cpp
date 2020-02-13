@@ -1,4 +1,7 @@
-#include "../conditions.h"
+#include "condition.h"
+
+#include "less_than.h"
+#include "greater_than.h"
 
 namespace BT
 {
