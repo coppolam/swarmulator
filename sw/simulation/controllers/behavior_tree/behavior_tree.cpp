@@ -1,7 +1,9 @@
 #include "behavior_tree.h"
 #include "draw.h"
 
-#define BEHAVIOR_TREE "/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml"
+// #define BEHAVIOR_TREE "/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml"
+// #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
+#define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
 
 float behavior_tree::f_attraction(float u)
 {
@@ -79,6 +81,7 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   // if (walltimer == 2 * timelim){
   //   p_motion = BLKB.get("wheelSpeed0");
   // }
+  cout << (int)ID << " " << BLKB.get("wheelSpeed0") << endl;
 
   if (moving_timer == 1 && walltimer > 2 * timelim) {
     if (rg.bernoulli(1.0 - BLKB.get("wheelSpeed0"))) {
