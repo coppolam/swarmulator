@@ -5,6 +5,7 @@
  * Include all the agents here
  */
 #include "particle.h"
+#include "particle_oriented.h"
 #include "wheeled.h"
 
 #endif /*INCLUDES_AGENTS_H*/

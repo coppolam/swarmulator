@@ -52,7 +52,7 @@ void Controller_Pattern::get_velocity_command(const uint8_t ID, float &v_x, floa
   // for (int i = 0; i < state.size(); i++)
   //   std::cout << state[i] << ' ';
   // cout << endl;
-  vector<int> closest = o.request_closest(ID);
+  vector<uint> closest = o.request_closest(ID);
 
   // Can I move or are my neighbors moving?
   bool canImove = check_motion(state_ID);

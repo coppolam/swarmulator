@@ -4,30 +4,18 @@
 #include <vector>
 #include <stdio.h>
 #include <iostream>
+#include <vector>
+#include <cmath>
 #include "agent.h"
 
 using namespace std;
 
-/**
- * This child class of agent implements the dynamics of simple accelerated wheeled vehicles using a kinematic model
- */
-class Wheeled: public Agent
+class wheeled: public Agent
 {
 public:
-  /**
-   * Constructor
-   */
-  Wheeled(int i, vector<float> state, float tstep);
-
-  /**
-   * State update implementation
-   */
-  void state_update();
-
-  /**
-   * Animation openGL implementation for visualization
-   */
-  void animation();
+	wheeled(int i, vector<float> state, float tstep);
+	void state_update();
+	void animation();
 };
 
-#endif /*Wheeled_H*/
+#endif /*WHEELED_H*/

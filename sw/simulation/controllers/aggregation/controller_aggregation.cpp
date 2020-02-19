@@ -39,7 +39,7 @@ void Controller_Aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
   }
 
   // Get vector of all neighbors from closest to furthest
-  vector<int> closest = o.request_closest(ID);
+  vector<uint> closest = o.request_closest(ID);
   vector<int> q_ID;
   q_ID.clear();
   for (uint8_t i = 0; i < nagents - 1; i++) {

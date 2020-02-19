@@ -31,7 +31,7 @@ float evaluate_fitness(){
   float f = 0;
   for (size_t ID = 0; ID < nagents; ID++)
   {
-    vector<int> closest = o.request_closest_inrange(ID, rangesensor);
+    vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
     f += (float)closest.size()/(float)nagents;
   }
   return f;

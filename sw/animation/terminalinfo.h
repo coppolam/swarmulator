@@ -34,6 +34,14 @@ public:
   void debug_msg(string str);
 
   /**
+   * Print a debug message
+   * 
+   * @param str Debug string to print
+   * @param ID Robot ID
+   */
+  void debug_msg(string str, int ID);
+
+  /**
    * Print an info message
    * 
    * @param str Info string to print

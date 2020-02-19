@@ -21,6 +21,6 @@ void Controller_Lattice::get_velocity_command(const uint8_t ID, float &v_x, floa
   vector<int> state_ID;
   // The ID is just used for simulation purposes
   t.assess_situation(ID, state, state_ID);
-  vector<int> closest = o.request_closest(ID);
+  vector<uint> closest = o.request_closest(ID);
   get_lattice_motion_all(ID, state_ID, closest, v_x, v_y);
 }

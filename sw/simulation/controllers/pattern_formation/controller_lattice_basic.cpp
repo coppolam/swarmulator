@@ -80,7 +80,7 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
 }
 
 void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID,
-    const vector<int> &closest, float &v_x, float &v_y)
+    const vector<uint> &closest, float &v_x, float &v_y)
 {
   if (!state_ID.empty()) {
     if (o.request_distance(ID, closest[0]) > d_safe) { // If all are further than the safety distance

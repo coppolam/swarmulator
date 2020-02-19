@@ -18,14 +18,15 @@
 // #define CONTROLLER Controller_Lattice  // Basic lattice controller
 // #define CONTROLLER Controller_Pattern  // Controller with Qf
 
-// #define CONTROLLER ndi_follower  // NDI follower, needs AGENT Wheeled, to be defined below!
+// #define CONTROLLER ndi_follower  // NDI follower, needs AGENT particle_oriented, to be defined below!
 // #define COMMAND_LOCAL 1  // use COMMAND_LOCAL for local commands
 
 #define CONTROLLER behavior_tree  // Controller with Qf
 
 /***** Select the agent type that you want to use by uncommenting it****/
-#define AGENT Particle    // Accelerated particles
-// #define AGENT Wheeled    // Wheeled vehicles
+// #define AGENT particle    // Accelerated particles
+// #define AGENT particle_oriented    // Accelerated particle with orientation
+#define AGENT wheeled    // Wheeled robot
 
 /***** Noise in relative sensing *****/
 #define NOISE_R 0 // STDEV of noise in range

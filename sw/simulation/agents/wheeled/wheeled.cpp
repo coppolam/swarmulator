@@ -1,67 +1,53 @@
 #include "wheeled.h"
-#include "trigonometry.h"
-#include "randomgenerator.h"
 #include "draw.h"
 
-Wheeled::Wheeled(int i, vector<float> s, float tstep)
+wheeled::wheeled(int i, vector<float> s, float tstep)
 {
   state = s;
   ID = i;
   dt = tstep;
-  random_generator rg;
-  orientation = state[6];
-  controller.set_saturation(0.5);
-  manual = false;
+  orientation = 0.0;
 }
 
-void Wheeled::state_update()
-{
-  // NED frame
-  // x+ towards North
-  // y+ towards East
-  float vx_des, vy_des;
-  float vx_global, vy_global, dpsi_rate;
-  if (!manual) {
-    controller.get_velocity_command(ID, vx_des, vy_des); // Command comes out in the local frame
-    dpsi_rate = 0;
-  } else {
-    vx_des = manualx;
-    vy_des = manualy;
-    dpsi_rate = manualpsi_delta;
-  }
-  controller.saturate(vx_des);
-  controller.saturate(vy_des);
-#if COMMAND_LOCAL
-  rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
-#else
-  vx_global = vx_des;
-  vy_global = vy_des;
-#endif
-
-  state.at(7) = dpsi_rate;
-  state.at(6) += dpsi_rate * dt;
-  state.at(6) = wrapToPi_f(state[6]); // Orientation
-
-  // Acceleration control
-  float ka = 1;
-  state.at(4) = ka * (vx_global - state[2]); // Acceleration global frame
-  state.at(5) = ka * (vy_global - state[3]); // Acceleration global frame
+void wheeled::state_update()
+{ 
+  float leftwheelspeed, rightwheelspeed;
+  controller.get_velocity_command(ID, leftwheelspeed, rightwheelspeed);
+  
+  cout << leftwheelspeed << " " << rightwheelspeed << endl;
+  controller.saturate(leftwheelspeed);
+  controller.saturate(rightwheelspeed);
   moving = controller.moving;
   happy = controller.happy;
 
+  float r = 1; // Wheel radius
+  float L = 10; // Distance between wheels
+
+  float v_x = r/2 * leftwheelspeed + r/2 * rightwheelspeed;
+  float v_y = 0.0;
+  float psi_rate = - r/L * leftwheelspeed + r/L * rightwheelspeed;
+  cout << v_x << " " << rightwheelspeed << endl;
+
+  float vxr, vyr;
+  rotate_xy(v_x, v_y, state[6], vxr, vyr); // Local frame to global frame
+
+  // Orientation
+  state.at(7) = psi_rate; // Orientation rate
+  state.at(6) += state.at(7); // Orientation
+
   // Velocity
-  state.at(2) += state[4] * dt; // Velocity x global frame
-  state.at(3) += state[5] * dt; // Velocity y global frame
+  state.at(2) = vxr; // Velocity x
+  state.at(3) = vyr; // Velocity y
 
   // Position
-  state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x global frame
-  state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y global frame
-};
+  state.at(0) += state[2] * dt; // Position x
+  state.at(1) += state[3] * dt; // Position y
+}
 
-void Wheeled::animation()
+
+void wheeled::animation()
 {
   draw d;
-
   d.draw_triangle(param->scale());
   d.draw_circle_loop(rangesensor);
 }

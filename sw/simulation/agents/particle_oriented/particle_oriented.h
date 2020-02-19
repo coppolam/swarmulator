@@ -1,5 +1,5 @@
-#ifndef PARTICLE_H
-#define PARTICLE_H
+#ifndef PARTICLE_ORIENTED_H
+#define PARTICLE_ORIENTED_H
 
 #include <vector>
 #include <stdio.h>
@@ -9,15 +9,15 @@
 using namespace std;
 
 /**
- * This child class of agent implements the dynamics of simple accelerated particles using a kinematic model
+ * This child class of agent implements the dynamics of simple accelerated oriented vehicles using a kinematic model
  */
-class particle: public Agent
+class particle_oriented: public Agent
 {
 public:
   /**
    * Constructor
    */
-  particle(int i, vector<float> state, float tstep);
+  particle_oriented(int i, vector<float> state, float tstep);
 
   /**
    * State update implementation
@@ -30,4 +30,4 @@ public:
   void animation();
 };
 
-#endif /*PARTICLE_H*/
+#endif /*PARTICLE_ORIENTED_H*/

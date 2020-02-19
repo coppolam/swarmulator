@@ -51,7 +51,7 @@ void main_loop_function()
     drawer.draw_agent(ID,
                       s[ID]->state.at(0), // p_x global
                       s[ID]->state.at(1), // p_y global
-                      s[ID]->state.at(6)); // orientation global
+                      s[ID]->orientation); // orientation global
     drawer.draw_velocity_arrow(ID,
                                s[ID]->state.at(0), // p_x global
                                s[ID]->state.at(1), // p_y global

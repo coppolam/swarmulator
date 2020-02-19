@@ -42,9 +42,9 @@ void draw::draw_triangle(double scl)
 
   glBegin(GL_POLYGON);
   glColor3ub(255, 000, 000); // Red
-  glVertex2f(-0.5 * scl,  0.5 * scl);
-  glVertex2f(-0.5 * scl, -0.5 * scl);
-  glVertex2f(1.0 * scl,  0 * scl);
+  glVertex2f(-1 * scl,  1 * scl);
+  glVertex2f(-1 * scl, -1 * scl);
+  glVertex2f(2.0 * scl,  0 * scl);
   glEnd();
 
   glColor3ub(255, 255, 255); // White

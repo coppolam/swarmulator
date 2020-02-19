@@ -26,10 +26,10 @@ void array_sortmintomax_index(int length, indexed_array *x)
   return;
 }
 
-vector<int> OmniscientObserver::request_closest(uint8_t ID)
+vector<uint> OmniscientObserver::request_closest(uint8_t ID)
 {
   indexed_array dm[nagents - 1];
-  vector<int> ind;
+  vector<uint> ind;
   for (uint8_t i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
                       pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
@@ -48,10 +48,10 @@ vector<int> OmniscientObserver::request_closest(uint8_t ID)
   return ind;
 }
 
-vector<int> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
+vector<uint> OmniscientObserver::request_closest_inrange(uint8_t ID, float range)
 {
   indexed_array dm[nagents - 1];
-  vector<int> ind;
+  vector<uint> ind;
   for (uint8_t i = 0; i < nagents; i++) {
     dm[i].values = (sqrt(
                       pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)

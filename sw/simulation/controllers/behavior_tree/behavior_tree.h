@@ -23,8 +23,8 @@ class behavior_tree: public Controller
 public:
   bool moving; // Robot sets it if it is moving.
   float v_x_ref, v_y_ref, ang;
-  int walltimer; // Timer to set the time for a wall avoidance maneuver
-  int moving_timer; // Timer measuring how long a robot has been moving
+  uint walltimer; // Timer to set the time for a wall avoidance maneuver
+  uint moving_timer; // Timer measuring how long a robot has been moving
   composite *tree; // Tree structure.
   blackboard BLKB; // Blackboard structure that ticks the tree during runtime.
   random_generator rg; // Random generator
@@ -56,6 +56,15 @@ public:
    * @param v_y v_y component of attraction/repulsion
    */
   void get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y);
+  
+  /**
+   * Function for lattice to all robots
+   * 
+   * @param closest vector of ID of all closest neighbors
+   * @param v_x 
+   * @param v_y 
+   */
+  void lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y);
 
   /**
    * Update the inputs and run the behavior tree command

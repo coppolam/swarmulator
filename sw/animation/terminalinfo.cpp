@@ -7,6 +7,13 @@ void terminalinfo::debug_msg(string str)
 #endif
 }
 
+void terminalinfo::debug_msg(string str, int ID)
+{
+#ifdef DEBUG // Defined in the makefile!
+  cout << "\e[01;31m[DEBUG]: \e[0m" << "Robot " << ID << ":\t" << str << endl;
+#endif
+}
+
 void terminalinfo::info_msg(string str)
 {
 #ifdef INFO // Defined in the makefile!

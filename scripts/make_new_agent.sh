@@ -6,7 +6,9 @@ if [ "$1" = "" ]; then
 	exit 1;
 fi
 
-folder=../sw/simulation/agents;
+mkdir ../sw/simulation/agents/$1
+
+folder=../sw/simulation/agents/$1;
 
 if [ -f $folder/$1".h" ] || [ -f $folder/$1".cpp" ]; then
 	echo "An agent with this name already exists. Do you want to over write it? [yes]";
@@ -42,7 +44,7 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "Creating file implementation: "n".cpp ...";
 	print "#include \""n".h\"" > cN;
 	print "#include \"draw.h\"\n" > cN;
-	print n"::"n"(int i, vector<float> state, float tstep)\n{" >> cN;
+	print n"::"n"(int i, vector<float> s, float tstep)\n{" >> cN;
 	print "  state = s;\n  ID = i;\n  dt = tstep;\n  orientation = 0.0;" > cN;
 	print "}\n" >> cN;
 	print "void "n"::state_update()\n{ "> cN;
@@ -52,6 +54,11 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "void "n"::animation()\n{" > cN
 	print "  draw d;" > cN
 	print "  /*** Draw your agent here ***/\n}" > cN;
+
+	cN = p"/README.md";
+	print "Creating README file";
+	print "#"n"" > cN;
+	print "Please include a description of the agent here, both for yourself and for future users!" > cN;
 }'
 
 exit 0;

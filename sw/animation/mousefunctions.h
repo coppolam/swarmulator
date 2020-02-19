@@ -84,9 +84,11 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
     case 's':
       // Step through the simulation. Very useful for debugging or analyzing what's going on.
       ti.info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
+      int t_wait;
       mtx.try_lock();
       mtx.unlock();
-      this_thread::sleep_for(chrono::microseconds(1000));
+      t_wait = (int)1e9 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
+      this_thread::sleep_for(chrono::nanoseconds(t_wait));
       mtx.lock();
       paused = true;
       break;

@@ -43,7 +43,7 @@ public:
    * 
    * @return A vector of the IDs of all the neighbors, from closest to furthest.
    */
-  vector<int> request_closest(uint8_t ID); // request IDs of closest k neighbours and for your ID
+  vector<uint> request_closest(uint8_t ID); // request IDs of closest k neighbours and for your ID
 
   /**
    * @brief Get the closest within a range
@@ -56,7 +56,7 @@ public:
    * 
    * @return A vector of the IDs of all the neighbors within the range, from closest to furthest.
    */
-  vector<int> request_closest_inrange(uint8_t ID, float range);
+  vector<uint> request_closest_inrange(uint8_t ID, float range);
 
   /**
    * Get the relative distance between two agents along x or y

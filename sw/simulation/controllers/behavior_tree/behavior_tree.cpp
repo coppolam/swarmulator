@@ -1,10 +1,42 @@
 #include "behavior_tree.h"
 #include "draw.h"
 #include "terminalinfo.h"
+#include "auxiliary.h"
 
 // #define BEHAVIOR_TREE "/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml"
 // #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
 #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
+
+void wall_avoidance(uint8_t ID, uint &walltimer, float &v_x_ref, float &v_y_ref)
+{
+  terminalinfo ti;
+  float timelim = 2.0 * param->simulation_updatefreq();
+
+  walltimer++;
+  if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
+    walltimer = 0;
+    ti.debug_msg("Agent left the arena from the North side");
+    v_x_ref = -abs(v_x_ref);
+  }
+
+  if (s[ID]->get_position(0) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
+    walltimer = 0;
+    ti.debug_msg("Agent left the arena from the South side");
+    v_x_ref = abs(v_x_ref);
+  }
+
+  if (s[ID]->get_position(1) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
+    walltimer = 0;
+    ti.debug_msg("Agent left the arena from the East side");
+    v_y_ref = -abs(v_y_ref);
+  }
+
+  if (s[ID]->get_position(1) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
+    walltimer = 0;
+    ti.debug_msg("Agent left the arena from the West side");
+    v_y_ref = abs(v_y_ref);
+  }
+}
 
 float behavior_tree::f_attraction(float u)
 {
@@ -28,6 +60,18 @@ void behavior_tree::get_lattice_motion(const int &ID, const int &state_ID, float
   v_y += v_r * sin(v_b);
 }
 
+void behavior_tree::lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y)
+{
+  if (!closest.empty()) {
+    for (size_t i = 0; i < closest.size(); i++) {
+      get_lattice_motion(ID, closest[i], v_x, v_y);
+    }
+    v_x = v_x / (float)closest.size();
+    v_y = v_y / (float)closest.size();
+  }
+}
+
+
 behavior_tree::behavior_tree() : Controller()
 {
   // Load the behavior tree
@@ -45,7 +89,7 @@ behavior_tree::behavior_tree() : Controller()
   
   moving_timer = 0;
   #ifdef ARENAWALLS
-  walltimer = 1;
+  walltimer = 0;
   #endif
 }
 
@@ -55,24 +99,17 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   v_y = 0;
   
   float timelim = 2.0 * param->simulation_updatefreq();
-  // Initialize local moving_timer with random variable
-  if (moving_timer == 0) {
-    moving_timer = rg.uniform_int(0, timelim);
-  }
 
   // Get vector of all neighbors from closest to furthest
-  vector<int> closest = o.request_closest_inrange(ID, rangesensor);
-  if (!closest.empty()) {
-    for (size_t i = 0; i < closest.size(); i++) {
-      get_lattice_motion(ID, closest[i], v_x, v_y);
-    }
-    v_x = v_x / (float)closest.size();
-    v_y = v_y / (float)closest.size();
-  }
+  
+  vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
+  lattice_all(ID, closest, v_x, v_y);
 
-  float vmean = 0.5;
+  float vmean = 1.0;
 
   /**** Step 1 of 3: Set current state according to sensors ****/
+  BLKB.set("sensor0", closest.size());
+  BLKB.set("sensor0", closest.size());
   BLKB.set("sensor0", closest.size());
 
   /**** Step 2 of 3: Tick the tree based on the current state ****/
@@ -82,10 +119,16 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   float p_motion = BLKB.get("wheelSpeed0");
 
   terminalinfo ti;
-  string d = "Robot " + to_string(int(ID)) + ":\t p=" + to_string(p_motion);
-  ti.debug_msg(d); // Debug
+  string d = "p=" + to_string(p_motion);
+  ti.debug_msg(d,ID); // Debug
  
-  if (moving_timer == 1 && walltimer > 2 * timelim) {
+  /******** Probabilistic aggregation behavior ***********/
+  // Initialize local moving_timer with random variable
+  if (moving_timer == 0) {
+    moving_timer = rg.uniform_int(0, timelim);
+  }
+  // Behavior
+  if (moving_timer == 1 && walltimer > 2.0 * timelim) {
     if (rg.bernoulli(1.0 - p_motion)) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;
@@ -103,44 +146,14 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
       moving = true;
     }
   }
-
-/**********  wall avoidance **********/
-#ifdef ARENAWALLS
-  walltimer++;
-  if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    ti.debug_msg("Agent left the arena from the North side");
-    v_x_ref = -vmean;
-  }
-
-  if (s[ID]->get_position(0) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    ti.debug_msg("Agent left the arena from the South side");
-    v_x_ref = vmean;
-  }
-
-  if (s[ID]->get_position(1) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    ti.debug_msg("Agent left the arena from the East side");
-    v_y_ref = -vmean;
-  }
-
-  if (s[ID]->get_position(1) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    ti.debug_msg("Agent left the arena from the West side");
-    v_y_ref = vmean;
-  }
-#endif
-/******************************/
-
-  if (moving_timer > timelim) {
-    moving_timer = 0;
-  }
-  moving_timer++;
+  increase_counter(moving_timer, timelim);
+  /*******************************************************/
+  
+  wall_avoidance(ID, walltimer, v_x_ref, v_y_ref);
 
   v_x += v_x_ref;
   v_y += v_y_ref;
 
-  d = "Robot " + to_string(int(ID)) + ":\t " + to_string(v_x) + ", " +  to_string(v_y);
-  ti.debug_msg(d); // Debug
+  d = to_string(v_x) + ", " +  to_string(v_y);
+  ti.debug_msg(d,ID);
 }
