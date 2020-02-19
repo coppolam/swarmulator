@@ -12,10 +12,12 @@ using namespace std;
 
 class wheeled: public Agent
 {
+  float r = 1; // Wheel radius
+  float L = 10; // Distance between wheels
 public:
-	wheeled(int i, vector<float> state, float tstep);
-	void state_update();
-	void animation();
+  wheeled(int i, vector<float> state, float tstep);
+  void state_update();
+  void animation();
 };
 
 #endif /*WHEELED_H*/

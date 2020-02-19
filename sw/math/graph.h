@@ -23,7 +23,7 @@ private:
 public:
   /**
    * Constructor instatiates a list of all connections in the graph.
-   * 
+   *
    * @param V Total number of vertices
    */
   Graph(int V)
@@ -34,15 +34,15 @@ public:
 
   /**
    * Function to add an edge in the topology graph between node v and w
-   * 
+   *
    * @param v ID of node v
    * @param w ID of node w
    */
   void addEdge(int v, int w);
 
   /**
-   * Breadth-First Search (BFS) implementation. See how it is used in graph::isConnected() 
-   * 
+   * Breadth-First Search (BFS) implementation. See how it is used in graph::isConnected()
+   *
    * @param s first node to be visited (use s=0)
    * @param visited visited nodes during BFS
    */
@@ -55,7 +55,7 @@ public:
 
   /**
    * @brief Checks that the topology is connected.
-   *  
+   *
    * Check whether the undirected graph is connected using BFS
    * Returns true if connected, false if not connected
    */

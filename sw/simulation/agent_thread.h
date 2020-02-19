@@ -15,7 +15,7 @@
 
 /**
  * Update the agent simulation
- * 
+ *
  * @param ID The ID of the agent/robot
  * @param logfile The file ID of the log
  */
@@ -42,7 +42,7 @@ void run_agent_simulation_step(const int &ID, ofstream &logfile)
 
 /**
  * Start the simulation of an agent
- * 
+ *
  * @param ID The ID of the agent/robot
  */
 void start_agent_simulation(int ID)
@@ -66,7 +66,7 @@ void start_agent_simulation(int ID)
 
 /**
  * Generates new agent + simulation thread at given position x0 y0
- * 
+ *
  * @param ID The ID of the agent/robot
  * @param x Initial position of the agent in x
  * @param y Initial position of the agent in y

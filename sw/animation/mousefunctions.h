@@ -32,14 +32,14 @@ float yrat = 0;
 
 /**
  * @brief keyboard_callback reads keyboard commands from the animation window of Swarmulator.
- * 
- * This function reads keyboard commands from the animation window of Swarmulator 
+ *
+ * This function reads keyboard commands from the animation window of Swarmulator
  * and handles the commands.
  * In this way, it becomes easies and intuitive to interact with the simulation of the swarm.
  * Functions include pausing, quitting, adding agents, zoom, etc.
- * 
+ *
  * @param key The keyboard key that has been pressed
- * @param a (unused) Required by callback structure 
+ * @param a (unused) Required by callback structure
  * @param b (unused) Required by callback structure
  */
 void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attribute__((unused)) int b)
@@ -54,7 +54,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       center_y = 0;
       break;
     case 'z':
-      // Reset the zoom to the default value 
+      // Reset the zoom to the default value
       ti.info_msg("Resetting zoom.");
       zoom = 0;
       break;
@@ -118,7 +118,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       s[0]->manualpsi_delta = -0.1;
       break;
     case 'n':
-      // Quit and restart swarmulator 
+      // Quit and restart swarmulator
       mtx.try_lock();
       ti.info_msg("Restarting.");
       stringstream ss;
@@ -130,7 +130,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
 }
 /**
  * Detects the mouse motion and adjusts the center of the animation
- * 
+ *
  * @param x Pointer location in the animation window along x
  * @param y Pointer location in the animation window along y
  */
@@ -143,7 +143,7 @@ void mouse_motion_callback(int x, int y)
 /**
  * Keeps track of the location of the pointer.
  * This is used for launching new agents at specified locations intuitively.
- * 
+ *
  * @param x Pointer location in the animation window along x
  * @param y Pointer location in the animation window along y
  */
@@ -158,7 +158,7 @@ void mouse_motion_callback_passive(int x, int y)
 /**
  * Detects that the mouse has been clicked (for dragging)
  * Or else detects that the zoom wheel is in use.
- * 
+ *
  * @param button Detects which button has been pressed on the mouse
  * @param state State of the button (pressed on not)
  * @param x Pointer location in the animation window along x
@@ -189,9 +189,9 @@ void mouse_click_callback(int button, int state, int x, int y)
 
 /**
  * @brief Allows to take control of the 0th agent with the keyboard arrows
- * 
+ *
  * @param key Key being pressed
- * @param a (unused) Required by callback structure 
+ * @param a (unused) Required by callback structure
  * @param b (unused) Required by callback structure
  */
 void catchKey_arrow(int key, __attribute__((unused)) int a, __attribute__((unused)) int b)
@@ -214,9 +214,9 @@ void catchKey_arrow(int key, __attribute__((unused)) int a, __attribute__((unuse
 
 /**
  * @brief Removes control of the 0th agent with the keyboard arrows (key is up!)
- * 
+ *
  * @param key Key being pressed
- * @param a (unused) Required by callback structure 
+ * @param a (unused) Required by callback structure
  * @param b (unused) Required by callback structure
  */
 void catckKey_arrow_up(int key, __attribute__((unused)) int a, __attribute__((unused)) int b)

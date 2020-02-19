@@ -13,7 +13,7 @@
 #include <future>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h> 
+#include <fcntl.h>
 #include <unistd.h>
 
 #include "main.h"
@@ -26,18 +26,19 @@
 
 #define FIFO_FILE "/tmp/btevo_fifo"
 
-float evaluate_fitness(){
+float evaluate_fitness()
+{
   OmniscientObserver o;
   float f = 0;
-  for (size_t ID = 0; ID < nagents; ID++)
-  {
+  for (size_t ID = 0; ID < nagents; ID++) {
     vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
-    f += (float)closest.size()/(float)nagents;
+    f += (float)closest.size() / (float)nagents;
   }
   return f;
 }
 
-int send_fifo(int fd) {
+int send_fifo(int fd)
+{
   float fitness = evaluate_fitness();
   // cout << "fitness: " << fitness << endl;
   uint8_t size = 8;
@@ -49,7 +50,7 @@ int send_fifo(int fd) {
 /**
  * Extract the number of agents from the argument list.
  * Else, return an error.
- * 
+ *
  * @param argc Number of arguments from terminal input when launching swarmulator
  * @param argv Content of arguments from terminal input when launching swarmulator
  */
@@ -68,7 +69,7 @@ void get_number_of_agents(int argc, char *argv[])
  * This function initiates the simulation.
  * All agents in the beginning initiate randomly with a mean position around the (0,0) point.
  * Once the vector of agents is created, each agent is launched in a separate thread.
- * 
+ *
  * @param argc Number of arguments from terminal input when launching swarmulator
  * @param argv Content of arguments from terminal input when launching swarmulator
  */

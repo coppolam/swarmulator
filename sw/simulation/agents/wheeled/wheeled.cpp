@@ -10,23 +10,18 @@ wheeled::wheeled(int i, vector<float> s, float tstep)
 }
 
 void wheeled::state_update()
-{ 
+{
   float leftwheelspeed, rightwheelspeed;
   controller.get_velocity_command(ID, leftwheelspeed, rightwheelspeed);
-  
-  cout << leftwheelspeed << " " << rightwheelspeed << endl;
+
   controller.saturate(leftwheelspeed);
   controller.saturate(rightwheelspeed);
   moving = controller.moving;
   happy = controller.happy;
 
-  float r = 1; // Wheel radius
-  float L = 10; // Distance between wheels
-
-  float v_x = r/2 * leftwheelspeed + r/2 * rightwheelspeed;
+  float v_x = r / 2 * leftwheelspeed + r / 2 * rightwheelspeed;
   float v_y = 0.0;
-  float psi_rate = - r/L * leftwheelspeed + r/L * rightwheelspeed;
-  cout << v_x << " " << rightwheelspeed << endl;
+  float psi_rate = - r / L * leftwheelspeed + r / L * rightwheelspeed;
 
   float vxr, vyr;
   rotate_xy(v_x, v_y, state[6], vxr, vyr); // Local frame to global frame

@@ -15,7 +15,7 @@ using namespace std;
 using namespace BT;
 
 class behavior_tree: public Controller
-{ 
+{
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver o;
   terminalinfo ti;
@@ -33,7 +33,7 @@ public:
    * Initialize the behavior tree
    */
   behavior_tree();
-  
+
   /** Attraction
    * Attraction function at distance u
    * @param u distance
@@ -56,13 +56,13 @@ public:
    * @param v_y v_y component of attraction/repulsion
    */
   void get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y);
-  
+
   /**
    * Function for lattice to all robots
-   * 
+   *
    * @param closest vector of ID of all closest neighbors
-   * @param v_x 
-   * @param v_y 
+   * @param v_x
+   * @param v_y
    */
   void lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y);
 

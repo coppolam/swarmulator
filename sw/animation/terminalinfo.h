@@ -28,14 +28,14 @@ public:
 
   /**
    * Print a debug message
-   * 
+   *
    * @param str Debug string to print
    */
   void debug_msg(string str);
 
   /**
    * Print a debug message
-   * 
+   *
    * @param str Debug string to print
    * @param ID Robot ID
    */
@@ -43,7 +43,7 @@ public:
 
   /**
    * Print an info message
-   * 
+   *
    * @param str Info string to print
    */
   void info_msg(string str);

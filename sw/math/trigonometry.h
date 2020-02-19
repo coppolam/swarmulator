@@ -10,7 +10,7 @@ using namespace std;
 
 /**
  * Wraps an angle in radians between -PI and +PI, overwrites onto the variable
- * 
+ *
  * @param ang Angle value (in radians)
  */
 inline static void wrapToPi(float &ang)
@@ -21,7 +21,7 @@ inline static void wrapToPi(float &ang)
 
 /**
  * Wraps an angle in radians between 0 and +2PI, overwrites onto the variable
- * 
+ *
  * @param ang Angle value (in radians)
  */
 inline static void wrapTo2Pi(float &ang)
@@ -36,7 +36,7 @@ inline static void wrapTo2Pi(float &ang)
 
 /**
  * Wraps an angle in radians between -PI and +PI, returns the wrapped value
- * 
+ *
  * @param ang Angle value (in radians)
  * @return The angle value, wrapped to [-PI,PI]
  */
@@ -56,7 +56,7 @@ inline static float wrapToPi_f(float ang)
 
 /**
  * Wraps an angle in radians between 0 and +2PI, returns the wrapped value
- * 
+ *
  * @param ang Angle value (in radians)
  * @return The angle value, wrapped to [0,2PI]
  */
@@ -74,7 +74,7 @@ inline static float wrapTo2Pi_f(float ang)
 
 /**
  * Converts an angle from radians to degrees
- * 
+ *
  * @param ang Angle value in radians
  * @return The angle value in degrees
  */
@@ -82,7 +82,7 @@ inline static float rad2deg(float rad) { return 180.0 / M_PI * rad; }
 
 /**
  * Converts an angle from degrees to radians
- * 
+ *
  * @param ang Angle value in degrees
  * @return The angle value in radians
  */
@@ -90,7 +90,7 @@ inline static float deg2rad(float deg) { return M_PI / 180.0 * deg; }
 
 /**
  * Convert polar (r,theta) coordinates to cartesian (x,y) coordinates
- * 
+ *
  * @param r Value of r in polar coordinates
  * @param theta Value of theta in polar coordinates (in radians)
  * @param x Value of x in cartesian coordinates (East)
@@ -104,7 +104,7 @@ inline static void polar2cart(const float &r, const float &theta, float &x, floa
 
 /**
  * Convert cartesian (x,y) coordinates to polar (r,theta) coordinates
- * 
+ *
  * @param x Value of x in cartesian coordinates (East)
  * @param y Value of y in cartesian coordinates (North)
  * @param r Value of r in polar coordinates
@@ -118,7 +118,7 @@ inline static void cart2polar(const float &x, const float &y, float &r, float &t
 
 /**
  * Rotates a vector (x,y) by a certain angle theta
- * 
+ *
  * @param x Value of x in cartesian coordinates (East)
  * @param y Value of y in cartesian coordinates (North)
  * @param theta Angle of rotation

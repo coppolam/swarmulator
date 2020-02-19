@@ -9,7 +9,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h> 
+#include <fcntl.h>
 #include <unistd.h>
 
 #include <mutex>
@@ -31,14 +31,14 @@ public:
 
   /**
    * Set the name of the txt file to be used
-   * 
+   *
    * @param s The name of the txt file
    */
   void setfilename(const string &s);
 
   /**
    * Write the state of a robot to a txt file
-   * 
+   *
    * @param logfile The txt file ID (from ofstream)
    */
   void txtwrite_state(ofstream &logfile);
@@ -46,7 +46,7 @@ public:
   /**
    * Write other properties. The definition of this function can be modified to different needs.
    * TODO: Generalize how this handled.
-   * 
+   *
    * @param logfile The txt file ID (from ofstream)
    */
   void txtwrite_summary(ofstream &logfile);

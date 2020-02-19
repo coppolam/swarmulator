@@ -76,32 +76,32 @@ behavior_tree::behavior_tree() : Controller()
 {
   // Load the behavior tree
   tree = loadFile(BEHAVIOR_TREE);
-  
+
   v_x_ref = rg.gaussian_float(0.0, 1.0);
   v_y_ref = rg.gaussian_float(0.0, 1.0);
 
   // Initialize input sensors
   BLKB.set("sensor0", 0.); // Sensor 0
-  
+
   // Initialize outputs
   BLKB.set("wheelSpeed0", 0.); // Output 0
   BLKB.set("wheelSpeed1", 0.); // Output 1
-  
+
   moving_timer = 0;
-  #ifdef ARENAWALLS
+#ifdef ARENAWALLS
   walltimer = 0;
-  #endif
+#endif
 }
 
 void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
-{  
+{
   v_x = 0;
   v_y = 0;
-  
+
   float timelim = 2.0 * param->simulation_updatefreq();
 
   // Get vector of all neighbors from closest to furthest
-  
+
   vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
   lattice_all(ID, closest, v_x, v_y);
 
@@ -114,14 +114,14 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
 
   /**** Step 2 of 3: Tick the tree based on the current state ****/
   tree->tick(&BLKB);
-  
+
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
   float p_motion = BLKB.get("wheelSpeed0");
 
   terminalinfo ti;
   string d = "p=" + to_string(p_motion);
-  ti.debug_msg(d,ID); // Debug
- 
+  ti.debug_msg(d, ID); // Debug
+
   /******** Probabilistic aggregation behavior ***********/
   // Initialize local moving_timer with random variable
   if (moving_timer == 0) {
@@ -148,12 +148,12 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   }
   increase_counter(moving_timer, timelim);
   /*******************************************************/
-  
+
   wall_avoidance(ID, walltimer, v_x_ref, v_y_ref);
 
   v_x += v_x_ref;
   v_y += v_y_ref;
 
   d = to_string(v_x) + ", " +  to_string(v_y);
-  ti.debug_msg(d,ID);
+  ti.debug_msg(d, ID);
 }

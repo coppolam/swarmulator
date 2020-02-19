@@ -12,7 +12,7 @@ using namespace std;
 
 /**
  * Increase a counter by 1, or reset to 1 if above a given limit
- * 
+ *
  * @param counter The counter value (uint). This will be increased by one.
  * @param limit The limit of the counter. If this is passed. Then counter = 1.
  */
@@ -28,7 +28,7 @@ inline static void increase_counter(uint &counter, const uint &limit)
 /**
  * Convert an 8bit boolean vector to an unsigned integer
  * TODO: Add check for vector length
- * 
+ *
  * @param t An 8 bit boolean vector
  * @return Integer value of the boolean vector
  */
@@ -44,7 +44,7 @@ inline static int bool2int(vector<bool> t)
 /**
  * @brief Bind (saturate) a value between a minimum and a maximum.
  * This is basically a saturation filter.
- * 
+ *
  * @param value The value of interest
  * @param min Minimum bound
  * @param max Maximum bound
@@ -102,7 +102,7 @@ inline static Iter select_randomly(Iter start, Iter end)
 
 /**
  * Calculate the mean of all elements in a vector
- * 
+ *
  * @param v std::vector holding the values
  */
 inline static float vector_mean(const vector<float> &v)
@@ -113,7 +113,7 @@ inline static float vector_mean(const vector<float> &v)
 
 /**
  * Calculate the standard deviation of all elements in a vector
- * 
+ *
  * @param v std::vector holding the values
  */
 inline static float get_vector_std(const vector<float> &v)

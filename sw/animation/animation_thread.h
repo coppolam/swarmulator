@@ -70,7 +70,7 @@ void main_loop_function()
 
 /**
  * Initialze OpenGL perspective matrix
- * 
+ *
  * @param width Width of the animation window
  * @param height Height of the animation window
  */
