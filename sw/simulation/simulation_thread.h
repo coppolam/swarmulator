@@ -74,22 +74,17 @@ void get_number_of_agents(int argc, char *argv[])
  */
 void main_simulation_thread(int argc, char *argv[])
 {
+#ifdef MAX_TIME
   // create and open the FIFO (named pipe)
-  // char const *bt_fifo_read  = FIFO_FILE;
   char const *bt_fifo_write = FIFO_FILE;
-  // int fd_read;
   int fd_write;
-
-  // if (access(bt_fifo_read, F_OK) == -1) {
-  // mkfifo(bt_fifo_read, 0666);
-  // }
 
   if (access(bt_fifo_write, F_OK) == -1) {
     mkfifo(bt_fifo_write, 0666);
   }
 
   fd_write = open(bt_fifo_write, O_RDWR | O_NONBLOCK);
-  // fd_read  = open(bt_fifo_read, O_RDWR | O_NONBLOCK);
+#endif
 
   terminalinfo ti;
   ti.info_msg("Simulation started.");

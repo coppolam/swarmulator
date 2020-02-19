@@ -1,5 +1,6 @@
 #include "behavior_tree.h"
 #include "draw.h"
+#include "terminalinfo.h"
 
 // #define BEHAVIOR_TREE "/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml"
 // #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
@@ -78,13 +79,14 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   tree->tick(&BLKB);
   
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
-  // if (walltimer == 2 * timelim){
-  //   p_motion = BLKB.get("wheelSpeed0");
-  // }
-  cout << (int)ID << " " << BLKB.get("wheelSpeed0") << endl;
+  float p_motion = BLKB.get("wheelSpeed0");
 
+  terminalinfo ti;
+  string d = "Robot " + to_string(int(ID)) + ":\t p=" + to_string(p_motion);
+  ti.debug_msg(d); // Debug
+ 
   if (moving_timer == 1 && walltimer > 2 * timelim) {
-    if (rg.bernoulli(1.0 - BLKB.get("wheelSpeed0"))) {
+    if (rg.bernoulli(1.0 - p_motion)) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;
       moving = false;
@@ -102,7 +104,7 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
     }
   }
 
-
+/**********  wall avoidance **********/
 #ifdef ARENAWALLS
   walltimer++;
   if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
@@ -129,6 +131,7 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
     v_y_ref = vmean;
   }
 #endif
+/******************************/
 
   if (moving_timer > timelim) {
     moving_timer = 0;
@@ -138,5 +141,6 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   v_x += v_x_ref;
   v_y += v_y_ref;
 
-  // cout << "Robot " << int(ID) << ": \t" << v_x << ", " << v_y << endl; // Debug
+  d = "Robot " + to_string(int(ID)) + ":\t " + to_string(v_x) + ", " +  to_string(v_y);
+  ti.debug_msg(d); // Debug
 }
