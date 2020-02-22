@@ -138,6 +138,8 @@ public:
    *    https://link.springer.com/article/10.1007/s11721-019-00172-z
    */
   bool check_happy(void);
+
+  void request_relative_location_inrange(uint8_t ID, float range, vector<float> &r, vector<float> &b);
 };
 
 #endif /*OMNISCIENT_OBSERVER_H*/

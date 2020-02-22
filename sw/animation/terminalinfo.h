@@ -31,7 +31,7 @@ public:
    *
    * @param str Debug string to print
    */
-  void debug_msg(string str);
+  static void debug_msg(string str);
 
   /**
    * Print a debug message
@@ -39,14 +39,14 @@ public:
    * @param str Debug string to print
    * @param ID Robot ID
    */
-  void debug_msg(string str, int ID);
+  static void debug_msg(string str, int ID);
 
   /**
    * Print an info message
    *
    * @param str Info string to print
    */
-  void info_msg(string str);
+  static void info_msg(string str);
 };
 
 #endif  /* TERMINALINFO_H */

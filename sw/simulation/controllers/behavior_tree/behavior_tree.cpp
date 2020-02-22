@@ -109,8 +109,6 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
 
   /**** Step 1 of 3: Set current state according to sensors ****/
   BLKB.set("sensor0", closest.size());
-  BLKB.set("sensor0", closest.size());
-  BLKB.set("sensor0", closest.size());
 
   /**** Step 2 of 3: Tick the tree based on the current state ****/
   tree->tick(&BLKB);

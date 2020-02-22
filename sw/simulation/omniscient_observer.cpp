@@ -147,3 +147,12 @@ bool OmniscientObserver::see_if_moving(uint8_t ID)
 {
   return s[ID]->moving;
 }
+
+void OmniscientObserver::request_relative_location_inrange(uint8_t ID, float range, vector<float> &r, vector<float> &b)
+{
+  vector<uint> closest = request_closest_inrange(ID, range);
+  for (size_t i = 0; i < closest.size(); i++) {
+    r.push_back(request_distance(ID, closest[i]));
+    b.push_back(request_bearing(ID, closest[i]));
+  }
+}
