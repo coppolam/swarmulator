@@ -30,11 +30,21 @@ float evaluate_fitness()
 {
   OmniscientObserver o;
   float f = 0;
+  /*** Mean number of neighbors ***/
+  // for (size_t ID = 0; ID < nagents; ID++) {
+  //   vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
+  //   f += (float)closest.size() / (float)nagents;
+  // }
+
+  /*** Mean distance to neighbors ***/
   for (size_t ID = 0; ID < nagents; ID++) {
-    vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
-    f += (float)closest.size() / (float)nagents;
+    vector<float> r,b;
+    o.request_relative_location_inrange(ID, rangesensor,r,b);
+    float r_mean = accumulate( r.begin(), r.end(), 0.0/ r.size());
+    f += (float)r_mean / (float)nagents;
   }
-  return f;
+
+  return 1/f; // use 1/f to minimize, or just f to maximize
 }
 
 int send_fifo(int fd)

@@ -6,7 +6,7 @@
  *****/
 // #define ANIMATION // Activate animation thread
 // #define LOG     // Activate logger thread
-// #define MAX_TIME  // If set, swarmulator will quite automatically after 100 (or however many) simulated seconds. Requires logger.
+#define MAX_TIME 100 // If set, swarmulator will quite automatically after 100 (or however many) simulated seconds. Requires logger.
 
 // #define REMAIN_CONNECTED // Check that the swarm remains connected (only if logging)
 // #define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
