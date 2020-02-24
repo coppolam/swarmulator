@@ -40,11 +40,11 @@ float evaluate_fitness()
   for (size_t ID = 0; ID < nagents; ID++) {
     vector<float> r,b;
     o.request_relative_location_inrange(ID, rangesensor, r ,b);
-    float r_mean = accumulate( r.begin(), r.end(), 0.0/ r.size());
+    float r_mean = accumulate( r.begin(), r.end(), 0.0) / r.size();
     f += (float)r_mean / (float)nagents;
   }
 
-  // Check connected
+  // Check con
   if (!(o.connected_graph_range(rangesensor))) {
     f = 0.0;
   }
