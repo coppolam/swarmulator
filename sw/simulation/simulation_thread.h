@@ -39,12 +39,17 @@ float evaluate_fitness()
   /*** Mean distance to neighbors ***/
   for (size_t ID = 0; ID < nagents; ID++) {
     vector<float> r,b;
-    o.request_relative_location_inrange(ID, rangesensor,r,b);
+    o.request_relative_location_inrange(ID, rangesensor, r ,b);
     float r_mean = accumulate( r.begin(), r.end(), 0.0/ r.size());
     f += (float)r_mean / (float)nagents;
   }
 
-  return 1/f; // use 1/f to minimize, or just f to maximize
+  // Check connected
+  if (!(o.connected_graph_range(rangesensor))) {
+    f = 0.0;
+  }
+
+  return f; // use 1/f to minimize, or just f to maximize
 }
 
 int send_fifo(int fd)
