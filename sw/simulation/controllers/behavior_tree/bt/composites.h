@@ -8,7 +8,7 @@ namespace BT
 typedef std::vector<node *> nodes;
 
 /**
- * @brief Composite behaviors
+ * Composite behaviors
  *
  */
 class composite : public node

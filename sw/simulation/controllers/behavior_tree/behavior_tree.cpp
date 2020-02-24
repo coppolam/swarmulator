@@ -7,6 +7,7 @@
 // #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
 #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
 
+#ifdef ARENAWALLS
 void wall_avoidance(uint8_t ID, uint &walltimer, float &v_x_ref, float &v_y_ref)
 {
   terminalinfo ti;
@@ -37,6 +38,7 @@ void wall_avoidance(uint8_t ID, uint &walltimer, float &v_x_ref, float &v_y_ref)
     v_y_ref = abs(v_y_ref);
   }
 }
+#endif
 
 float behavior_tree::f_attraction(float u)
 {
@@ -146,8 +148,9 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   }
   increase_counter(moving_timer, timelim);
   /*******************************************************/
-
+#ifdef ARENAWALLS
   wall_avoidance(ID, walltimer, v_x_ref, v_y_ref);
+#endif
 
   v_x += v_x_ref;
   v_y += v_y_ref;

@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
   thread simulation(main_simulation_thread, argc, argv);
   simulation.detach();
 
-#ifdef ANIMATE
+#ifdef ANIMATION
   // Start animation thread
   thread animation(main_animation_thread);
   animation.detach();
