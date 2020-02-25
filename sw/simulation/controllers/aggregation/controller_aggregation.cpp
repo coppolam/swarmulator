@@ -4,7 +4,7 @@
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
 
-float Controller_Aggregation::f_attraction(float u)
+float controller_aggregation::f_attraction(float u)
 {
   //% Sigmoid function -- long-range
   float ddes = 1.5;
@@ -12,12 +12,12 @@ float Controller_Aggregation::f_attraction(float u)
   return 1 / (1 + exp(-_ka * (u - w)));
 }
 
-float Controller_Aggregation::get_attraction_velocity(float u)
+float controller_aggregation::get_attraction_velocity(float u)
 {
   return f_attraction(u) + f_repulsion(u);
 }
 
-void Controller_Aggregation::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
+void controller_aggregation::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
 {
   float v_b, v_r;
   v_b = wrapToPi_f(o.request_bearing(ID, state_ID));
@@ -27,7 +27,7 @@ void Controller_Aggregation::get_lattice_motion(const int &ID, const int &state_
 }
 
 
-void Controller_Aggregation::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;

@@ -10,7 +10,7 @@ using namespace std;
 /*
  * This controller handles attraction and velocity in North and East separately
  */
-class Controller_Aggregation: public Controller
+class controller_aggregation: public Controller
 {
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver o;
@@ -26,7 +26,7 @@ public:
   /**
    * Construction. Controller_Aggregation is a child class of Controller.
    */
-  Controller_Aggregation() : Controller()
+  controller_aggregation() : Controller()
   {
     moving = false;
     v_x_ref = rg.gaussian_float(0.0, 1.0);
