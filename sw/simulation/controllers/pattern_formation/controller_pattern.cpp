@@ -6,7 +6,7 @@
 #include "trigonometry.h"
 #include "auxiliary.h"
 
-Controller_Pattern::Controller_Pattern() : controller_lattice_basic()
+controller_pattern::controller_pattern() : controller_lattice_basic()
 {
   // Define here the state-action matrix used by the agents
   string s = "./conf/state_action_matrices/state_action_matrix_lineNE.txt";
@@ -18,7 +18,7 @@ Controller_Pattern::Controller_Pattern() : controller_lattice_basic()
   beta_des.push_back(M_PI / 2.0 + atan(_ddes_x / _ddes_y));
 }
 
-void Controller_Pattern::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void controller_pattern::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0.0;
   v_y = 0.0;
