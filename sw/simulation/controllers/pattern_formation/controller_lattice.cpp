@@ -4,7 +4,7 @@
 #include "randomgenerator.h"
 #include "trigonometry.h"
 
-Controller_Lattice::Controller_Lattice() : Controller_Lattice_Basic()
+controller_lattice::controller_lattice() : controller_lattice_basic()
 {
   beta_des.push_back(0.0);
   beta_des.push_back(atan(_ddes_y / _ddes_x));
@@ -12,7 +12,7 @@ Controller_Lattice::Controller_Lattice() : Controller_Lattice_Basic()
   beta_des.push_back(M_PI / 2.0 + atan(_ddes_x / _ddes_y));
 };
 
-void Controller_Lattice::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void controller_lattice::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;

@@ -41,9 +41,10 @@ void particle_oriented::state_update()
   state.at(7) = dpsi_rate;
   state.at(6) += dpsi_rate * dt;
   state.at(6) = wrapToPi_f(state[6]); // Orientation
+  orientation = state.at(6);
 
   // Acceleration control
-  float ka = 1;
+  float ka = 10;
   state.at(4) = ka * (vx_global - state[2]); // Acceleration global frame
   state.at(5) = ka * (vy_global - state[3]); // Acceleration global frame
   moving = controller.moving;

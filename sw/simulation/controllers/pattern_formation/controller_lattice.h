@@ -6,11 +6,11 @@
 
 using namespace std;
 
-class Controller_Lattice : public Controller_Lattice_Basic
+class controller_lattice : public controller_lattice_basic
 {
 public:
-  Controller_Lattice();
-  ~Controller_Lattice() {};
+  controller_lattice();
+  ~controller_lattice() {};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 

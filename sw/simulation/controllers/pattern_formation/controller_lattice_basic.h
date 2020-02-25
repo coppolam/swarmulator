@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class Controller_Lattice_Basic : public Controller
+class controller_lattice_basic : public Controller
 {
 public:
   OmniscientObserver o; // The omniscient observer is used to simulate sensing the other agents.

@@ -6,7 +6,7 @@
 #include "trigonometry.h"
 #include "auxiliary.h"
 
-Controller_Pattern::Controller_Pattern() : Controller_Lattice_Basic()
+Controller_Pattern::Controller_Pattern() : controller_lattice_basic()
 {
   // Define here the state-action matrix used by the agents
   string s = "./conf/state_action_matrices/state_action_matrix_lineNE.txt";

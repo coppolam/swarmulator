@@ -96,7 +96,7 @@ void main_animation_thread()
 #ifdef ARENAWALLS
   zoom = -ARENAWALLS;
 #else
-  zoom = 0;
+  zoom = param->zoom();
 #endif // ARENAWALLS
   zoom_scale = 0;
   pointer_x = 0;

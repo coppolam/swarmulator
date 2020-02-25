@@ -14,14 +14,14 @@
 
 using namespace std;
 
-class Controller_Pattern : public Controller_Lattice_Basic
+class controller_pattern : public controller_lattice_basic
 {
   uint moving_timer;
   int selected_action;
 
 public:
-  Controller_Pattern();
-  ~Controller_Pattern() {};
+  controller_pattern();
+  ~controller_pattern() {};
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
 };
 

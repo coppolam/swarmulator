@@ -37,6 +37,7 @@ public:
   float manualx, manualy;
   bool manual;
   float manualpsi_delta;
+  random_generator rg;
   CONTROLLER controller; // Controller used by the agent. Defined in settings.h.
 
   /**

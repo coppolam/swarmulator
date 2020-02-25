@@ -152,18 +152,19 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
     filter.run(ID, ID_tracked);
-    px = filter.ekf_rl.X[0];
-    py = filter.ekf_rl.X[1];
-    vx = filter.ekf_rl.X[4];
-    vy = filter.ekf_rl.X[5];
+    float px = filter.ekf_rl.X[0]; // Relative px
+    float py = filter.ekf_rl.X[1]; // Relative py
+    float vx = filter.ekf_rl.X[4]; // Relative vx
+    float vy = filter.ekf_rl.X[5]; // Relative vy
+    float vx0, vy0, ax0, ay0;
     rotate_xy(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
+    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #else
     polar2cart(o.request_distance(ID, ID_tracked), o.request_bearing(ID, ID_tracked), px, py);
     rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx, vy);
     rotate_xy(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
     rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
-    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
     ndihandle.xarr[ndihandle.data_end] = px;
     ndihandle.yarr[ndihandle.data_end] = py;
     ndihandle.u1arr[ndihandle.data_end] = vx;
@@ -188,7 +189,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
     ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
     ndihandle.data_entries++;
     uwb_follower_control_periodic();
-    bindNorm(0.1);
+    bindNorm(1.0);
     vx_des = ndihandle.commands_lim[0];
     vy_des = ndihandle.commands_lim[1];
   }

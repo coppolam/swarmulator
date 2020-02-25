@@ -4,7 +4,7 @@
 #include "randomgenerator.h"
 #include "trigonometry.h"
 
-float Controller_Lattice_Basic::f_attraction(const float &u, const float &b_eq)
+float controller_lattice_basic::f_attraction(const float &u, const float &b_eq)
 {
   float w;
   float ddes2 = sqrt(pow(_ddes_x, 2.0) + pow(_ddes_y, 2.0));
@@ -24,18 +24,18 @@ float Controller_Lattice_Basic::f_attraction(const float &u, const float &b_eq)
 }
 
 // TODO -- move general sum to controller
-float Controller_Lattice_Basic::get_attraction_velocity(const float &u, const float &b_eq)
+float controller_lattice_basic::get_attraction_velocity(const float &u, const float &b_eq)
 {
   return f_attraction(u, b_eq) + f_repulsion(u);
 }
 
-void Controller_Lattice_Basic::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
+void controller_lattice_basic::attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y)
 {
   v_x += v_r * cos(v_b);
   v_y += v_r * sin(v_b);
 }
 
-void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes,
+void controller_lattice_basic::latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes,
     float &v_x, float &v_y)
 {
   attractionmotion(v_r + v_adj, v_b, v_x, v_y);
@@ -43,7 +43,7 @@ void Controller_Lattice_Basic::latticemotion(const float &v_r, const float &v_ad
   v_y += -v_adj * sin(bdes * 2 - v_b);
 }
 
-void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v_x, float &v_y)
+void controller_lattice_basic::actionmotion(const int &selected_action, float &v_x, float &v_y)
 {
   float actionspace_y[8] = {0,       sqrt(_ddes_y) / 3, _ddes_y, sqrt(_ddes_y) / 3, 0,        -sqrt(_ddes_y) / 3, -_ddes_y, -sqrt(_ddes_y) / 3};
   float actionspace_x[8] = {_ddes_x, sqrt(_ddes_x) / 3, 0,      -sqrt(_ddes_x) / 3, -_ddes_x, -sqrt(_ddes_x) / 3, 0,         sqrt(_ddes_x) / 3};
@@ -51,7 +51,7 @@ void Controller_Lattice_Basic::actionmotion(const int &selected_action, float &v
   v_y = _v_adj * actionspace_y[selected_action];
 }
 
-bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
+bool controller_lattice_basic::check_motion(const vector<int> &state_ID)
 {
   bool canImove = true;
   for (uint8_t i = 0; i < state_ID.size(); i++) {
@@ -63,7 +63,7 @@ bool Controller_Lattice_Basic::check_motion(const vector<int> &state_ID)
   return canImove;
 }
 
-void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
+void controller_lattice_basic::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
 {
   float beta, b_eq, v_r;
   beta = wrapToPi_f(o.request_bearing(ID, state_ID));
@@ -79,7 +79,7 @@ void Controller_Lattice_Basic::get_lattice_motion(const int &ID, const int &stat
   // v_y += 1 * (sin(b) + cos(b));
 }
 
-void Controller_Lattice_Basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID,
+void controller_lattice_basic::get_lattice_motion_all(const int &ID, const vector<int> &state_ID,
     const vector<uint> &closest, float &v_x, float &v_y)
 {
   if (!state_ID.empty()) {

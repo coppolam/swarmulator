@@ -25,7 +25,7 @@ void ekf_state_estimator::init_ekf_filter()
 
 void ekf_state_estimator::run_ekf_filter()
 {
-  // All in local frame of follower!!!! values for position, velocity, acceleration
+  // All in local frame of follower!!!! Values for position, velocity, acceleration
   float vxf, vyf, vx0f, vy0f, axf, ayf, ax0, ay0;
   // Global to local, rotate the opposite of local to global, hence the negative
   rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vxf,  vyf);

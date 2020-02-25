@@ -15,5 +15,6 @@ float Agent::get_orientation()
 
 float Agent::get_state(uint8_t i)
 {
-  return state[i];
+  float noise = rg.gaussian_float(0.0, NOISE_R);
+  return state[i] + noise;
 }
