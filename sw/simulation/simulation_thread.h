@@ -23,31 +23,16 @@
 #include "agent_thread.h"
 #include "drawingparams.h"
 #include "settings.h"
+#include "fitness_functions.h"
 
 #define FIFO_FILE "/tmp/btevo_fifo"
 
 float evaluate_fitness()
 {
-  OmniscientObserver o;
-  float f = 0;
-  /*** Mean number of neighbors ***/
-  // for (size_t ID = 0; ID < nagents; ID++) {
-  //   vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
-  //   f += (float)closest.size() / (float)nagents;
-  // }
-
-  /*** Mean distance to neighbors ***/
-  for (size_t ID = 0; ID < nagents; ID++) {
-    vector<float> r,b;
-    o.request_relative_location_inrange(ID, rangesensor, r ,b);
-    float r_mean = accumulate( r.begin(), r.end(), 0.0) / r.size();
-    f += (float)r_mean / (float)nagents;
-  }
-
-  // Check con
-  if (!(o.connected_graph_range(rangesensor))) {
-    f = 0.0;
-  }
+  float f;
+  f = mean_number_of_neighbors();
+  // f = mean_dist_to_neighbors();
+  // connectivity_check(f);
 
   return f; // use 1/f to minimize, or just f to maximize
 }

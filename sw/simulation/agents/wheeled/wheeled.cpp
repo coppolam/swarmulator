@@ -28,7 +28,7 @@ void wheeled::state_update()
   state.at(7) = psi_rate; // Orientation rate
   state.at(6) += state.at(7); // Orientation
   orientation = state.at(6);
-  
+
   // Velocity
   float vxr, vyr;
   rotate_xy(v_x, v_y, orientation, vxr, vyr); // Local frame to global frame
