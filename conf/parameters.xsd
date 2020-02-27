@@ -14,6 +14,7 @@
       <xs:element name="animation_updatefreq" type="xs:float"/>
       <xs:element name="visible_centroid" type="xs:integer"/>
       <xs:element name="logger_updatefreq" type="xs:integer"/>
+      <xs:element name="time_limit" type="xs:float"/>
       <!-- xs:element name="parameter_name" type="xs:parametertype"/-->
     </xs:sequence>
   </xs:complexType>

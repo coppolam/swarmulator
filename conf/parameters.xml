@@ -1,25 +1,21 @@
 <?xml version="1.0"?>
-<parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:noNamespaceSchemaLocation="parameters.xsd">
-
-<!-- Simulation global variables -->
-<simulation_updatefreq>20</simulation_updatefreq>
-<simulation_realtimefactor>10</simulation_realtimefactor>
-
-<!-- Animation global variables -->
-<window_width>800</window_width>
-<window_height>800</window_height>
-<scale>0.2</scale>
-<mouse_drag_speed>1.0</mouse_drag_speed>
-<mouse_zoom_speed>0.5</mouse_zoom_speed>
-<zoom>-10</zoom> <!-- start up zoom, bounded -90 and 9 -->
-<animation_updatefreq>25</animation_updatefreq>
-<visible_centroid>1</visible_centroid>
-
-<!-- Logger global variables -->
-<logger_updatefreq>1</logger_updatefreq>
-
-<!-- Additional Parameters-->
-<!--new_parameter_name>default value</new_parameter_name-->
-
+<parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="parameters.xsd">
+  <!-- Simulation global variables -->
+  <simulation_updatefreq>20</simulation_updatefreq>
+  <simulation_realtimefactor>200</simulation_realtimefactor>
+  <!-- Animation global variables -->
+  <window_width>800</window_width>
+  <window_height>800</window_height>
+  <scale>0.2</scale>
+  <mouse_drag_speed>1.0</mouse_drag_speed>
+  <mouse_zoom_speed>0.5</mouse_zoom_speed>
+  <zoom>-10</zoom>
+  <!-- start up zoom, bounded -90 and 9 -->
+  <animation_updatefreq>25</animation_updatefreq>
+  <visible_centroid>1</visible_centroid>
+  <!-- Logger global variables -->
+  <logger_updatefreq>1</logger_updatefreq>
+  <!-- Additional Parameters-->
+  <!--new_parameter_name>default value</new_parameter_name-->
+  <time_limit>50</time_limit>
 </parameters>

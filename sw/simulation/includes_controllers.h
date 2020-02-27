@@ -9,6 +9,7 @@
 #include "controller_lattice.h"
 #include "behavior_tree.h"
 #include "behavior_tree_wheeled.h"
+#include "behavior_tree_lf.h"
 #include "ndi_follower.h"
 
 #endif /*INCLUDES_CONTROLLERS_H*/

@@ -19,11 +19,12 @@
 // #define CONTROLLER controller_lattice  // Basic lattice controller
 // #define CONTROLLER controller_pattern  // Controller with Qf
 
-#define CONTROLLER ndi_follower  // NDI follower, needs AGENT particle_oriented, to be defined below!
+// #define CONTROLLER ndi_follower  // NDI follower, needs AGENT particle_oriented, to be defined below!
 #define COMMAND_LOCAL 1  // use COMMAND_LOCAL for local commands
 
 // #define CONTROLLER behavior_tree // Controller with behvaior_tree_aggregation
 // #define CONTROLLER behavior_tree_wheeled // Controller with Qf
+#define CONTROLLER behavior_tree_lf // Controller with Qf
 
 /***** Select the agent type that you want to use by uncommenting it****/
 // #define AGENT particle    // Accelerated particles

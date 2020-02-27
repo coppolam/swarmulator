@@ -30,7 +30,8 @@
 float evaluate_fitness()
 {
   float f;
-  f = mean_number_of_neighbors();
+  f = mean_dist_to_one_neighbor(0);
+  // f = mean_number_of_neighbors();
   // f = mean_dist_to_neighbors();
   // connectivity_check(f);
 
@@ -130,12 +131,13 @@ void main_simulation_thread(int argc, char *argv[])
       mtx.lock(); // Lock mutex to update global clock thread in relative sync
       simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1e9;
       mtx.unlock();
-#ifdef MAX_TIME
-      if (simtime_seconds > MAX_TIME) { // Quit after a certain amount of time
-        send_fifo(fd_write);
-        program_running = false;
+      /** runtime finish evolution **/
+      if (param->time_limit() > 0.0) {
+        if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time
+          send_fifo(fd_write);
+          program_running = false;
+        }
       }
-#endif
     }
   };
 

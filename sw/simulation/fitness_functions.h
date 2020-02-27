@@ -10,7 +10,7 @@
  */
 float mean_number_of_neighbors()
 {
-  float f;
+  float f = 0.;
   OmniscientObserver o;
   for (size_t ID = 0; ID < nagents; ID++) {
     vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
@@ -26,7 +26,7 @@ float mean_number_of_neighbors()
  */
 float mean_dist_to_neighbors()
 {
-  float f;
+  float f = 0.;
   OmniscientObserver o;
   for (size_t ID = 0; ID < nagents; ID++) {
     vector<float> r, b;
@@ -35,6 +35,21 @@ float mean_dist_to_neighbors()
     f += (float)r_mean / (float)nagents;
   }
   return f;
+}
+
+/**
+ * Mean distance to neighbors
+ *
+ * @return float the mean distance between all neighbors
+ */
+float mean_dist_to_one_neighbor(uint8_t ID_tracked)
+{
+  float f = 0.;
+  OmniscientObserver o;
+  for (size_t ID = 0; ID < nagents; ID++) {
+    f += o.request_distance(ID,ID_tracked)/(float)nagents;
+  }
+  return 1/f;
 }
 
 /**
