@@ -7,8 +7,8 @@
 #include "settings.h"
 
 #define MAX_SIZE (size_t) - 1
-#define KCOND 4 // Total number of sensors = sensors!
-#define NUMBER_OF_VARS 4 // Total number of variables = sensors!
+#define KCOND 1
+#define NUMBER_OF_VARS 6 // Total number of variables = sensors!
 
 
 /**

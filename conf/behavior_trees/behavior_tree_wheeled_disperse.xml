@@ -1,0 +1,10 @@
+<BTtype>composite<function>selector<vars><name>selector<endl>
+	<BTtype>condition<function>greater_than<vars>1,0.83<name>robot<endl>
+	<BTtype>action<function>wheelSpeed<vars>0.65,0.33<name>robot<endl>
+	<BTtype>composite<function>sequence<vars><name>sequence<endl>
+		<BTtype>condition<function>greater_than<vars>5,0.9877<name>robot<endl>
+		<BTtype>condition<function>greater_than<vars>1,0.1648<name>robot<endl>
+		<BTtype>condition<function>greater_than<vars>1,0.0603<name>robot<endl>
+		<BTtype>action<function>wheelSpeed<vars>0.4593,0.3831<name>robot<endl>
+		<BTtype>action<function>wheelSpeed<vars>0.93,0.7<name>robot<endl>
+	<BTtype>action<function>wheelSpeed<vars>0.55,0.51<name>robot<endl>
