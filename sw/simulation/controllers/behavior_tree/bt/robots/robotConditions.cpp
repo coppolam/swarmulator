@@ -13,12 +13,12 @@ std::tuple<std::string, double, double, double> input(int i)
   double lower_lim;
   double upper_lim;
 
-  if (i < KCOND) {
+  if (i < NUMBER_OF_VARS) {
     sprintf(buff, "sensor%d", i);
     lower_lim = 0.;
     upper_lim = 8;
   } else if (i < NUMBER_OF_VARS) {
-    sprintf(buff, "wheelSpeed%d", i - KCOND);
+    sprintf(buff, "wheelSpeed%d", i - NUMBER_OF_VARS);
     lower_lim = 0;
     upper_lim = 1.0;
   } else {

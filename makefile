@@ -5,6 +5,7 @@
 TARGET = swarmulator # application name
 BUILD_FOLDER = build
 SRC_FOLDER = sw
+SENSORS ?= "0"
 # Use these to give input parameters
 # IP1?=
 # IP2?=
@@ -29,6 +30,11 @@ endif
 
 ifeq ($(LOGGER),ON)
 CFLAGS += -DLOGGER
+endif
+
+ifneq ($(SENSORS),"0")
+$(info Building swarmulator for $(SENSORS) sensors.)
+CFLAGS += -DNUMBER_OF_VARS=$(SENSORS)
 endif
 
 # General parameters to include all cpp files and all subfolders

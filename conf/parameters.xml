@@ -2,7 +2,7 @@
 <parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="parameters.xsd">
   <!-- Simulation global variables -->
   <simulation_updatefreq>20</simulation_updatefreq>
-  <simulation_realtimefactor>10</simulation_realtimefactor>
+  <simulation_realtimefactor>200</simulation_realtimefactor>
   <!-- Animation global variables -->
   <window_width>800</window_width>
   <window_height>800</window_height>
@@ -17,5 +17,5 @@
   <logger_updatefreq>1</logger_updatefreq>
   <!-- Additional Parameters-->
   <!--new_parameter_name>default value</new_parameter_name-->
-  <time_limit>50</time_limit>
+  <time_limit>100</time_limit>
 </parameters>
