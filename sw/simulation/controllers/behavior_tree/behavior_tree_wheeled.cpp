@@ -37,18 +37,18 @@ void behavior_tree_wheeled::get_velocity_command(const uint8_t ID, float &v_x, f
 {
   v_x = 0;
   v_y = 0;
-
+  BLKB.set("wheelSpeed0", 0.); // Output 0
+  BLKB.set("wheelSpeed1", 0.); // Output 1
+  
   vector<float> r, b;
   o.request_relative_location_inrange(ID, rangesensor, r, b);
 
-  // float vmean = 1.0;
-
   /**** Step 1 of 3: Set current state according to sensors ****/
-  if (r.size() > 0) {
+  if (b.size() > 0) {
     string name;
     for (size_t i = 0; i < min((uint)r.size(), (uint)KNEAREST); i++) {
       name = "sensor" + to_string(i);
-      BLKB.set(name.c_str(), r[i]);
+      BLKB.set(name.c_str(), b[i]); // bearing of agent i
     }
   }
 

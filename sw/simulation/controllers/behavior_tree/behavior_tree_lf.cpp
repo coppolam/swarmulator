@@ -39,6 +39,10 @@ void behavior_tree_lf::get_velocity_command(const uint8_t ID, float &v_x, float 
 
   // Follower is trying to follower the leader
   else {
+    // Reset outputs
+    BLKB.set("wheelSpeed0", 0.);
+    BLKB.set("wheelSpeed1", 0.);
+
     uint8_t ID_tracked = 0; //ID - 1;
     filter.run(ID, ID_tracked);
     BLKB.set("sensor0",filter.ekf_rl.X[0]); // Relative px
