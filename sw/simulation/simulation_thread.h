@@ -30,10 +30,10 @@
 float evaluate_fitness()
 {
   float f;
-  f = mean_dist_to_one_neighbor(0);
+  // f = mean_dist_to_one_neighbor(0);
   // f = mean_number_of_neighbors();
-  // f = mean_dist_to_neighbors();
-  // connectivity_check(f);
+  f = mean_dist_to_neighbors();
+  connectivity_check(f);
 
   return f; // use 1/f to minimize, or just f to maximize
 }
