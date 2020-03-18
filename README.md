@@ -30,7 +30,7 @@ Once you have all the packages needed to build Swarmulator, you can build it wit
 
 If you don't want the animation, just don't type the ANIMATION=ON part.
 
-If you want it to build fast, use `make -j', but this will take up more memory.
+If you want it to build fast, use `make -j', but this will take up more memory. On a virtual machine, using `-j' may cause it to fail to build.
 
 #### Extra: Generate the doxygen documetation
 Swarmulator was commented using the doxygen format. To generate the doxygen documentation, use
