@@ -37,11 +37,13 @@ You will need the following packages. Run the following to make sure you have ev
 #### Build instructions
 Once you have all the packages needed to build Swarmulator, you can build it with:
 
-	make clean && make
+	make clean && make ANIMATION=ON
+
+If you don't want the animation, just don't type the ANIMATION=ON part.
 
 If you want it to build fast, use `make -j', but this will take up more memory.
 
-#### Generate the doxygen documetation
+#### Extra: Generate the doxygen documetation
 Swarmulator was commented using the doxygen format. To generate the doxygen documentation, use
 
     doxygen doxyfile
