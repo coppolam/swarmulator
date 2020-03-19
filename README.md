@@ -28,9 +28,9 @@ Once you have all the packages needed to build Swarmulator, you can build it wit
 
 	make clean && make ANIMATION=ON
 
-If you don't want the animation, just don't type the ANIMATION=ON part.
+If you don't want the animation, just don't type the `ANIMATION=ON` part.
 
-If you want it to build fast, use `make -j', but this will take up more memory. On a virtual machine, using `-j' may cause it to fail to build.
+If you want it to build fast, use `make -j` instead of just `make`, but this will take up more memory. On a virtual machine, where memory is limited, using `-j` may cause it to fail to build.
 
 #### Extra: Generate the doxygen documetation
 Swarmulator was commented using the doxygen format. To generate the doxygen documentation, use
@@ -47,7 +47,7 @@ Swarmulator can be launched from the terminal. To run Swarmulator, use the follo
     .\swarmulator <nagents>
 
 Where <nagents> is the number of agents you would like to have at the start of the simulation.
-    .\swarmulator 3
+    .\swarmulator 10
 
 #### Setting up the runtime parameters
 Swarmulator uses a configuration file called `parameters.xml` in order to load run-time parameters. These are loaded when Swarmulator starts.
