@@ -22,7 +22,7 @@ public:
   /**
    * State update implementation
    */
-  void state_update();
+  vector<float> state_update(vector<float> state);
 
   /**
    * Animation openGL implementation for visualization

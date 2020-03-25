@@ -58,6 +58,8 @@ public:
    */
   void draw_axes();
 
+  void draw_line(float x0, float y0, float x1, float y1);
+
   /**
    * Draw arena walls
    */

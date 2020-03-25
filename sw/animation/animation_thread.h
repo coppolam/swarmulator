@@ -23,7 +23,7 @@ void main_loop_function()
   }
 
   static draw drawer; // Drawer object
-
+  static Arena arena;
   // Add depth (used internally to block obstructed objects)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
@@ -44,7 +44,7 @@ void main_loop_function()
   for (int i = 0; i < 3; i++) {
     drawer.draw_axes_text(i);
   }
-
+  arena.animate();
   // Draw all agents
   for (uint8_t ID = 0; ID < nagents; ID++) {
     // Rotate local frame velocity (in state) to global frame

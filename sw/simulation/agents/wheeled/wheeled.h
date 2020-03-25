@@ -16,7 +16,7 @@ class wheeled: public Agent
   float L = 10; // Distance between wheels
 public:
   wheeled(int i, vector<float> state, float tstep);
-  void state_update();
+  vector<float> state_update(vector<float> state);
   void animation();
 };
 

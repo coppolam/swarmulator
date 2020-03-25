@@ -52,7 +52,7 @@ public:
    * The agent class is only the parent class of a child class that specifies the dynamics and control
    * of a given agent (robot/animal/whatever). The state_update function is handled by the child class.
    */
-  virtual void state_update() = 0;
+  virtual vector<float> state_update(vector<float>) = 0;
 
   /**
    * The agent class is only the parent class of a child class that specifies the dynamics and control

@@ -14,7 +14,7 @@ particle_oriented::particle_oriented(int i, vector<float> s, float tstep)
   manual = false;
 }
 
-void particle_oriented::state_update()
+vector<float> particle_oriented::state_update(vector<float> state)
 {
   // NED frame
   // x+ towards North
@@ -57,6 +57,8 @@ void particle_oriented::state_update()
   // Position
   state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x global frame
   state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y global frame
+
+  return state;
 };
 
 void particle_oriented::animation()

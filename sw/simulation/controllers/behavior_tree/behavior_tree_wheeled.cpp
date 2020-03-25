@@ -10,11 +10,11 @@
 
 #define KNEAREST 6
 
-// Defining the binary function 
-bool comp(int a, int b) 
-{ 
-    return (a < b); 
-} 
+// Defining the binary function
+bool comp(int a, int b)
+{
+  return (a < b);
+}
 
 behavior_tree_wheeled::behavior_tree_wheeled() : Controller()
 {
@@ -38,20 +38,20 @@ void behavior_tree_wheeled::get_velocity_command(const uint8_t ID, float &v_x, f
   v_x = 0;
   v_y = 0;
 
-  vector<float> r,b;
-  o.request_relative_location_inrange(ID, rangesensor,r,b);
+  vector<float> r, b;
+  o.request_relative_location_inrange(ID, rangesensor, r, b);
 
   // float vmean = 1.0;
 
   /**** Step 1 of 3: Set current state according to sensors ****/
-  if (r.size()>0){
+  if (r.size() > 0) {
     string name;
-    for (size_t i = 0; i < min((uint)r.size(),(uint)KNEAREST); i++) {
+    for (size_t i = 0; i < min((uint)r.size(), (uint)KNEAREST); i++) {
       name = "sensor" + to_string(i);
       BLKB.set(name.c_str(), r[i]);
     }
   }
-  
+
   /**** Step 2 of 3: Tick the tree based on the current state ****/
   tree->tick(&BLKB);
 

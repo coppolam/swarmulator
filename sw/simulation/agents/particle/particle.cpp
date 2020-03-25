@@ -11,7 +11,7 @@ particle::particle(int i, vector<float> s, float tstep)
   controller.set_saturation(1.0);
 }
 
-void particle::state_update()
+vector<float> particle::state_update(vector<float> state)
 {
   // NED frame
   // x+ towards North
@@ -39,6 +39,7 @@ void particle::state_update()
   state.at(0) += state[2] * dt + 0.5 * state[4] * pow(dt, 2); // Position x
   state.at(1) += state[3] * dt + 0.5 * state[5] * pow(dt, 2); // Position y
 
+  return state;
 };
 
 void particle::animation()

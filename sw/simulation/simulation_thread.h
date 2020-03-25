@@ -23,6 +23,7 @@
 #include "agent_thread.h"
 #include "drawingparams.h"
 #include "settings.h"
+#include "arena.h"
 
 #define FIFO_FILE "/tmp/btevo_fifo"
 
@@ -38,9 +39,9 @@ float evaluate_fitness()
 
   /*** Mean distance to neighbors ***/
   for (size_t ID = 0; ID < nagents; ID++) {
-    vector<float> r,b;
-    o.request_relative_location_inrange(ID, rangesensor, r ,b);
-    float r_mean = accumulate( r.begin(), r.end(), 0.0) / r.size();
+    vector<float> r, b;
+    o.request_relative_location_inrange(ID, rangesensor, r, b);
+    float r_mean = accumulate(r.begin(), r.end(), 0.0) / r.size();
     f += (float)r_mean / (float)nagents;
   }
 
@@ -133,6 +134,10 @@ void main_simulation_thread(int argc, char *argv[])
     thread agent(start_agent_simulation, ID);
     agent.detach();
   }
+
+  // Launch arena
+  cout << "test" << endl;
+  Arena a;
 
   // Keep global clock running.
   // This is only used by the animation and the logger.
