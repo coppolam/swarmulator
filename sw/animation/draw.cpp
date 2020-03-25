@@ -132,23 +132,11 @@ void draw::draw_line(float x0, float y0, float x1, float y1)
   glLineWidth(2.5);
   float lineintensity = 0.9;
   glBegin(GL_LINES);
-  glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
+  glColor3ub(128 * lineintensity, 128 * lineintensity, 255 * lineintensity); // white
   glVertex3f(x0, y0, 0.0);
   glVertex3f(x1, y1, 0.0);
   glEnd();
 }
-
-void draw::draw_walls()
-{
-#ifdef ARENAWALLS
-  // float wall_f = ARENAWALLS / 2 * xrat;
-  // draw_line(-wall_f, wall_f, -wall_f, -wall_f);
-  // draw_line(-wall_f, wall_f, wall_f, -wall_f);
-  // draw_line(wall_f, -wall_f, wall_f, wall_f);
-  // draw_line(-wall_f, -wall_f, wall_f, -wall_f);
-#endif
-}
-
 
 void draw::draw_agent(uint8_t ID, float x, float y, float orientation)
 {

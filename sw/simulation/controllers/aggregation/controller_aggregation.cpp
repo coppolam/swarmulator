@@ -24,6 +24,7 @@ void controller_aggregation::get_lattice_motion(const int &ID, const int &state_
   v_r = get_attraction_velocity(o.request_distance(ID, state_ID));
   v_x += v_r * cos(v_b);
   v_y += v_r * sin(v_b);
+  ang = 0;
 }
 
 
@@ -83,6 +84,17 @@ void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
     happy = false;
   }
 #endif
+
+  // Predict what the command wants and see if it will hit a wall, then fix it.
+  vector<float> sn(2);
+  sn[0] = s[ID]->state[0] + v_x_ref;
+  sn[1] = s[ID]->state[1] + v_y_ref;
+  if (environment.sensor(ID, sn, s[ID]->state)){
+    float temp;
+    cart2polar(v_x_ref, v_y_ref, temp, ang);
+    polar2cart(vmean, wrapTo2Pi_f(ang + M_PI), v_x_ref, v_y_ref);
+    cout << int(ID) << " " << v_x_ref << " " << v_y_ref << endl;
+  }
 
 #ifdef ARENAWALLS
   walltimer++;

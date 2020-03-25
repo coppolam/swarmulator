@@ -12,7 +12,7 @@
 #include "settings.h"
 #include "randomgenerator.h"
 #include "includes_agents.h" // Include all agents here
-#include "arena.h"
+#include "environment.h"
 
 /**
  * Update the agent simulation
@@ -25,13 +25,10 @@ void run_agent_simulation_step(const int &ID, ofstream &logfile)
   // Update the position of the agent in the simulation
   // Lock mutex to avoid conflicts
   auto start = chrono::steady_clock::now();
-  static Arena a;
   mtx.lock();
   vector<float> s_n = s.at(ID)->state_update(s.at(ID)->state);
-  if (!a.sensor(ID, s.at(ID)->state, s_n)) {
+  if (!environment.sensor(ID, s.at(ID)->state, s_n)) {
     s.at(ID)->state = s_n;
-  } else {
-    cout << "wall !" << endl;
   }
   auto end = chrono::steady_clock::now();
   auto test = chrono::duration_cast<chrono::nanoseconds>(end - start).count();

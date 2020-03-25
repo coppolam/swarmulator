@@ -1,5 +1,5 @@
-#ifndef ARENA_H
-#define ARENA_H
+#ifndef ENVIRONMENT_H
+#define ENVIRONMENT_H
 
 // #include <stdio.h>
 // #include <iostream>
@@ -7,16 +7,16 @@
 #include <vector>
 using namespace std;
 
-class Arena
+class Environment
 {
   vector<vector<float>> walls;
 public:
-  Arena();
-  ~Arena() {};
+  Environment();
+  ~Environment() {};
   void define(void);
   void add(void);
   bool sensor(uint8_t ID, vector<float> s_n, vector<float> s);
   void animate(void);
 };
 
-#endif /*ARENA_H*/
+#endif /*ENVIRONMENT_H*/

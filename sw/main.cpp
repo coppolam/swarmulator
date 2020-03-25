@@ -38,6 +38,7 @@ float simulation_time = 0;      /* Initial simulation time (fake time) */
 float simtime_seconds = 0;      /* Initial simulation time */
 float rangesensor     = 1.8;    /* How far each robot can sense */
 bool program_running  = false;  /* Program running, initiated false until the beginning */
+Environment environment;
 
 /**
  * Parameters from the XML file

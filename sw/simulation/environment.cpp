@@ -1,4 +1,4 @@
-#include "arena.h"
+#include "environment.h"
 #include "settings.h"
 #include "main.h"
 #include "auxiliary.h"
@@ -6,25 +6,24 @@
 
 using namespace std;
 
-Arena::Arena(void)
+Environment::Environment(void)
 {
-  std::cout << "Hello" << std::endl;
   define();
   animate();
 }
 
-void Arena::define(void)
+void Environment::define(void)
 {
-  walls = read_matrix("conf/arenas/square.txt");
+  walls = read_matrix("conf/arenas/funnel.txt");
   draw();
 }
 
-void Arena::add(void)
+void Environment::add(void)
 {
   // TODO: User interaction
 }
 
-bool Arena::sensor(uint8_t ID, vector<float> s_n, vector<float> s)
+bool Environment::sensor(uint8_t ID, vector<float> s_n, vector<float> s)
 {
   Point p1, q1, p2, q2;
   p1.x = s[0];
@@ -43,7 +42,7 @@ bool Arena::sensor(uint8_t ID, vector<float> s_n, vector<float> s)
   return false;
 }
 
-void Arena::animate(void)
+void Environment::animate(void)
 {
   draw d;
   for (size_t i = 0; i < walls.size(); i++) {

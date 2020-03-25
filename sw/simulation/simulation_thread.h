@@ -23,7 +23,7 @@
 #include "agent_thread.h"
 #include "drawingparams.h"
 #include "settings.h"
-#include "arena.h"
+#include "environment.h"
 
 #define FIFO_FILE "/tmp/btevo_fifo"
 
@@ -134,10 +134,6 @@ void main_simulation_thread(int argc, char *argv[])
     thread agent(start_agent_simulation, ID);
     agent.detach();
   }
-
-  // Launch arena
-  cout << "test" << endl;
-  Arena a;
 
   // Keep global clock running.
   // This is only used by the animation and the logger.
