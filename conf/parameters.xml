@@ -10,7 +10,7 @@
 <window_width>800</window_width>
 <window_height>800</window_height>
 <scale>0.2</scale>
-<mouse_drag_speed>1.0</mouse_drag_speed>
+<mouse_drag_speed>0.3</mouse_drag_speed>
 <mouse_zoom_speed>0.5</mouse_zoom_speed>
 <zoom>-10</zoom> <!-- start up zoom, bounded -90 and 9 -->
 <animation_updatefreq>25</animation_updatefreq>

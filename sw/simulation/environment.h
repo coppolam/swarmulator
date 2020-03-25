@@ -14,7 +14,7 @@ public:
   Environment();
   ~Environment() {};
   void define(void);
-  void add(void);
+  void add(float x0, float y0, float x1, float y1);
   bool sensor(uint8_t ID, vector<float> s_n, vector<float> s);
   void animate(void);
 };

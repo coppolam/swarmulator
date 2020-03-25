@@ -9,5 +9,6 @@ extern float pointer_x, pointer_y;
 extern float xrat;
 extern float yrat;
 extern bool paused; // Indicates if the simulation is paused at runtime
+extern bool mouse_motion;
 
 #endif /* DRAWINGPARAMS_H */

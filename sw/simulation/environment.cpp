@@ -18,9 +18,15 @@ void Environment::define(void)
   draw();
 }
 
-void Environment::add(void)
-{
-  // TODO: User interaction
+void Environment::add(float x0, float y0, float x1, float y1)
+{  
+  mtx.lock();
+  walls.push_back(std::vector<float>());
+  walls[walls.size()-1].push_back(x0);
+  walls[walls.size()-1].push_back(y0);
+  walls[walls.size()-1].push_back(x1);
+  walls[walls.size()-1].push_back(y1);
+  mtx.unlock();
 }
 
 bool Environment::sensor(uint8_t ID, vector<float> s_n, vector<float> s)

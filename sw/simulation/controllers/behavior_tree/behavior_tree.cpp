@@ -7,39 +7,6 @@
 // #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
 #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
 
-#ifdef ARENAWALLS
-void wall_avoidance(uint8_t ID, uint &walltimer, float &v_x_ref, float &v_y_ref)
-{
-  terminalinfo ti;
-  float timelim = 2.0 * param->simulation_updatefreq();
-
-  walltimer++;
-  if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
-    walltimer = 0;
-    ti.debug_msg("Agent left the arena from the North side");
-    v_x_ref = -abs(v_x_ref);
-  }
-
-  if (s[ID]->get_position(0) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
-    walltimer = 0;
-    ti.debug_msg("Agent left the arena from the South side");
-    v_x_ref = abs(v_x_ref);
-  }
-
-  if (s[ID]->get_position(1) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
-    walltimer = 0;
-    ti.debug_msg("Agent left the arena from the East side");
-    v_y_ref = -abs(v_y_ref);
-  }
-
-  if (s[ID]->get_position(1) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
-    walltimer = 0;
-    ti.debug_msg("Agent left the arena from the West side");
-    v_y_ref = abs(v_y_ref);
-  }
-}
-#endif
-
 float behavior_tree::f_attraction(float u)
 {
   //% Sigmoid function -- long-range
@@ -90,9 +57,6 @@ behavior_tree::behavior_tree() : Controller()
   BLKB.set("wheelSpeed1", 0.); // Output 1
 
   moving_timer = 0;
-#ifdef ARENAWALLS
-  walltimer = 0;
-#endif
 }
 
 void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
@@ -128,7 +92,7 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
     moving_timer = rg.uniform_int(0, timelim);
   }
   // Behavior
-  if (moving_timer == 1 && walltimer > 2.0 * timelim) {
+  if (moving_timer == 1) {
     if (rg.bernoulli(1.0 - p_motion)) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;

@@ -59,7 +59,7 @@ public:
   void draw_axes();
 
   /**
-   * Draw a line (used for walls)
+   * Draw a line (used for walls and obstacles)
    */
   void draw_line(float x0, float y0, float x1, float y1);
 

@@ -3,6 +3,16 @@
 #include "main.h"
 #include "randomgenerator.h"
 #include "omniscient_observer.h"
+#include "auxiliary.h"
+
+controller_aggregation::controller_aggregation() : Controller() {
+    moving = false;
+    v_x_ref = rg.gaussian_float(0.0, 1.0);
+    v_y_ref = rg.gaussian_float(0.0, 1.0);
+    // motion_p = {P1, P2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
+    moving_timer = 0;
+  }
 
 float controller_aggregation::f_attraction(float u)
 {
@@ -24,7 +34,6 @@ void controller_aggregation::get_lattice_motion(const int &ID, const int &state_
   v_r = get_attraction_velocity(o.request_distance(ID, state_ID));
   v_x += v_r * cos(v_b);
   v_y += v_r * sin(v_b);
-  ang = 0;
 }
 
 
@@ -57,14 +66,13 @@ void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
     v_y = v_y / (float)q_ID.size();
   }
   float vmean = 0.5;
-
-  if (moving_timer == 1 && walltimer > 2 * timelim) {
+  if (moving_timer == 1) {
     if (rg.bernoulli(1.0 - motion_p[q_ID.size()])) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;
       moving = false;
     } else { // Else explore randomly, change heading
-      ang = rg.uniform_float(0.0, 2 * M_PI);
+      float ang = rg.uniform_float(0.0, 2 * M_PI);
       if (moving) {
         float ext = rg.gaussian_float(0.0, 0.5);
         float temp;
@@ -76,6 +84,9 @@ void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
       moving = true;
     }
   }
+  increase_counter(moving_timer,timelim);
+
+  wall_avoidance(ID, v_x_ref, v_y_ref);
 
 #ifdef CHECK_HAPPY
   if (q_ID.size() > 1) {
@@ -85,45 +96,20 @@ void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
   }
 #endif
 
-  // Predict what the command wants and see if it will hit a wall, then fix it.
-  vector<float> sn(2);
-  sn[0] = s[ID]->state[0] + v_x_ref;
-  sn[1] = s[ID]->state[1] + v_y_ref;
-  if (environment.sensor(ID, sn, s[ID]->state)){
-    float temp;
-    cart2polar(v_x_ref, v_y_ref, temp, ang);
-    polar2cart(vmean, wrapTo2Pi_f(ang + M_PI), v_x_ref, v_y_ref);
-    cout << int(ID) << " " << v_x_ref << " " << v_y_ref << endl;
-  }
-
-#ifdef ARENAWALLS
-  walltimer++;
-  if (s[ID]->get_position(0) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    v_x_ref = -vmean;
-  }
-
-  if (s[ID]->get_position(0) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    v_x_ref = vmean;
-  }
-
-  if (s[ID]->get_position(1) > ARENAWALLS / 2.0 - rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    v_y_ref = -vmean;
-  }
-
-  if (s[ID]->get_position(1) < -ARENAWALLS / 2.0 + rangesensor && walltimer > 2 * timelim) {
-    walltimer = 1;
-    v_y_ref = vmean;
-  }
-#endif
-
-  if (moving_timer > timelim) {
-    moving_timer = 0;
-  }
-  moving_timer++;
-
+  // Final output
   v_x += v_x_ref;
   v_y += v_y_ref;
+}
+
+void controller_aggregation::wall_avoidance(uint8_t ID, float &v_x, float &v_y)
+{
+  // Predict what the command wants and see if it will hit a wall, then fix it.
+  vector<float> sn(2);
+  sn[0] = s[ID]->state[0] + v_x;
+  sn[1] = s[ID]->state[1] + v_y;
+  if (environment.sensor(ID, sn, s[ID]->state)){
+    float v, ang;
+    cart2polar(v_x, v_y, v, ang);
+    polar2cart(v, wrapTo2Pi_f(ang + M_PI), v_x, v_y);
+  }
 }

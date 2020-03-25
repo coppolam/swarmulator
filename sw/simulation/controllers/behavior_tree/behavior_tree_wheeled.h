@@ -23,7 +23,6 @@ class behavior_tree_wheeled: public Controller
 public:
   bool moving; // Robot sets it if it is moving.
   float v_x_ref, v_y_ref, ang;
-  uint walltimer; // Timer to set the time for a wall avoidance maneuver
   uint moving_timer; // Timer measuring how long a robot has been moving
   composite *tree; // Tree structure.
   blackboard BLKB; // Blackboard structure that ticks the tree during runtime.

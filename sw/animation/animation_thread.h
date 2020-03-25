@@ -40,7 +40,9 @@ void main_loop_function()
   for (int i = 0; i < 3; i++) {
     drawer.draw_axes_text(i);
   }
+  
   environment.animate();
+
   // Draw all agents
   for (uint8_t ID = 0; ID < nagents; ID++) {
     // Rotate local frame velocity (in state) to global frame
@@ -89,11 +91,7 @@ void main_animation_thread()
   center_y = 0;
   sx = 0;
   sy = 0;
-#ifdef ARENAWALLS
-  zoom = -ARENAWALLS;
-#else
   zoom = param->zoom();
-#endif // ARENAWALLS
   zoom_scale = 0;
   pointer_x = 0;
   pointer_y = 0;
