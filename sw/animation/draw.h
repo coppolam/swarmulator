@@ -59,9 +59,9 @@ public:
   void draw_axes();
 
   /**
-   * Draw a line (used for walls and obstacles)
+   * Draw a segment (used for walls and obstacles)
    */
-  void draw_line(float x0, float y0, float x1, float y1);
+  void draw_segment(float x0, float y0, float x1, float y1);
 
   /**
   * Draw a small white point

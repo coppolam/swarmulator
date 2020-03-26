@@ -139,6 +139,14 @@ public:
    */
   bool check_happy(void);
 
+  /**
+   * @brief Get the relative location of neighbor if they are within range
+   *
+   * @param ID Robot who calls the function (with the sensor)
+   * @param range Extent of range sensor
+   * @param r List or ranges to neighbors within the range sensor (output)
+   * @param b Bearing to neighbors (output)
+   */
   void request_relative_location_inrange(uint8_t ID, float range, vector<float> &r, vector<float> &b);
 };
 

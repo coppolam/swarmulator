@@ -72,6 +72,6 @@ void Environment::animate(void)
 {
   draw d;
   for (size_t i = 0; i < walls.size(); i++) {
-    d.draw_line(walls[i][0], walls[i][1], walls[i][2], walls[i][3]);
+    d.draw_segment(walls[i][0], walls[i][1], walls[i][2], walls[i][3]);
   }
 }

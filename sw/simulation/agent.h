@@ -45,7 +45,20 @@ public:
    * This is used by the OmniscientObserver class in order to simulate the presence of sensors.
    */
   float get_position(uint8_t dim);
+
+  /**
+   * @brief Get the orientation object
+   *
+   * @return float
+   */
   float get_orientation();
+
+  /**
+   * @brief Get the state along a given dimension
+   *
+   * @param dim dimension
+   * @return float
+   */
   float get_state(uint8_t dim);
 
   /**

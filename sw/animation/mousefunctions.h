@@ -152,7 +152,7 @@ void mouse_motion_callback(int x, int y)
  */
 void mouse_motion_callback_passive(int x, int y)
 {
-  pointer_x =  ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
+  pointer_x = ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
   pointer_y = -((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) * 8. - 4.) / (zoom_scale * yrat) - center_y;
 }
 
@@ -187,7 +187,7 @@ void mouse_click_callback(int button, int state, int x, int y)
 
   // Click - right
   if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
-    float wall_x_1 =  ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
+    float wall_x_1 = ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
     float wall_y_1 = -((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) * 8. - 4.) / (zoom_scale * yrat) - center_y;
     environment.add(wall_x_0, wall_y_0, wall_x_1, wall_y_1);
   }

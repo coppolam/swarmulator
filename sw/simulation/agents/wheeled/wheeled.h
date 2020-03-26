@@ -15,8 +15,27 @@ class wheeled: public Agent
   float r = 1; // Wheel radius
   float L = 10; // Distance between wheels
 public:
+  /**
+   * @brief Construct a new wheeled object
+   *
+   * @param i ID
+   * @param state Initial state
+   * @param tstep Simulation time step
+   */
   wheeled(int i, vector<float> state, float tstep);
+
+  /**
+   * State update over one time step
+   *
+   * @param state current state
+   * @return vector<float> next state
+   */
   vector<float> state_update(vector<float> state);
+
+  /**
+   * Drawing to animate the wheeled agent
+   *
+   */
   void animation();
 };
 
