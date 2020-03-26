@@ -73,6 +73,13 @@ public:
    */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
 
+  /**
+   * General wall avoidance function to use within get_velocity_command() to instigate a wall avoidance maneuver
+   *
+   * @param ID The ID of the robot to control
+   * @param v_x The desired velocity in v_x (amended in this function)
+   * @param v_y The desired velocity in v_y (amended in this function)
+   */
   void wall_avoidance(uint8_t ID, float &v_x, float &v_y);
 };
 

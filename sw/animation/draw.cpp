@@ -130,11 +130,11 @@ void draw::draw_axes()
 void draw::draw_line(float x0, float y0, float x1, float y1)
 {
   glLineWidth(2.5);
-  float lineintensity = 0.9;
+  float lineintensity = 1.0;
   glBegin(GL_LINES);
-  glColor3ub(128 * lineintensity, 128 * lineintensity, 255 * lineintensity); // white
-  glVertex3f(x0, y0, 0.0);
-  glVertex3f(x1, y1, 0.0);
+  glColor3ub(128 * lineintensity, 128 * lineintensity, 200 * lineintensity); // white
+  glVertex3f(x0 * xrat, y0 * yrat, 0.0);
+  glVertex3f(x1 * xrat, y1 * yrat, 0.0);
   glEnd();
 }
 

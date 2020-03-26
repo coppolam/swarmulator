@@ -42,8 +42,8 @@ void Controller::wall_avoidance(uint8_t ID, float &v_x, float &v_y)
   // Predict what the command wants and see if it will hit a wall, then fix it.
   vector<float> sn(2);
   float margin = 2.;
-  sn[0] = s[ID]->state[0] + margin*v_x;
-  sn[1] = s[ID]->state[1] + margin*v_y;
+  sn[0] = s[ID]->state[0] + margin * v_x;
+  sn[1] = s[ID]->state[1] + margin * v_y;
   bool test = environment.sensor(ID, sn, s[ID]->state);
   if (test) {
     float v, ang;

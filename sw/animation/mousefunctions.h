@@ -27,8 +27,8 @@ float zoom = 0;
 float zoom_scale = 0;
 float pointer_x, pointer_y;
 bool paused = false;
-float xrat = 0;
-float yrat = 0;
+float xrat = 1.0;
+float yrat = 1.0;
 bool mouse_motion = false;
 
 /**
@@ -138,8 +138,8 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
 void mouse_motion_callback(int x, int y)
 {
   if (mouse_motion) {
-    center_x += param->mouse_drag_speed() / zoom_scale * ((float)x / ((float)param->window_width() / xrat) - sx);
-    center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / ((float)param->window_height() / yrat) - sy);
+    center_x += param->mouse_drag_speed() / zoom_scale * ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) - sx);
+    center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) - sy);
   }
 }
 
@@ -152,10 +152,8 @@ void mouse_motion_callback(int x, int y)
  */
 void mouse_motion_callback_passive(int x, int y)
 {
-  pointer_x = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zoom_scale * xrat)) - 4 /
-               (zoom_scale * xrat)) - center_x;
-  pointer_y = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 /
-                 (zoom_scale * yrat))) - center_y;
+  pointer_x =  ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
+  pointer_y = -((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) * 8. - 4.) / (zoom_scale * yrat) - center_y;
 }
 
 /**
@@ -172,8 +170,8 @@ void mouse_click_callback(int button, int state, int x, int y)
 {
   // Click - left
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-    sx = (float)x / ((float)param->window_width() / xrat);
-    sy = -(float)y / ((float)param->window_height() / yrat);
+    sx = (float)x / (float)glutGet(GLUT_WINDOW_WIDTH);
+    sy = -(float)y / (float)glutGet(GLUT_WINDOW_HEIGHT);
     mouse_motion = true;
   }
 
@@ -189,12 +187,9 @@ void mouse_click_callback(int button, int state, int x, int y)
 
   // Click - right
   if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
-    float wall_x_1 = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zoom_scale * xrat)) - 4 /
-                      (zoom_scale * xrat)) - center_x;
-    float wall_y_1  = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 /
-                         (zoom_scale * yrat))) - center_y;
+    float wall_x_1 =  ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
+    float wall_y_1 = -((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) * 8. - 4.) / (zoom_scale * yrat) - center_y;
     environment.add(wall_x_0, wall_y_0, wall_x_1, wall_y_1);
-    cout << wall_x_0 << " " << wall_y_0  << " " << wall_x_1 << " " << wall_y_1 << endl;
   }
 
   // Zoom wheel
@@ -268,7 +263,7 @@ void mouse_draganddrop()
   glutSpecialUpFunc(catckKey_arrow_up);
   glutKeyboardFunc(keyboard_callback);
   glutKeyboardUpFunc(psi_callback_up);
-  zoom_scale = -10 / (-10 + zoom);
+  zoom_scale = -(float)10 / (-(float)10 + (float)zoom);
   glTranslatef(center_x, center_y, -10 + zoom);
 }
 
