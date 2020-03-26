@@ -46,8 +46,6 @@ public:
    * Implementation of method to get the commanded velocity
    */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
-
-  void wall_avoidance(const uint8_t ID, float &v_x, float &v_y);
 };
 
 #endif /*CONTROLLER_AGGREGATION_H*/

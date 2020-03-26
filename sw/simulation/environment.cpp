@@ -29,14 +29,13 @@ void Environment::define(void)
 float Environment::limits(void)
 {
   float max = 0;
-  for (size_t i = 0; i < walls.size(); i++)
-  {
+  for (size_t i = 0; i < walls.size(); i++) {
     float v = *max_element(walls[i].begin(), walls[i].end()); // c++11
-    if (max < v){
+    if (max < v) {
       max = v;
     }
   }
-  return max*0.95; // 0.95 for margin
+  return max * 0.95; // 0.95 for margin
 }
 
 void Environment::add(float x0, float y0, float x1, float y1)
@@ -50,7 +49,7 @@ void Environment::add(float x0, float y0, float x1, float y1)
   mtx.unlock();
 }
 
-bool Environment::sensor(uint8_t ID, vector<float> s_n, vector<float> s, float &slope_wall)
+bool Environment::sensor(uint8_t ID, vector<float> s_n, vector<float> s)
 {
   Point p1, q1, p2, q2;
   p1.x = s[0];
@@ -62,11 +61,10 @@ bool Environment::sensor(uint8_t ID, vector<float> s_n, vector<float> s, float &
     p2.x = walls[i][1];
     q2.y = walls[i][2];
     q2.x = walls[i][3];
-    slope_wall = atan2(p2.y-q2.y,p2.x-q2.x);
     if (doIntersect(p1, q1, p2, q2)) {
       return true;
     }
-  } 
+  }
   return false;
 }
 

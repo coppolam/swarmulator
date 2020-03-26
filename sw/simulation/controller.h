@@ -72,6 +72,8 @@ public:
    * @param v_y The desired velocity in v_y (to be set in this function)
    */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
+
+  void wall_avoidance(uint8_t ID, float &v_x, float &v_y);
 };
 
 

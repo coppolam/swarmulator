@@ -69,8 +69,6 @@ public:
    * Update the inputs and run the behavior tree command
    */
   virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);
-
-  void wall_avoidance(uint8_t ID, float &v_x, float &v_y);
 };
 
 #endif /*BEHAVIOR_TREE_H*/
