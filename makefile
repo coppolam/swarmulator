@@ -20,7 +20,7 @@ CFLAGS = -g -Wall -std=gnu++0x -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR #-DP1=$(IP
 OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions
 
 ifeq ($(VERBOSE),ON)
-CFLAGS += -DDEBUG -DINFO
+CFLAGS += -DVERBOSE
 endif
 
 ifeq ($(ANIMATION),ON)

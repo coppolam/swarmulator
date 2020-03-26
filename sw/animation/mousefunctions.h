@@ -138,8 +138,8 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
 void mouse_motion_callback(int x, int y)
 {
   if (mouse_motion) {
-  center_x += param->mouse_drag_speed() / zoom_scale * ((float)x / ((float)param->window_width() / xrat) - sx);
-  center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / ((float)param->window_height() / yrat) - sy);
+    center_x += param->mouse_drag_speed() / zoom_scale * ((float)x / ((float)param->window_width() / xrat) - sx);
+    center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / ((float)param->window_height() / yrat) - sy);
   }
 }
 
@@ -189,11 +189,11 @@ void mouse_click_callback(int button, int state, int x, int y)
 
   // Click - right
   if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
-  float wall_x_1 = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zoom_scale * xrat)) - 4 /
-               (zoom_scale * xrat)) - center_x;
-  float wall_y_1  = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 /
-                 (zoom_scale * yrat))) - center_y;
-    environment.add(wall_x_0,wall_y_0,wall_x_1,wall_y_1);
+    float wall_x_1 = ((((float)x / ((float)param->window_width() / xrat)) * 8 / (zoom_scale * xrat)) - 4 /
+                      (zoom_scale * xrat)) - center_x;
+    float wall_y_1  = (-((((float)y / ((float)param->window_height() / yrat)) * 8 / (zoom_scale * yrat)) - 4 /
+                         (zoom_scale * yrat))) - center_y;
+    environment.add(wall_x_0, wall_y_0, wall_x_1, wall_y_1);
     cout << wall_x_0 << " " << wall_y_0  << " " << wall_x_1 << " " << wall_y_1 << endl;
   }
 

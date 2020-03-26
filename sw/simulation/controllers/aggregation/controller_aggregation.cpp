@@ -5,14 +5,15 @@
 #include "omniscient_observer.h"
 #include "auxiliary.h"
 
-controller_aggregation::controller_aggregation() : Controller() {
-    moving = false;
-    v_x_ref = rg.gaussian_float(0.0, 1.0);
-    v_y_ref = rg.gaussian_float(0.0, 1.0);
-    // motion_p = {P1, P2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
-    moving_timer = 0;
-  }
+controller_aggregation::controller_aggregation() : Controller()
+{
+  moving = false;
+  v_x_ref = rg.gaussian_float(0.0, 1.0);
+  v_y_ref = rg.gaussian_float(0.0, 1.0);
+  // motion_p = {P1, P2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
+  moving_timer = 0;
+}
 
 float controller_aggregation::f_attraction(float u)
 {
@@ -84,7 +85,7 @@ void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
       moving = true;
     }
   }
-  increase_counter(moving_timer,timelim);
+  increase_counter(moving_timer, timelim);
 
   wall_avoidance(ID, v_x_ref, v_y_ref);
 
@@ -107,7 +108,7 @@ void controller_aggregation::wall_avoidance(uint8_t ID, float &v_x, float &v_y)
   vector<float> sn(2);
   sn[0] = s[ID]->state[0] + v_x;
   sn[1] = s[ID]->state[1] + v_y;
-  if (environment.sensor(ID, sn, s[ID]->state)){
+  if (environment.sensor(ID, sn, s[ID]->state)) {
     float v, ang;
     cart2polar(v_x, v_y, v, ang);
     polar2cart(v, wrapTo2Pi_f(ang + M_PI), v_x, v_y);

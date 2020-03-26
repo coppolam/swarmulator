@@ -1,12 +1,10 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-/***** Uncomment the main simulation threads and functions that run
- *     Note: this is on top of the main simulator thread
- *****/
-// #define ANIMATION // Activate animation thread
-// #define LOG // Activate logger thread
-// #define MAX_TIME 100 // If set, swarmulator will quite automatically after 100 (or however many) simulated seconds. Requires logger.
+/**
+ * Uncomment the main simulation threads and functions that run
+ * Note: this is on top of the main simulator thread
+ */
 
 // #define REMAIN_CONNECTED // Check that the swarm remains connected (only if logging)
 // #define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
@@ -22,12 +20,17 @@
 // #define CONTROLLER behavior_tree // Controller with behvaior_tree_aggregation
 // #define CONTROLLER behavior_tree_wheeled // Controller with Qf
 
-/***** Select the agent type that you want to use by uncommenting it****/
+/**
+ * Select the agent type that you want to use by uncommenting it
+ * /
 #define AGENT particle    // Accelerated particles
 // #define AGENT particle_oriented    // Accelerated particle with orientation
 // #define AGENT wheeled    // Wheeled robot
 
-/***** Noise in relative sensing *****/
+/**
+ * Noise in relative sensing
+ * /
+// TODO: Make runtime variable
 #define NOISE_R 0 // STDEV of noise in range
 #define NOISE_B 0 // STDEV of noise in bearing
 

@@ -1,8 +1,13 @@
 #include "environment.h"
-#include "settings.h"
 #include "main.h"
+#include "settings.h"
 #include "auxiliary.h"
 #include "draw.h"
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -14,18 +19,19 @@ Environment::Environment(void)
 
 void Environment::define(void)
 {
-  walls = read_matrix("conf/arenas/funnel.txt");
+  string filename = "conf/environments/" + param->environment() + ".txt";
+  walls = read_matrix(filename);
   draw();
 }
 
 void Environment::add(float x0, float y0, float x1, float y1)
-{  
+{
   mtx.lock();
   walls.push_back(std::vector<float>());
-  walls[walls.size()-1].push_back(x0);
-  walls[walls.size()-1].push_back(y0);
-  walls[walls.size()-1].push_back(x1);
-  walls[walls.size()-1].push_back(y1);
+  walls[walls.size() - 1].push_back(x0);
+  walls[walls.size() - 1].push_back(y0);
+  walls[walls.size() - 1].push_back(x1);
+  walls[walls.size() - 1].push_back(y1);
   mtx.unlock();
 }
 

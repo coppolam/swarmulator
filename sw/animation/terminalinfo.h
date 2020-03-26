@@ -47,6 +47,13 @@ public:
    * @param str Info string to print
    */
   static void info_msg(string str);
+
+  /**
+  * Print a warning message
+  *
+  * @param str Warning string to print
+  */
+  static void warning_msg(string str);
 };
 
 #endif  /* TERMINALINFO_H */

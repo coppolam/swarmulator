@@ -1,5 +1,5 @@
-#ifndef CONTROLLER_CARTESIAN_H
-#define CONTROLLER_CARTESIAN_H
+#ifndef CONTROLLER_AGGREGATION_H
+#define CONTROLLER_AGGREGATION_H
 
 #include "controller.h"
 #include "randomgenerator.h"
@@ -50,4 +50,4 @@ public:
   void wall_avoidance(const uint8_t ID, float &v_x, float &v_y);
 };
 
-#endif /*CONTROLLER_CARTESIAN_H*/
+#endif /*CONTROLLER_AGGREGATION_H*/

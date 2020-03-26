@@ -40,7 +40,7 @@ void main_loop_function()
   for (int i = 0; i < 3; i++) {
     drawer.draw_axes_text(i);
   }
-  
+
   environment.animate();
 
   // Draw all agents
