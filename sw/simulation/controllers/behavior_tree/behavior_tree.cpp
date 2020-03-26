@@ -112,13 +112,25 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   }
   increase_counter(moving_timer, timelim);
   /*******************************************************/
-#ifdef ARENAWALLS
-  wall_avoidance(ID, walltimer, v_x_ref, v_y_ref);
-#endif
+
+  wall_avoidance(ID, v_x_ref, v_y_ref);
 
   v_x += v_x_ref;
   v_y += v_y_ref;
 
   d = to_string(v_x) + ", " +  to_string(v_y);
   ti.debug_msg(d, ID);
+}
+
+void behavior_tree::wall_avoidance(uint8_t ID, float &v_x, float &v_y)
+{
+  // Predict what the command wants and see if it will hit a wall, then fix it.
+  vector<float> sn(2);
+  sn[0] = s[ID]->state[0] + v_x;
+  sn[1] = s[ID]->state[1] + v_y;
+  if (environment.sensor(ID, sn, s[ID]->state, ang)) {
+    float v, ang;
+    cart2polar(v_x, v_y, v, ang);
+    polar2cart(v, wrapTo2Pi_f(ang + M_PI), v_x, v_y);
+  }
 }

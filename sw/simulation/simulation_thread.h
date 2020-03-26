@@ -111,7 +111,7 @@ void main_simulation_thread(int argc, char *argv[])
 
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
   random_generator rg;
-  float spread = 0.5; // default // TODO: Spread randomly within an arbitray arena
+  float spread = environment.limits(); // default // TODO: Spread randomly within an arbitray arena
   vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
   vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
   vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);

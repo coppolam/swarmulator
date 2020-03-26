@@ -5,7 +5,7 @@
 <!-- Simulation global variables -->
 <simulation_updatefreq>20</simulation_updatefreq>
 <simulation_realtimefactor>20</simulation_realtimefactor>
-<environment>funnel</environment>
+<environment>square</environment>
 
 <!-- Animation global variables -->
 <window_width>800</window_width>

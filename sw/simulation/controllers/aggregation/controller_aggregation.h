@@ -21,7 +21,7 @@ public:
   vector<float> motion_p; // Probability of motion
   uint moving_timer; // Timer measuring how long a robot has been moving
   random_generator rg; // Random generator
-
+  float vmean;
   /**
    * Construction. Controller_Aggregation is a child class of Controller.
    */

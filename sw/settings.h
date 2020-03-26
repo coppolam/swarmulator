@@ -22,14 +22,14 @@
 
 /**
  * Select the agent type that you want to use by uncommenting it
- * /
+ */
 #define AGENT particle    // Accelerated particles
 // #define AGENT particle_oriented    // Accelerated particle with orientation
 // #define AGENT wheeled    // Wheeled robot
 
 /**
  * Noise in relative sensing
- * /
+ */
 // TODO: Make runtime variable
 #define NOISE_R 0 // STDEV of noise in range
 #define NOISE_B 0 // STDEV of noise in bearing

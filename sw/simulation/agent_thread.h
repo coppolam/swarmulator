@@ -13,6 +13,7 @@
 #include "randomgenerator.h"
 #include "includes_agents.h" // Include all agents here
 #include "environment.h"
+#include "terminalinfo.h"
 
 /**
  * Update the agent simulation
@@ -24,24 +25,43 @@ void run_agent_simulation_step(const int &ID, ofstream &logfile)
 {
   // Update the position of the agent in the simulation
   // Lock mutex to avoid conflicts
-  auto start = chrono::steady_clock::now();
   mtx.lock();
+  auto start = chrono::steady_clock::now();
   vector<float> s_n = s.at(ID)->state_update(s.at(ID)->state);
-  if (!environment.sensor(ID, s.at(ID)->state, s_n)) {
+  vector<float> test = s_n;
+  test[0] += 10*s_n[2]; // Gross prediction ahead as safety margin
+  test[1] += 10*s_n[3];
+  float angle_wall;
+  if (!environment.sensor(ID, s.at(ID)->state, test, angle_wall)) {
+    // mtx.lock();
     s.at(ID)->state = s_n;
+    // mtx.unlock();
+  }
+  else{
+    // float angle_velocity = atan2(s.at(ID)->state[5],s.at(ID)->state[4]);
+    // float angle_acceleration = atan2(s.at(ID)->state[3],s.at(ID)->state[2]);
+    // cout << (int)ID << " "<< angle_wall << " " << angle_velocity << " " <<  angle_acceleration << endl;
+    // Hitting the wall kills dynamics.
+    // TODO: Provide different options?!
+    cout << "out " << endl;
+    s.at(ID)->state[2] = 0.0;
+    s.at(ID)->state[3] = 0.0;
+    s.at(ID)->state[4] = 0.0;
+    s.at(ID)->state[5] = 0.0;
   }
   auto end = chrono::steady_clock::now();
-  auto test = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+  // auto test = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 #ifdef LOGGER
   char a[20];
   sprintf(a, "%ld\n", test);
   logfile << a;
 #endif
-  mtx.unlock();
+      mtx.unlock();
 
   // Wait according to defined frequency (subtract execution time)
-  int t_wait = (int)1e9 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor())) - test;
+  int t_wait = (int)1e9 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor())); //- test;
   this_thread::sleep_for(chrono::nanoseconds(t_wait));
+
 }
 
 /**
