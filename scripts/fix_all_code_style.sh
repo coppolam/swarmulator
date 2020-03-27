@@ -8,3 +8,5 @@ dir=${script_dir%/*} # Go to root swarmulator folder
 # Run
 ${dir}/scripts/fix_code_style.sh "${dir}/sw/*.cpp";
 ${dir}/scripts/fix_code_style.sh "${dir}/sw/*.h";
+
+echo "astyle formatted the code."

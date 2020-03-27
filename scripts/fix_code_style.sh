@@ -33,6 +33,7 @@ if [[ $(bc <<< "$ASTYLE_VERSION >= 2.03") -eq 1 ]]; then
         --ignore-exclude-errors-x \
         --max-code-length=120 \
         --recursive \
+        --quiet \
         $*
 else
     astyle --style=kr   \
@@ -50,5 +51,6 @@ else
         --lineend=linux   \
         --add-brackets \
         --recursive \
+        --quiet \
         $*
 fi
