@@ -20,7 +20,6 @@ Template_Calculator::Template_Calculator()
 void Template_Calculator::set_state_action_matrix(string filename)
 {
   state_action_matrix.clear();
-  terminalinfo ti;
   ifstream state_action_matrix_file(filename);
 
   if (state_action_matrix_file.is_open()) {
@@ -49,7 +48,7 @@ void Template_Calculator::set_state_action_matrix(string filename)
     }
     state_action_matrix_file.close();
   } else {
-    ti.debug_msg("Unable to open state action matrix file.");
+    terminalinfo::error_msg("Unable to open state action matrix file.");
   }
 }
 

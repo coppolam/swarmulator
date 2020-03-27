@@ -17,8 +17,7 @@ bool animation_running = false;
 void main_loop_function()
 {
   if (!animation_running) {
-    terminalinfo ti;
-    ti.info_msg("Animation started.");
+    terminalinfo::info_msg("Animation started.");
     animation_running = true;
   }
 

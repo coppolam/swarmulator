@@ -5,7 +5,8 @@
 <!-- Simulation global variables -->
 <simulation_updatefreq>20</simulation_updatefreq>
 <simulation_realtimefactor>20</simulation_realtimefactor>
-<environment>square</environment>
+<time_limit>0</time_limit> <!-- Use time_limit > 0 to set a limit -->
+<environment>square</environment> <!-- See the folder conf/environments/ for available environments -->
 
 <!-- Animation global variables -->
 <window_width>800</window_width>
@@ -13,7 +14,7 @@
 <scale>0.2</scale>
 <mouse_drag_speed>0.3</mouse_drag_speed>
 <mouse_zoom_speed>0.5</mouse_zoom_speed>
-<zoom>-40</zoom> <!-- start up zoom, bounded -90 and 9 -->
+<zoom>-40</zoom> <!-- Start up zoom, bounded -90 and 9 -->
 <animation_updatefreq>25</animation_updatefreq>
 
 <!-- Logger global variables -->

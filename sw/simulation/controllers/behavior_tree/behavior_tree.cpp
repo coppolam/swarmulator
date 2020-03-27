@@ -82,9 +82,8 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
   float p_motion = BLKB.get("wheelSpeed0");
 
-  terminalinfo ti;
   string d = "p=" + to_string(p_motion);
-  ti.debug_msg(d, ID); // Debug
+  terminalinfo::debug_msg(d, ID); // Debug
 
   /******** Probabilistic aggregation behavior ***********/
   // Initialize local moving_timer with random variable
@@ -119,5 +118,5 @@ void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_
   v_y += v_y_ref;
 
   d = to_string(v_x) + ", " +  to_string(v_y);
-  ti.debug_msg(d, ID);
+  terminalinfo::debug_msg(d, ID);
 }

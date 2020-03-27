@@ -37,21 +37,19 @@ void txtwrite::txtwrite_summary(ofstream &logfile)
 
 #if defined(REMAIN_CONNECTED) || defined(CHECK_HAPPY)
   OmniscientObserver o;
-  terminalinfo ti;
 #endif
 
 #ifdef REMAIN_CONNECTED
   if (!(o.connected_graph_range(rangesensor))) {
     logfile << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << " " << 0 << endl;
-    ti.debug_msg("Swarm broke");
+    terminalinfo::debug_msg("Swarm broke");
     killflag = true;
   }
 #endif
 
 #ifdef CHECK_HAPPY
   if (o.check_happy()) {
-    terminalinfo ti;
-    ti.debug_msg("Pattern completed");
+    terminalinfo::debug_msg("Pattern completed");
     killflag = true;
   }
 #endif

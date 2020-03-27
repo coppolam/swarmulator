@@ -27,8 +27,7 @@ void run_logger(ofstream &logfile, string filename)
 {
   static txtwrite writer;
   if (!logger_running) {
-    terminalinfo ti;
-    ti.info_msg("Logger started.");
+    terminalinfo::info_msg("Logger started.");
     writer.setfilename(filename); // Set the filename
     logger_running = true; // Set logger running to true
   }

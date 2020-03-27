@@ -75,8 +75,7 @@ int main(int argc, char *argv[])
   };
 
   // Exit
-  terminalinfo ti;
-  ti.info_msg("Swarmulator exiting");
+  terminalinfo::info_msg("Swarmulator exiting");
 
   return 0;
 }

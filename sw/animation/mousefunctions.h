@@ -45,30 +45,28 @@ bool mouse_motion = false;
  */
 void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attribute__((unused)) int b)
 {
-  terminalinfo ti; // Object to format runtime information on the terminal
-
   switch (key) {
     case 'c':
       // Center the animation
-      ti.info_msg("Recentering Animation.");
+      terminalinfo::info_msg("Recentering Animation.");
       center_x = 0;
       center_y = 0;
       break;
     case 'z':
       // Reset the zoom to the default value
-      ti.info_msg("Resetting zoom.");
+      terminalinfo::info_msg("Resetting zoom.");
       zoom = 0;
       break;
     case 'q':
       // End the simulation and quit
-      ti.info_msg("Quitting Swarmulator.");
+      terminalinfo::info_msg("Quitting Swarmulator.");
       mtx.try_lock();
       program_running = false;
       break;
     case 'p':
       // Pause the simulation
       if (!paused) {
-        ti.info_msg("Paused. Press `r' to resume or `s' to step forward.");
+        terminalinfo::info_msg("Paused. Press `r' to resume or `s' to step forward.");
         mtx.try_lock();
         paused = true;
       }
@@ -76,7 +74,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
     case 'r':
       // Resume the simulation (if paused)
       if (paused) {
-        ti.info_msg("Resuming.");
+        terminalinfo::info_msg("Resuming.");
         mtx.unlock();
         paused = false;
       }
@@ -84,7 +82,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       break;
     case 's':
       // Step through the simulation. Very useful for debugging or analyzing what's going on.
-      ti.info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
+      terminalinfo::info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
       int t_wait;
       mtx.try_lock();
       mtx.unlock();
@@ -96,7 +94,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
     case 'a':
       // Draw and simulate a new agent, initialized at the current pointer position
       if (!paused) {
-        ti.info_msg("Drawing new agent.");
+        terminalinfo::info_msg("Drawing new agent.");
         mtx.lock();
         create_new_agent(nagents, pointer_y, pointer_x);
         mtx.unlock();
@@ -104,7 +102,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       }
     case 'm':
       // Toggle the real time parameter between 1 and default, so as to better understand what's going on
-      ti.info_msg("Toggle realtime factor between 1 and the specified value.");
+      terminalinfo::info_msg("Toggle realtime factor between 1 and the specified value.");
       if (param->simulation_realtimefactor() != 1) {
         realtimefactor = param->simulation_realtimefactor();
         param->simulation_realtimefactor() = 1;
@@ -121,7 +119,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
     case 'n':
       // Quit and restart swarmulator
       mtx.try_lock();
-      ti.info_msg("Restarting.");
+      terminalinfo::info_msg("Restarting.");
       stringstream ss;
       ss << "pkill swarmulator && ./swarmulator " << nagents;
       system(ss.str().c_str());

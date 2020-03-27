@@ -18,7 +18,6 @@ class behavior_tree_wheeled: public Controller
 {
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver o;
-  terminalinfo ti;
 
 public:
   bool moving; // Robot sets it if it is moving.

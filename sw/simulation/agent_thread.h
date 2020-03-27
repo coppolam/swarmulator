@@ -26,23 +26,21 @@ void run_agent_simulation_step(const int &ID, ofstream &logfile)
   // Update the position of the agent in the simulation
   // Lock mutex to avoid conflicts
   auto start = chrono::steady_clock::now();
+  mtx.lock();
   vector<float> s_n = s.at(ID)->state_update(s.at(ID)->state);
   vector<float> test = s_n;
   test[0] += 20 * s_n[2]; // Gross prediction margin ahead as safety margin
   test[1] += 20 * s_n[3];
   if (!environment.sensor(ID, s.at(ID)->state, test)) {
-    mtx.lock();
     s.at(ID)->state = s_n;
-    mtx.unlock();
   } else {
     // TODO: Provide different options?!
-    mtx.lock();
     s.at(ID)->state[2] = 0.0;
     s.at(ID)->state[3] = 0.0;
     s.at(ID)->state[4] = 0.0;
     s.at(ID)->state[5] = 0.0;
-    mtx.unlock();
   }
+  mtx.unlock();
   auto end = chrono::steady_clock::now();
   auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 #ifdef LOGGER
@@ -63,10 +61,9 @@ void run_agent_simulation_step(const int &ID, ofstream &logfile)
 void start_agent_simulation(int ID)
 {
   // Info message
-  terminalinfo ti;
   stringstream ss;
   ss << "Robot " << ID << " initiated";
-  ti.info_msg(ss.str());
+  terminalinfo::info_msg(ss.str());
 
   char filename[100];
   sprintf(filename, "logs/evaluation_time/timelog_%d.txt", nagents);

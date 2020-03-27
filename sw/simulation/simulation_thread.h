@@ -24,39 +24,36 @@
 #include "drawingparams.h"
 #include "settings.h"
 #include "environment.h"
+#include "fitness_functions.h"
 
-#define FIFO_FILE "/tmp/btevo_fifo"
+#define FIFO_FILE "/tmp/swarmulator"
 
+/**
+ * Select a fitness function, or use your own if you want.
+ * The file "fitness_functions.h" is used to store fitness functions.
+ * 
+ * @return float fitness
+ */
 float evaluate_fitness()
 {
-  OmniscientObserver o;
-  float f = 0;
-  /*** Mean number of neighbors ***/
-  // for (size_t ID = 0; ID < nagents; ID++) {
-  //   vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
-  //   f += (float)closest.size() / (float)nagents;
-  // }
+  float f;
+  // f = mean_dist_to_one_neighbor(0);
+  f = mean_number_of_neighbors();
+  // f = mean_dist_to_neighbors();
+  // connectivity_check(f);
 
-  /*** Mean distance to neighbors ***/
-  for (size_t ID = 0; ID < nagents; ID++) {
-    vector<float> r, b;
-    o.request_relative_location_inrange(ID, rangesensor, r, b);
-    float r_mean = accumulate(r.begin(), r.end(), 0.0) / r.size();
-    f += (float)r_mean / (float)nagents;
-  }
-
-  // Check con
-  if (!(o.connected_graph_range(rangesensor))) {
-    f = 0.0;
-  }
-
-  return f; // use 1/f to minimize, or just f to maximize
+  return f;
 }
 
+/**
+ * @brief Send out a FIFO message to interfact with external programs.
+ * 
+ * @param fd FIFO file ID, initiated in the beginning of the thread
+ * @return int 
+ */
 int send_fifo(int fd)
 {
   float fitness = evaluate_fitness();
-  // cout << "fitness: " << fitness << endl;
   uint8_t size = 8;
   char msg[size];
   sprintf(msg, "%f", fitness);
@@ -72,10 +69,8 @@ int send_fifo(int fd)
  */
 void get_number_of_agents(int argc, char *argv[])
 {
-  terminalinfo ti;
   if (argc <= 1) {
-    ti.info_msg("Please specify the number of agents.");
-    program_running = false;
+    terminalinfo::error_msg("Please specify the number of agents.");
   } else {
     nagents = stoi(argv[1]);
   }
@@ -91,20 +86,16 @@ void get_number_of_agents(int argc, char *argv[])
  */
 void main_simulation_thread(int argc, char *argv[])
 {
-#ifdef MAX_TIME
-  // create and open the FIFO (named pipe)
+  // Create and open the FIFO pipe to communicate/interface with external programs, if needed.
+  // By default, it is used to send the fitness.
   char const *bt_fifo_write = FIFO_FILE;
   int fd_write;
-
   if (access(bt_fifo_write, F_OK) == -1) {
     mkfifo(bt_fifo_write, 0666);
   }
-
   fd_write = open(bt_fifo_write, O_RDWR | O_NONBLOCK);
-#endif
 
-  terminalinfo ti;
-  ti.info_msg("Simulation started.");
+  terminalinfo::info_msg("Simulation started.");
 
   // Read the number of agents from the argument input
   get_number_of_agents(argc, argv);
@@ -142,12 +133,13 @@ void main_simulation_thread(int argc, char *argv[])
       mtx.lock(); // Lock mutex to update global clock thread in relative sync
       simtime_seconds += param->simulation_realtimefactor() * simulation_time / 1e9;
       mtx.unlock();
-#ifdef MAX_TIME
-      if (simtime_seconds > MAX_TIME) { // Quit after a certain amount of time
-        send_fifo(fd_write);
-        program_running = false;
+      // Runtime finish evolution
+      if (param->time_limit() > 0.0) {
+        if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time
+          send_fifo(fd_write);
+          program_running = false;
+        }
       }
-#endif
     }
   };
 

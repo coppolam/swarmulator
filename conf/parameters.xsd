@@ -4,13 +4,14 @@
     <xs:sequence>
       <xs:element name="simulation_updatefreq" type="xs:float"/>
       <xs:element name="simulation_realtimefactor" type="xs:float"/>
+      <xs:element name="time_limit" type="xs:float"/>
       <xs:element name="environment" type="xs:string"/>
       <xs:element name="window_width" type="xs:integer"/>
       <xs:element name="window_height" type="xs:integer"/>
       <xs:element name="scale" type="xs:float"/>
       <xs:element name="mouse_drag_speed" type="xs:float"/>
       <xs:element name="mouse_zoom_speed" type="xs:float"/>
-      <xs:element name="zoom" type="xs:float"/>
+      <xs:element name="zoom" type="xs:integer"/>
       <xs:element name="animation_updatefreq" type="xs:float"/>
       <xs:element name="logger_updatefreq" type="xs:integer"/>
       <!-- xs:element name="parameter_name" type="xs:parametertype"/-->

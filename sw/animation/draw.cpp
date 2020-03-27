@@ -99,7 +99,6 @@ void draw::draw_line(float x, float y)
   glPopMatrix();
 }
 
-
 void draw::draw_point()
 {
   glPointSize(10.0);
@@ -107,7 +106,6 @@ void draw::draw_point()
   glVertex3f(0, 0, 0);
   glEnd();
 }
-
 
 void draw::draw_axes()
 {
