@@ -31,7 +31,7 @@
 /**
  * Select a fitness function, or use your own if you want.
  * The file "fitness_functions.h" is used to store fitness functions.
- * 
+ *
  * @return float fitness
  */
 float evaluate_fitness()
@@ -47,9 +47,9 @@ float evaluate_fitness()
 
 /**
  * @brief Send out a FIFO message to interfact with external programs.
- * 
+ *
  * @param fd FIFO file ID, initiated in the beginning of the thread
- * @return int 
+ * @return int
  */
 int send_fifo(int fd)
 {
