@@ -6,7 +6,7 @@
 <simulation_updatefreq>20</simulation_updatefreq>
 <simulation_realtimefactor>20</simulation_realtimefactor>
 <time_limit>0</time_limit> <!-- Use time_limit > 0 to set a limit -->
-<environment>square</environment> <!-- See the folder conf/environments/ for available environments -->
+<environment>rooms</environment> <!-- See the folder conf/environments/ for available environments -->
 
 <!-- Animation global variables -->
 <window_width>800</window_width>

@@ -29,7 +29,6 @@ void main_loop_function()
   // Get current window size w.r.t. beginning
   xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
   yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
-
   mouse_draganddrop(); // Activate mouse functions
 
   // Draw fixed one time objects

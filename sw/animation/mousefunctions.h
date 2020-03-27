@@ -135,11 +135,13 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
  */
 void mouse_motion_callback(int x, int y)
 {
+  // Move the center
   if (mouse_motion) {
     center_x += param->mouse_drag_speed() / zoom_scale * ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) - sx);
     center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) - sy);
   }
 }
+
 
 /**
  * Keeps track of the location of the pointer.
@@ -168,6 +170,7 @@ void mouse_click_callback(int button, int state, int x, int y)
 {
   // Click - left
   if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+    // Position on window in percentage
     sx = (float)x / (float)glutGet(GLUT_WINDOW_WIDTH);
     sy = -(float)y / (float)glutGet(GLUT_WINDOW_HEIGHT);
     mouse_motion = true;
