@@ -8,7 +8,7 @@ particle::particle(int i, vector<float> s, float tstep)
   ID = i;
   dt = tstep;
   orientation = 0.0;
-  controller.set_saturation(1.0);
+  controller->set_saturation(1.0);
 }
 
 vector<float> particle::state_update(vector<float> state)
@@ -17,12 +17,13 @@ vector<float> particle::state_update(vector<float> state)
   // x+ towards North
   // y+ towards East
 
-  float v_x, v_y;
-  controller.get_velocity_command(ID, v_x, v_y);
-  controller.saturate(v_x);
-  controller.saturate(v_y);
-  moving = controller.moving;
-  happy = controller.happy;
+  float v_x = 0.0;
+  float v_y = 0.0;
+  controller->get_velocity_command(ID, v_x, v_y);
+  controller->saturate(v_x);
+  controller->saturate(v_y);
+  moving = controller->moving;
+  happy = controller->happy;
 
   float vxr, vyr;
   rotate_xy(v_x, v_y, orientation, vxr, vyr);
@@ -45,6 +46,6 @@ vector<float> particle::state_update(vector<float> state)
 void particle::animation()
 {
   draw d;
-  d.draw_circle(param->scale());
-  d.draw_circle_loop(rangesensor);
+  d.circle(param->scale());
+  d.circle_loop(rangesensor);
 }

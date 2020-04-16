@@ -2,31 +2,24 @@
 #include "trigonometry.h"
 #include <cmath>
 
-void draw::draw_data()
+void draw::data()
 {
   glRasterPos2f((-3.9 / zoom_scale - center_x), (-3.9 / zoom_scale - center_y));
-  glColor3f(0, 0, 1); // Red
+  glColor3ub(255, 255, 255); // White
   stringstream ss;
   ss << "Time[s]:" << simtime_seconds;
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
 }
 
-void draw::draw_axes_text(uint8_t dim)
+void draw::axis_label()
 {
-  stringstream ss;
-
-  if (dim == 0) {
-    glRasterPos2f(3.9 / zoom_scale - center_x, 0.1 / zoom_scale);
-    ss << "E";
-  } else if (dim == 1) {
-    glRasterPos2f(0.1 / zoom_scale, 3.9 / zoom_scale - center_y);
-    ss << "N";
-  }
-
-  glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
+  glRasterPos2f(3.9 / zoom_scale - center_x, 0.1 / zoom_scale);
+  glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)string("E").c_str());
+  glRasterPos2f(0.1 / zoom_scale, 3.9 / zoom_scale - center_y);
+  glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)string("N").c_str());
 }
 
-void draw::draw_agent_number(uint8_t ID)
+void draw::agent_number(const uint8_t &ID)
 {
   glRasterPos2f(-0.01, 0.035);
   glColor3f(1.0, 1.0, 1.0); // Background color
@@ -36,12 +29,12 @@ void draw::draw_agent_number(uint8_t ID)
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)ss.str().c_str());
 }
 
-void draw::draw_triangle(double scl)
+void draw::triangle(const float &scl)
 {
   glPushMatrix();
 
   glBegin(GL_POLYGON);
-  glColor3ub(255, 000, 000); // Red
+  glColor3ub(200, 000, 000); // Red
   glVertex2f(-1 * scl,  1 * scl);
   glVertex2f(-1 * scl, -1 * scl);
   glVertex2f(2.0 * scl,  0 * scl);
@@ -51,14 +44,14 @@ void draw::draw_triangle(double scl)
   glPopMatrix();
 }
 
-void draw::draw_circle(double d)
+void draw::circle(const float &d)
 {
-  double angle, x, y;
+  float angle, x, y;
   glPushMatrix();
   glBegin(GL_POLYGON);
-  glColor3ub(255, 000, 000); // Red
-  for (int i = 0; i <= 100; i++) {
-    angle = 2 * M_PI * i / 100;
+  glColor3ub(200, 000, 000); // Redish
+  for (int i = 0; i <= 10; i++) { // Resolution
+    angle = 2 * M_PI * i / 10;
     x = (d * yrat) * cos(angle);
     y = (d * xrat) * sin(angle);
     glVertex2d(x, y);
@@ -69,25 +62,24 @@ void draw::draw_circle(double d)
   glPopMatrix();
 }
 
-void draw::draw_circle_loop(double r)
+void draw::circle_loop(const float &r)
 {
-  int num_segments = 100;
+  int num_segments = 30; // Resolution
   glPushMatrix();
   glLineWidth(1);
   glBegin(GL_LINE_LOOP);
-  for (int ii = 0; ii < num_segments; ii++) {
-    float theta = 2.0f * M_PI * float(ii) / float(num_segments);//get the current angle
+  for (int i = 0; i < num_segments; i++) {
+    float theta = 2.0f * M_PI * float(i) / float(num_segments);//get the current angle
     float x = r * yrat * cosf(theta);                 //calculate the x component
     float y = r * xrat * sinf(theta);                 //calculate the y component
     glVertex2d(x, y);
   }
   glEnd();
-
   glColor3ub(255, 255, 255); // White
   glPopMatrix();
 }
 
-void draw::draw_line(float x, float y)
+void draw::line(const float &x, const float &y)
 {
   glPushMatrix();
   glLineWidth(2.5);
@@ -99,7 +91,7 @@ void draw::draw_line(float x, float y)
   glPopMatrix();
 }
 
-void draw::draw_point()
+void draw::point()
 {
   glPointSize(10.0);
   glBegin(GL_POINTS);
@@ -107,59 +99,63 @@ void draw::draw_point()
   glEnd();
 }
 
-void draw::draw_axes()
+void draw::axes()
 {
-  float lineintensity = 0.9;
-  glLineWidth(2.5);
-
+  float lineintensity = 1.0;
+  glLineWidth(0.5);
   glBegin(GL_LINES);
+  glLineStipple(1, 0xAAAA);  // [1]
+  glEnable(GL_LINE_STIPPLE);
   glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
   glVertex3f(-1000,  0.0, 0.0);
   glVertex3f(1000.0,  0.0, 0.0);
   glEnd();
 
   glBegin(GL_LINES);
+  glLineStipple(1, 0xAAAA);  // [1]
+  glEnable(GL_LINE_STIPPLE);
   glColor3ub(255 * lineintensity, 255 * lineintensity, 255 * lineintensity); // white
   glVertex3f(0.0, -1000.0, 0.0);
   glVertex3f(0.0,  1000.0, 0.0);
   glEnd();
+  glPopAttrib();
 }
 
-void draw::draw_segment(float x0, float y0, float x1, float y1)
+void draw::segment(const float &x0, const float &y0, const float &x1, const float &y1)
 {
-  glLineWidth(2.5);
+  glLineWidth(5);
   float lineintensity = 1.0;
   glBegin(GL_LINES);
-  glColor3ub(128 * lineintensity, 128 * lineintensity, 200 * lineintensity); // white
+  glColor3ub(128 * lineintensity, 128 * lineintensity, 128 * lineintensity); // white
   glVertex3f(x0 * xrat, y0 * yrat, 0.0);
   glVertex3f(x1 * xrat, y1 * yrat, 0.0);
   glEnd();
 }
 
-void draw::draw_agent(uint8_t ID, float x, float y, float orientation)
+void draw::agent(const uint8_t &ID, const float &x, const float &y, const float &orientation)
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
   glRotatef(90.0 - rad2deg(orientation), 0.0, 0, 1);
   s[ID]->animation(); // Uses the animation function defined by the agent in use
-  draw_agent_number(ID);
+  agent_number(ID);
   glPopMatrix();
 }
 
-void draw::draw_velocity_arrow(uint8_t ID, float x, float y, float z, float v_x, float v_y)
+void draw::velocity_arrow(const uint8_t &ID, const float &x, const float &y, const float &v_x, const float &v_y)
 {
   glPushMatrix();
-  glTranslatef(y * xrat, x * yrat, z); // ENU to NED
+  glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
   glRotatef(90.0, 0.0, 0.0, 1.0);
-  draw_line(v_x, v_y);
+  line(v_x, v_y);
   glPopMatrix();
 }
 
-void draw::draw_centroid(float x, float y, float z)
+void draw::centroid(const float &x, const float &y)
 {
   glPushMatrix();
-  glTranslatef(y, x, z);
+  glTranslatef(y, x, 0.0);
   glRotatef(90, 0.0, 0.0, 1.0);
-  draw_point();
+  point();
   glPopMatrix();
 }

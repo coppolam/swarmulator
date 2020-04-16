@@ -1,5 +1,5 @@
-#ifndef AGENTTHREAD_H
-#define AGENTTHREAD_H
+#ifndef AGENT_THREAD_H
+#define AGENT_THREAD_H
 
 #include <numeric>
 #include <string>
@@ -14,6 +14,7 @@
 #include "includes_agents.h" // Include all agents here
 #include "environment.h"
 #include "terminalinfo.h"
+#include "auxiliary.h"
 
 /**
  * Update the agent simulation
@@ -24,33 +25,38 @@
 void run_agent_simulation_step(const int &ID, ofstream &logfile)
 {
   // Update the position of the agent in the simulation
-  // Lock mutex to avoid conflicts
-  auto start = chrono::steady_clock::now();
-  mtx.lock();
-  vector<float> s_n = s.at(ID)->state_update(s.at(ID)->state);
-  vector<float> test = s_n;
-  test[0] += 20 * s_n[2]; // Gross prediction margin ahead as safety margin
-  test[1] += 20 * s_n[3];
-  if (!environment.sensor(ID, s.at(ID)->state, test)) {
-    s.at(ID)->state = s_n;
-  } else {
-    // TODO: Provide different options?!
-    s.at(ID)->state[2] = 0.0;
-    s.at(ID)->state[3] = 0.0;
-    s.at(ID)->state[4] = 0.0;
-    s.at(ID)->state[5] = 0.0;
-  }
+  // auto start = chrono::steady_clock::now();
+  mtx.lock(); // Lock mutex to avoid conflicts
+  vector<float> s_n = s.at(ID)->state_update(s.at(ID)->state); // State update
   mtx.unlock();
-  auto end = chrono::steady_clock::now();
-  auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-#ifdef LOGGER
-  char a[20];
-  sprintf(a, "%ld\n", test);
-  logfile << a;
-#endif
+  /****** Wall physics engine ********/
+  // Check if hitting a wall
+  vector<float> test = s_n;
+  float r_temp, ang_temp, vx_temp, vy_temp;
+  cart2polar(s_n[2], s_n[3], r_temp, ang_temp); // direction of velocity
+  polar2cart(2, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
+  test[0] += vx_temp;
+  test[1] += vy_temp;
+  if (!environment.sensor(ID, s.at(ID)->state, test, ang_temp)) { // No wall --> Update the dynamics
+    mtx.lock(); // Lock mutex to avoid conflicts
+    s.at(ID)->state = s_n;
+    mtx.unlock();
+  } else { // Wall! --> Kill the dynamics
+    mtx.lock();
+    s.at(ID)->state[2] = 0.0; // v_x
+    s.at(ID)->state[3] = 0.0; // v_y
+    s.at(ID)->state[4] = 0.0; // a_x
+    s.at(ID)->state[5] = 0.0; // a_y
+    s.at(ID)->controller->moving = false; // Not moving
+    mtx.unlock();
+  }
+  /**********************************/
+  // auto end = chrono::steady_clock::now();
+  // auto duration = chrono::duration_cast<chrono::microseconds>(end - start).count();
+
   // Wait according to defined frequency (subtract execution time)
-  int t_wait = (int)1e9 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor())) - duration;
-  this_thread::sleep_for(chrono::nanoseconds(t_wait));
+  int t_wait = (int)1e6 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
+  this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 
 /**
@@ -58,7 +64,7 @@ void run_agent_simulation_step(const int &ID, ofstream &logfile)
  *
  * @param ID The ID of the agent/robot
  */
-void start_agent_simulation(int ID)
+void start_agent_simulation(const int &ID)
 {
   // Info message
   stringstream ss;
@@ -83,19 +89,14 @@ void start_agent_simulation(int ID)
  * @param x Initial position of the agent in x
  * @param y Initial position of the agent in y
  */
-void create_new_agent(int ID, float x0, float y0)
+void create_new_agent(const int &ID, const vector<float> &states)
 {
-  // Initiate a new agent at the given position
-  random_generator rg;
-  vector<float> states = {x0, y0, 0.0, 0.0, 0.0, 0.0, rg.uniform_float(-M_PI, M_PI), 0.0}; // Initial positions/states
+  // Initiate a new agent
+  mtx.lock();
   s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
-  nagents++; // Increase agent counter
+  mtx.unlock();
 
-  // Wait a bit before animating the new agent
-  this_thread::sleep_for(chrono::microseconds(1000));
-
-  // Initate and detach the threads
   thread agent(start_agent_simulation, ID); // Initiate the thread that controls the agent
   agent.detach(); // Detach thread so that it runs independently
 }
-#endif /*AGENTTHREAD_H*/
+#endif /*AGENT_THREAD_H*/

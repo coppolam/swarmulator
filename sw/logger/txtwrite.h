@@ -26,7 +26,6 @@ class txtwrite
 {
 public:
   string filename;
-
   txtwrite();
 
   /**

@@ -23,9 +23,9 @@ struct indexed_array {
  */
 class OmniscientObserver
 {
-public:
   random_generator rg;
 
+public:
   /**
    * Constructor
    */
@@ -40,10 +40,9 @@ public:
    * Get a vector of the closest neighbors, in order from closest to furthest.
    *
    * @param ID The ID of the robot that is performing the request
-   *
-   * @return A vector of the IDs of all the neighbors, from closest to furthest.
+   * @return vector<uint> A vector of the IDs of all the neighbors, from closest to furthest.
    */
-  vector<uint> request_closest(uint8_t ID); // request IDs of closest k neighbours and for your ID
+  vector<uint> request_closest(const uint8_t &ID); // request IDs of closest k neighbours and for your ID
 
   /**
    * @brief Get the closest within a range
@@ -53,10 +52,9 @@ public:
    *
    * @param ID The ID of the robot that is performing the request
    * @param range The maximum range that the agent can sense
-   *
-   * @return A vector of the IDs of all the neighbors within the range, from closest to furthest.
+   * @return vector<uint> A vector of the IDs of all the neighbors within the range, from closest to furthest.
    */
-  vector<uint> request_closest_inrange(uint8_t ID, float range);
+  vector<uint> request_closest_inrange(const uint8_t &ID, const float &range);
 
   /**
    * Get the relative distance between two agents along x or y
@@ -64,67 +62,60 @@ public:
    * @param ID The ID of the robot that is performing the request
    * @param ID_tracked The ID of the robot to be sensed
    * @param dim The dimension along which we measure the distance (x or y)
-   *
    * @return The distance from robot ID to robot ID_tracked along the dimension dim
    */
-  float request_distance_dim(uint8_t ID, uint8_t ID_tracked, uint8_t dim);
+  float request_distance_dim(const uint8_t &ID, const uint8_t &ID_tracked, const uint8_t &dim);
 
   /**
    * Get the relative distance between two agents
    *
    * @param ID The ID of the robot that is performing the request
    * @param ID_tracked The ID of the robot to be sensed
-   *
-   * @return The distance from robot ID to robot ID_tracked
+   * @return float The distance from robot ID to robot ID_tracked
    */
-  float request_distance(uint8_t ID, uint8_t ID_tracked);
+  float request_distance(const uint8_t &ID, const uint8_t &ID_tracked);
 
   /**
    * Get the relative bearing between two agents
    *
    * @param ID The ID of the robot that is performing the request
    * @param ID_tracked The ID of the robot to be sensed
-   *
-   * @return The angle from robot ID to robot ID_tracked in radians
+   * @return float The angle from robot ID to robot ID_tracked in radians
    */
-  float request_bearing(uint8_t ID, uint8_t ID_tracked);
+  float request_bearing(const uint8_t &ID, const uint8_t &ID_tracked);
 
   /**
    * Checks that the graph is connected
    *
    * @param range range of the relative sensing between robots
-   *
-   * @return Returns true if the swarm is connected, considering that the robots have relative sensing with a given range.
+   * @return bool Returns true if the swarm is connected, considering that the robots have relative sensing with a given range.
    */
-  bool connected_graph_range(float range);
+  bool connected_graph_range(const float &range);
 
   /**
    * Returns the centroid of the swarm along the dimension dim (0=East, 1=North)
    *
    * @param dim Dimension of interest
-   *
-   * @return The position of the centroid along the dimension dim
+   * @return float The position of the centroid along the dimension dim
    */
-  float get_centroid(uint8_t dim);
+  float get_centroid(const uint8_t &dim);
 
   /**
    * Gets the current orientation of the robot
    *
    * @param ID The ID of the robot
-   *
-   * @return The orientation of the robot (in radians)
+   * @return float The orientation of the robot (in radians)
    */
-  float own_bearing(uint8_t ID);
+  float own_bearing(const uint8_t &ID);
 
   /**
    * @brief This function returns true if the agent with the specified ID is declared as moving
    * It is used to simulate the fact that a robot may detect motion by another robot
    *
    * @param ID Gets a local state of the robot that declares whether it is active or not
-   *
-   * @return Returns true if the robot is moving.
+   * @return bool Returns true if the robot is moving.
    */
-  bool see_if_moving(uint8_t ID);
+  bool see_if_moving(const uint8_t &ID);
 
   /**
    * @brief This function returns whether all the agents in the swarm are in a desired local state
@@ -136,6 +127,8 @@ public:
    *  - The PageRank algorithm as a method to optimize swarm behavior through local analysis
    *    M. Coppola, J. Guo, E. Gill & G. C. H. E. de Croon. Swarm Intelligence, Volume 13, Pages 277–319. (2019)
    *    https://link.springer.com/article/10.1007/s11721-019-00172-z
+   *
+   * @return bool True if happy, false if not happy
    */
   bool check_happy(void);
 
@@ -147,7 +140,16 @@ public:
    * @param r List or ranges to neighbors within the range sensor (output)
    * @param b Bearing to neighbors (output)
    */
-  void request_relative_location_inrange(uint8_t ID, float range, vector<float> &r, vector<float> &b);
+  void relative_location_inrange(const uint8_t ID, const float range, vector<float> &r, vector<float> &b);
+
+  /**
+   * @brief Relative location to all robots
+   *
+   * @param ID
+   * @param r
+   * @param b
+   */
+  void relative_location(const uint8_t ID, vector<float> &r, vector<float> &b);
 };
 
 #endif /*OMNISCIENT_OBSERVER_H*/

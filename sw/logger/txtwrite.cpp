@@ -5,9 +5,7 @@
 #include "agent.h"
 #include "main.h"
 
-txtwrite::txtwrite()
-{
-}
+txtwrite::txtwrite() {}
 
 void txtwrite::setfilename(const string &s)
 {
@@ -20,7 +18,7 @@ void txtwrite::txtwrite_state(ofstream &logfile)
   t << simtime_seconds;
   vector<Agent *> state_buff = s;
 
-  for (uint8_t i = 0; i < nagents; i++) {
+  for (uint8_t i = 0; i < s.size(); i++) {
     logfile << t.str() << " " // time
             << i + 1 << " "; // ID
     // log states

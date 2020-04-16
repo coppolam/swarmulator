@@ -17,6 +17,9 @@ using namespace std;
  */
 class Controller
 {
+protected:
+  OmniscientObserver o;
+  random_generator rg;
 
 public:
   /**
@@ -28,7 +31,6 @@ public:
    * Destructor
    */
   ~Controller() {};
-
   float _ddes_x; // Desired equilibrium distance_x
   float _ddes_y; // Desired equilibrium distance_y
   float _kr; // Repulsion gain
@@ -54,6 +56,15 @@ public:
   void saturate(float &f);
 
   /**
+   * Attraction function
+   * This is defined here since it is a basic behavior for collision avoidance
+   * which many higher level controllers may want to use, although it does not have to be.
+   * @param u Distance to neighbor
+   * @return float Attraction speed
+   */
+  float f_attraction(float u);
+
+  /**
    * Repulsion function.
    * This is defined here since it is a basic behavior for collision avoidance
    * which many higher level controllers may want to use, although it does not have to be.
@@ -62,6 +73,33 @@ public:
    * @return Repulsion velocity component
    */
   float f_repulsion(float u);
+
+  /**
+   * Implementation of lattice behavior.
+   *
+   * @param ID
+   * @param state_ID
+   * @param v_x
+   * @param v_y
+   */
+  void get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y);
+
+  /**
+   * @brief Get the lattice motion all object
+   *
+   * @param ID
+   * @param v_x
+   * @param v_y
+   */
+  void get_lattice_motion_all(const int &ID, float &v_x, float &v_y);
+
+  /**
+   * @brief Get the attraction velocity object
+   *
+   * @param u
+   * @return float
+   */
+  float get_attraction_velocity(float u);
 
   /**
    * Virtual function to be implemented by child class that defines the controller
@@ -80,7 +118,7 @@ public:
    * @param v_x The desired velocity in v_x (amended in this function)
    * @param v_y The desired velocity in v_y (amended in this function)
    */
-  void wall_avoidance(uint8_t ID, float &v_x, float &v_y);
+  void wall_avoidance(const uint8_t ID, float &v_x, float &v_y);
 };
 
 

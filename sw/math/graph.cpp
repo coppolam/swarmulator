@@ -1,6 +1,6 @@
 #include "graph.h"
 
-/*
+/**
  * Add Edge to connect v and w
  */
 void Graph::addEdge(int v, int w)
@@ -9,7 +9,7 @@ void Graph::addEdge(int v, int w)
   adj[w].push_back(v);
 }
 
-/*
+/**
  *  A recursive function to print BFS starting from s
  */
 void Graph::BFS(int s, bool visited[])
@@ -30,7 +30,7 @@ void Graph::BFS(int s, bool visited[])
   }
 }
 
-/*
+/**
  * Function that returns reverse (or transpose) of this graph
  */
 Graph Graph::getTranspose()
@@ -45,7 +45,7 @@ Graph Graph::getTranspose()
   return g;
 }
 
-/*
+/**
  * Check if Graph is Connected
  */
 bool Graph::isConnected()

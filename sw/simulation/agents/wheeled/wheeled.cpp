@@ -13,11 +13,11 @@ vector<float> wheeled::state_update(vector<float> state)
 {
   float leftwheelspeed, rightwheelspeed;
 
-  controller.get_velocity_command(ID, leftwheelspeed, rightwheelspeed);
-  controller.saturate(leftwheelspeed);
-  controller.saturate(rightwheelspeed);
-  moving = controller.moving;
-  happy = controller.happy;
+  controller->get_velocity_command(ID, leftwheelspeed, rightwheelspeed);
+  controller->saturate(leftwheelspeed);
+  controller->saturate(rightwheelspeed);
+  moving = controller->moving;
+  happy = controller->happy;
 
   // Model
   float v_x = r / 2 * leftwheelspeed + r / 2 * rightwheelspeed;
@@ -46,6 +46,6 @@ vector<float> wheeled::state_update(vector<float> state)
 void wheeled::animation()
 {
   draw d;
-  d.draw_triangle(param->scale());
-  d.draw_circle_loop(rangesensor);
+  d.triangle(param->scale());
+  d.circle_loop(rangesensor);
 }

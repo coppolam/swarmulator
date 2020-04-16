@@ -7,17 +7,29 @@
 #include <string>
 #include <random>
 #include <algorithm> // std::transform
-
 #include <map>
 #include <fstream>
 #include <sstream>
 #include <random>
 #include <iterator>
-#include "terminalinfo.h"
 #include <stdio.h>
+#include "terminalinfo.h"
 #include "fmat.h"
 
 using namespace std;
+
+/**
+ * @brief Returns whether a number is positive or negative as a float +1, 0, -1
+ *
+ * @param x
+ * @return float
+ */
+inline static float sign(float x)
+{
+  if (x > 0) { return 1; }
+  if (x < 0) { return -1; }
+  return 0;
+}
 
 /**
  * Increase a counter by 1, or reset to 1 if above a given limit
@@ -35,17 +47,33 @@ inline static void increase_counter(uint &counter, const uint &limit)
 }
 
 /**
+ * Increase a counter by 1, or reset to a value if above a given limit
+ *
+ * @param counter The counter value (uint). This will be increased by one.
+ * @param limit The limit of the counter. If this is passed. Then counter = 1.
+ */
+inline static void increase_counter_to_value(uint &counter, const uint &limit, const uint &reset_value)
+{
+  if (counter > limit) {
+    counter = reset_value;
+  } else {
+    counter++;
+  }
+}
+
+
+/**
  * Convert an 8bit boolean vector to an unsigned integer
  * TODO: Add check for vector length
  *
  * @param t An 8 bit boolean vector
  * @return Integer value of the boolean vector
  */
-inline static int bool2int(vector<bool> t)
+inline static uint bool2int(vector<bool> t)
 {
-  int n = 0; //Initialize
-  for (int i = 0; i < 8; i++) {
-    n += (int)t[i] * (int)pow(2, 7 - i);
+  uint n = 0; //Initialize
+  for (uint i = 0; i < t.size(); i++) {
+    n += (uint)t[i] * (uint)pow(2, t.size() - 1 - i);
   }
   return n;
 }
@@ -156,18 +184,52 @@ inline static std::vector<std::vector<float>> read_matrix(const string filename)
       rows++;
     }
   } else {
-    terminalinfo::warning_msg("Environment file not loaded.");
+    terminalinfo::error_msg("Environment file not loaded.");
   }
   return matrix;
 }
 
+/**
+ * Read an array from a txt file
+ *
+ * @param filename = name of file
+ */
+inline static std::vector<float> read_array(const string filename)
+{
+  ifstream in(filename);
+  std::string line;
+  std::vector<float> array;
+  if (in.is_open()) {
+    std::getline(in, line);
+    std::stringstream ss(line);
+    float value;
+    while (ss >> value) {
+      array.push_back(value);
+    }
+  } else {
+    terminalinfo::error_msg("Environment file not loaded.");
+  }
+  return array;
+}
+
+/**
+ * 2D Point class use for the functions below
+ *
+ */
 struct Point {
   float x;
   float y;
 };
 
-// Given three colinear points p, q, r, the function checks if
-// point q lies on line segment 'pr'
+/**
+ * Given three colinear points p, q, r, the function checks if point q lies on line segment 'pr'
+ *
+ * @param p
+ * @param q
+ * @param r
+ * @return true
+ * @return false
+ */
 inline static bool onSegment(Point p, Point q, Point r)
 {
   if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) &&
@@ -178,11 +240,18 @@ inline static bool onSegment(Point p, Point q, Point r)
   return false;
 }
 
-// To find orientation of ordered triplet (p, q, r).
-// The function returns following values
-// 0 --> p, q and r are colinear
-// 1 --> Clockwise
-// 2 --> Counterclockwise
+/**
+ * Function to find orientation of ordered triplet (p, q, r).
+ * The function returns following values
+ * 0 --> p, q and r are colinear
+ * 1 --> Clockwise
+ * 2 --> Counterclockwise
+ *
+ * @param p
+ * @param q
+ * @param r
+ * @return int
+ */
 inline static int orientation(Point p, Point q, Point r)
 {
   // See https://www.geeksforgeeks.org/orientation-3-ordered-points/
@@ -195,8 +264,16 @@ inline static int orientation(Point p, Point q, Point r)
   return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
 
-// The main function that returns true if line segment 'p1q1'
-// and 'p2q2' intersect.
+/**
+ * Returns true if line segment 'p1q1' and 'p2q2' intersect, false otherwise.
+ *
+ * @param p1 Start segment 1
+ * @param q1 End segment 1
+ * @param p2 Start segment 2
+ * @param q2 End segment 2
+ * @return true Lines intersect
+ * @return false Lines do not intersect
+ */
 inline static bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 {
   // Find the four orientations needed for general and

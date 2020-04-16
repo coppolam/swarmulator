@@ -3,18 +3,13 @@
 #include "trigonometry.h"
 #include <algorithm> // std::find
 
-Template_Calculator::Template_Calculator()
+Template_Calculator::Template_Calculator(uint spacing)
 {
+  sp = spacing;
   // Angles to check for neighboring links
-  blink.push_back(0);
-  blink.push_back(M_PI / 4.0);
-  blink.push_back(M_PI / 2.0);
-  blink.push_back(3 * M_PI / 4.0);
-  blink.push_back(M_PI);
-  blink.push_back(deg2rad(180 + 45));
-  blink.push_back(deg2rad(180 + 90));
-  blink.push_back(deg2rad(180 + 135));
-  blink.push_back(2 * M_PI);
+  for (size_t i = 0; i <= sp; i++) {
+    blink.push_back(2. * M_PI * (float)i / (float)sp);
+  }
 };
 
 void Template_Calculator::set_state_action_matrix(string filename)
@@ -59,7 +54,7 @@ bool Template_Calculator::fill_template(vector<bool> &q, const float &b_i, const
   // Determine link (cycle through all options)
   if (u < dmax) { // If in range of sensor
     for (int j = 0; j < (int)blink.size(); j++) { // For all angle options
-      if (abs(b_i - blink[j]) < deg2rad(angle_err)
+      if (abs(b_i - blink[j]) < angle_err
           && !q[j]) {   // If in the right angle and not already taken by another agent
         if (j == (int)blink.size() - 1) { // last element is back to 0
           j = 0;
@@ -117,16 +112,16 @@ float Template_Calculator::get_preferred_bearing(const vector<float> &bdes, cons
 void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID)
 {
   q.clear();
-  q.assign(8, false);
+  q.assign(sp, false);
   q_ID.clear();
 
   // Fill the template with respect to the agent in question
   vector<uint> closest = o.request_closest(ID);
-  for (uint8_t i = 0; i < nagents - 1; i++) {
+  for (uint8_t i = 0; i < s.size() - 1; i++) {
     if (fill_template(q, // Vector to fill
                       wrapTo2Pi_f(o.request_bearing(ID, closest[i])), // Bearing
                       o.request_distance(ID, closest[i]), // Distance
-                      rangesensor, 22.5)) { // Sensor range, bearing precision
+                      rangesensor, M_PI / (float)sp)) { // Sensor range, bearing precision
       // Use higher values of bearing sensor to handle higher noise values (even if there is overlap)
       q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }

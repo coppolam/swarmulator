@@ -5,7 +5,7 @@
 
 #include "main.h"
 #include "draw.h"
-#include "mousefunctions.h"
+#include "user_interaction.h"
 #include "terminalinfo.h"
 #include "trigonometry.h"
 
@@ -29,39 +29,28 @@ void main_loop_function()
   // Get current window size w.r.t. beginning
   xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
   yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
-  mouse_draganddrop(); // Activate mouse functions
+  user_interaction(); // Activate interactive functions (mouse + keyboard), important: use this before draw functions!
 
   // Draw fixed one time objects
-  drawer.draw_data(); // Put data in corner
-  drawer.draw_axes(); // Put x and y global axes
+  drawer.data(); // Put data in corner
+  drawer.axes(); // Put x and y global axes
+  drawer.axis_label(); // Axis label
+  environment.animate(); // Animate the environment walls
 
-  for (int i = 0; i < 3; i++) {
-    drawer.draw_axes_text(i);
-  }
-
-  environment.animate();
-
-  // Draw all agents
-  for (uint8_t ID = 0; ID < nagents; ID++) {
-    // Rotate local frame velocity (in state) to global frame
-    drawer.draw_agent(ID,
-                      s[ID]->state.at(0), // p_x global
-                      s[ID]->state.at(1), // p_y global
-                      s[ID]->orientation); // orientation global
-    drawer.draw_velocity_arrow(ID,
-                               s[ID]->state.at(0), // p_x global
-                               s[ID]->state.at(1), // p_y global
-                               0.0, // p_z global
-                               s[ID]->state.at(2),  // v_x global
-                               s[ID]->state.at(3)); // v_y global
+  // Draw all robots
+  for (uint8_t ID = 0; ID < s.size(); ID++) {
+    // Input: ID, p_x global, p_y global, orientation global
+    drawer.agent(ID, s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->orientation);
+    // Input: ID, p_x global, p_y global, v_x global, v_y global
+    drawer.velocity_arrow(ID,  s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->state.at(2), s[ID]->state.at(3));
   }
 
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();
 
-  // Wait until the next time-step according to the update frequency parameter
-  int t_wait = (int) 1000.0 * (1.0 / param->animation_updatefreq());
-  this_thread::sleep_for(chrono::milliseconds(t_wait));
+  // Sleep until the next time-step according to the update frequency parameter
+  int t_wait = 10e6 / param->animation_updatefreq();
+  this_thread::sleep_for(chrono::microseconds(t_wait));
 }
 
 /**

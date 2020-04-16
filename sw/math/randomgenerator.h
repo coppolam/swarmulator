@@ -58,6 +58,8 @@ public:
    */
   bool bernoulli(float p);
 
+  int discrete_int(vector<float> &d);
+
   /**
    * Generate a random vector with zero mean from a gaussian distribution
    *
@@ -75,6 +77,7 @@ public:
    * @param max Maximum value in range
    */
   vector<float> uniform_float_vector(const int &length, const float &min, const float &max);
+
 };
 
 

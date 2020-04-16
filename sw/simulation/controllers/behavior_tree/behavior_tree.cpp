@@ -7,28 +7,6 @@
 // #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
 #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
 
-float behavior_tree::f_attraction(float u)
-{
-  //% Sigmoid function -- long-range
-  float ddes = 1.5;
-  float w = log((ddes / _kr - 1) / exp(-_ka * ddes)) / _ka;
-  return 1 / (1 + exp(-_ka * (u - w)));
-}
-
-float behavior_tree::get_attraction_velocity(float u)
-{
-  return f_attraction(u) + f_repulsion(u);
-}
-
-void behavior_tree::get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y)
-{
-  float v_b, v_r;
-  v_b = wrapToPi_f(o.request_bearing(ID, state_ID));
-  v_r = get_attraction_velocity(o.request_distance(ID, state_ID));
-  v_x += v_r * cos(v_b);
-  v_y += v_r * sin(v_b);
-}
-
 void behavior_tree::lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y)
 {
   if (!closest.empty()) {

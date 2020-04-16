@@ -12,9 +12,27 @@ inline static float mean_number_of_neighbors()
 {
   float f = 0.;
   OmniscientObserver o;
-  for (size_t ID = 0; ID < nagents; ID++) {
+  for (size_t ID = 0; ID < s.size(); ID++) {
     vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
-    f += (float)closest.size() / (float)nagents;
+    f += (float)closest.size() / (float)s.size();
+  }
+  return f;
+}
+
+/**
+ * Mean distance to all
+ *
+ * @return float the mean distance between all robots
+ */
+inline static float mean_dist_to_all()
+{
+  float f = 0.;
+  OmniscientObserver o;
+  for (size_t ID = 0; ID < s.size(); ID++) {
+    vector<float> r, b;
+    o.relative_location(ID, r, b);
+    float r_mean = accumulate(r.begin(), r.end(), 0.0) / r.size();
+    f += (float)r_mean / (float)s.size();
   }
   return f;
 }
@@ -22,17 +40,17 @@ inline static float mean_number_of_neighbors()
 /**
  * Mean distance to neighbors
  *
- * @return float the mean distance between all neighbors
+ * @return float the mean distance between neighboring robots
  */
 inline static float mean_dist_to_neighbors()
 {
   float f = 0.;
   OmniscientObserver o;
-  for (size_t ID = 0; ID < nagents; ID++) {
+  for (size_t ID = 0; ID < s.size(); ID++) {
     vector<float> r, b;
-    o.request_relative_location_inrange(ID, rangesensor, r, b);
+    o.relative_location_inrange(ID, rangesensor, r, b);
     float r_mean = accumulate(r.begin(), r.end(), 0.0) / r.size();
-    f += (float)r_mean / (float)nagents;
+    f += (float)r_mean / (float)s.size();
   }
   return f;
 }
@@ -40,22 +58,21 @@ inline static float mean_dist_to_neighbors()
 /**
  * Mean distance to neighbors
  *
- * @return float the mean distance between all neighbors
+ * @return float the mean distance to all neighbors that a robot has
  */
 inline static float mean_dist_to_one_neighbor(uint8_t ID_tracked)
 {
   float f = 0.;
   OmniscientObserver o;
-  for (size_t ID = 0; ID < nagents; ID++) {
-    f += o.request_distance(ID, ID_tracked) / (float)nagents;
+  for (size_t ID = 0; ID < s.size(); ID++) {
+    f += o.request_distance(ID, ID_tracked) / (float)s.size();
   }
   return 1 / f;
 }
 
 /**
  * Connectivity
- *
- * @return float returns 0.0 if the graph of the swarm is disconnected, else keeps f
+ * Change f to 0.0 if the graph of the swarm is disconnected, else keeps f
  */
 inline static void connectivity_check(float &f)
 {
@@ -63,6 +80,22 @@ inline static void connectivity_check(float &f)
   if (!(o.connected_graph_range(rangesensor))) {
     f = 0.0;
   }
+}
+
+/**
+ * Select a fitness function, or use your own if you want.
+ * TODO: Move to controllers so that its defined within a particular controller. It would be far more versatile.
+ * @return float fitness
+ */
+inline static float evaluate_fitness()
+{
+  float f;
+  // f = mean_dist_to_one_neighbor(0);
+  // f = mean_number_of_neighbors();
+  // f = mean_dist_to_neighbors();
+  f = 1. / mean_dist_to_all(); //  use 1. / for aggregation instead of separation
+  // connectivity_check(f);
+  return f;
 }
 
 #endif

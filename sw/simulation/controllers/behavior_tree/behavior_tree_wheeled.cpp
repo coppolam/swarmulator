@@ -39,7 +39,7 @@ void behavior_tree_wheeled::get_velocity_command(const uint8_t ID, float &v_x, f
   v_y = 0;
 
   vector<float> r, b;
-  o.request_relative_location_inrange(ID, rangesensor, r, b);
+  o.relative_location_inrange(ID, rangesensor, r, b);
 
   // float vmean = 1.0;
 

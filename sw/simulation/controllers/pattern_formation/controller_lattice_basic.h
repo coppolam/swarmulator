@@ -9,13 +9,12 @@ using namespace std;
 class controller_lattice_basic : public Controller
 {
 public:
-  OmniscientObserver o; // The omniscient observer is used to simulate sensing the other agents.
   Template_Calculator t;
   vector<float> beta_des;
   float _v_adj = 1; // Adjustment velocity
   float d_safe = 0.9;
 
-  controller_lattice_basic() {};
+  controller_lattice_basic(): t(4) {};
   ~controller_lattice_basic() {};
 
   void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y);

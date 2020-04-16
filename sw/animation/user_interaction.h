@@ -1,5 +1,5 @@
-#ifndef MOUSEFUNCTIONS_H
-#define MOUSEFUNCTIONS_H
+#ifndef USER_INTERACTION_H
+#define USER_INTERACTION_H
 
 #include "main.h"
 
@@ -26,9 +26,9 @@ float sy = 0;
 float zoom = 0;
 float zoom_scale = 0;
 float pointer_x, pointer_y;
-bool paused = false;
 float xrat = 1.0;
 float yrat = 1.0;
+bool paused = false;
 bool mouse_motion = false;
 
 /**
@@ -46,33 +46,28 @@ bool mouse_motion = false;
 void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attribute__((unused)) int b)
 {
   switch (key) {
-    case 'c':
-      // Center the animation
+    case 'c': // Center the animation
       terminalinfo::info_msg("Recentering Animation.");
       center_x = 0;
       center_y = 0;
       break;
-    case 'z':
-      // Reset the zoom to the default value
+    case 'z': // Reset the zoom to the default value
       terminalinfo::info_msg("Resetting zoom.");
       zoom = 0;
       break;
-    case 'q':
-      // End the simulation and quit
+    case 'q': // End the simulation and quit
       terminalinfo::info_msg("Quitting Swarmulator.");
       mtx.try_lock();
       program_running = false;
       break;
-    case 'p':
-      // Pause the simulation
+    case 'p': // Pause the simulation
       if (!paused) {
         terminalinfo::info_msg("Paused. Press `r' to resume or `s' to step forward.");
         mtx.try_lock();
         paused = true;
       }
       break;
-    case 'r':
-      // Resume the simulation (if paused)
+    case 'r': // Resume the simulation (if paused)
       if (paused) {
         terminalinfo::info_msg("Resuming.");
         mtx.unlock();
@@ -80,28 +75,25 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       }
       s[0]->manual = false;
       break;
-    case 's':
-      // Step through the simulation. Very useful for debugging or analyzing what's going on.
+    case 's': // Step through the simulation. Very useful for debugging or analyzing what's going on.
       terminalinfo::info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
       int t_wait;
       mtx.try_lock();
       mtx.unlock();
-      t_wait = (int)1e9 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
-      this_thread::sleep_for(chrono::nanoseconds(t_wait));
+      t_wait = (int)1e6 * (1.0 / (param->simulation_updatefreq() * param->simulation_realtimefactor()));
+      this_thread::sleep_for(chrono::microseconds(t_wait));
       mtx.lock();
       paused = true;
       break;
-    case 'a':
-      // Draw and simulate a new agent, initialized at the current pointer position
+    case 'a': // Draw and simulate a new agent, initialized at the current pointer position
       if (!paused) {
         terminalinfo::info_msg("Drawing new agent.");
-        mtx.lock();
-        create_new_agent(nagents, pointer_y, pointer_x);
-        mtx.unlock();
+        random_generator rg;
+        vector<float> states = {pointer_y, pointer_x, 0.0, 0.0, 0.0, 0.0, rg.uniform_float(-M_PI, M_PI), 0.0}; // Initial positions/states
+        create_new_agent(s.size(), states);
         break;
       }
-    case 'm':
-      // Toggle the real time parameter between 1 and default, so as to better understand what's going on
+    case 'm': // Toggle the real time parameter between 1 and default, so as to better understand what's going on
       terminalinfo::info_msg("Toggle realtime factor between 1 and the specified value.");
       if (param->simulation_realtimefactor() != 1) {
         realtimefactor = param->simulation_realtimefactor();
@@ -110,14 +102,13 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
         param->simulation_realtimefactor() = realtimefactor;
       }
       break;
-    case '1':
+    case '1': // Turn the agent with 0.1 rad/s
       s[0]->manualpsi_delta = 0.1;
       break;
-    case '2':
+    case '2': // Turn the agent with -0.1 rad/s
       s[0]->manualpsi_delta = -0.1;
       break;
-    case 'n':
-      // Quit and restart swarmulator
+    case 'n': // Quit and restart swarmulator
       mtx.try_lock();
       terminalinfo::info_msg("Restarting.");
       stringstream ss;
@@ -125,8 +116,8 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       system(ss.str().c_str());
       break;
   }
-
 }
+
 /**
  * Detects the mouse motion and adjusts the center of the animation
  *
@@ -141,7 +132,6 @@ void mouse_motion_callback(int x, int y)
     center_y += param->mouse_drag_speed() / zoom_scale * (-(float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) - sy);
   }
 }
-
 
 /**
  * Keeps track of the location of the pointer.
@@ -180,24 +170,27 @@ void mouse_click_callback(int button, int state, int x, int y)
     mouse_motion = false;
   }
 
-  // Click - right
+  // Click - right (press down)
   if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+    // Start position of the new wall
     wall_x_0 = pointer_x;
     wall_y_0 = pointer_y;
   }
 
-  // Click - right
+  // Click - right (release)
   if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+    // End position of the new wall
     float wall_x_1 = ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
     float wall_y_1 = -((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) * 8. - 4.) / (zoom_scale * yrat) - center_y;
+    // Generate new wall
     environment.add(wall_x_0, wall_y_0, wall_x_1, wall_y_1);
   }
 
   // Zoom wheel
   if (button == GLUT_WHEEL_UP) {
-    zoom +=  param->mouse_zoom_speed();
+    zoom += param->mouse_zoom_speed();
   } else if (button == GLUT_WHEEL_DOWN) {
-    zoom += -param->mouse_zoom_speed();
+    zoom -= param->mouse_zoom_speed();
   }
 
   // Guard on too much / too little zoom
@@ -232,6 +225,10 @@ void catchKey_arrow(int key, __attribute__((unused)) int a, __attribute__((unuse
     s[0]->manualx = vnominal;
     s[0]->manualy = 0;
   }
+
+  if (key == GLUT_KEY_F11) {
+    glutFullScreenToggle();
+  }
 }
 
 /**
@@ -253,9 +250,9 @@ void psi_callback_up(unsigned char key, int x, int y)
 }
 
 /**
- * mouse_draganddrop handles the drag and drop functionality.
+ * Handles the user inteactive functions, via keyboard and mouse
  */
-void mouse_draganddrop()
+void user_interaction()
 {
   glutMotionFunc(mouse_motion_callback);
   glutPassiveMotionFunc(mouse_motion_callback_passive);
@@ -268,4 +265,4 @@ void mouse_draganddrop()
   glTranslatef(center_x, center_y, -10 + zoom);
 }
 
-#endif /* MOUSEFUNCTIONS_H */
+#endif /* USER_INTERACTION_H */

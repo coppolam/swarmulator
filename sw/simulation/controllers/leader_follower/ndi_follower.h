@@ -39,8 +39,6 @@ typedef struct ndihandler {
 
 class ndi_follower : public Controller
 {
-  // The omniscient observer is used to simulate sensing the other agents.
-  OmniscientObserver o;
   ndihandler ndihandle;
   ekf_state_estimator filter;
 

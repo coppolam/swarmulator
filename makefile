@@ -27,16 +27,19 @@ ifeq ($(ANIMATION),ON)
 CFLAGS += -DANIMATION
 endif
 
-ifeq ($(LOGGER),ON)
-CFLAGS += -DLOGGER
+ifeq ($(LOG),ON)
+CFLAGS += -DLOG
+endif
+
+ifeq ($(SEQUENTIAL),ON)
+CFLAGS += -DSEQUENTIAL
 endif
 
 # General parameters to include all cpp files and all subfolders
 INC_DIRS = $(shell find sw -maxdepth 50 -type d) # Max depth 50 layers. Should be enough.
 INC_PARAMS = $(foreach d, $(INC_DIRS), -I$d) #Each include folder must have a -I before it
 INC = -I. -I$(SRC_FOLDER) -I$(BUILD_FOLDER) $(INC_PARAMS) # All include paths
-SOURCES_CPP = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp 
-SOURCES_CPP := $(filter-out sw/math/NEAT_v1.2.1/sw/%.cpp, $(SOURCES_CPP)) # Exclude NEAT if not relevant
+SOURCES_CPP = $(shell find $(SRC_FOLDER) -name *.cpp) # Recursively find all cpp
 SOURCES_C = $(shell find $(SRC_FOLDER) -name *.c) # Recursively find all cpp 
 MAKE = $(CC) $(CFLAGS) $(INC)
 OBJECTS_CPP=$(SOURCES_CPP:%.cpp=$(BUILD_FOLDER)/%.o)
@@ -60,7 +63,7 @@ $(BUILD_FOLDER)/%.o: %.cpp # This rule defines how to go from CPP file to Object
 	@mkdir -p $(@D)
 	@$(MAKE) -c $< -o $@ $(OPT);
 
-$(BUILD_FOLDER)/%.o: %.c # This rule defines how to go from CPP file to Object file (use %.c* for all files)
+$(BUILD_FOLDER)/%.o: %.c # This rule defines how to go from C file to Object file (use %.c* for all files)
 	# Compiling $<
 	@mkdir -p $(@D)
 	@gcc -g -Wall -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -std=c11 $(INC) -c $< -o $@;

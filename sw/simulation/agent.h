@@ -19,9 +19,9 @@ class Agent
 {
 public:
   /**
-   * The constructor of agent is not defined here, but in the child class.
-   * This makes it so that the agent to be used can be selected in settings.h
+   * Constructor
    */
+  Agent();
 
   /**
    * Destructor
@@ -29,6 +29,7 @@ public:
   virtual ~Agent() {};
 
   uint8_t ID; // ID of agent
+  bool activated;
   float dt;
   vector<float> state; // State vector
   float orientation; // Orientation
@@ -38,32 +39,36 @@ public:
   bool manual;
   float manualpsi_delta;
   random_generator rg;
-  CONTROLLER controller; // Controller used by the agent. Defined in settings.h.
+  Controller *controller = new CONTROLLER;
 
   /**
    * Returns the position of the agent along a certain dimension (i.e., North(0) and East(1))
    * This is used by the OmniscientObserver class in order to simulate the presence of sensors.
+   * @param dim dimension x or y
+   * @return position along x or y
    */
   float get_position(uint8_t dim);
 
   /**
-   * @brief Get the orientation object
+   * Get the orientation object
    *
    * @return float
    */
   float get_orientation();
 
   /**
-   * @brief Get the state along a given dimension
+   * Get the state along a given dimension
    *
    * @param dim dimension
    * @return float
    */
-  float get_state(uint8_t dim);
+  float get_state(const uint8_t dim);
 
   /**
    * The agent class is only the parent class of a child class that specifies the dynamics and control
    * of a given agent (robot/animal/whatever). The state_update function is handled by the child class.
+   * @param s current state vector
+   * @return next state vector
    */
   virtual vector<float> state_update(vector<float>) = 0;
 

@@ -33,6 +33,13 @@ bool random_generator::bernoulli(float p)
   return dist(generator);
 }
 
+
+int random_generator::discrete_int(vector<float> &d)
+{
+  discrete_distribution<int> dist(d.begin(), d.end());
+  return dist(generator);
+}
+
 vector<float> random_generator::gaussian_float_vector(const int &length, const float &mean, const float &std)
 {
   // Generate the random vector
@@ -44,6 +51,14 @@ vector<float> random_generator::gaussian_float_vector(const int &length, const f
   return v;
 }
 
+/**
+ * @brief
+ *
+ * @param length
+ * @param min
+ * @param max
+ * @return vector<float>
+ */
 vector<float> random_generator::uniform_float_vector(const int &length, const float &min, const float &max)
 {
   // Generate the random vector

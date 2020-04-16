@@ -20,10 +20,10 @@
 /**
  * Include top level threads
  */
-#include "main.h"               /* Contains extern defines for global variables */
-#include "simulation_thread.h"  /* Thread that handles the simulation */
-#include "animation_thread.h"   /* Thread that handles animation */
-#include "logger_thread.h"      /* Thread that handles the logger */
+#include "main.h" // Contains extern defines for global variables
+#include "simulation_thread.h" // Thread that handles the simulation
+#include "animation_thread.h" // Thread that handles animation
+#include "logger_thread.h" // Thread that handles the logger
 
 using namespace std;
 
@@ -35,15 +35,15 @@ unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::fla
 /**
  * Global variables used throughout simulation
  */
-uint nagents;                   /* Number of agents in the simulation */
-vector<Agent *> s;              /* Set up the agents */
-mutex mtx;                      /* Mutex needed to lock threads */
-float realtimefactor;           /* Real time factor of simulation */
-float simulation_time = 0;      /* Initial simulation time (fake time) */
-float simtime_seconds = 0;      /* Initial simulation time */
-float rangesensor     = 1.8;    /* How far each robot can sense */
-bool program_running  = false;  /* Program running, initiated false until the beginning */
-Environment environment;
+uint nagents; // Number of agents in the simulation
+vector<Agent *> s; // Set up the agents
+mutex mtx; // Mutex needed to lock threads
+float realtimefactor; // Real time factor of simulation
+float simtime_seconds = 0; // Initial simulation time
+float rangesensor = 1.8; // How far each robot can sense
+bool program_running  = false; // Program running, initiated false until the beginning
+Environment environment; // Environment walls
+string identifier; // Log name identifier
 
 /**
  * The main function launches separate threads that control independent

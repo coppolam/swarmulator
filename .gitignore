@@ -1,8 +1,8 @@
+conf/environments/rooms.txt
 swarmulator
 *logs*/
-conf/*.xml
 conf/*.txt
-parameters.*
+conf/environments/random.txt
 build/
 *.o
 state_action_matrix_free_test*.txt
@@ -23,3 +23,5 @@ script.sh
 docs/
 logo_small.png
 mat/
+scripts/python/*.txt
+conf/state_action_matrices/

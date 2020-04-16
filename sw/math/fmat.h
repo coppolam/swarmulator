@@ -1,30 +1,107 @@
 #ifndef FMAT_H
 #define FMAT_H
 
-#include <vector>
 #include "trigonometry.h"
 #include "auxiliary.h"
 
+/**
+ * @brief Template class for matrix operations.
+ *
+ * Header class for matrix operations. Can be invoked anywhere by using fmat<type>::function(inputs).
+ * The class uses a template type so the matrix can be any vector<type>.
+ * @tparam T
+ */
 template<typename T>
 class fmat
 {
 public:
-  static void normalize(vector<T, std::allocator<T>> &matrix, uint n_rows, uint n_cols);
-  static void normalize_larger_than_1(vector<T, std::allocator<T>> &matrix, uint n_rows, uint n_cols);
-  static void make_identity(vector<T, std::allocator<T>> &matrix, uint n);
-  static void add(uint n_row, uint n_col, vector<T, std::allocator<T>> &r, vector<T, std::allocator<T>> &a,
+  /**
+   * Normalize a matrix with n rows and m columns
+   *
+   * @param matrix
+   * @param n_rows number of rows
+   * @param n_cols number of columns
+   */
+  static void normalize(vector<T, std::allocator<T>> &matrix, const uint &n_rows, const uint &n_cols);
+
+  /**
+   * @brief Normalize all rows that are larger than 1
+   *
+   * @param matrix
+   * @param n_rows number of rows
+   * @param n_cols number of columns
+   */
+  static void normalize_larger_than_1(vector<T, std::allocator<T>> &matrix, const uint &n_rows, const uint &n_cols);
+
+  /**
+   * @brief Make an identity matrix
+   *
+   * @param matrix Matrix to make into an identity matrix
+   * @param n Size of matrix
+   */
+  static void make_identity(vector<T, std::allocator<T>> &matrix, const uint &n);
+
+  /**
+   * @brief Add two matrix
+   *
+   * @param n_row Number of rows
+   * @param n_col Number of columns
+   * @param r Output matrix = A + B
+   * @param a matrix A
+   * @param b matrix B
+   */
+  static void add(const uint &n_row, const uint &n_col, vector<T, std::allocator<T>> &r, vector<T, std::allocator<T>> &a,
                   vector<T, std::allocator<T>> &b);
-  static void print(uint n_row, uint n_col, vector<T, std::allocator<T>> &a);
-  static void mult(uint n_rowa, uint n_cola, uint n_colb, vector<T, std::allocator<T>> &r,
+
+  /**
+   * Print a matrix to the terminal
+   *
+   * @param n_row Number of rows
+   * @param n_col Number of columns
+   * @param a Matrix
+   * @param name Name of matrix (as string)
+   */
+  static void print(const uint &n_row, const uint &n_col, vector<T, std::allocator<T>> &a, string name);
+
+  /**
+   * @brief Multiply two matrixces
+   *
+   * @param n_rowa Number of rows matrix A
+   * @param n_cola Number of columns matrix A
+   * @param n_colb Number of columns matrix B
+   * @param r Output matrix = A * B
+   * @param a Matrix A
+   * @param b Matrix B
+   */
+  static void mult(const uint &n_rowa, const uint &n_cola, const uint &n_colb, vector<T, std::allocator<T>> &r,
                    vector<T, std::allocator<T>> &a, vector<T, std::allocator<T>> &b);
-  static void scal_mult(uint n_row, uint n_col, vector<T, std::allocator<T>> &r, float k,
+
+  /**
+   * Multiply a matrix by a scalar k
+   *
+   * @param n_row Number of rows
+   * @param n_col Number of columns
+   * @param r Output matrix = k * A
+   * @param k Scalar
+   * @param a Matrix A
+   */
+  static void scal_mult(const uint &n_row, const uint &n_col, vector<T, std::allocator<T>> &r, float k,
                         vector<T, std::allocator<T>> &a);
+
+  /**
+   * Write the matrix to a CSV file.
+   *
+   * @param filename Name of file
+   * @param mat Matrix
+   * @param rows Number of rows
+   * @param cols Number of columns
+   */
+  static void write_to_csv(const string &filename, const vector<T, std::allocator<T>> &mat, const uint &rows,
+                           const uint &cols);
 };
 
-// #include "fmat.h"
-
 template<class T>
-void fmat<T>::normalize(vector<T, std::allocator<T>> &matrix, uint n_rows, uint n_cols)
+void fmat<T>::normalize(vector<T, std::allocator<T>> &matrix, const uint &n_rows, const uint &n_cols)
 {
   for (uint i = 0; i < n_rows; i++) {
     float sum_of_elems = 0;
@@ -38,7 +115,7 @@ void fmat<T>::normalize(vector<T, std::allocator<T>> &matrix, uint n_rows, uint 
 }
 
 template<class T>
-void fmat<T>::normalize_larger_than_1(vector<T, std::allocator<T>> &matrix, uint n_rows, uint n_cols)
+void fmat<T>::normalize_larger_than_1(vector<T, std::allocator<T>> &matrix, const uint &n_rows, const uint &n_cols)
 {
   for (uint i = 0; i < n_rows; i++) {
     float sum_of_elems = 0;
@@ -53,7 +130,7 @@ void fmat<T>::normalize_larger_than_1(vector<T, std::allocator<T>> &matrix, uint
 
 /* Make an identity matrix */
 template<class T>
-void fmat<T>::make_identity(vector<T, std::allocator<T>> &matrix, uint n)
+void fmat<T>::make_identity(vector<T, std::allocator<T>> &matrix, const uint &n)
 {
   for (uint i = 0; i < n; i++) {
     for (uint j = 0; j < n; j++) {
@@ -68,7 +145,8 @@ void fmat<T>::make_identity(vector<T, std::allocator<T>> &matrix, uint n)
 
 /* Function to add two matrices to eachother */
 template<class T>
-void fmat<T>::add(uint n_row, uint n_col, vector<T, std::allocator<T>> &r, vector<T, std::allocator<T>> &a,
+void fmat<T>::add(const uint &n_row, const uint &n_col, vector<T, std::allocator<T>> &r,
+                  vector<T, std::allocator<T>> &a,
                   vector<T, std::allocator<T>> &b)
 {
   uint row, col, ridx;
@@ -81,21 +159,24 @@ void fmat<T>::add(uint n_row, uint n_col, vector<T, std::allocator<T>> &r, vecto
 }
 
 template<class T>
-void fmat<T>::print(uint n_row, uint n_col, vector<T, std::allocator<T>> &a)
+void fmat<T>::print(const uint &n_row, const uint &n_col, vector<T, std::allocator<T>> &a, string name)
 {
+  cout << name << " = [..." << endl;
   uint row, col, ridx;
   for (row = 0; row < n_row; row++) {
     for (col = 0; col < n_col; col++) {
       ridx = row * n_col + col;
-      printf("%2.2f \t", (float)a[ridx]);
+      cout << a[ridx];
+      printf("\t");
     }
     printf(";\n");
   }
+  cout << "];" << endl;
 }
 
 /* Multiply two matrices with eachother */
 template<class T>
-void fmat<T>::mult(uint n_rowa, uint n_cola, uint n_colb, vector<T, std::allocator<T>> &r,
+void fmat<T>::mult(const uint &n_rowa, const uint &n_cola, const uint &n_colb, vector<T, std::allocator<T>> &r,
                    vector<T, std::allocator<T>> &a, vector<T, std::allocator<T>> &b)
 {
   uint row, col, k, ridx, aidx, bidx;
@@ -113,7 +194,7 @@ void fmat<T>::mult(uint n_rowa, uint n_cola, uint n_colb, vector<T, std::allocat
 
 /* Function to multiply a matrix by a scalar value */
 template<class T>
-void fmat<T>::scal_mult(uint n_row, uint n_col, vector<T, std::allocator<T>> &r, float k,
+void fmat<T>::scal_mult(const uint &n_row, const uint &n_col, vector<T, std::allocator<T>> &r, float k,
                         vector<T, std::allocator<T>> &a)
 {
   uint row, col, ridx;
@@ -125,5 +206,23 @@ void fmat<T>::scal_mult(uint n_row, uint n_col, vector<T, std::allocator<T>> &r,
   }
 }
 
+template<class T>
+void fmat<T>::write_to_csv(const string &filename, const vector<T> &mat, const uint &rows, const uint &cols)
+{
+  ofstream file;
+  file.open(filename.c_str());
+  file << "#" << filename << "\n";
+  for (uint8_t i = 0; i < rows; i++) {
+    for (uint8_t j = 0; j < cols; j++) {
+      float t = mat[j + i * rows];
+      if (j < cols - 1) {
+        file << t << ", \t";
+      } else {
+        file << t << "\n";
+      }
+    }
+  }
+  file.close();
+}
 
 #endif /*FMAT_H*/

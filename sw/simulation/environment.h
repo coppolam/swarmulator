@@ -31,6 +31,13 @@ public:
   void define(void);
 
   /**
+   * @brief Returns a point within the environment.
+   *
+   * @return float
+   */
+  vector<float> start(void);
+
+  /**
    * @brief Returns the furthers point from (0,0) in the environment, used for initialization so that
    * the robots can be initialized in the same spot.
    *
@@ -58,7 +65,7 @@ public:
    * @return true if the lines intersect, meaning that it will go through a wall, so that we can handle it.
    * @return false if the lines do not intersect, so that the robot will not go through a wall and can act normally.
    */
-  bool sensor(uint8_t ID, vector<float> s_n, vector<float> s);
+  bool sensor(const uint8_t ID, vector<float> s_n, vector<float> s, float &angle);
 
   /**
    * Function used to draw all the walls in the animation. It is called by the animation thread.

@@ -1,5 +1,10 @@
 #include "agent.h"
 
+Agent::Agent()
+{
+  activated = false;
+}
+
 float Agent::get_position(uint8_t dim)
 {
   if (dim < 3) {
@@ -13,7 +18,7 @@ float Agent::get_orientation()
   return state[6];
 }
 
-float Agent::get_state(uint8_t i)
+float Agent::get_state(const uint8_t i)
 {
   float noise = rg.gaussian_float(0.0, NOISE_R);
   return state[i] + noise;
