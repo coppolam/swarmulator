@@ -49,8 +49,8 @@ void main_loop_function()
   glutSwapBuffers();
 
   // Sleep until the next time-step according to the update frequency parameter
-  int t_wait = 10e6 / param->animation_updatefreq();
-  this_thread::sleep_for(chrono::microseconds(t_wait));
+  int t_wait = (int) 1000.0 * (1.0 / param->animation_updatefreq());
+  this_thread::sleep_for(chrono::milliseconds(t_wait));
 }
 
 /**
