@@ -15,7 +15,7 @@
 /**
  * Select the controller to be used by uncommenting it
  */
-#define CONTROLLER controller_lattice  // Basic lattice controller
+// #define CONTROLLER controller_lattice  // Basic lattice controller
 // #define CONTROLLER controller_pattern  // Controller with Qf
 
 // #define CONTROLLER ndi_follower  // NDI follower, needs AGENT particle_oriented, to be defined below!

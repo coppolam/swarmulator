@@ -29,8 +29,8 @@ vector<float> particle::state_update(vector<float> state)
   rotate_xy(v_x, v_y, orientation, vxr, vyr);
 
   // Acceleration
-  state.at(4) = 1 * (vxr - state[2]); // Acceleration x
-  state.at(5) = 1 * (vyr - state[3]); // Acceleration y
+  state.at(4) = 2 * (vxr - state[2]); // Acceleration x
+  state.at(5) = 2 * (vyr - state[3]); // Acceleration y
 
   // Velocity
   state.at(2) += state[4] * dt; // Velocity x

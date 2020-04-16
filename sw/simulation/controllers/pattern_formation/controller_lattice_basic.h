@@ -14,7 +14,7 @@ public:
   float _v_adj = 1; // Adjustment velocity
   float d_safe = 0.9;
 
-  controller_lattice_basic(): t(4) {};
+  controller_lattice_basic(): t(8) {};
   ~controller_lattice_basic() {};
 
   void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y);
