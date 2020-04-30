@@ -21,7 +21,6 @@ void main_loop_function()
     animation_running = true;
   }
 
-  static draw drawer; // Drawer object
   // Add depth (used internally to block obstructed objects)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
@@ -29,28 +28,36 @@ void main_loop_function()
   // Get current window size w.r.t. beginning
   xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
   yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
-  user_interaction(); // Activate interactive functions (mouse + keyboard), important: use this before draw functions!
+
+  zoom_scale = -(float)10 / (-(float)10 + (float)zoom);
+  glTranslatef(center_x, center_y, -10 + zoom);
 
   // Draw fixed one time objects
+  static draw drawer; // Drawer object
   drawer.data(); // Put data in corner
   drawer.axes(); // Put x and y global axes
   drawer.axis_label(); // Axis label
   environment.animate(); // Animate the environment walls
 
   // Draw all robots
-  for (uint8_t ID = 0; ID < s.size(); ID++) {
-    // Input: ID, p_x global, p_y global, orientation global
-    drawer.agent(ID, s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->orientation);
-    // Input: ID, p_x global, p_y global, v_x global, v_y global
-    drawer.velocity_arrow(ID,  s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->state.at(2), s[ID]->state.at(3));
+  uint r = s.size();
+  if (r > 0) {
+    for (uint8_t ID = 0; ID < r; ID++) {
+      // Input: ID, p_x global, p_y global, orientation global
+      drawer.agent(ID, s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->orientation);
+      // Input: ID, p_x global, p_y global, v_x global, v_y global
+      drawer.velocity_arrow(ID,  s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->state.at(2), s[ID]->state.at(3));
+    }
   }
+
+  // Sleep until the next time-step according to the update frequency parameter
+  int t_wait = 1000.0 / param->animation_updatefreq();
+  this_thread::sleep_for(chrono::milliseconds(t_wait));
 
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();
 
-  // Sleep until the next time-step according to the update frequency parameter
-  int t_wait = (int) 1000.0 * (1.0 / param->animation_updatefreq());
-  this_thread::sleep_for(chrono::milliseconds(t_wait));
+  user_interaction(); // Activate interactive functions (mouse + keyboard), important: use this before draw functions!
 }
 
 /**
@@ -63,7 +70,7 @@ void GL_Setup(int width, int height)
 {
   glViewport(0, 0, width, height);
   glMatrixMode(GL_PROJECTION);
-  glEnable(GL_DEPTH_TEST);
+  // glEnable(GL_DEPTH_TEST);
   gluPerspective(45, (float)width / height, .1, 100);
   glMatrixMode(GL_MODELVIEW);
 }

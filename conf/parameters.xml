@@ -20,7 +20,7 @@
   <!-- Logger -->
   <logger_updatefreq>1</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>../swarmulator/conf/state_action_matrices/aggregation_policy_test.txt</policy>
-  <!-- <sequential_interval>5</sequential_interval> -->
+  <policy>../swarmulator/conf/state_action_matrices/aggregation_policy_evolved.txt</policy>
+  <id>1</id>
   <!--new_parameter_name>default value</new_parameter_name-->
 </parameters>

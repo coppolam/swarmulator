@@ -82,6 +82,20 @@ inline static void connectivity_check(float &f)
   }
 }
 
+inline static uint number_of_clusters()
+{
+  OmniscientObserver o;
+  Graph g(s.size());
+  for (size_t ID = 0; ID < s.size(); ID++) {
+    vector<uint> neighbors = o.request_closest_inrange(ID, rangesensor);
+    for (size_t j = 0; j < neighbors.size(); j++) {
+      g.addEdge(ID, neighbors[j]);
+    }
+  }
+  uint a = g.connectedComponents();
+  return a;
+}
+
 /**
  * Select a fitness function, or use your own if you want.
  * TODO: Move to controllers so that its defined within a particular controller. It would be far more versatile.
@@ -92,8 +106,9 @@ inline static float evaluate_fitness()
   float f;
   // f = mean_dist_to_one_neighbor(0);
   // f = mean_number_of_neighbors();
+  f = 1.0 / (float)number_of_clusters(); // use 1./ to minimize (e.g. for aggregation)
   // f = mean_dist_to_neighbors();
-  f = 1. / mean_dist_to_all(); //  use 1. / for aggregation instead of separation
+  // f = 1. / mean_dist_to_all(); //  use 1./ to minimize
   // connectivity_check(f);
   return f;
 }

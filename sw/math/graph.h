@@ -41,6 +41,11 @@ public:
   void addEdge(int v, int w);
 
   /**
+   * Returns the transpose of the graph
+   */
+  Graph getTranspose();
+
+  /**
    * Breadth-First Search (BFS) implementation. See how it is used in graph::isConnected()
    *
    * @param s first node to be visited (use s=0)
@@ -49,9 +54,12 @@ public:
   void BFS(int s, bool visited[]);
 
   /**
-   * Returns the transpose of the graph
+   * Depth-First Search
+   *
+   * @param v
+   * @param visited
    */
-  Graph getTranspose();
+  void DFS(int v, bool visited[]);
 
   /**
    * @brief Checks that the topology is connected.
@@ -60,6 +68,13 @@ public:
    * Returns true if connected, false if not connected
    */
   bool isConnected();
+
+  /**
+   * Counts the number of connected robot clusters
+   *
+   * @return uint
+   */
+  uint connectedComponents();
 };
 
 #endif /* GRAPH_H */

@@ -18,18 +18,18 @@ vector<float> particle_oriented::state_update(vector<float> state)
   // NED frame
   // x+ towards North
   // y+ towards East
-  float vx_des, vy_des;
+  float vx_des, vy_des = 0.;
   float vx_global, vy_global, dpsi_rate;
-  if (!manual) {
-    controller->get_velocity_command(ID, vx_des, vy_des); // Command comes out in the local frame
-    dpsi_rate = 0;
-  } else {
-    vx_des = manualx;
-    vy_des = manualy;
-    dpsi_rate = manualpsi_delta;
-  }
-  controller->saturate(vx_des);
-  controller->saturate(vy_des);
+  // if (!manual) {
+  controller->get_velocity_command(ID, vx_des, dpsi_rate); // Command comes out in the local frame
+  // dpsi_rate = 0;
+  // } else {
+  //   vx_des = manualx;
+  //   vy_des = manualy;
+  //   dpsi_rate = manualpsi_delta;
+  // }
+  // controller->saturate(vx_des);
+  // controller->saturate(vy_des);
 #if COMMAND_LOCAL
   rotate_xy(vx_des, vy_des, state[6], vx_global, vy_global);
 #else

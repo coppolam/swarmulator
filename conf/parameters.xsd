@@ -15,7 +15,7 @@
       <xs:element name="animation_updatefreq" type="xs:float"/>
       <xs:element name="logger_updatefreq" type="xs:integer"/>
       <xs:element name="policy" type="xs:string"/>
-      <!-- <xs:element name="sequential_interval" type="xs:float"/> -->
+      <xs:element name="id" type="xs:string"/>
       <!-- xs:element name="parameter_name" type="xs:parametertype"/-->
     </xs:sequence>
   </xs:complexType>

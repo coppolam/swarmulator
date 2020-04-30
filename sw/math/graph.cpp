@@ -9,6 +9,22 @@ void Graph::addEdge(int v, int w)
   adj[w].push_back(v);
 }
 
+
+/**
+ * Function that returns reverse (or transpose) of this graph
+ */
+Graph Graph::getTranspose()
+{
+  Graph g(V);
+  for (int v = 0; v < V; v++) {
+    list<int>::iterator i;
+    for (i = adj[v].begin(); i != adj[v].end(); ++i) {
+      g.adj[*i].push_back(v);
+    }
+  }
+  return g;
+}
+
 /**
  *  A recursive function to print BFS starting from s
  */
@@ -30,19 +46,41 @@ void Graph::BFS(int s, bool visited[])
   }
 }
 
-/**
- * Function that returns reverse (or transpose) of this graph
- */
-Graph Graph::getTranspose()
+void Graph::DFS(int v, bool visited[])
 {
-  Graph g(V);
+  // Mark the current node as visited and print it
+  visited[v] = true;
+
+  // Recur for all the vertices
+  // adjacent to this vertex
+  list<int>::iterator i;
+  for (i = adj[v].begin(); i != adj[v].end(); ++i)
+    if (!visited[*i]) {
+      DFS(*i, visited);
+    }
+}
+
+// Method to print connected components in an
+// undirected graph
+uint Graph::connectedComponents()
+{
+  // Mark all the vertices as not visited
+  bool *visited = new bool[V];
   for (int v = 0; v < V; v++) {
-    list<int>::iterator i;
-    for (i = adj[v].begin(); i != adj[v].end(); ++i) {
-      g.adj[*i].push_back(v);
+    visited[v] = false;
+  }
+  uint count = 0;
+  for (int v = 0; v < V; v++) {
+    if (visited[v] == false) {
+      // print all reachable vertices
+      // from v
+      DFS(v, visited);
+      count++;
     }
   }
-  return g;
+  delete[] visited;
+
+  return count;
 }
 
 /**

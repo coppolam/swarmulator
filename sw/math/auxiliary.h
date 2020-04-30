@@ -184,7 +184,8 @@ inline static std::vector<std::vector<float>> read_matrix(const string filename)
       rows++;
     }
   } else {
-    terminalinfo::error_msg("Environment file not loaded.");
+    std::string msg = "Matrix file not loaded " + filename;
+    terminalinfo::error_msg(msg);
   }
   return matrix;
 }
@@ -207,7 +208,7 @@ inline static std::vector<float> read_array(const string filename)
       array.push_back(value);
     }
   } else {
-    terminalinfo::error_msg("Environment file not loaded.");
+    terminalinfo::error_msg("Array file not loaded: " + filename);
   }
   return array;
 }
@@ -302,6 +303,25 @@ inline static bool doIntersect(Point p1, Point q1, Point p2, Point q2)
   if (o4 == 0 && onSegment(p2, q1, q2)) { return true; }
 
   return false; // Doesn't fall in any of the above cases
+}
+
+/**
+ * Get current date/time, format is YYYY-MM-DD-hh:mm:ss
+ * Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+ * for more information about date/time format
+ *
+ * @return A character string with the current date and time.
+ */
+inline static const std::string currentDateTime()
+{
+  time_t now = time(0); // Read in the time
+  struct tm tstruct;
+  char buf[80]; // Buffer
+  tstruct = *localtime(&now);
+
+  // Put the time on a string using the buffer
+  strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
+  return buf;
 }
 
 #endif /*AUXILIARY_H*/

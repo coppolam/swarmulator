@@ -96,8 +96,34 @@ void Controller::wall_avoidance(const uint8_t ID, float &v_x, float &v_y)
     cart2polar(v_x, v_y, v, ang);
     ang = rg.uniform_float(0, 2 * M_PI);
     polar2cart(v, ang, v_x, v_y);
-    // polar2cart(v, slope + M_PI_2, v_x, v_y);
-    // cout << v_x << " " << v_y << endl;
     moving = false;
+  }
+}
+
+void Controller::wall_avoidance_t(const uint8_t ID, float &v, float &dpsitheta)
+{
+  // Predict what the command wants and see if it will hit a wall, then fix it.
+  vector<float> sn = s[ID]->state;
+  float r_temp, ang_temp, vx_temp, vy_temp, vx_global, vy_global, slope;
+  rotate_xy(0.5, 0.2, sn[6], vx_global, vy_global);
+  cart2polar(vx_global, vy_global, r_temp, ang_temp); // direction of velocity
+  polar2cart(2.5, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
+  sn[0] += vx_temp;
+  sn[1] += vy_temp;
+
+  bool test1 = environment.sensor(ID, sn, s[ID]->state, slope);
+
+  sn = s[ID]->state;
+  rotate_xy(0.5, -0.2, sn[6], vx_global, vy_global);
+  cart2polar(vx_global, vy_global, r_temp, ang_temp); // direction of velocity
+  polar2cart(2.5, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
+  sn[0] += vx_temp;
+  sn[1] += vy_temp;
+
+  bool test2 = environment.sensor(ID, sn, s[ID]->state, slope);
+  if (test1 || test2) {
+    v = 0.;
+    dpsitheta = 0.11;
+    // cout << "Wallll" << endl;
   }
 }

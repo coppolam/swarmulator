@@ -1,5 +1,6 @@
 #include "fifo.h"
 #include "settings.h"
+#include "main.h"
 #include <sstream> // std::stringstream, std::stringbuf
 #include <unistd.h> // write
 #include <sys/types.h> // fifo related
@@ -8,7 +9,8 @@
 
 fifo::fifo()
 {
-  fifo::open(FIFO_FILE);
+  fifo::open("/tmp/swarmulator_" + param->id());
+  terminalinfo::debug_msg("Pipe set to " + param->id());
 };
 
 void fifo::open(std::string file)

@@ -261,8 +261,6 @@ void user_interaction()
   glutSpecialUpFunc(catckKey_arrow_up);
   glutKeyboardFunc(keyboard_callback);
   glutKeyboardUpFunc(psi_callback_up);
-  zoom_scale = -(float)10 / (-(float)10 + (float)zoom);
-  glTranslatef(center_x, center_y, -10 + zoom);
 }
 
 #endif /* USER_INTERACTION_H */

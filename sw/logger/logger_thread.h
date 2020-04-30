@@ -45,32 +45,13 @@ void run_logger(ofstream &logfile, string filename)
 }
 
 /**
- * Get current date/time, format is YYYY-MM-DD-hh:mm:ss
- * Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
- * for more information about date/time format
- *
- * @return A character string with the current date and time.
- */
-const std::string currentDateTime()
-{
-  time_t now = time(0); // Read in the time
-  struct tm tstruct;
-  char buf[80]; // Buffer
-  tstruct = *localtime(&now);
-
-  // Put the time on a string using the buffer
-  strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
-  return buf;
-}
-
-/**
  * Logger thread that logs the simulation to a txt file
  */
 void main_logger_thread()
 {
   // Log filename
-  identifier = currentDateTime(); // declared in main.h
-  string filename = "logs/log_" + identifier + ".txt";
+  string filename;
+  filename = "logs/log_" + identifier + ".txt";
 
   // Open the logfile for writing
   ofstream logfile;

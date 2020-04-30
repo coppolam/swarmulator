@@ -212,8 +212,8 @@ void fmat<T>::write_to_csv(const string &filename, const vector<T> &mat, const u
   ofstream file;
   file.open(filename.c_str());
   file << "#" << filename << "\n";
-  for (uint8_t i = 0; i < rows; i++) {
-    for (uint8_t j = 0; j < cols; j++) {
+  for (uint i = 0; i < rows; i++) {
+    for (uint j = 0; j < cols; j++) {
       float t = mat[j + i * rows];
       if (j < cols - 1) {
         file << t << ", \t";
@@ -223,6 +223,7 @@ void fmat<T>::write_to_csv(const string &filename, const vector<T> &mat, const u
     }
   }
   file.close();
+  terminalinfo::info_msg("Wrote matrix " + filename);
 }
 
 #endif /*FMAT_H*/

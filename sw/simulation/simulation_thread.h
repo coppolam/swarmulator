@@ -33,12 +33,18 @@
  * @param argc Number of arguments from terminal input when launching swarmulator
  * @param argv Content of arguments from terminal input when launching swarmulator
  */
-void get_number_of_agents(int argc, char *argv[])
+void read_argv(int argc, char *argv[])
 {
   if (argc <= 1) {
     terminalinfo::error_msg("Please specify the number of agents.");
   } else {
     nagents = stoi(argv[1]);
+  }
+
+  if (argc > 2) {
+    string s;
+    s += argv[2];
+    param->id() = s;
   }
 }
 
@@ -53,33 +59,33 @@ void get_number_of_agents(int argc, char *argv[])
 void main_simulation_thread(int argc, char *argv[])
 {
   terminalinfo::info_msg("Simulation started.");
-  get_number_of_agents(argc, argv); // Read the number of agents from the argument input
+  read_argv(argc, argv); // Read the number of agents from the argument input
   random_generator rg;
 
+
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
+  if (nagents > 0) {
 #ifdef SEQUENTIAL
-  vector<float> st = environment.start();
-  vector<float> x0 = rg.uniform_float_vector(nagents, st[1], st[1]);
-  vector<float> y0 = rg.uniform_float_vector(nagents, st[0], st[0]);
+    vector<float> st = environment.start();
+    vector<float> x0 = rg.uniform_float_vector(nagents, st[1] - 0.1, st[1] + 0.1);
+    vector<float> y0 = rg.uniform_float_vector(nagents, st[0] - 0.1, st[0] + 0.1);
 #else
-  float spread = environment.limits(); // default // TODO: Spread randomly within an arbitray arena
-  vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
-  vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
+    float spread = environment.limits(); // default // TODO: Spread randomly within an arbitray arena
+    vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
+    vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
 #endif
-  vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
-
-
-  // Generate the agent models
+    vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
+    // Generate the agent models
 #ifdef SEQUENTIAL
-  uint ID = 0;
-  float t_created = 0;
+    uint ID = 0;
+    float t_created = -SEQUENTIAL - 1; // so that first agent is created at time - 9,9
 #else
-  for (uint8_t ID = 0; ID < nagents; ID++) {
-    vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
-    create_new_agent(ID, state); // Create agent
+    for (uint8_t ID = 0; ID < nagents; ID++) {
+      vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
+      create_new_agent(ID, state); // Create agent
+    }
+#endif
   }
-#endif
-
 
   // Keep global clock running.
   // This is only used by the animation and the logger.
@@ -103,7 +109,9 @@ void main_simulation_thread(int argc, char *argv[])
       // Runtime finish evolution
       if (param->time_limit() > 0.0) {
         if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time
+          mtx.lock(); // Done
           f.send(evaluate_fitness());
+          mtx.unlock();
           program_running = false;
         }
       }
