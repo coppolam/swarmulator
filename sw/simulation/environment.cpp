@@ -16,9 +16,9 @@ using namespace std;
 Environment::Environment(void)
 {
   define_walls();
-  define_food(100);
-  define_beacon(0., 0.);
-  nest = 10;
+  // define_food(100);
+  // define_beacon(0., 0.);
+  // nest = 10;
 }
 
 void Environment::define_walls(void)
