@@ -53,7 +53,7 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       break;
     case 'z': // Reset the zoom to the default value
       terminalinfo::info_msg("Resetting zoom.");
-      zoom = 0;
+      zoom = param->zoom();
       break;
     case 'q': // End the simulation and quit
       terminalinfo::info_msg("Quitting Swarmulator.");
@@ -69,11 +69,12 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       break;
     case 'r': // Resume the simulation (if paused)
       if (paused) {
-        terminalinfo::info_msg("Resuming.");
+        mtx.try_lock();
         mtx.unlock();
+        terminalinfo::info_msg("Resuming.");
         paused = false;
       }
-      s[0]->manual = false;
+      param->simulation_realtimefactor() = realtimefactor;
       break;
     case 's': // Step through the simulation. Very useful for debugging or analyzing what's going on.
       terminalinfo::info_msg("Stepping through. Press `s' to keep stepping forwrad to `r' to resume. ");
@@ -109,7 +110,6 @@ void keyboard_callback(unsigned char key, __attribute__((unused)) int a, __attri
       s[0]->manualpsi_delta = -0.1;
       break;
     case 'n': // Quit and restart swarmulator
-      mtx.try_lock();
       terminalinfo::info_msg("Restarting.");
       stringstream ss;
       ss << "pkill swarmulator && ./swarmulator " << nagents;
@@ -183,7 +183,7 @@ void mouse_click_callback(int button, int state, int x, int y)
     float wall_x_1 = ((float)x / (float)glutGet(GLUT_WINDOW_WIDTH) * 8. - 4.) / (zoom_scale * xrat) - center_x;
     float wall_y_1 = -((float)y / (float)glutGet(GLUT_WINDOW_HEIGHT) * 8. - 4.) / (zoom_scale * yrat) - center_y;
     // Generate new wall
-    environment.add(wall_x_0, wall_y_0, wall_x_1, wall_y_1);
+    environment.add_wall(wall_x_0, wall_y_0, wall_x_1, wall_y_1);
   }
 
   // Zoom wheel

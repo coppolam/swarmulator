@@ -8,7 +8,7 @@
 
 #include "settings.h"
 #include "terminalinfo.h"
-#include "includes_controllers.h"
+#include CONTROLLER_INCLUDE
 
 using namespace std;
 
@@ -28,7 +28,7 @@ public:
    */
   virtual ~Agent() {};
 
-  uint8_t ID; // ID of agent
+  uint16_t ID; // ID of agent
   bool activated;
   float dt;
   vector<float> state; // State vector
@@ -47,7 +47,7 @@ public:
    * @param dim dimension x or y
    * @return position along x or y
    */
-  float get_position(uint8_t dim);
+  float get_position(uint16_t dim);
 
   /**
    * Get the orientation object
@@ -62,7 +62,7 @@ public:
    * @param dim dimension
    * @return float
    */
-  float get_state(const uint8_t dim);
+  float get_state(const uint16_t dim);
 
   /**
    * The agent class is only the parent class of a child class that specifies the dynamics and control

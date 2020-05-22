@@ -19,13 +19,16 @@ void txtwrite::txtwrite_state(ofstream &logfile)
   t << simtime_seconds;
   vector<Agent *> state_buff = s;
 
-  for (uint8_t i = 0; i < s.size(); i++) {
+  for (uint16_t i = 0; i < s.size(); i++) {
     logfile << t.str() << " " // time
             << i + 1 << " "; // ID
     // log states
-    for (uint8_t j = 0; j < 2; j++) {
+    for (uint16_t j = 0; j < 2; j++) {
       logfile << state_buff[i]->state.at(j) << " ";
     }
+#ifdef ESTIMATOR
+    logfile << pr.s_kp1[i] << " " << pr.fitness;
+#endif
     logfile << endl;
   }
 }

@@ -9,16 +9,19 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include "randomgenerator.h"
 
 using namespace std;
 
 Environment::Environment(void)
 {
-  define();
-  animate();
+  define_walls();
+  define_food(100);
+  define_beacon(0., 0.);
+  nest = 10;
 }
 
-void Environment::define(void)
+void Environment::define_walls(void)
 {
   string s = param->environment();
   if (!strcmp(s.c_str(), "random")) {
@@ -28,8 +31,25 @@ void Environment::define(void)
   }
   string filename = "conf/environments/" + param->environment() + ".txt";
   walls = read_matrix(filename);
-  draw();
 }
+
+void Environment::define_food(uint64_t n)
+{
+  random_generator rg;
+  float lim = limits();
+  for (size_t i = 0; i < n; i++) {
+    food.push_back(vector<float>());
+    food[i].push_back(rg.uniform_float(-lim, lim));
+    food[i].push_back(rg.uniform_float(-lim, lim));
+  }
+}
+
+void Environment::define_beacon(float x, float y)
+{
+  beacon.push_back(x);
+  beacon.push_back(y);
+}
+
 
 // TODO: Temporary function for initialization, but the initalization should change eventually
 vector<float> Environment::start(void)
@@ -53,7 +73,7 @@ float Environment::limits(void)
   return max * 0.95; // 0.95 for margin
 }
 
-void Environment::add(float x0, float y0, float x1, float y1)
+void Environment::add_wall(float x0, float y0, float x1, float y1)
 {
   mtx.lock();
   walls.push_back(vector<float>());
@@ -64,7 +84,7 @@ void Environment::add(float x0, float y0, float x1, float y1)
   mtx.unlock();
 }
 
-bool Environment::sensor(const uint8_t ID, vector<float> s_n, vector<float> s, float &angle)
+bool Environment::sensor(const uint16_t ID, vector<float> s_n, vector<float> s, float &angle)
 {
   Point p1, q1, p2, q2;
   p1.y = s[0]; // Flip axis
@@ -89,5 +109,36 @@ void Environment::animate(void)
   draw d;
   for (size_t i = 0; i < walls.size(); i++) {
     d.segment(walls[i][0], walls[i][1], walls[i][2], walls[i][3]);
+  }
+
+  for (size_t i = 0; i < food.size(); i++) {
+    d.food(food[i][0], food[i][1]);
+  }
+}
+
+
+void Environment::grab_food(uint64_t food_ID)
+{
+  mtx_env.lock();
+  food.erase(food.begin() + food_ID);
+  mtx_env.unlock();
+}
+
+void Environment::drop_food()
+{
+  mtx_env.lock();
+  nest += 1.;
+  mtx_env.unlock();
+}
+
+void Environment::eat_food(float amount)
+{
+  if (nest > amount) {
+    mtx_env.lock();
+    nest -= amount;
+    // cout << nest << endl;;
+    mtx_env.unlock();
+    // terminalinfo::info_msg("Oh no! The swarm ran out of food! Quitting.");
+    // program_running = false;
   }
 }

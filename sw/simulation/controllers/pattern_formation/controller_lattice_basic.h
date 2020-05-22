@@ -26,7 +26,7 @@ public:
   void get_lattice_motion(const int &ID, const int &state_ID, float &v_x, float &v_y);
   void get_lattice_motion_all(const int &ID, const vector<int> &state_ID, const vector<uint> &closest, float &v_x,
                               float &v_y);
-  virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
+  virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y) = 0;
 };
 
 #endif /*CONTROLLER_LATTICE_BASIC_H*/

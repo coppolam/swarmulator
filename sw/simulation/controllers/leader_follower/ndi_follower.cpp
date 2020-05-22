@@ -137,7 +137,7 @@ void ndi_follower::uwb_follower_control_periodic(void)
   }
 }
 
-void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &vy_des)
+void ndi_follower::get_velocity_command(const uint16_t ID, float &vx_des, float &vy_des)
 {
   // Store data from leader's position estimate
   if (ndihandle.data_entries == NDI_PAST_VALS) {
@@ -148,7 +148,7 @@ void ndi_follower::get_velocity_command(const uint8_t ID, float &vx_des, float &
   // float px, py, vx, vy, vx0, vy0, ax0, ay0;
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
   if (ID > 0 && simtime_seconds > 10) {
-    uint8_t ID_tracked = 0; //ID - 1;
+    uint16_t ID_tracked = 0; //ID - 1;
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
     filter.run(ID, ID_tracked);

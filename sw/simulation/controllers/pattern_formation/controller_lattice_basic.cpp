@@ -54,7 +54,7 @@ void controller_lattice_basic::actionmotion(const int &selected_action, float &v
 bool controller_lattice_basic::check_motion(const vector<int> &state_ID)
 {
   bool canImove = true;
-  for (uint8_t i = 0; i < state_ID.size(); i++) {
+  for (uint16_t i = 0; i < state_ID.size(); i++) {
     if (o.see_if_moving(state_ID[i])) {
       // Somebody nearby is already moving
       canImove = false;

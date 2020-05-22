@@ -9,12 +9,14 @@ SRC_FOLDER = sw
 CONTROLLER?=controller_aggregation
 AGENT?=particle
 
+CONTROLLER_INCLUDE=\"$(CONTROLLER).h\"
+AGENT_INCLUDE=\"$(AGENT).h\"
 # Compiler parameters
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
 
 CC = g++ # chosen compiler
-CFLAGS = -g -Wall -std=gnu++0x -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR -DCONTROLLER=$(CONTROLLER) -DAGENT=$(AGENT)
+CFLAGS = -g -Wall -std=gnu++17 -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR -DCONTROLLER=$(CONTROLLER) -DAGENT=$(AGENT) -DAGENT_INCLUDE=$(AGENT_INCLUDE) -DCONTROLLER_INCLUDE=$(CONTROLLER_INCLUDE)
 OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions
 
 ifeq ($(VERBOSE),ON)
@@ -76,7 +78,7 @@ $(BUILD_FOLDER)/%.o: %.cpp # This rule defines how to go from CPP file to Object
 $(BUILD_FOLDER)/%.o: %.c # This rule defines how to go from C file to Object file (use %.c* for all files)
 	# Compiling $<
 	@mkdir -p $(@D)
-	@gcc -g -Wall -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -std=c11 $(INC) -c $< -o $@;
+	@$(MAKE) -c $< -o $@ $(OPT);
 
 clean:
 	# Cleaning $(TARGET)...

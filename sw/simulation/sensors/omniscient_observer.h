@@ -42,7 +42,7 @@ public:
    * @param ID The ID of the robot that is performing the request
    * @return vector<uint> A vector of the IDs of all the neighbors, from closest to furthest.
    */
-  vector<uint> request_closest(const uint8_t &ID); // request IDs of closest k neighbours and for your ID
+  vector<uint> request_closest(const uint16_t &ID); // request IDs of closest k neighbours and for your ID
 
   /**
    * @brief Get the closest within a range
@@ -54,7 +54,7 @@ public:
    * @param range The maximum range that the agent can sense
    * @return vector<uint> A vector of the IDs of all the neighbors within the range, from closest to furthest.
    */
-  vector<uint> request_closest_inrange(const uint8_t &ID, const float &range);
+  vector<uint> request_closest_inrange(const uint16_t &ID, const float &range);
 
   /**
    * Get the relative distance between two agents along x or y
@@ -64,7 +64,7 @@ public:
    * @param dim The dimension along which we measure the distance (x or y)
    * @return The distance from robot ID to robot ID_tracked along the dimension dim
    */
-  float request_distance_dim(const uint8_t &ID, const uint8_t &ID_tracked, const uint8_t &dim);
+  float request_distance_dim(const uint16_t &ID, const uint16_t &ID_tracked, const uint16_t &dim);
 
   /**
    * Get the relative distance between two agents
@@ -73,7 +73,7 @@ public:
    * @param ID_tracked The ID of the robot to be sensed
    * @return float The distance from robot ID to robot ID_tracked
    */
-  float request_distance(const uint8_t &ID, const uint8_t &ID_tracked);
+  float request_distance(const uint16_t &ID, const uint16_t &ID_tracked);
 
   /**
    * Get the relative bearing between two agents
@@ -82,7 +82,7 @@ public:
    * @param ID_tracked The ID of the robot to be sensed
    * @return float The angle from robot ID to robot ID_tracked in radians
    */
-  float request_bearing(const uint8_t &ID, const uint8_t &ID_tracked);
+  float request_bearing(const uint16_t &ID, const uint16_t &ID_tracked);
 
   /**
    * Checks that the graph is connected
@@ -98,7 +98,7 @@ public:
    * @param dim Dimension of interest
    * @return float The position of the centroid along the dimension dim
    */
-  float get_centroid(const uint8_t &dim);
+  float get_centroid(const uint16_t &dim);
 
   /**
    * Gets the current orientation of the robot
@@ -106,7 +106,7 @@ public:
    * @param ID The ID of the robot
    * @return float The orientation of the robot (in radians)
    */
-  float own_bearing(const uint8_t &ID);
+  float own_bearing(const uint16_t &ID);
 
   /**
    * @brief This function returns true if the agent with the specified ID is declared as moving
@@ -115,7 +115,7 @@ public:
    * @param ID Gets a local state of the robot that declares whether it is active or not
    * @return bool Returns true if the robot is moving.
    */
-  bool see_if_moving(const uint8_t &ID);
+  bool see_if_moving(const uint16_t &ID);
 
   /**
    * @brief This function returns whether all the agents in the swarm are in a desired local state
@@ -140,7 +140,7 @@ public:
    * @param r List or ranges to neighbors within the range sensor (output)
    * @param b Bearing to neighbors (output)
    */
-  void relative_location_inrange(const uint8_t ID, const float range, vector<float> &r, vector<float> &b);
+  void relative_location_inrange(const uint16_t ID, const float range, vector<float> &r, vector<float> &b);
 
   /**
    * @brief Relative location to all robots
@@ -149,7 +149,18 @@ public:
    * @param r
    * @param b
    */
-  void relative_location(const uint8_t ID, vector<float> &r, vector<float> &b);
+  void relative_location(const uint16_t ID, vector<float> &r, vector<float> &b);
+
+  /**
+   * @brief Returns true if there is nearby food
+   *
+   * @param ID
+   * @param r
+   * @param b
+   */
+  bool sense_food(const uint16_t ID, uint16_t &food_ID);
+
+  void beacon(const uint16_t ID, float &r, float &b);
 };
 
 #endif /*OMNISCIENT_OBSERVER_H*/

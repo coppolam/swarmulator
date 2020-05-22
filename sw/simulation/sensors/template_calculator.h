@@ -52,7 +52,7 @@ public:
   /**
    * Define the current neighborhood
    */
-  void assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID);
+  void assess_situation(uint16_t ID, vector<bool> &q, vector<int> &q_ID);
 };
 
 #endif /*TEMPLATE_CALCULATOR_H*/

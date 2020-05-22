@@ -65,6 +65,15 @@ public:
   float f_attraction(float u);
 
   /**
+   * Attraction function
+   * This is defined here since it is a basic behavior for collision avoidance.
+   * which many higher level controllers may want to use, although it does not have to be.
+   * @param u Distance to neighbor
+   * @return float Attraction speed
+   */
+  float f_attraction_equilibrium(float u, float eq_distance);
+
+  /**
    * Repulsion function.
    * This is defined here since it is a basic behavior for collision avoidance
    * which many higher level controllers may want to use, although it does not have to be.
@@ -109,7 +118,7 @@ public:
    * @param v_x The desired velocity in v_x (to be set in this function)
    * @param v_y The desired velocity in v_y (to be set in this function)
    */
-  virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y) = 0;
+  virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y) = 0;
 
   /**
    * General wall avoidance function to use within get_velocity_command() to instigate a wall avoidance maneuver
@@ -118,8 +127,8 @@ public:
    * @param v_x The desired velocity in v_x (amended in this function)
    * @param v_y The desired velocity in v_y (amended in this function)
    */
-  void wall_avoidance(const uint8_t ID, float &v_x, float &v_y);
-  void wall_avoidance_t(const uint8_t ID, float &v_x, float &v_y);
+  bool wall_avoidance(const uint16_t ID, float &v_x, float &v_y);
+  bool wall_avoidance_t(const uint16_t ID, float &v_x, float &v_y);
 };
 
 

@@ -9,11 +9,12 @@ controller_aggregation::controller_aggregation() : Controller()
   moving = false;
   v_x_ref = rg.gaussian_float(0.0, 1.0);
   v_y_ref = rg.gaussian_float(0.0, 1.0);
-  // motion_p = {P1, P2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-  // motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
   string p = param->policy();
   if (!strcmp(p.c_str(), "")) {
     motion_p = {0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
+    // motion_p = {0.991355, 0.984845, 0.007304, 0.000783, 0.004238, 0.001033, 0.007088};
+    // motion_p = {1.0, 0.0, 0.0, 0.0, 1.0, 0.14, 0.14};
+    // motion_p = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
   } else {
     motion_p = read_array(p);
   }
@@ -22,7 +23,7 @@ controller_aggregation::controller_aggregation() : Controller()
   vmean = 0.5;
 }
 
-void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void controller_aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;
@@ -36,6 +37,11 @@ void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
   if (st != r.size() || moving_timer == 1) { // state change
     // state, action
     st = min(r.size(), motion_p.size());
+#ifdef ESTIMATOR
+    int a;
+    if (moving) {a = 1;} else {a = 0;}
+    pr.update(ID, st, a); // pr update
+#endif
     if (rg.bernoulli(1.0 - motion_p[st])) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;
@@ -54,15 +60,6 @@ void controller_aggregation::get_velocity_command(const uint8_t ID, float &v_x, 
     }
   }
   increase_counter_to_value(moving_timer, timelim, 1);
-
-#ifdef CHECK_HAPPY
-  if (q_ID.size() > 1) {
-    happy = true;
-  } else {
-    happy = false;
-  }
-#endif
-
   wall_avoidance(ID, v_x_ref, v_y_ref);
 
   // Final output

@@ -109,7 +109,7 @@ float Template_Calculator::get_preferred_bearing(const vector<float> &bdes, cons
   return bdes[minindex];
 }
 
-void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<int> &q_ID)
+void Template_Calculator::assess_situation(uint16_t ID, vector<bool> &q, vector<int> &q_ID)
 {
   q.clear();
   q.assign(sp, false);
@@ -117,7 +117,7 @@ void Template_Calculator::assess_situation(uint8_t ID, vector<bool> &q, vector<i
 
   // Fill the template with respect to the agent in question
   vector<uint> closest = o.request_closest(ID);
-  for (uint8_t i = 0; i < s.size() - 1; i++) {
+  for (uint16_t i = 0; i < s.size() - 1; i++) {
     if (fill_template(q, // Vector to fill
                       wrapTo2Pi_f(o.request_bearing(ID, closest[i])), // Bearing
                       o.request_distance(ID, closest[i]), // Distance

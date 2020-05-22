@@ -7,10 +7,10 @@
 #include <sys/stat.h> // fifo related
 #include <fcntl.h> // fifo related
 
-fifo::fifo()
+fifo::fifo(std::string id)
 {
-  fifo::open("/tmp/swarmulator_" + param->id());
-  terminalinfo::debug_msg("Pipe set to " + param->id());
+  fifo::open("/tmp/swarmulator_" + id);
+  terminalinfo::debug_msg("Pipe set to " + id);
 };
 
 void fifo::open(std::string file)
@@ -24,7 +24,7 @@ void fifo::open(std::string file)
 
 bool fifo::send(float f)
 {
-  uint8_t size = 8;
+  uint16_t size = 8;
   char msg[size];
   sprintf(msg, "%f", f);
   return write(fifo_write_id, (char *)msg, size * sizeof(char));

@@ -37,7 +37,7 @@ behavior_tree::behavior_tree() : Controller()
   moving_timer = 0;
 }
 
-void behavior_tree::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;

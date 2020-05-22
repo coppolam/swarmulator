@@ -49,6 +49,13 @@ public:
   static void info_msg(string str);
 
   /**
+   * Print an info message
+   *
+   * @param str Info string to print
+   */
+  static void info_msg(string str, int ID);
+
+  /**
   * Print a warning message
   *
   * @param str Warning string to print

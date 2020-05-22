@@ -19,7 +19,7 @@ void draw::axis_label()
   glutBitmapString(GLUT_BITMAP_8_BY_13, (unsigned char *)string("N").c_str());
 }
 
-void draw::agent_number(const uint8_t &ID)
+void draw::agent_number(const uint16_t &ID)
 {
   glRasterPos2f(-0.01, 0.035);
   glColor3f(1.0, 1.0, 1.0); // Background color
@@ -132,7 +132,7 @@ void draw::segment(const float &x0, const float &y0, const float &x1, const floa
   glEnd();
 }
 
-void draw::agent(const uint8_t &ID, const float &x, const float &y, const float &orientation)
+void draw::agent(const uint16_t &ID, const float &x, const float &y, const float &orientation)
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
@@ -142,7 +142,7 @@ void draw::agent(const uint8_t &ID, const float &x, const float &y, const float 
   glPopMatrix();
 }
 
-void draw::velocity_arrow(const uint8_t &ID, const float &x, const float &y, const float &v_x, const float &v_y)
+void draw::velocity_arrow(const uint16_t &ID, const float &x, const float &y, const float &v_x, const float &v_y)
 {
   glPushMatrix();
   glTranslatef(y * xrat, x * yrat, 0.0); // ENU to NED
@@ -151,7 +151,7 @@ void draw::velocity_arrow(const uint8_t &ID, const float &x, const float &y, con
   glPopMatrix();
 }
 
-void draw::centroid(const float &x, const float &y)
+void draw::food(const float &x, const float &y)
 {
   glPushMatrix();
   glTranslatef(y, x, 0.0);

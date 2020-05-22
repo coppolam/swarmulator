@@ -44,7 +44,7 @@ vector<float> random_generator::gaussian_float_vector(const int &length, const f
 {
   // Generate the random vector
   vector<float> v(length, 0);
-  for (uint8_t i = 0; i < length; i++) {
+  for (uint16_t i = 0; i < length; i++) {
     v[i] = gaussian_float(mean, std);
   }
 
@@ -63,7 +63,7 @@ vector<float> random_generator::uniform_float_vector(const int &length, const fl
 {
   // Generate the random vector
   vector<float> v(length, 0);
-  for (uint8_t i = 0; i < length; i++) {
+  for (uint16_t i = 0; i < length; i++) {
     v[i] = uniform_float(min, max);
   }
 

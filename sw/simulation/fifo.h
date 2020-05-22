@@ -1,6 +1,7 @@
 #ifndef FIFO_H
 #define FIFO_H
 #include <iostream>
+#include <string>
 
 /**
  * Handles FIFO messaging for external interfacing.
@@ -15,7 +16,7 @@ public:
    * @brief Construct a new fifo object
    *
    */
-  fifo();
+  fifo(std::string a);
 
   /**
    * @brief Destroy the fifo object

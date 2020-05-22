@@ -37,7 +37,8 @@ unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::fla
  */
 uint nagents; // Number of agents in the simulation
 vector<Agent *> s; // Set up the agents
-mutex mtx; // Mutex needed to lock threads
+shared_mutex mtx; // Mutex needed to lock threads
+shared_mutex mtx_env; // Mutex needed to lock threads
 float realtimefactor; // Real time factor of simulation
 float simtime_seconds = 0; // Initial simulation time
 float rangesensor = 1.8; // How far each robot can sense
@@ -54,31 +55,25 @@ int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
 
-  if (!strcmp(param->id().c_str(), "")) {
-    identifier = currentDateTime(); // declared in main.h
+  if (argc > 2) {
+    string s = "";
+    s += argv[2];
+    identifier = s;
   } else {
-    identifier = param->id();
+    identifier = currentDateTime();
   }
 
-  // Start simulation thread
-  thread simulation(main_simulation_thread, argc, argv);
-  simulation.detach();
-
 #ifdef ANIMATION
-  // Start animation thread
   thread animation(main_animation_thread);
   animation.detach();
 #endif
 
 #ifdef LOG
-  // Start logger thread
   thread logger(main_logger_thread);
   logger.detach();
 #endif
 
-  // Keep the program running
-  while (program_running) {
-  };
+  main_simulation_thread(argc, argv, identifier);
 
   // Exit
   terminalinfo::info_msg("Swarmulator exiting");

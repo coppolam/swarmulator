@@ -5,12 +5,17 @@
 // #include <iostream>
 #include <stdint.h>
 #include <vector>
+#include <mutex>
 using namespace std;
 
 class Environment
 {
   vector<vector<float>> walls;
 public:
+  vector<vector<float>> food;
+  vector<float> beacon;
+  float nest;
+
   /**
   * @brief Construct a new Environment object
   *
@@ -28,7 +33,17 @@ public:
    * You can indicate obstacle list in the conf/parameters.xml file, under <environment>
    * Make sure the file exists!
    */
-  void define(void);
+  void define_walls(void);
+
+  /**
+   * @brief Define the initial obstacle list according to the list in conf/environments/.txt
+   * You can indicate obstacle list in the conf/parameters.xml file, under <environment>
+   * Make sure the file exists!
+   */
+  void define_food(uint64_t n);
+
+
+  void define_beacon(float x, float y);
 
   /**
    * @brief Returns a point within the environment.
@@ -54,7 +69,7 @@ public:
    * @param x1 Final x
    * @param y1 Final y
    */
-  void add(float x0, float y0, float x1, float y1);
+  void add_wall(float x0, float y0, float x1, float y1);
 
   /**
    * Senses whether the next state will go through a wall
@@ -65,8 +80,11 @@ public:
    * @return true if the lines intersect, meaning that it will go through a wall, so that we can handle it.
    * @return false if the lines do not intersect, so that the robot will not go through a wall and can act normally.
    */
-  bool sensor(const uint8_t ID, vector<float> s_n, vector<float> s, float &angle);
+  bool sensor(const uint16_t ID, vector<float> s_n, vector<float> s, float &angle);
 
+  void grab_food(uint64_t food_ID);
+  void drop_food();
+  void eat_food(float);
   /**
    * Function used to draw all the walls in the animation. It is called by the animation thread.
    *

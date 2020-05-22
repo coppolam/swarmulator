@@ -12,7 +12,7 @@ controller_lattice::controller_lattice() : controller_lattice_basic()
   beta_des.push_back(M_PI / 2.0 + atan(_ddes_x / _ddes_y));
 };
 
-void controller_lattice::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)
+void controller_lattice::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;

@@ -52,7 +52,7 @@ public:
   bool ndi_follow_leader(void);
   void bindNorm(float max_command);
   void uwb_follower_control_periodic(void);
-  virtual void get_velocity_command(const uint8_t ID, float &x_des, float &vy_des);
+  virtual void get_velocity_command(const uint16_t ID, float &x_des, float &vy_des);
 };
 
 #endif /*NDI_FOLLOWER_H*/

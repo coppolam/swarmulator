@@ -35,7 +35,7 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "{" > hN;
 	print "public:" > hN;
 	print "	"n"():Controller(){};" > hN;
-	print "	virtual void get_velocity_command(const uint8_t ID, float &v_x, float &v_y);" > hN;
+	print "	virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y);" > hN;
 	print "};\n" > hN;
 	print "#endif /*"N"_H*/" >> hN;
 
@@ -43,7 +43,7 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "Creating file implementation: "n".cpp ...";
 	print "#include \""n".h\"" > cN;
 	print "#include \"draw.h\"\n" > cN;
-	print "void "n"::get_velocity_command(const uint8_t ID, float &v_x, float &v_y)\n{" > cN;
+	print "void "n"::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)\n{" > cN;
 	print "  /*** Put your controller here ***/\n}" >> cN;
 
 	cN = p"/README.md";

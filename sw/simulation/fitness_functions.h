@@ -56,21 +56,6 @@ inline static float mean_dist_to_neighbors()
 }
 
 /**
- * Mean distance to neighbors
- *
- * @return float the mean distance to all neighbors that a robot has
- */
-inline static float mean_dist_to_one_neighbor(uint8_t ID_tracked)
-{
-  float f = 0.;
-  OmniscientObserver o;
-  for (size_t ID = 0; ID < s.size(); ID++) {
-    f += o.request_distance(ID, ID_tracked) / (float)s.size();
-  }
-  return 1 / f;
-}
-
-/**
  * Connectivity
  * Change f to 0.0 if the graph of the swarm is disconnected, else keeps f
  */
@@ -103,13 +88,24 @@ inline static uint number_of_clusters()
  */
 inline static float evaluate_fitness()
 {
-  float f;
-  // f = mean_dist_to_one_neighbor(0);
-  // f = mean_number_of_neighbors();
-  f = 1.0 / (float)number_of_clusters(); // use 1./ to minimize (e.g. for aggregation)
-  // f = mean_dist_to_neighbors();
-  // f = 1. / mean_dist_to_all(); //  use 1./ to minimize
-  // connectivity_check(f);
+  float f = 1.;
+  // Define the fitness function that you would like to use, or write your own
+  if (!strcmp(param->fitness().c_str(), "mean_number_of_neighbors"))
+  { f = mean_number_of_neighbors();}
+  else if (!strcmp(param->fitness().c_str(), "mean_dist_to_neighbors"))
+  { f = mean_dist_to_neighbors();}
+  else if (!strcmp(param->fitness().c_str(), "aggregation_clusters"))
+  { f = 1. / ((float)number_of_clusters() / float(nagents));}
+  else if (!strcmp(param->fitness().c_str(), "dispersion_clusters"))
+  { f = ((float)number_of_clusters() / float(nagents));}
+  else if (!strcmp(param->fitness().c_str(), "aggregation_dist_to_all"))
+  { f = 1. / mean_dist_to_all();}
+  else if (!strcmp(param->fitness().c_str(), "dispersion_dist_to_all"))
+  { f = mean_dist_to_all();}
+  else if (!strcmp(param->fitness().c_str(), "food"))
+  { f = environment.nest;}
+  else if (!strcmp(param->fitness().c_str(), "connected"))
+  { connectivity_check(f); }
   return f;
 }
 

@@ -2,17 +2,14 @@
 #define SIMULATION_THREAD_H
 
 #include <numeric>
-#include <functional>
 #include <cctype>
 #include <algorithm>
 #include <thread>
 #include <cstdlib> // system, NULL, EXIT_FAILURE
 #include <iostream>
 #include <sstream> // std::stringstream, std::stringbuf
-#include <future>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <unistd.h>
 
 #include "main.h"
@@ -24,7 +21,6 @@
 #include "environment.h"
 #include "fitness_functions.h"
 #include "fifo.h"
-
 
 /**
  * Extract the number of agents from the argument list.
@@ -40,12 +36,6 @@ void read_argv(int argc, char *argv[])
   } else {
     nagents = stoi(argv[1]);
   }
-
-  if (argc > 2) {
-    string s;
-    s += argv[2];
-    param->id() = s;
-  }
 }
 
 /**
@@ -56,11 +46,12 @@ void read_argv(int argc, char *argv[])
  * @param argc Number of arguments from terminal input when launching swarmulator
  * @param argv Content of arguments from terminal input when launching swarmulator
  */
-void main_simulation_thread(int argc, char *argv[])
+void main_simulation_thread(int argc, char *argv[], string id)
 {
   terminalinfo::info_msg("Simulation started.");
   read_argv(argc, argv); // Read the number of agents from the argument input
   random_generator rg;
+  fifo f(id); // Open FIFO pipe
 
 
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
@@ -80,7 +71,7 @@ void main_simulation_thread(int argc, char *argv[])
     uint ID = 0;
     float t_created = -SEQUENTIAL - 1; // so that first agent is created at time - 9,9
 #else
-    for (uint8_t ID = 0; ID < nagents; ID++) {
+    for (uint16_t ID = 0; ID < nagents; ID++) {
       vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
       create_new_agent(ID, state); // Create agent
     }
@@ -90,7 +81,6 @@ void main_simulation_thread(int argc, char *argv[])
   // Keep global clock running.
   // This is only used by the animation and the logger.
   // The robots operate by their own detached thread clock.
-  fifo f; // Open FIFO pipe
   while (program_running) {
     if (!paused) {
 #ifdef SEQUENTIAL
@@ -101,15 +91,11 @@ void main_simulation_thread(int argc, char *argv[])
         ID++;
       }
 #endif
-      int t_wait = 1e6 / (param->simulation_updatefreq() * param->simulation_realtimefactor());
-      this_thread::sleep_for(chrono::microseconds(t_wait));
-      mtx.lock(); // Lock mutex to update global clock thread in relative sync
-      simtime_seconds += param->simulation_realtimefactor() * t_wait / 1e6;
-      mtx.unlock();
       // Runtime finish evolution
       if (param->time_limit() > 0.0) {
         if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time
           mtx.lock(); // Done
+          terminalinfo::debug_msg("Sending message");
           f.send(evaluate_fitness());
           mtx.unlock();
           program_running = false;

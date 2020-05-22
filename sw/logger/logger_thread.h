@@ -15,7 +15,7 @@
 using namespace std;
 
 bool logger_running = false;
-
+float simtime_seconds_old;
 /**
  * Run the logger
  *
@@ -32,16 +32,14 @@ void run_logger(ofstream &logfile, string filename)
   }
 
   // Write the logfile
-  mtx.lock();
-  if (!paused && simtime_seconds > 1.0) {
+  if (!paused && simtime_seconds > simtime_seconds_old + 1. / param->logger_updatefreq()) {
+    mtx.lock_shared();
     writer.txtwrite_state(logfile);
     writer.txtwrite_summary(logfile);
+    simtime_seconds_old = simtime_seconds;
+    mtx.unlock_shared();
   }
-  mtx.unlock();
-
-  // Wait
-  uint t_wait = (int)1e6 / (param->logger_updatefreq() * param->simulation_realtimefactor());
-  this_thread::sleep_for(chrono::microseconds(t_wait));
+  if (!program_running) {terminate();}
 }
 
 /**
@@ -57,6 +55,7 @@ void main_logger_thread()
   ofstream logfile;
   logfile.open(filename.c_str());
 
+  simtime_seconds_old = 0;
   // Initiate the logger
   while (program_running) {
     run_logger(logfile, filename);

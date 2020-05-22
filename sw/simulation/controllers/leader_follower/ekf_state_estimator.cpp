@@ -41,7 +41,7 @@ void ekf_state_estimator::run_ekf_filter()
   ekf_rl.X[8] = wrapToPi_f(ekf_rl.X[8]);
 }
 
-void ekf_state_estimator::run(uint8_t ID_in, uint8_t ID_tracked_in)
+void ekf_state_estimator::run(uint16_t ID_in, uint16_t ID_tracked_in)
 {
   if (!initialized) {
     ID = ID_in;

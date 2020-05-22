@@ -35,7 +35,7 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "{" > hN;
 	print "public:" > hN;
 	print "	"n"(int i, vector<float> state, float tstep);" > hN;
-	print "	void state_update();" > hN;
+	print "	vector<float> state_update(vector<float> state);" > hN;
 	print "	void animation();" > hN;
 	print "};\n" > hN;
 	print "#endif /*"N"_H*/" >> hN;
@@ -47,14 +47,16 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print n"::"n"(int i, vector<float> s, float tstep)\n{" >> cN;
 	print "  state = s;\n  ID = i;\n  dt = tstep;\n  orientation = 0.0;" > cN;
 	print "}\n" >> cN;
-	print "void "n"::state_update()\n{ "> cN;
+	print "vector<float> "n"::state_update(vector<float> state)\n{ "> cN;
 	print "  float v_x, v_y;"> cN;
-	print "  controller.get_velocity_command(ID, v_x, v_y);" > cN;
+	print "  controller->get_velocity_command(ID, v_x, v_y);" > cN;
+	print "  return state;" > cN;
 	print "  /*** Include your model here ***/ \n}\n" > cN;
 	print "void "n"::animation()\n{" > cN
 	print "  draw d;" > cN
-	print "  /*** Draw your agent here ***/\n}" > cN;
-
+	print "  /*** Draw your agent here. ***/" > cN;
+	print "  d.circle(param->scale());\n}" > cN
+	
 	cN = p"/README.md";
 	print "Creating README file";
 	print "#"n"" > cN;

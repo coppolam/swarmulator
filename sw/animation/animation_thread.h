@@ -42,7 +42,7 @@ void main_loop_function()
   // Draw all robots
   uint r = s.size();
   if (r > 0) {
-    for (uint8_t ID = 0; ID < r; ID++) {
+    for (uint16_t ID = 0; ID < r; ID++) {
       // Input: ID, p_x global, p_y global, orientation global
       drawer.agent(ID, s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->orientation);
       // Input: ID, p_x global, p_y global, v_x global, v_y global
@@ -51,13 +51,14 @@ void main_loop_function()
   }
 
   // Sleep until the next time-step according to the update frequency parameter
-  int t_wait = 1000.0 / param->animation_updatefreq();
-  this_thread::sleep_for(chrono::milliseconds(t_wait));
+  // int t_wait = 1000.0 / param->animation_updatefreq();
+  // this_thread::sleep_for(chrono::milliseconds(t_wait));
 
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();
 
   user_interaction(); // Activate interactive functions (mouse + keyboard), important: use this before draw functions!
+  if (!program_running) {terminate();}
 }
 
 /**
@@ -68,9 +69,8 @@ void main_loop_function()
  */
 void GL_Setup(int width, int height)
 {
-  glViewport(0, 0, width, height);
+  glViewport(0, 100, width, height);
   glMatrixMode(GL_PROJECTION);
-  // glEnable(GL_DEPTH_TEST);
   gluPerspective(45, (float)width / height, .1, 100);
   glMatrixMode(GL_MODELVIEW);
 }
