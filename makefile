@@ -78,7 +78,7 @@ $(BUILD_FOLDER)/%.o: %.cpp # This rule defines how to go from CPP file to Object
 $(BUILD_FOLDER)/%.o: %.c # This rule defines how to go from C file to Object file (use %.c* for all files)
 	# Compiling $<
 	@mkdir -p $(@D)
-	@$(MAKE) -c $< -o $@ $(OPT);
+	@gcc -g -Wall -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -std=c11 $(INC) -c $< -o $@;
 
 clean:
 	# Cleaning $(TARGET)...

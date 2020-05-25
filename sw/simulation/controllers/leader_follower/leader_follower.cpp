@@ -1,4 +1,4 @@
-#include "ndi_follower.h"
+#include "leader_follower.h"
 #include "main.h"
 #include <iostream>
 #include <string>
@@ -6,6 +6,7 @@
 #include "trigonometry.h"
 
 #define STATE_ESTIMATOR 1
+#define COMMAND_LOCAL 1
 
 #define NDI_MOST_RECENT ndihandle.data_entries - 1
 
@@ -21,7 +22,7 @@
 #define NDI_METHOD 1
 
 // Initilizer
-ndi_follower::ndi_follower() : Controller()
+leader_follower::leader_follower() : Controller()
 {
   ndihandle.delay = NDI_DELAY;
   ndihandle.tau_x = 3.0;
@@ -34,7 +35,7 @@ ndi_follower::ndi_follower() : Controller()
   ndihandle.Ki = 0.0;
   ndihandle.Kd = -3.0;
 };
-void ndi_follower::bindNorm(float max_command)
+void leader_follower::bindNorm(float max_command)
 {
   float normcom = sqrt(ndihandle.commands[1] * ndihandle.commands[1] + ndihandle.commands[0] * ndihandle.commands[0]);
   if (normcom > max_command) {
@@ -45,7 +46,7 @@ void ndi_follower::bindNorm(float max_command)
     ndihandle.commands_lim[1] = ndihandle.commands[1];
   }
 }
-float ndi_follower::accessCircularFloatArrElement(float arr[], int index)
+float leader_follower::accessCircularFloatArrElement(float arr[], int index)
 {
   float value;
   int realindex = (ndihandle.data_start + index) % NDI_PAST_VALS;
@@ -54,7 +55,7 @@ float ndi_follower::accessCircularFloatArrElement(float arr[], int index)
 }
 
 // TODO: Trapezoidal integration, and not simply discarding values before tcur-delay, but linearly interpolating to tcur-delay
-float ndi_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
+float leader_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
 {
   float integral = 0;
   float dt;
@@ -67,7 +68,7 @@ float ndi_follower::computeNdiFloatIntegral(float ndiarr[], float curtime)
   return integral;
 }
 
-void ndi_follower::cleanNdiValues(float tcur)
+void leader_follower::cleanNdiValues(float tcur)
 {
   int curentries = ndihandle.data_entries;
   for (int i = 0; i < curentries; i++) {
@@ -82,7 +83,7 @@ void ndi_follower::cleanNdiValues(float tcur)
 /**
   * Update the NDI controller periodically
   */
-void ndi_follower::uwb_follower_control_periodic(void)
+void leader_follower::uwb_follower_control_periodic(void)
 {
   // Re-initialize commands
   ndihandle.commands[0] = 0;
@@ -137,7 +138,7 @@ void ndi_follower::uwb_follower_control_periodic(void)
   }
 }
 
-void ndi_follower::get_velocity_command(const uint16_t ID, float &vx_des, float &vy_des)
+void leader_follower::get_velocity_command(const uint16_t ID, float &vx_des, float &vy_des)
 {
   // Store data from leader's position estimate
   if (ndihandle.data_entries == NDI_PAST_VALS) {
@@ -145,26 +146,25 @@ void ndi_follower::get_velocity_command(const uint16_t ID, float &vx_des, float 
     ndihandle.data_start = (ndihandle.data_start + 1) % NDI_PAST_VALS;
   }
 
-  // float px, py, vx, vy, vx0, vy0, ax0, ay0;
+  float px, py, vx, vy, vx0, vy0, ax0, ay0;
   // float px_true, py_true, vx_true, vy_true, vx0_true, vy0_true, ax0_true, ay0_true;
   if (ID > 0 && simtime_seconds > 10) {
-    uint16_t ID_tracked = 0; //ID - 1;
+    uint8_t ID_tracked = 0; //ID - 1;
 #if COMMAND_LOCAL
 #if STATE_ESTIMATOR
     filter.run(ID, ID_tracked);
-    float px = filter.ekf_rl.X[0]; // Relative px
-    float py = filter.ekf_rl.X[1]; // Relative py
-    float vx = filter.ekf_rl.X[4]; // Relative vx
-    float vy = filter.ekf_rl.X[5]; // Relative vy
-    float vx0, vy0, ax0, ay0;
+    px = filter.ekf_rl.X[0];
+    py = filter.ekf_rl.X[1];
+    vx = filter.ekf_rl.X[4];
+    vy = filter.ekf_rl.X[5];
     rotate_xy(filter.ekf_rl.X[6], filter.ekf_rl.X[7], filter.ekf_rl.X[8], vx0, vy0);
-    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #else
     polar2cart(o.request_distance(ID, ID_tracked), o.request_bearing(ID, ID_tracked), px, py);
     rotate_xy(s[ID]->get_state(2), s[ID]->get_state(3), -s[ID]->get_state(6), vx, vy);
     rotate_xy(s[ID_tracked]->get_state(2), s[ID_tracked]->get_state(3), -s[ID]->get_state(6), vx0, vy0);
     rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
 #endif
+    rotate_xy(s[ID_tracked]->get_state(4), s[ID_tracked]->get_state(5), -s[ID]->get_state(6), ax0, ay0);
     ndihandle.xarr[ndihandle.data_end] = px;
     ndihandle.yarr[ndihandle.data_end] = py;
     ndihandle.u1arr[ndihandle.data_end] = vx;
@@ -189,7 +189,7 @@ void ndi_follower::get_velocity_command(const uint16_t ID, float &vx_des, float 
     ndihandle.data_end = (ndihandle.data_end + 1) % NDI_PAST_VALS;
     ndihandle.data_entries++;
     uwb_follower_control_periodic();
-    bindNorm(1.0);
+    bindNorm(0.1);
     vx_des = ndihandle.commands_lim[0];
     vy_des = ndihandle.commands_lim[1];
   }

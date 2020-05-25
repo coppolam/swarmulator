@@ -1,4 +1,4 @@
-# ndi_follower
+# leader_follower
 
 ## Description
 This controller implements the relative localization method and the state estimation from the paper:

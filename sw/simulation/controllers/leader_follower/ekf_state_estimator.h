@@ -11,8 +11,8 @@ class ekf_state_estimator
   // The omniscient observer is used to simulate sensing the other agents.
   OmniscientObserver o;
   bool initialized;
-  uint16_t ID;
-  uint16_t ID_tracked;
+  uint8_t ID;
+  uint8_t ID_tracked;
   float simtime_seconds_store;
 
 public:
@@ -21,7 +21,7 @@ public:
   ~ekf_state_estimator() {};
   void init_ekf_filter();
   void run_ekf_filter();
-  void run(uint16_t ID_in, uint16_t ID_tracked_in);
+  void run(uint8_t ID_in, uint8_t ID_tracked_in);
 };
 
 #endif /*EKF_STATE_ESTIMATOR_H*/

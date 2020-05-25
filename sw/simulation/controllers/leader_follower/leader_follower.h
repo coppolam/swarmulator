@@ -37,14 +37,16 @@ typedef struct ndihandler {
   float commands_lim[2];
 } ndihandler;
 
-class ndi_follower : public Controller
+class leader_follower : public Controller
 {
+  // The omniscient observer is used to simulate sensing the other agents.
+  OmniscientObserver o;
   ndihandler ndihandle;
   ekf_state_estimator filter;
 
 public:
-  ndi_follower();
-  ~ndi_follower() {};
+  leader_follower();
+  ~leader_follower() {};
 
   float accessCircularFloatArrElement(float arr[], int index);
   float computeNdiFloatIntegral(float ndiarr[], float curtime);
