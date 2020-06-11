@@ -207,7 +207,7 @@ void mouse_click_callback(int button, int state, int x, int y)
 void catchKey_arrow(int key, __attribute__((unused)) int a, __attribute__((unused)) int b)
 {
   s[0]->manual = true;
-  float vnominal = 0.1;
+  float vnominal = 1.0;
   // if (key == GLUT_KEY_LEFT) {
   //   s[0]->manualy = -vnominal;
   //   s[0]->manualx = 0;

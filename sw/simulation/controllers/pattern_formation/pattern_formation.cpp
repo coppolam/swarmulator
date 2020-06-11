@@ -1,14 +1,15 @@
-#include "controller_pattern.h"
+#include "pattern_formation.h"
 #include <algorithm> // std::find
 #include "agent.h"
 #include "main.h"
 #include "randomgenerator.h"
 #include "trigonometry.h"
 #include "auxiliary.h"
+#include "draw.h"
 
 using namespace std;
 
-controller_pattern::controller_pattern() : controller_lattice_basic()
+pattern_formation::pattern_formation() : lattice_basic()
 {
   // Define here the state-action matrix used by the agents
   string s = "./conf/state_action_matrices/state_action_matrix_lineNE.txt";
@@ -18,9 +19,11 @@ controller_pattern::controller_pattern() : controller_lattice_basic()
   beta_des.push_back(atan(_ddes_y / _ddes_x));
   beta_des.push_back(M_PI / 2.0);
   beta_des.push_back(M_PI / 2.0 + atan(_ddes_x / _ddes_y));
+  _kr = 1.0; // Repulsion gain
+  // _ka = 5.0; // Attraction gain
 }
 
-void controller_pattern::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
+void pattern_formation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
   v_x = 0.0;
   v_y = 0.0;
@@ -86,4 +89,10 @@ void controller_pattern::get_velocity_command(const uint16_t ID, float &v_x, flo
     increase_counter(moving_timer, twait);
   }
 
+}
+
+void pattern_formation::animation(const uint16_t ID)
+{
+  draw d;
+  d.circle_loop(rangesensor);
 }

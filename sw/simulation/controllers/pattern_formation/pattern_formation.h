@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_PATTERN
 #define CONTROLLER_PATTERN
 
-#include "controller_lattice_basic.h"
+#include "lattice_basic.h"
 
 #include <map>
 #include <fstream>
@@ -12,15 +12,16 @@
 #include "terminalinfo.h"
 #include "template_calculator.h"
 
-class controller_pattern : public controller_lattice_basic
+class pattern_formation : public lattice_basic
 {
   uint moving_timer;
   int selected_action;
 
 public:
-  controller_pattern();
-  ~controller_pattern() {};
+  pattern_formation();
+  ~pattern_formation() {};
   virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y);
+  virtual void animation(const uint16_t ID);
 };
 
 #endif /*CONTROLLER_PATTERN*/

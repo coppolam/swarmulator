@@ -20,7 +20,7 @@ vector<float> particle_oriented::state_update(vector<float> state)
   // x+ towards North
   // y+ towards East
   float vx_des, vy_des = 0.;
-  float vx_global, vy_global, dpsirate = 0;
+  float vx_global, vy_global, dpsirate;
   if (!manual) {
     controller->get_velocity_command(ID, vx_des, dpsirate); // Command comes out in the local frame
   } else {
@@ -36,12 +36,9 @@ vector<float> particle_oriented::state_update(vector<float> state)
   vx_global = vx_des;
   vy_global = vy_des;
 #endif
-
-  // Orientation
   state.at(7) = dpsirate;
   state.at(6) += state[7] * dt;
-  state.at(6) = wrapToPi_f(state[6]);
-  orientation = state.at(6);
+  orientation = wrapToPi_f(state[6]);
 
   // Acceleration control
   float ka = 2;
@@ -64,5 +61,6 @@ vector<float> particle_oriented::state_update(vector<float> state)
 void particle_oriented::animation()
 {
   draw d;
+
   d.triangle(param->scale());
 }

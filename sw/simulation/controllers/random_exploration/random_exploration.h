@@ -7,6 +7,8 @@
 #include "controller.h"
 #include "randomgenerator.h"
 
+#define COMMAND_LOCAL 1
+
 /**
  * Basic exploration behavior which randomly moves in an environment while avoiding neighbors.
  *
@@ -23,6 +25,7 @@ public:
   random_exploration();
 
   virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y);
+  virtual void animation(const uint16_t ID);
 };
 
 #endif /*EXPLORATION_H*/

@@ -4,7 +4,7 @@
 #include "controller.h"
 #include "template_calculator.h"
 
-class controller_lattice_basic : public Controller
+class lattice_basic : public Controller
 {
 public:
   Template_Calculator t;
@@ -12,8 +12,8 @@ public:
   float _v_adj = 1; // Adjustment velocity
   float d_safe = 0.9;
 
-  controller_lattice_basic(): t(8) {};
-  ~controller_lattice_basic() {};
+  lattice_basic(): t(8) {};
+  ~lattice_basic() {};
 
   void attractionmotion(const float &v_r, const float &v_b, float &v_x, float &v_y);
   void latticemotion(const float &v_r, const float &v_adj, const float &v_b, const float &bdes, float &v_x, float &v_y);

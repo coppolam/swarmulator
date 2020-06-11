@@ -128,10 +128,4 @@ inline static void rotate_xy(const float &x, const float &y, const float &theta,
   yr = x * sin(theta) + y * cos(theta);
 }
 
-inline static float minimum_angular_distance(float first, float second)
-{
-  float raw_diff = first > second ? first - second : second - first;
-  float mod_diff = std::fmod(raw_diff, 2 * M_PI);
-  return mod_diff > M_PI ? 2 * M_PI - mod_diff : mod_diff;
-}
 #endif /*TRIGONOMETRY_H*/

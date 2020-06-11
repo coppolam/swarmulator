@@ -87,7 +87,7 @@ void draw::line(const float &x, const float &y)
   glColor3f(1.0, 1.0, 1.0);
   glBegin(GL_LINES);
   glVertex3f(0.0, 0.0, 0.0);
-  glVertex3f(x, -y, 0);
+  glVertex3f(x * xrat, -y * yrat, 0);
   glEnd();
   glPopMatrix();
 }
@@ -99,7 +99,7 @@ void draw::line(const float &x, const float &y, const float &width)
   glColor3f(1.0, 1.0, 1.0);
   glBegin(GL_LINES);
   glVertex3f(0.0, 0.0, 0.0);
-  glVertex3f(x, -y, 0);
+  glVertex3f(x * xrat, -y * yrat, 0);
   glEnd();
   glPopMatrix();
 }
@@ -168,7 +168,7 @@ void draw::velocity_arrow(const uint16_t &ID, const float &x, const float &y, co
 void draw::food(const float &x, const float &y)
 {
   glPushMatrix();
-  glTranslatef(y, x, 0.0);
+  glTranslatef(y * xrat, x * yrat, 0.0);
   glRotatef(90, 0.0, 0.0, 1.0);
   point();
   glPopMatrix();
