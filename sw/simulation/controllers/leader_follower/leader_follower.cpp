@@ -6,7 +6,6 @@
 #include "trigonometry.h"
 
 #define STATE_ESTIMATOR 1
-#define COMMAND_LOCAL 1
 
 #define NDI_MOST_RECENT ndihandle.data_entries - 1
 
@@ -193,4 +192,9 @@ void leader_follower::get_velocity_command(const uint16_t ID, float &vx_des, flo
     vx_des = ndihandle.commands_lim[0];
     vy_des = ndihandle.commands_lim[1];
   }
+}
+
+void leader_follower::animation(const uint16_t ID)
+{
+
 }

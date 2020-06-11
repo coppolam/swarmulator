@@ -17,15 +17,13 @@
 #include <sstream> // std::stringstream, std::stringbuf
 #include "drawingparams.h"
 
-using namespace std;
-
 /**
  * Class to write data to a txt file, used for logging purposes
  */
 class txtwrite
 {
 public:
-  string filename;
+  std::string filename;
   txtwrite();
 
   /**
@@ -33,14 +31,14 @@ public:
    *
    * @param s The name of the txt file
    */
-  void setfilename(const string &s);
+  void setfilename(const std::string &s);
 
   /**
    * Write the state of a robot to a txt file
    *
    * @param logfile The txt file ID (from ofstream)
    */
-  void txtwrite_state(ofstream &logfile);
+  void txtwrite_state(std::ofstream &logfile);
 
   /**
    * Write other properties. The definition of this function can be modified to different needs.
@@ -48,7 +46,7 @@ public:
    *
    * @param logfile The txt file ID (from ofstream)
    */
-  void txtwrite_summary(ofstream &logfile);
+  void txtwrite_summary(std::ofstream &logfile);
 };
 
 

@@ -11,14 +11,12 @@
 #include <vector>
 #include <random>
 
-using namespace std;
-
 /**
  * Defines a graph structure that can be used to assess the topology of the swarm
  */
 class random_generator
 {
-  default_random_engine generator;
+  std::default_random_engine generator;
 
 public:
 
@@ -58,7 +56,7 @@ public:
    */
   bool bernoulli(float p);
 
-  int discrete_int(vector<float> &d);
+  int discrete_int(std::vector<float> &d);
 
   /**
    * Generate a random vector with zero mean from a gaussian distribution
@@ -67,7 +65,7 @@ public:
    * @param mean Mean of the gaussian distribution
    * @param stddev Standard deviation
    */
-  vector<float> gaussian_float_vector(const int &length, const float &mean, const float &std);
+  std::vector<float> gaussian_float_vector(const int &length, const float &mean, const float &std);
 
   /**
    * Generate a random vector with zero mean from a uniform distribution
@@ -76,7 +74,7 @@ public:
    * @param min Minimum value in range
    * @param max Maximum value in range
    */
-  vector<float> uniform_float_vector(const int &length, const float &min, const float &max);
+  std::vector<float> uniform_float_vector(const int &length, const float &min, const float &max);
 
 };
 

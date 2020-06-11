@@ -22,10 +22,10 @@ void array_sortmintomax_index(int length, indexed_array *x)
   return;
 }
 
-vector<uint> OmniscientObserver::request_closest(const uint16_t &ID)
+std::vector<uint> OmniscientObserver::request_closest(const uint16_t &ID)
 {
   indexed_array dm[s.size() - 1];
-  vector<uint> ind;
+  std::vector<uint> ind;
   for (uint16_t i = 0; i < s.size(); i++) {
     dm[i].values = (sqrt(
                       pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
@@ -44,10 +44,10 @@ vector<uint> OmniscientObserver::request_closest(const uint16_t &ID)
   return ind;
 }
 
-vector<uint> OmniscientObserver::request_closest_inrange(const uint16_t &ID, const float &range)
+std::vector<uint> OmniscientObserver::request_closest_inrange(const uint16_t &ID, const float &range)
 {
   indexed_array dm[s.size() - 1];
-  vector<uint> ind;
+  std::vector<uint> ind;
   for (uint16_t i = 0; i < s.size(); i++) {
     dm[i].values = (sqrt(
                       pow(s[i]->get_position(0) - s[ID]->get_position(0), 2.0)
@@ -144,19 +144,19 @@ bool OmniscientObserver::see_if_moving(const uint16_t &ID)
   return s[ID]->moving;
 }
 
-void OmniscientObserver::relative_location_inrange(const uint16_t ID, const float range, vector<float> &r,
-    vector<float> &b)
+void OmniscientObserver::relative_location_inrange(const uint16_t ID, const float range, std::vector<float> &r,
+    std::vector<float> &b)
 {
-  vector<uint> closest = request_closest_inrange(ID, range);
+  std::vector<uint> closest = request_closest_inrange(ID, range);
   for (size_t i = 0; i < closest.size(); i++) {
     r.push_back(request_distance(ID, closest[i]));
     b.push_back(request_bearing(ID, closest[i]));
   }
 }
 
-void OmniscientObserver::relative_location(const uint16_t ID, vector<float> &r, vector<float> &b)
+void OmniscientObserver::relative_location(const uint16_t ID, std::vector<float> &r, std::vector<float> &b)
 {
-  vector<uint> c = request_closest(ID);
+  std::vector<uint> c = request_closest(ID);
   for (size_t i = 0; i < c.size(); i++) {
     r.push_back(request_distance(ID, c[i]));
     b.push_back(request_bearing(ID, c[i]));

@@ -6,8 +6,6 @@
 #include <list>
 #include <queue>
 
-using namespace std;
-
 /**
  * @brief Defines a graph structure that can be used to assess the topology of the swarm
  *
@@ -18,7 +16,7 @@ class Graph
 {
 private:
   int V;
-  list<int> *adj;
+  std::list<int> *adj;
 
 public:
   /**
@@ -29,7 +27,7 @@ public:
   Graph(int V)
   {
     this->V = V;
-    adj = new list<int>[V];
+    adj = new std::list<int>[V];
   }
 
   /**

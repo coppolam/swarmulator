@@ -34,7 +34,7 @@ void read_argv(int argc, char *argv[])
   if (argc <= 1) {
     terminalinfo::error_msg("Please specify the number of agents.");
   } else {
-    nagents = stoi(argv[1]);
+    nagents = std::stoi(argv[1]);
   }
 }
 
@@ -46,7 +46,7 @@ void read_argv(int argc, char *argv[])
  * @param argc Number of arguments from terminal input when launching swarmulator
  * @param argv Content of arguments from terminal input when launching swarmulator
  */
-void main_simulation_thread(int argc, char *argv[], string id)
+void main_simulation_thread(int argc, char *argv[], std::string id)
 {
   terminalinfo::info_msg("Simulation started.");
   read_argv(argc, argv); // Read the number of agents from the argument input
@@ -57,22 +57,22 @@ void main_simulation_thread(int argc, char *argv[], string id)
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
   if (nagents > 0) {
 #ifdef SEQUENTIAL
-    vector<float> st = environment.start();
-    vector<float> x0 = rg.uniform_float_vector(nagents, st[1] - 0.1, st[1] + 0.1);
-    vector<float> y0 = rg.uniform_float_vector(nagents, st[0] - 0.1, st[0] + 0.1);
+    std::vector<float> st = environment.start();
+    std::vector<float> x0 = rg.uniform_float_vector(nagents, st[1] - 0.1, st[1] + 0.1);
+    std::vector<float> y0 = rg.uniform_float_vector(nagents, st[0] - 0.1, st[0] + 0.1);
 #else
     float spread = environment.limits(); // default // TODO: Spread randomly within an arbitray arena
-    vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
-    vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
+    std::vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
+    std::vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
 #endif
-    vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
+    std::vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
     // Generate the agent models
 #ifdef SEQUENTIAL
     uint ID = 0;
     float t_created = -SEQUENTIAL - 1; // so that first agent is created at time - 9,9
 #else
     for (uint16_t ID = 0; ID < nagents; ID++) {
-      vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
+      std::vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
       create_new_agent(ID, state); // Create agent
     }
 #endif
@@ -95,8 +95,10 @@ void main_simulation_thread(int argc, char *argv[], string id)
       if (param->time_limit() > 0.0) {
         if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time
           mtx.lock(); // Done
+          mtx_env.lock();
           terminalinfo::debug_msg("Sending message");
           f.send(evaluate_fitness());
+          mtx_env.unlock();
           mtx.unlock();
           program_running = false;
         }

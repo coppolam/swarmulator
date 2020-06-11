@@ -25,26 +25,24 @@
 #include "animation_thread.h" // Thread that handles animation
 #include "logger_thread.h" // Thread that handles the logger
 
-using namespace std;
-
 /**
  * Parameters from the XML file
  */
-unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
+std::unique_ptr<parameters_t> param(parameters("conf/parameters.xml", xml_schema::flags::dont_validate));
 
 /**
  * Global variables used throughout simulation
  */
 uint nagents; // Number of agents in the simulation
-vector<Agent *> s; // Set up the agents
-shared_mutex mtx; // Mutex needed to lock threads
-shared_mutex mtx_env; // Mutex needed to lock threads
+std::vector<Agent *> s; // Set up the agents
+std::shared_mutex mtx; // Mutex needed to lock threads
+std::shared_mutex mtx_env; // Mutex needed to lock threads
 float realtimefactor; // Real time factor of simulation
 float simtime_seconds = 0; // Initial simulation time
 float rangesensor = 1.8; // How far each robot can sense
 bool program_running  = false; // Program running, initiated false until the beginning
 Environment environment; // Environment walls
-string identifier; // Log name identifier
+std::string identifier; // Log name identifier
 
 /**
  * The main function launches separate threads that control independent
@@ -56,7 +54,7 @@ int main(int argc, char *argv[])
   program_running = true; // Program is running
 
   if (argc > 2) {
-    string s = "";
+    std::string s = "";
     s += argv[2];
     identifier = s;
   } else {
@@ -64,12 +62,12 @@ int main(int argc, char *argv[])
   }
 
 #ifdef ANIMATION
-  thread animation(main_animation_thread);
+  std::thread animation(main_animation_thread);
   animation.detach();
 #endif
 
 #ifdef LOG
-  thread logger(main_logger_thread);
+  std::thread logger(main_logger_thread);
   logger.detach();
 #endif
 

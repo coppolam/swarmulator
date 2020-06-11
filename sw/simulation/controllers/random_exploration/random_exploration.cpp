@@ -27,6 +27,6 @@ void random_exploration::get_velocity_command(const uint16_t ID, float &v_x, flo
   v_y_old = v_y_ref;
   v_x += v_x_ref;
   v_y += v_y_ref;
-  wall_avoidance(ID, v_x, v_y);
+  wall_avoidance_bounce(ID, v_x, v_y);
 
 }

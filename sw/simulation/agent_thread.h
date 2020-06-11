@@ -29,13 +29,13 @@ void run_agent_simulation_step(const int &ID)
 #endif
     if (sequential) {
       mtx.lock_shared();
-      vector<float> s_0 = s.at(ID)->state;
-      vector<float> s_n = s.at(ID)->state_update(s_0); // State update
+      std::vector<float> s_0 = s.at(ID)->state;
+      std::vector<float> s_n = s.at(ID)->state_update(s_0); // State update
       mtx.unlock_shared();
 
       /****** Wall physics engine ********/
       // Check if hitting a wall
-      vector<float> test = s_n;
+      std::vector<float> test = s_n;
       float r_temp, ang_temp, vx_temp, vy_temp;
       cart2polar(s_n[2], s_n[3], r_temp, ang_temp); // direction of velocity
       polar2cart(r_temp, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
@@ -56,11 +56,12 @@ void run_agent_simulation_step(const int &ID)
       }
       if (ID == 0) { // global clock = clock of first robot
         simtime_seconds += 1. / param->simulation_updatefreq();
+        environment.loop();
       }
       if (param->simulation_realtimefactor() > 0) {
         /*** Sleep. Set param->simulation_realtimefactor()=0 in parameters.xml to avoid sleep and run at full speed! ***/
         int t_wait = (int)1e6 / (param->simulation_updatefreq() * param->simulation_realtimefactor());
-        this_thread::sleep_for(chrono::microseconds(t_wait));
+        std::this_thread::sleep_for(std::chrono::microseconds(t_wait));
       }
     }
   }
@@ -73,22 +74,19 @@ void run_agent_simulation_step(const int &ID)
  * @param x Initial position of the agent in x
  * @param y Initial position of the agent in y
  */
-void create_new_agent(const int &ID, const vector<float> &states)
+void create_new_agent(const int &ID, const std::vector<float> &states)
 {
   mtx.lock();
   // Initiate a new agent
   s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
-#ifdef ESTIMATOR
-  pr.extend(); // Extend estimator so that the new agent can also contribute
-#endif
   mtx.unlock();
 
   // Info message
-  stringstream ss;
+  std::stringstream ss;
   ss << "Robot " << ID << " initiated";
   terminalinfo::info_msg(ss.str());
 
-  thread agent(run_agent_simulation_step, ID); // Initiate the thread that controls the agent
+  std::thread agent(run_agent_simulation_step, ID); // Initiate the thread that controls the agent
   agent.detach(); // Detach thread so that it runs independently
 }
 #endif /*AGENT_THREAD_H*/

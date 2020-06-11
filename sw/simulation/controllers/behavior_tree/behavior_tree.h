@@ -8,8 +8,6 @@
 #include "terminalinfo.h"
 #include "randomgenerator.h"
 
-using namespace std;
-
 // Include behavior tree library
 #include "bt/btFile.h"
 using namespace BT;
@@ -34,7 +32,7 @@ public:
    * @param v_x
    * @param v_y
    */
-  void lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y);
+  void lattice_all(const int &ID, const std::vector<uint> &closest, float &v_x, float &v_y);
 
   /**
    * Update the inputs and run the behavior tree command

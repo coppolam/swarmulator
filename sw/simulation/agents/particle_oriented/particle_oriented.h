@@ -6,8 +6,6 @@
 #include <iostream>
 #include "agent.h"
 
-using namespace std;
-
 /**
  * This child class of agent implements the dynamics of simple accelerated oriented vehicles using a kinematic model
  */
@@ -17,12 +15,12 @@ public:
   /**
    * Constructor
    */
-  particle_oriented(int i, vector<float> state, float tstep);
+  particle_oriented(int i, std::vector<float> state, float tstep);
 
   /**
    * State update implementation
    */
-  vector<float> state_update(vector<float> state);
+  std::vector<float> state_update(std::vector<float> state);
 
   /**
    * Animation openGL implementation for visualization

@@ -10,8 +10,6 @@
 #include "drawingparams.h"
 #include "settings.h"
 
-using namespace std;
-
 /**
  * @brief Object that takes care of OpenGL drawing for all elements of interest.
  * This class contains general openGL function that
@@ -51,6 +49,7 @@ public:
    * @param y y position (North)
    */
   void line(const float &x, const float &y);
+  void line(const float &x, const float &y, const float &width);
 
   /**
    * Draw the global x and y axes at (0,0)

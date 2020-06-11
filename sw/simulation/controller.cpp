@@ -50,8 +50,8 @@ void Controller::get_lattice_motion(const int &ID, const int &state_ID, float &v
 
 void Controller::get_lattice_motion_all(const int &ID, float &v_x, float &v_y)
 {
-  vector<uint> closest = o.request_closest(ID);
-  vector<uint> q_ID;
+  std::vector<uint> closest = o.request_closest(ID);
+  std::vector<uint> q_ID;
   q_ID.clear();
   for (uint16_t i = 0; i < s.size() - 1; i++) {
     if (o.request_distance(ID, closest[i]) < rangesensor) {
@@ -64,6 +64,19 @@ void Controller::get_lattice_motion_all(const int &ID, float &v_x, float &v_y)
     }
     v_x += v_x / (float)q_ID.size();
     v_y += v_y / (float)q_ID.size();
+  }
+}
+
+void Controller::get_lattice_motion_all(const int &ID, float &v_x, float &v_y, uint8_t k)
+{
+  std::vector<uint> closest = o.request_closest(ID);
+  if (!closest.empty()) {
+    uint mm = std::min(int(closest.size()), int(k));
+    for (size_t i = 0; i < mm; i++) {
+      get_lattice_motion(ID, closest[i], v_x, v_y);
+    }
+    v_x += v_x / (float)k;
+    v_y += v_y / (float)k;
   }
 }
 
@@ -84,10 +97,10 @@ void Controller::set_saturation(const float &lim)
   saturation_limits = lim;
 }
 
-bool Controller::wall_avoidance(const uint16_t ID, float &v_x, float &v_y)
+bool Controller::wall_avoidance_bounce(const uint16_t ID, float &v_x, float &v_y)
 {
   // Predict what the command wants and see if it will hit a wall, then fix it.
-  vector<float> sn = s[ID]->state;
+  std::vector<float> sn = s[ID]->state;
   float r_temp, ang_temp, vx_temp, vy_temp;
   cart2polar(v_x, v_y, r_temp, ang_temp); // direction of velocity
   polar2cart(rangesensor, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
@@ -106,10 +119,10 @@ bool Controller::wall_avoidance(const uint16_t ID, float &v_x, float &v_y)
   return false;
 }
 
-bool Controller::wall_avoidance_t(const uint16_t ID, float &v, float &dpsitheta)
+bool Controller::wall_avoidance_turn(const uint16_t ID, float &v, float &dpsitheta)
 {
   // Predict what the command wants and see if it will hit a wall, then fix it.
-  vector<float> sn = s[ID]->state;
+  std::vector<float> sn = s[ID]->state;
   float r_temp, ang_temp, vx_temp, vy_temp, vx_global, vy_global, slope;
   rotate_xy(0.5, 0.5, sn[6], vx_global, vy_global);
   cart2polar(vx_global, vy_global, r_temp, ang_temp); // direction of velocity

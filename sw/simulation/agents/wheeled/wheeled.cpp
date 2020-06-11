@@ -1,5 +1,8 @@
 #include "wheeled.h"
 #include "draw.h"
+#include "trigonometry.h"
+
+using namespace std;
 
 wheeled::wheeled(int i, vector<float> s, float tstep)
 {
@@ -42,10 +45,8 @@ vector<float> wheeled::state_update(vector<float> state)
   return state;
 }
 
-
 void wheeled::animation()
 {
   draw d;
   d.triangle(param->scale());
-  d.circle_loop(rangesensor);
 }

@@ -11,8 +11,6 @@
 #include "graph.h"
 #include "randomgenerator.h"
 
-using namespace std;
-
 struct indexed_array {
   float values;
   int index;
@@ -37,12 +35,12 @@ public:
   ~OmniscientObserver() {};
 
   /**
-   * Get a vector of the closest neighbors, in order from closest to furthest.
+   * Get a std::vector of the closest neighbors, in order from closest to furthest.
    *
    * @param ID The ID of the robot that is performing the request
-   * @return vector<uint> A vector of the IDs of all the neighbors, from closest to furthest.
+   * @return std::vector<uint> A std::vector of the IDs of all the neighbors, from closest to furthest.
    */
-  vector<uint> request_closest(const uint16_t &ID); // request IDs of closest k neighbours and for your ID
+  std::vector<uint> request_closest(const uint16_t &ID); // request IDs of closest k neighbours and for your ID
 
   /**
    * @brief Get the closest within a range
@@ -52,9 +50,9 @@ public:
    *
    * @param ID The ID of the robot that is performing the request
    * @param range The maximum range that the agent can sense
-   * @return vector<uint> A vector of the IDs of all the neighbors within the range, from closest to furthest.
+   * @return std::vector<uint> A std::vector of the IDs of all the neighbors within the range, from closest to furthest.
    */
-  vector<uint> request_closest_inrange(const uint16_t &ID, const float &range);
+  std::vector<uint> request_closest_inrange(const uint16_t &ID, const float &range);
 
   /**
    * Get the relative distance between two agents along x or y
@@ -140,7 +138,7 @@ public:
    * @param r List or ranges to neighbors within the range sensor (output)
    * @param b Bearing to neighbors (output)
    */
-  void relative_location_inrange(const uint16_t ID, const float range, vector<float> &r, vector<float> &b);
+  void relative_location_inrange(const uint16_t ID, const float range, std::vector<float> &r, std::vector<float> &b);
 
   /**
    * @brief Relative location to all robots
@@ -149,7 +147,7 @@ public:
    * @param r
    * @param b
    */
-  void relative_location(const uint16_t ID, vector<float> &r, vector<float> &b);
+  void relative_location(const uint16_t ID, std::vector<float> &r, std::vector<float> &b);
 
   /**
    * @brief Returns true if there is nearby food

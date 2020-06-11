@@ -10,13 +10,11 @@
 #include "terminalinfo.h"
 #include "omniscient_observer.h"
 
-using namespace std;
-
 class Template_Calculator
 {
   // Map of state-space index to possible action space indexes.
   OmniscientObserver o; // The omniscient observer is used to simulate sensing the other agents.
-  vector<float> blink;
+  std::vector<float> blink;
   uint sp;
 public:
   /**
@@ -32,27 +30,27 @@ public:
   /**
    * State-action map storage
    */
-  std::map<int, vector<int>> state_action_matrix;
+  std::map<int, std::vector<int>> state_action_matrix;
 
   /**
    * Function to read the state-action map from a txt file and store it in the object
    */
-  void set_state_action_matrix(string filename);
+  void set_state_action_matrix(std::string filename);
 
   /**
    * Function to select the desired relative bearing based on what is easiest
    */
-  float get_preferred_bearing(const vector<float> &bdes, const float v_b);
+  float get_preferred_bearing(const std::vector<float> &bdes, const float v_b);
 
   /**
    * Construct the local discrete state in binary form (q) from the continous neighborhood
    */
-  bool  fill_template(vector<bool> &q, const float &b_i, const float &u, const float &dmax, const float &angle_err);
+  bool  fill_template(std::vector<bool> &q, const float &b_i, const float &u, const float &dmax, const float &angle_err);
 
   /**
    * Define the current neighborhood
    */
-  void assess_situation(uint16_t ID, vector<bool> &q, vector<int> &q_ID);
+  void assess_situation(uint16_t ID, std::vector<bool> &q, std::vector<int> &q_ID);
 };
 
 #endif /*TEMPLATE_CALCULATOR_H*/

@@ -90,7 +90,7 @@ void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v
   increase_counter(moving_timer, timelim);
   /*******************************************************/
 
-  wall_avoidance(ID, v_x_ref, v_y_ref);
+  wall_avoidance_bounce(ID, v_x_ref, v_y_ref);
 
   v_x += v_x_ref;
   v_y += v_y_ref;

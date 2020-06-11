@@ -6,6 +6,8 @@
 #include "trigonometry.h"
 #include "auxiliary.h"
 
+using namespace std;
+
 controller_pattern::controller_pattern() : controller_lattice_basic()
 {
   // Define here the state-action matrix used by the agents

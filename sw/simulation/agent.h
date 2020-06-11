@@ -10,8 +10,6 @@
 #include "terminalinfo.h"
 #include CONTROLLER_INCLUDE
 
-using namespace std;
-
 /**
  * Parent class defining an agent. The dynamic implementation is handled in children classes.
  */
@@ -31,7 +29,7 @@ public:
   uint16_t ID; // ID of agent
   bool activated;
   float dt;
-  vector<float> state; // State vector
+  std::vector<float> state; // State vector
   float orientation; // Orientation
   bool moving;
   bool happy;
@@ -70,7 +68,7 @@ public:
    * @param s current state vector
    * @return next state vector
    */
-  virtual vector<float> state_update(vector<float>) = 0;
+  virtual std::vector<float> state_update(std::vector<float>) = 0;
 
   /**
    * The agent class is only the parent class of a child class that specifies the dynamics and control

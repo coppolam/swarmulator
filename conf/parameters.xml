@@ -2,7 +2,7 @@
 <parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="parameters.xsd">
   <!-- Simulation -->
   <simulation_updatefreq>20</simulation_updatefreq>
-  <simulation_realtimefactor>10</simulation_realtimefactor>
+  <simulation_realtimefactor>50</simulation_realtimefactor>
   <time_limit>0</time_limit>
   <!-- (seconds). Use time_limit > 0 to set a limit -->
   <environment>square</environment>
@@ -16,11 +16,11 @@
   <mouse_zoom_speed>0.5</mouse_zoom_speed>
   <zoom>-40</zoom>
   <!-- Start up zoom, bounded -90 and 9 -->
-  <animation_updatefreq>30</animation_updatefreq>
+  <animation_updatefreq>25</animation_updatefreq>
   <!-- Logger -->
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>../swarmulator/conf/state_action_matrices/policy_evolved_temp.txt</policy>
+  <policy></policy>
   <fitness>aggregation_clusters</fitness>
   <!--new_parameter_name>default value</new_parameter_name-->
 </parameters>

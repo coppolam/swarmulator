@@ -50,15 +50,11 @@ void main_loop_function()
     }
   }
 
-  // Sleep until the next time-step according to the update frequency parameter
-  // int t_wait = 1000.0 / param->animation_updatefreq();
-  // this_thread::sleep_for(chrono::milliseconds(t_wait));
-
   // Swap buffers (color buffers, makes previous render visible)
   glutSwapBuffers();
 
   user_interaction(); // Activate interactive functions (mouse + keyboard), important: use this before draw functions!
-  if (!program_running) {terminate();}
+  if (!program_running) {std::terminate();}
 }
 
 /**

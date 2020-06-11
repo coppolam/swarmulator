@@ -30,7 +30,6 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "#include <stdio.h>" > hN;
 	print "#include <iostream>" > hN;
 	print "#include \"controller.h\"\n" > hN;
-	print "using namespace std;\n" > hN
 	print "class "n": public Controller" > hN;
 	print "{" > hN;
 	print "public:" > hN;

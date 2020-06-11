@@ -3,7 +3,7 @@
 #include "terminalinfo.h"
 #include "auxiliary.h"
 #include <algorithm>
-
+using namespace std;
 #define BEHAVIOR_TREE "/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml"
 // #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
 // #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
@@ -46,7 +46,7 @@ void behavior_tree_wheeled::get_velocity_command(const uint16_t ID, float &v_x, 
   /**** Step 1 of 3: Set current state according to sensors ****/
   if (r.size() > 0) {
     string name;
-    for (size_t i = 0; i < min((uint)r.size(), (uint)KNEAREST); i++) {
+    for (size_t i = 0; i < std::min((uint)r.size(), (uint)KNEAREST); i++) {
       name = "sensor" + to_string(i);
       BLKB.set(name.c_str(), r[i]);
     }

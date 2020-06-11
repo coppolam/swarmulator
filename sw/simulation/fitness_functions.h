@@ -13,7 +13,7 @@ inline static float mean_number_of_neighbors()
   float f = 0.;
   OmniscientObserver o;
   for (size_t ID = 0; ID < s.size(); ID++) {
-    vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
+    std::vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
     f += (float)closest.size() / (float)s.size();
   }
   return f;
@@ -29,7 +29,7 @@ inline static float mean_dist_to_all()
   float f = 0.;
   OmniscientObserver o;
   for (size_t ID = 0; ID < s.size(); ID++) {
-    vector<float> r, b;
+    std::vector<float> r, b;
     o.relative_location(ID, r, b);
     float r_mean = accumulate(r.begin(), r.end(), 0.0) / r.size();
     f += (float)r_mean / (float)s.size();
@@ -47,7 +47,7 @@ inline static float mean_dist_to_neighbors()
   float f = 0.;
   OmniscientObserver o;
   for (size_t ID = 0; ID < s.size(); ID++) {
-    vector<float> r, b;
+    std::vector<float> r, b;
     o.relative_location_inrange(ID, rangesensor, r, b);
     float r_mean = accumulate(r.begin(), r.end(), 0.0) / r.size();
     f += (float)r_mean / (float)s.size();
@@ -72,7 +72,7 @@ inline static uint number_of_clusters()
   OmniscientObserver o;
   Graph g(s.size());
   for (size_t ID = 0; ID < s.size(); ID++) {
-    vector<uint> neighbors = o.request_closest_inrange(ID, rangesensor);
+    std::vector<uint> neighbors = o.request_closest_inrange(ID, rangesensor);
     for (size_t j = 0; j < neighbors.size(); j++) {
       g.addEdge(ID, neighbors[j]);
     }

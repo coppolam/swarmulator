@@ -12,8 +12,6 @@
 #include "main.h"
 #include "txtwrite.h"
 
-using namespace std;
-
 bool logger_running = false;
 float simtime_seconds_old;
 /**
@@ -22,7 +20,7 @@ float simtime_seconds_old;
  * @param logfile The file ID (ofstream)
  * @param filename The name of the logfile
  */
-void run_logger(ofstream &logfile, string filename)
+void run_logger(std::ofstream &logfile, std::string filename)
 {
   static txtwrite writer;
   if (!logger_running) {
@@ -39,7 +37,7 @@ void run_logger(ofstream &logfile, string filename)
     simtime_seconds_old = simtime_seconds;
     mtx.unlock_shared();
   }
-  if (!program_running) {terminate();}
+  if (!program_running) {std::terminate();}
 }
 
 /**
@@ -48,11 +46,11 @@ void run_logger(ofstream &logfile, string filename)
 void main_logger_thread()
 {
   // Log filename
-  string filename;
+  std::string filename;
   filename = "logs/log_" + identifier + ".txt";
 
   // Open the logfile for writing
-  ofstream logfile;
+  std::ofstream logfile;
   logfile.open(filename.c_str());
 
   simtime_seconds_old = 0;

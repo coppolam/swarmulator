@@ -1,4 +1,5 @@
 # leader_follower
+NOTE FOR USE: Modify particle_oriented.cpp to take vy_des rather than dpsirate!
 
 ## Description
 This controller implements the relative localization method and the state estimation from the paper:

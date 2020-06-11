@@ -12,8 +12,6 @@
 #include "terminalinfo.h"
 #include "template_calculator.h"
 
-using namespace std;
-
 class controller_pattern : public controller_lattice_basic
 {
   uint moving_timer;

@@ -7,8 +7,6 @@
 #include "controller.h"
 #include "randomgenerator.h"
 
-using namespace std;
-
 /**
  * Basic exploration behavior which randomly moves in an environment while avoiding neighbors.
  *

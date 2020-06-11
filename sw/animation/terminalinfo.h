@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include <iostream>
 
-using namespace std;
-
 /**
  * terminalinfo is used to print info commands to the terminal.
  * These can come in the form of info messages or debug messages
@@ -31,7 +29,7 @@ public:
    *
    * @param str Debug string to print
    */
-  static void debug_msg(string str);
+  static void debug_msg(std::string str);
 
   /**
    * Print a debug message
@@ -39,35 +37,35 @@ public:
    * @param str Debug string to print
    * @param ID Robot ID
    */
-  static void debug_msg(string str, int ID);
+  static void debug_msg(std::string str, int ID);
 
   /**
    * Print an info message
    *
    * @param str Info string to print
    */
-  static void info_msg(string str);
+  static void info_msg(std::string str);
 
   /**
    * Print an info message
    *
    * @param str Info string to print
    */
-  static void info_msg(string str, int ID);
+  static void info_msg(std::string str, int ID);
 
   /**
   * Print a warning message
   *
   * @param str Warning string to print
   */
-  static void warning_msg(string str);
+  static void warning_msg(std::string str);
 
   /**
   * Print an error message
   *
   * @param str Error string to print
   */
-  static void error_msg(string str);
+  static void error_msg(std::string str);
 };
 
 #endif  /* TERMINALINFO_H */

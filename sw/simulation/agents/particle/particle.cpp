@@ -2,7 +2,7 @@
 #include "trigonometry.h"
 #include "draw.h"
 
-particle::particle(int i, vector<float> s, float tstep)
+particle::particle(int i, std::vector<float> s, float tstep)
 {
   state = s;
   ID = i;
@@ -11,7 +11,7 @@ particle::particle(int i, vector<float> s, float tstep)
   controller->set_saturation(1.0);
 }
 
-vector<float> particle::state_update(vector<float> state)
+std::vector<float> particle::state_update(std::vector<float> state)
 {
   // NED frame
   // x+ towards North
@@ -47,5 +47,4 @@ void particle::animation()
 {
   draw d;
   d.circle(param->scale());
-  d.circle_loop(rangesensor);
 }

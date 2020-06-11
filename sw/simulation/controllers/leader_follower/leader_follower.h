@@ -7,6 +7,8 @@ using namespace std;
 
 #define NDI_PAST_VALS 500 // Store the last 200 values in order to compute the control
 
+#define COMMAND_LOCAL 1
+
 typedef struct ndihandler {
   // Default values unless specified in constructor
   float delay = 4;
@@ -55,6 +57,7 @@ public:
   void bindNorm(float max_command);
   void uwb_follower_control_periodic(void);
   virtual void get_velocity_command(const uint16_t ID, float &x_des, float &vy_des);
+  virtual void animation(const uint16_t ID);
 };
 
 #endif /*NDI_FOLLOWER_H*/

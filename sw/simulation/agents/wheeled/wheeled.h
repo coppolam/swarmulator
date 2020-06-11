@@ -8,8 +8,6 @@
 #include <cmath>
 #include "agent.h"
 
-using namespace std;
-
 class wheeled: public Agent
 {
   float r = 1; // Wheel radius
@@ -22,7 +20,7 @@ public:
    * @param state Initial state
    * @param tstep Simulation time step
    */
-  wheeled(int i, vector<float> state, float tstep);
+  wheeled(int i, std::vector<float> state, float tstep);
 
   /**
    * State update over one time step
@@ -30,7 +28,7 @@ public:
    * @param state current state
    * @return vector<float> next state
    */
-  vector<float> state_update(vector<float> state);
+  std::vector<float> state_update(std::vector<float> state);
 
   /**
    * Drawing to animate the wheeled agent

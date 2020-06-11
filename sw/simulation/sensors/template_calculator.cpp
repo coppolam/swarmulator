@@ -3,6 +3,8 @@
 #include "trigonometry.h"
 #include <algorithm> // std::find
 
+using namespace std;
+
 Template_Calculator::Template_Calculator(uint spacing)
 {
   sp = spacing;

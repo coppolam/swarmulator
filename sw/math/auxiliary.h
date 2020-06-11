@@ -16,8 +16,6 @@
 #include "terminalinfo.h"
 #include "fmat.h"
 
-using namespace std;
-
 /**
  * @brief Returns whether a number is positive or negative as a float +1, 0, -1
  *
@@ -69,7 +67,7 @@ inline static void increase_counter_to_value(uint &counter, const uint &limit, c
  * @param t An 8 bit boolean vector
  * @return Integer value of the boolean vector
  */
-inline static uint bool2int(vector<bool> t)
+inline static uint bool2int(std::vector<bool> t)
 {
   uint n = 0; //Initialize
   for (uint i = 0; i < t.size(); i++) {
@@ -119,7 +117,7 @@ inline static int wraptosequence(int x, int min, int max)
 template <typename Iter, typename RandomGenerator>
 inline static Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
 {
-  uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
+  std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
   advance(start, dis(g));
   return start;
 }
@@ -132,8 +130,8 @@ inline static Iter select_randomly(Iter start, Iter end, RandomGenerator &g)
 template <typename Iter>
 inline static Iter select_randomly(Iter start, Iter end)
 {
-  static random_device rd;
-  static mt19937 gen(rd());
+  static std::random_device rd;
+  static std::mt19937 gen(rd());
   return select_randomly(start, end, gen);
 }
 
@@ -142,7 +140,7 @@ inline static Iter select_randomly(Iter start, Iter end)
  *
  * @param v std::vector holding the values
  */
-inline static float vector_mean(const vector<float> &v)
+inline static float vector_mean(const std::vector<float> &v)
 {
   float sum = std::accumulate(v.begin(), v.end(), 0.0);
   return sum / v.size();
@@ -153,11 +151,11 @@ inline static float vector_mean(const vector<float> &v)
  *
  * @param v std::vector holding the values
  */
-inline static float get_vector_std(const vector<float> &v)
+inline static float get_vector_std(const std::vector<float> &v)
 {
-  vector<double> diff(v.size());
+  std::vector<double> diff(v.size());
   transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), vector_mean(v)));
-  double sq_sum = inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
+  double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   return sqrt(sq_sum / v.size());
 }
 
@@ -166,9 +164,9 @@ inline static float get_vector_std(const vector<float> &v)
  *
  * @param filename = name of file
  */
-inline static std::vector<std::vector<float>> read_matrix(const string filename)
+inline static std::vector<std::vector<float>> read_matrix(const std::string filename)
 {
-  ifstream in(filename);
+  std::ifstream in(filename);
   std::string line;
   std::vector<std::vector<float>> matrix;
   uint rows = 0;
@@ -195,9 +193,9 @@ inline static std::vector<std::vector<float>> read_matrix(const string filename)
  *
  * @param filename = name of file
  */
-inline static std::vector<float> read_array(const string filename)
+inline static std::vector<float> read_array(const std::string filename)
 {
-  ifstream in(filename);
+  std::ifstream in(filename);
   std::string line;
   std::vector<float> array;
   if (in.is_open()) {
@@ -233,8 +231,8 @@ struct Point {
  */
 inline static bool onSegment(Point p, Point q, Point r)
 {
-  if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) &&
-      q.y <= max(p.y, r.y) && q.y >= min(p.y, r.y)) {
+  if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+      q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y)) {
     return true;
   }
 

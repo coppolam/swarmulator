@@ -17,7 +17,7 @@ Graph Graph::getTranspose()
 {
   Graph g(V);
   for (int v = 0; v < V; v++) {
-    list<int>::iterator i;
+    std::list<int>::iterator i;
     for (i = adj[v].begin(); i != adj[v].end(); ++i) {
       g.adj[*i].push_back(v);
     }
@@ -30,8 +30,8 @@ Graph Graph::getTranspose()
  */
 void Graph::BFS(int s, bool visited[])
 {
-  list<int> q;
-  list<int>::iterator i;
+  std::list<int> q;
+  std::list<int>::iterator i;
   visited[s] = true;
   q.push_back(s);
   while (!q.empty()) {
@@ -53,7 +53,7 @@ void Graph::DFS(int v, bool visited[])
 
   // Recur for all the vertices
   // adjacent to this vertex
-  list<int>::iterator i;
+  std::list<int>::iterator i;
   for (i = adj[v].begin(); i != adj[v].end(); ++i)
     if (!visited[*i]) {
       DFS(*i, visited);

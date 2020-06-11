@@ -4,6 +4,8 @@
 #include "randomgenerator.h"
 #include "trigonometry.h"
 
+using namespace std;
+
 float controller_lattice_basic::f_attraction(const float &u, const float &b_eq)
 {
   float w;
@@ -57,7 +59,7 @@ bool controller_lattice_basic::check_motion(const vector<int> &state_ID)
   for (uint16_t i = 0; i < state_ID.size(); i++) {
     if (o.see_if_moving(state_ID[i])) {
       // Somebody nearby is already moving
-      canImove = false;
+      return canImove;
     }
   }
   return canImove;

@@ -4,8 +4,6 @@
 #include "controller_lattice_basic.h"
 #include "template_calculator.h"
 
-using namespace std;
-
 class controller_lattice : public controller_lattice_basic
 {
 public:
