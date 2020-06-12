@@ -22,15 +22,26 @@ You will need the following packages. Run the following to make sure you have ev
     sudo apt-get install libxerces-c-dev
     sudo apt-get install xsdcxx
     sudo apt-get install libeigen3-dev
+    sudo apt-get install libprotobuf-dev
 
 #### Build instructions
 Once you have all the packages needed to build Swarmulator, you can build it with:
 
-	make clean && make ANIMATION=ON
+	make clean && make ANIMATION=ON LOGGER=ON VERBOSE=ON
 
-If you don't want the animation, just don't type the `ANIMATION=ON` part.
+If you don't want the animation, just don't type the `ANIMATION=ON` part, same for `LOGGER`, which logs data, or `VERBOSE` which outputs information to the console
 
-If you want it to build fast, use `make -j` instead of just `make`, but this will take up more memory. On a virtual machine, where memory is limited, using `-j` may cause it to fail to build.
+Swarmulator is designed to be modular, so that you can compile for any combination of controller and robot dynamics that you wish. By default, the `aggregation` controller and the `particle` agent will be used. To use another one, speficity this in the make command, as follows:
+
+    make clean && make CONTROLLER=<yourcontrollername> AGENT=<youragentname> ANIMATION=ON
+
+for example, try out:
+
+    make clean && make CONTROLLER=boid AGENT=particle_oriented ANIMATION=ON
+
+To find which agents and controllers are available in the branch, check the folders `sw/simulation/controllers` and `sw/simulation/agents`. See the next section "Prototyping with Swarmulator" for instructions on how to make your own!
+
+(Pro tip: If you want it to build fast, use `make -j` instead of just `make`, but this will take up more memory. On a virtual machine, where memory is limited, using `-j` may cause it to fail to build.)
 
 #### Extra: Generate the doxygen documetation
 Swarmulator was commented using the doxygen format. To generate the doxygen documentation, use
