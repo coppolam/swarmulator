@@ -20,7 +20,7 @@
   <!-- Logger -->
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>conf/policies/policy_evolved_temp.txt</policy>
+  <policy></policy>
   <fitness>aggregation_clusters</fitness>
   <!--new_parameter_name>default value</new_parameter_name-->
 </parameters>
