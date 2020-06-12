@@ -12,4 +12,4 @@ https://link.springer.com/article/10.1007/s11721-019-00172-z
 
 The behavior is similar to the one, though, due to the evolutions of Swarmulator since then, it may differ slightly. For the exact same behavior as in the paper, plese see the `SI_pagerank` branch of the repository.
 
-It is designed to work with the "particle" agent.
+It is designed to work with AGENT=particle

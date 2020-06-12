@@ -10,6 +10,6 @@ This controller implements the pattern formation behavior as from the paper:
 The paper is available open-access at this link: 
 https://link.springer.com/article/10.1007/s11721-019-00163-0
 
-The behavior is similar to the one, though, due to the evolutions of Swarmulator since then, it may differ slightly. For the exact same behavior as in the paper, plese see the `SI_PatternFormation` branch of the repository.
+The behavior is similar to the one, though, due to the evolutions of Swarmulator since then, it may differ slightly and may require some mild tuning to function in the same way. For the exact same behavior as in the paper, plese see the `SI_PatternFormation` branch of the repository.
 
-It is designed to work with the "particle" agent.
+It is designed to work with AGENT=particle.

@@ -14,4 +14,4 @@ You can see it in action here: https://www.youtube.com/playlist?list=PL_KSX9GOn2
 
 The behavior is similar to the one, though note that it may differ slightly given its implementation within Swarmulator.
 
-It is designed to work with the "particle_oriented" agent.
+Designed to work with AGENT=particle_oriented_xy

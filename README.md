@@ -54,10 +54,16 @@ Swarmulator uses a configuration file called `parameters.xml` in order to load r
 
 `parameters.xml` is to be found in in the `conf` folder.
 
-Here you can edit all the run-time parameters. These are described below:
+Here you can edit all the run-time parameters. The standard ones are described below.
+In the next sub-section, you can find out how to make your own!
 
 * `simulation_updatefreq`: Refresh-rate of the simulation (Hz)
 * `simulation_realtimefactor`: Simulation real-time factor. The higher the faster, up to whatever your computer can handle, since eventually the mutex synchronization will win, which is particularly relavant for large numbers of robots.
+* `time_limit`: The time limit of simulated time after which the simulator will quit. If set to 0, then the simulation won't quit until you make it quit.
+
+* `environment`: The environment that the robots operate in (essentially defining the walls).
+Use `square` for a standard squared room, or leave it empty for a boundless environment.
+For a randomly generated environment, use `random`. You can always make your own enviromment by defining it and placing it in `conf/environments`.
 
 * `window_width`: Height of the animation window (in pixels)
 * `window_height`: Width of the animation window (in pixels)
@@ -127,3 +133,6 @@ Swarmulator was originally designed just to quickly prototype and analyze swarm 
 However, thanks to its speed and ability to operate at high real time factors, it also lends itself to doing evolution of swarm controllers in a (relatively) short amount of time.
 
 Please see the file `scripts/python/example_evolution.py` and the README file in the same folder for an example that uses evolution to evolve a policy.
+
+# PYTORCH!
+It's now possible to use Swarmulator with the PyTorch C++ library. An example controller with README instructions to set it up is avaiable in the controller `pytorch` under `sw/simulation/controllers`. Go check it out and have fun!

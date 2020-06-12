@@ -1,2 +1,9 @@
-#wheeled
-Please include a description of the agent here, both for yourself and for future users!
+# wheeled
+
+It uses the dynamics of wheeled robots.
+
+It expects the inputs to be:
+
+* rotation speed of left wheel
+
+* rotation speed of right wheel
