@@ -325,7 +325,7 @@ class Generator():
 		
 		self.tiles_level = np.asarray(self.tiles_level)
 
-		c = 3
+		c = 2
 		w_h = []
 		# Horizontal walls
 		for idx,row in enumerate(self.tiles_level):
@@ -387,11 +387,12 @@ class Generator():
 		# 	# 		print(map(itemgetter(1), g))
 
 if __name__ == '__main__':
-	gen = Generator(max_rooms=5, width=30, height=30, min_room_xy=3,
-					max_room_xy=10, rooms_overlap=False)
+	gen = Generator(max_rooms=5, width=30, height=30, min_room_xy=2,
+					max_room_xy=10, rooms_overlap=True)
 	gen.gen_level()
 	gen.gen_tiles_level()
-	
+	# np.savetxt("test",gen.wall_coordinates,fmt='%.1f')
+
 	NEWLINE_SIZE_IN_BYTES = -1  # -2 on Windows?
 	with open('rooms.txt', 'wb') as fout:  # Note 'wb' instead of 'w'
 		np.savetxt(fout, gen.wall_coordinates, delimiter=" ", fmt='%.1f')

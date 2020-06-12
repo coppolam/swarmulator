@@ -17,7 +17,7 @@ AGENT_INCLUDE=\"$(AGENT).h\"
 
 CC = g++ # chosen compiler
 CFLAGS = -g -Wall -std=gnu++17 -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR -DCONTROLLER=$(CONTROLLER) -DAGENT=$(AGENT) -DAGENT_INCLUDE=$(AGENT_INCLUDE) -DCONTROLLER_INCLUDE=$(CONTROLLER_INCLUDE) -D_GLIBCXX_USE_CXX11_ABI=0
-OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions -lprotobuf #-L $(TORCH_LIB_HOME_CPP)/lib -lc10 -L $(TORCH_LIB_HOME_CPP)/lib -ltorch_cpu
+OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions -lprotobuf
 
 ifeq ($(VERBOSE),ON)
 CFLAGS += -DVERBOSE
@@ -53,7 +53,11 @@ SOURCES_C +=  $(shell find $(AGNT_INC) -name *.c -print)
 INC_DIRS += $(shell find $(AGNT_INC) -type d)
 
 ### External libraries
+# If using pytorch, load the library!
+ifeq ($(CONTROLLER),pytorch)
+OPT += -L $(TORCH_LIB_HOME)/lib -lc10 -L $(TORCH_LIB_HOME)/lib -ltorch_cpu
 INC_DIRS += $(shell find $(TORCH_LIB_HOME) -type d) ## Add torchlib include folder, if present
+endif
 
 # Prepare includes
 INC_PARAMS = $(foreach d, $(INC_DIRS), -I$d) # Each include folder must have a -I before it
