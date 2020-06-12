@@ -3,3 +3,4 @@ scipy
 networkx
 deap
 tqdm
+matplotlib
