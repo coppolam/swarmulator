@@ -11,7 +11,8 @@ mkdir ../sw/simulation/controllers/$1
 folder=../sw/simulation/controllers/$1;
 
 if [ -f $folder/$1".h" ] || [ -f $folder/$1".cpp" ]; then
-	echo "A controller with this name already exists. Do you want to overwrite it? [yes]";
+	echo "An agent with this name already exists. Do you want to over write it?"
+	echo "[write yes and press Enter to continue]"
 	read option;
 	if [ "$option" != "yes" ]; then
 		exit 0;
@@ -26,7 +27,6 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "Creating header: "n".h ...";
 	print "#ifndef "N"_H" > hN;
 	print "#define "N"_H\n" > hN;
-	print "#include <vector>" > hN;
 	print "#include <stdio.h>" > hN;
 	print "#include <iostream>" > hN;
 	print "#include \"controller.h\"\n" > hN;
@@ -35,6 +35,7 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "public:" > hN;
 	print "	"n"():Controller(){};" > hN;
 	print "	virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y);" > hN;
+	print "	virtual void animation(const uint16_t ID);" > hN;
 	print "};\n" > hN;
 	print "#endif /*"N"_H*/" >> hN;
 
@@ -44,6 +45,8 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "#include \"draw.h\"\n" > cN;
 	print "void "n"::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)\n{" > cN;
 	print "  /*** Put your controller here ***/\n}" >> cN;
+	print "void "n"::animation(const uint16_t ID)\n{" > cN;
+	print "  /*** Put the animation of the controller/sensors here ***/\n}" >> cN;
 
 	cN = p"/README.md";
 	print "Creating README file";

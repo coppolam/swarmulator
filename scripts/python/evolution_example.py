@@ -41,7 +41,7 @@ print("If you want to resume, please load it using the -resume input option.")
 ######################
 def fitness(individual):
 	### Set the policy file that swarmulator reads
-	policy_file = "conf/state_action_matrices/policy_evolved_temp.txt"
+	policy_file = "conf/policies/policy_evolved_temp.txt"
 	fh.save_to_txt(individual, sim.path+policy_file)
 	sim.runtime_setting("policy", policy_file) # Use random policy
 

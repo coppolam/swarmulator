@@ -12,7 +12,7 @@ using namespace std;
 pattern_formation::pattern_formation() : lattice_basic()
 {
   // Define here the state-action matrix used by the agents
-  string s = "./conf/state_action_matrices/state_action_matrix_lineNE.txt";
+  string s = "./conf/policies/state_action_matrix_lineNE.txt";
   t.set_state_action_matrix(s);
   moving_timer = 0;
   beta_des.push_back(0.0);

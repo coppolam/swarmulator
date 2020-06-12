@@ -15,11 +15,13 @@ using namespace std;
 Environment::Environment(void)
 {
   define_walls();
-  mtx_env.lock();
-  define_food(100);
-  define_beacon(0., 0.);
-  nest = 8;
-  mtx_env.unlock();
+  if (!strcmp(param->fitness().c_str(), "food")) {
+    mtx_env.lock();
+    environment.define_food(100);
+    environment.define_beacon(0., 0.);
+    environment.nest = 8;
+    mtx_env.unlock();
+  }
 }
 
 void Environment::define_walls(void)

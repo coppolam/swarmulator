@@ -50,25 +50,30 @@ Where <nagents> is the number of agents you would like to have at the start of t
     .\swarmulator 10
 
 #### Setting up the runtime parameters
-Swarmulator uses a configuration file called `parameters.xml` in order to load run-time parameters. These are loaded when Swarmulator starts.
+Swarmulator uses a configuration file called `parameters.xml` in order to load run-time parameters. These are loaded when Swarmulator starts, without having to re-build!
 
 `parameters.xml` is to be found in in the `conf` folder.
 
 Here you can edit all the run-time parameters. These are described below:
 
-* `simulation_updatefreq`: Refresh-rate of the simulation.
-* `simulation_realtimefactor`: Simulation real-time factor.
+* `simulation_updatefreq`: Refresh-rate of the simulation (Hz)
+* `simulation_realtimefactor`: Simulation real-time factor. The higher the faster, up to whatever your computer can handle, since eventually the mutex synchronization will win, which is particularly relavant for large numbers of robots.
 
 * `window_width`: Height of the animation window (in pixels)
 * `window_height`: Width of the animation window (in pixels)
-* `scale`: Scale of the Agents drawn
+* `scale`: Scale of the agents drawn in the animation window
 * `mouse_drag_speed`: Sensitivity of the mouse during drag-and-drop actions. Use 1.0 for a 1 to 1 feel.
 * `mouse_zoom_speed`: Sensitivity of zoom function to motion of the scroll wheel.
 * `animation_updatefreq`: Frame-rate of the animation.
 
 * `logger_updatefreq`: Log-rate. If the logger thread is activated, then this will create a text log at the indicated rate (with respect to the simulation time).
- 
-#### Adding your own runtime parameters
+
+* `policy` : This is the (relative) path to a file that holds the specifics of a policy (if your controller needs one, else it's not relevant). For instance, it can be a txt file holding the probability of doing something, or the weights of a neural network.
+* `fitness`: This specifies the fitness function that would like to use (if relevant to your application). Please see the file for the current options ```sw/simulation/fitness_functions.h```, and feel free to implement your own!
+    To use it, specify the name of the fitness function. For instance
+    ```<fitness>aggregation_clusters</fitness>``` will measure how aggregated the swarm is.
+
+#### Adding your own additional runtime parameters
 It is possible to easily add your own runtime parameter to Swarmulator.
 This can be done into three quick steps.
 1. Open `conf/parameters.xsd`. Here you declare the new parameter as an additional XSD element.
@@ -77,14 +82,15 @@ This can be done into three quick steps.
        ```<new_parameter_name>default value</new_parameter_name>```
 That's it! Now you use the parameter anywhere in the code by calling `param->new_parameter_name()`.
 
-#### Interactive user commands
+#### Interactive user commands when using the animation
 You can interact with Swarmulator in real time through the animation window. It is possible to intuitively move and zoom within the animation using drag-and-drop and your mouse's scroll wheel. 
 
 Additionally, there are a number of keyboard commands for the following:
 * Add a new agent (`a`). This can be done by pressing the `a`, at which point a new agent will be created at the location pointed by the mouse cursor.
 * Pause (`p`). The simulation can be paused by pressing the `p` key.
-* Resume (`r`). Resume the simulation. Pressing `r` while the simulation is running normally will cause it to pause.
-* Step-through (`s`). This will run the simulation for a very small time step and then pause. It can be pressed repeatedly to slowly step through the simulation.
+* Resume (`r`, note: it only works after pausing by pressing `p`). Resume the simulation.
+* Step-through (`s`, note: it only works after pausing by pressing `p`). This will run the simulation for a very small time step and then pause. It can be pressed repeatedly to slowly step through the simulation.
+* Toggle real-time factor (`m`). Toggle the realtime factor between the value specified in `conf/parameters.xml` and `1`. This allows you analyze the swarm in the animation.
 * Quit (`q`). This will quit Swarmulator.
 
 ## Prototyping with Swarmulator
@@ -98,7 +104,26 @@ You can define a controller as a child class of `Controller`, and then define th
 You can look at the controllers in `sw/simulation/controllers/...` for examples.
 You can use the functions in `OmniscientObserver` in order to simulate the sensing of other agents as you see fit.
 
+The bash script found in `scripts/make_new_controller.sh` will create an empty controller for you, ready for use!
+You can run it as follows:
+
+    cd scripts
+    ./make_new_controller.sh myawesomenewcontroller
+
+
 #### Using your agent dynamics
 All agents must be a child of the class `Agent`, to be found at `sw/simulation/agent.cpp`. 
 You can define an agent as a child class of `Agent`, and, as for controllers, define that you want to use it in `sw/settings.h`.
 You can look at the controllers in `sw/simulation/agents/...` for examples of agents, where you can declare the dynamics of the agents.
+
+The bash script found in `scripts/make_new_agent.sh` will create an empty controller for you, ready for use!
+You can run it as follows:
+
+    cd scripts
+    ./make_new_agent.sh myawesomenewagent
+
+# Using Swarmulator to evolve a swarm behavior
+Swarmulator was originally designed just to quickly prototype and analyze swarm behaviors.
+However, thanks to its speed and ability to operate at high real time factors, it also lends itself to doing evolution of swarm controllers in a (relatively) short amount of time.
+
+Please see the file `scripts/python/example_evolution.py` and the README file in the same folder for an example that uses evolution to evolve a policy.

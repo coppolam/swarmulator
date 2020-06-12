@@ -11,7 +11,8 @@ mkdir ../sw/simulation/agents/$1
 folder=../sw/simulation/agents/$1;
 
 if [ -f $folder/$1".h" ] || [ -f $folder/$1".cpp" ]; then
-	echo "An agent with this name already exists. Do you want to over write it? [yes]";
+	echo "An agent with this name already exists. Do you want to over write it?"
+	echo "[write yes and press Enter to continue]"
 	read option;
 	if [ "$option" != "yes" ]; then
 		exit 0;
@@ -33,8 +34,8 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "class "n": public Agent" > hN;
 	print "{" > hN;
 	print "public:" > hN;
-	print "	"n"(int i, vector<float> state, float tstep);" > hN;
-	print "	vector<float> state_update(vector<float> state);" > hN;
+	print "	"n"(int i, std::vector<float> state, float tstep);" > hN;
+	print "	std::vector<float> state_update(std::vector<float> state);" > hN;
 	print "	void animation();" > hN;
 	print "};\n" > hN;
 	print "#endif /*"N"_H*/" >> hN;
@@ -43,6 +44,7 @@ awk -vn=$1 -vN=$c -vp=$folder 'BEGIN{
 	print "Creating file implementation: "n".cpp ...";
 	print "#include \""n".h\"" > cN;
 	print "#include \"draw.h\"\n" > cN;
+	print "using namespace std;\n" > cN;
 	print n"::"n"(int i, vector<float> s, float tstep)\n{" >> cN;
 	print "  state = s;\n  ID = i;\n  dt = tstep;\n  orientation = 0.0;" > cN;
 	print "}\n" >> cN;

@@ -24,4 +24,4 @@ docs/
 logo_small.png
 mat/
 scripts/python/*.txt
-conf/state_action_matrices/
+conf/policies/
