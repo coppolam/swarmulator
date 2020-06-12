@@ -23,6 +23,7 @@ You will need the following packages. Run the following to make sure you have ev
     sudo apt-get install xsdcxx
     sudo apt-get install libeigen3-dev
     sudo apt-get install libprotobuf-dev
+    sudo apt-get install xmlstarlet
 
 #### Build instructions
 Once you have all the packages needed to build Swarmulator, you can build it with:
