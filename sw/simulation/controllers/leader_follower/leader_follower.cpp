@@ -5,7 +5,7 @@
 #include <sstream>
 #include "trigonometry.h"
 
-#define STATE_ESTIMATOR 1
+#define STATE_ESTIMATOR 0
 
 #define NDI_MOST_RECENT ndihandle.data_entries - 1
 

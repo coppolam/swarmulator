@@ -80,15 +80,16 @@ xsd:
 	@mkdir -p $(BUILD_FOLDER);
 	@xsdcxx cxx-tree --output-dir "$(BUILD_FOLDER)" --root-element-all conf/parameters.xsd;
 
-$(BUILD_FOLDER)/%.o: %.cpp # This rule defines how to go from CPP file to Object file (use %.c* for all files)
+$(BUILD_FOLDER)/%.o: %.cpp # This rule defines how to go from CPP file to Object file
 	# Compiling $<
 	@mkdir -p $(@D)
 	@$(MAKE) -c $< -o $@ $(OPT);
 
-$(BUILD_FOLDER)/%.o: %.c # This rule defines how to go from C file to Object file (use %.c* for all files)
+$(BUILD_FOLDER)/%.o: %.c # This rule defines how to go from C file to Object file
 	# Compiling $<
 	@mkdir -p $(@D)
-	@$(MAKE) -c $< -o $@ $(OPT);
+	@gcc -g -Wall -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -std=c11 $(INC) -c $< -o $@;
+
 
 clean:
 	# Cleaning $(TARGET)...

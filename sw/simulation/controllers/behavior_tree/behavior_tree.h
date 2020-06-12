@@ -38,6 +38,7 @@ public:
    * Update the inputs and run the behavior tree command
    */
   virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y);
+  virtual void animation(const uint16_t ID);
 };
 
 #endif /*BEHAVIOR_TREE_H*/

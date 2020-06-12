@@ -3,9 +3,7 @@
 #include "terminalinfo.h"
 #include "auxiliary.h"
 
-// #define BEHAVIOR_TREE "/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml"
-// #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
-#define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
+using namespace std;
 
 void behavior_tree::lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y)
 {
@@ -22,7 +20,7 @@ void behavior_tree::lattice_all(const int &ID, const vector<uint> &closest, floa
 behavior_tree::behavior_tree() : Controller()
 {
   // Load the behavior tree
-  tree = loadFile(BEHAVIOR_TREE);
+  tree = loadFile(param->policy().c_str());
 
   v_x_ref = rg.gaussian_float(0.0, 1.0);
   v_y_ref = rg.gaussian_float(0.0, 1.0);
@@ -97,4 +95,11 @@ void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v
 
   d = to_string(v_x) + ", " +  to_string(v_y);
   terminalinfo::debug_msg(d, ID);
+}
+
+
+void behavior_tree::animation(const uint16_t ID)
+{
+  draw d;
+  d.circle_loop(rangesensor);
 }

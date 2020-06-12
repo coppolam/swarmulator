@@ -19,7 +19,7 @@ aggregation::aggregation() : Controller()
   vmean = 0.5;
 
   // Policy
-  if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(7, 0.5); }
+  if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(7, 0.); motion_p[0] = 1.; }
   else { motion_p = read_array(param->policy()); }
 }
 

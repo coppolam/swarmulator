@@ -57,7 +57,8 @@ composite *loadFile(const char *file)
     }
     myfile.close();
   } else {
-    printf("ERROR! Unable to open behaviour tree file:\n%s\n\n", file);
+    printf("ERROR! Unable to open behaviour tree file. Please indicate it in the parameters.xml file, under <policy>\n%s\n\n",
+           file);
     exit(-1);
   }
   return (composite *) root;

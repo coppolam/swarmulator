@@ -15,8 +15,6 @@
  */
 class random_exploration: public Controller
 {
-  float v_x_old, v_y_old;
-
 public:
   /**
    * @brief Construct a new random exploration object

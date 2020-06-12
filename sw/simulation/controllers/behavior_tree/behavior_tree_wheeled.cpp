@@ -4,9 +4,6 @@
 #include "auxiliary.h"
 #include <algorithm>
 using namespace std;
-#define BEHAVIOR_TREE "/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml"
-// #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behavior_tree_aggregation.xml"
-// #define BEHAVIOR_TREE "/home/mario/repos/swarmulator/conf/behavior_trees/behaviortree_evolved_aggregation.xml"
 
 #define KNEAREST 6
 
@@ -19,7 +16,7 @@ bool comp(int a, int b)
 behavior_tree_wheeled::behavior_tree_wheeled() : Controller()
 {
   // Load the behavior tree
-  tree = loadFile(BEHAVIOR_TREE);
+  tree = loadFile(param->policy().c_str());
 
   // Initialize input sensors
   string name;
@@ -64,4 +61,10 @@ void behavior_tree_wheeled::get_velocity_command(const uint16_t ID, float &v_x, 
 
   string d = to_string(v_x) + ", " +  to_string(v_y);
   terminalinfo::debug_msg(d, ID);
+}
+
+void behavior_tree_wheeled::animation(const uint16_t ID)
+{
+  draw d;
+  d.circle_loop(rangesensor);
 }

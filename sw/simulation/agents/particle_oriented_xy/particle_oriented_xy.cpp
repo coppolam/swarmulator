@@ -1,10 +1,10 @@
-#include "particle_oriented.h"
+#include "particle_oriented_xy.h"
 #include "trigonometry.h"
 #include "randomgenerator.h"
 #include "draw.h"
 using namespace std;
 
-particle_oriented::particle_oriented(int i, vector<float> s, float tstep)
+particle_oriented_xy::particle_oriented_xy(int i, vector<float> s, float tstep)
 {
   state = s;
   ID = i;
@@ -14,7 +14,7 @@ particle_oriented::particle_oriented(int i, vector<float> s, float tstep)
   manual = false;
 }
 
-vector<float> particle_oriented::state_update(vector<float> state)
+vector<float> particle_oriented_xy::state_update(vector<float> state)
 {
   // NED frame
   // x+ towards North
@@ -58,7 +58,7 @@ vector<float> particle_oriented::state_update(vector<float> state)
   return state;
 };
 
-void particle_oriented::animation()
+void particle_oriented_xy::animation()
 {
   draw d;
 
