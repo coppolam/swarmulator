@@ -86,6 +86,7 @@ public:
   void eat_food(float);
 
   void loop(void);
+
   /**
    * Function used to draw all the walls in the animation. It is called by the animation thread.
    */

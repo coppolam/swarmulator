@@ -122,6 +122,7 @@ void Environment::grab_food(uint64_t food_ID)
 {
   float lim = limits();
   mtx_env.lock();
+  // uncomment one of the two line below
   // food.erase(food.begin() + food_ID); // Use this to grab without replacement
   food[food_ID] = {rg.uniform_float(-lim, lim), rg.uniform_float(-lim, lim)}; // Use this to grab with replacement
   mtx_env.unlock();
@@ -143,6 +144,6 @@ void Environment::eat_food(float amount)
 
 void Environment::loop()
 {
-  float rate = (0.01 / param->simulation_updatefreq()) * s.size();
+  float rate = (0.001 / param->simulation_updatefreq()) * s.size();
   eat_food(rate);
 }

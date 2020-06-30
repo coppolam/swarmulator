@@ -57,6 +57,7 @@ inline static float mean_dist_to_neighbors()
 
 /**
  * Connectivity
+ *
  * Change f to 0.0 if the graph of the swarm is disconnected, else keeps f
  */
 inline static void connectivity_check(float &f)
@@ -67,6 +68,11 @@ inline static void connectivity_check(float &f)
   }
 }
 
+/**
+ * @brief Measures the number of clusters that are formed
+ *
+ * @return uint
+ */
 inline static uint number_of_clusters()
 {
   OmniscientObserver o;
@@ -83,12 +89,13 @@ inline static uint number_of_clusters()
 
 /**
  * Select a fitness function, or use your own if you want.
- * TODO: Move to controllers so that its defined within a particular controller. It would be far more versatile.
+ *
  * @return float fitness
  */
 inline static float evaluate_fitness()
 {
-  float f = 1.;
+  float f = 1.; // Default
+
   // Define the fitness function that you would like to use, or write your own
   if (!strcmp(param->fitness().c_str(), "mean_number_of_neighbors"))
   { f = mean_number_of_neighbors();}
@@ -103,9 +110,9 @@ inline static float evaluate_fitness()
   else if (!strcmp(param->fitness().c_str(), "dispersion_dist_to_all"))
   { f = mean_dist_to_all();}
   else if (!strcmp(param->fitness().c_str(), "food"))
-  { f = environment.nest;}
+  { f = (float)environment.nest;}
   else if (!strcmp(param->fitness().c_str(), "connected"))
-  { connectivity_check(f); }
+  { connectivity_check(f);}
   return f;
 }
 
