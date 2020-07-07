@@ -79,6 +79,9 @@ void create_new_agent(const int &ID, const std::vector<float> &states)
   mtx.lock();
   // Initiate a new agent
   s.push_back(new AGENT(ID, states, 1.0 / param->simulation_updatefreq()));
+#ifdef ESTIMATOR
+  pr.extend(); // Extend estimator so that the new agent can also contribute
+#endif
   mtx.unlock();
 
   // Info message

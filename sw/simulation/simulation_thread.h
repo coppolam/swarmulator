@@ -53,6 +53,9 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
   random_generator rg;
   fifo f(id); // Open FIFO pipe
 
+#ifdef ESTIMATOR
+  pr.init();
+#endif
 
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
   if (nagents > 0) {
@@ -98,6 +101,9 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
           mtx_env.lock();
           terminalinfo::debug_msg("Sending message");
           f.send(evaluate_fitness());
+#ifdef ESTIMATOR
+          pr.save();
+#endif
           mtx_env.unlock();
           mtx.unlock();
           program_running = false;

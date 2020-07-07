@@ -19,7 +19,7 @@ aggregation::aggregation() : Controller()
   vmean = 0.5;
 
   // Policy
-  if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(7, 0.); motion_p[0] = 1.; }
+  if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(7, 0.5); }
   else { motion_p = read_array(param->policy()); }
 }
 
@@ -37,6 +37,11 @@ void aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   if (st != r.size() || moving_timer == 1) { // state change
     // state, action
     st = std::min(r.size(), motion_p.size());
+#ifdef ESTIMATOR
+    int a;
+    if (moving) {a = 1;} else {a = 0;}
+    pr.update(ID, st, a); // pr update
+#endif
     if (rg.bernoulli(1.0 - motion_p[st])) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;

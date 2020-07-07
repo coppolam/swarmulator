@@ -42,6 +42,9 @@ float simtime_seconds = 0; // Initial simulation time
 float rangesensor = 1.8; // How far each robot can sense
 bool program_running  = false; // Program running, initiated false until the beginning
 Environment environment; // Environment walls
+#ifdef ESTIMATOR
+pagerank_estimator pr(param->pr_states(), param->pr_actions());
+#endif
 std::string identifier; // Log name identifier
 
 /**

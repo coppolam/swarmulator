@@ -16,6 +16,8 @@
       <xs:element name="logger_updatefreq" type="xs:integer"/>
       <xs:element name="policy" type="xs:string"/>
       <xs:element name="fitness" type="xs:string"/>
+      <xs:element name="pr_states" type="xs:integer"/>
+      <xs:element name="pr_actions" type="xs:integer"/>
       <!-- xs:element name="parameter_name" type="xs:parametertype"/-->
     </xs:sequence>
   </xs:complexType>

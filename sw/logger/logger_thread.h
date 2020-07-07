@@ -31,11 +31,11 @@ void run_logger(std::ofstream &logfile, std::string filename)
 
   // Write the logfile
   if (!paused && simtime_seconds > simtime_seconds_old + 1. / param->logger_updatefreq()) {
-    mtx.lock_shared();
+    mtx.lock();
     writer.txtwrite_state(logfile);
     writer.txtwrite_summary(logfile);
     simtime_seconds_old = simtime_seconds;
-    mtx.unlock_shared();
+    mtx.unlock();
   }
   if (!program_running) {std::terminate();}
 }

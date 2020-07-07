@@ -3,6 +3,7 @@
 
 // Options
 // #define SEQUENTIAL 5
+#define ESTIMATOR
 // #define REMAIN_CONNECTED // Check that the swarm remains connected (only if logging)
 // #define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
 

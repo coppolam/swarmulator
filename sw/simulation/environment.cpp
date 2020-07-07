@@ -138,7 +138,9 @@ void Environment::drop_food()
 void Environment::eat_food(float amount)
 {
   mtx_env.lock();
-  if (nest > amount) { nest -= amount; }
+  // if (nest > amount) {
+  nest -= amount;
+  // }
   mtx_env.unlock();
 }
 

@@ -9,6 +9,10 @@
 #include "environment.h"
 #include "settings.h"
 
+#ifdef ESTIMATOR
+#include "pagerank_estimator.h"
+extern pagerank_estimator pr;
+#endif
 
 extern uint nagents;            // Number of agents in the swarm
 extern std::vector<Agent *> s;  // Set up a vector of agents
