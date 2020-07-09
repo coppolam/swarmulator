@@ -21,8 +21,8 @@
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
   <policy>conf/state_action_matrices/loop_policy_loop.txt</policy>
-  <fitness>aggregation_clusters</fitness>
-  <pr_states>8</pr_states>
+  <fitness>food</fitness>
+  <pr_states>30</pr_states>
   <!-- set to 0 to turn of estimator -->
   <pr_actions>1</pr_actions>
   <!-- set to 0 to turn of estimator -->
