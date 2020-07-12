@@ -3,7 +3,7 @@
   <!-- Simulation -->
   <simulation_updatefreq>20</simulation_updatefreq>
   <simulation_realtimefactor>300</simulation_realtimefactor>
-  <time_limit>200</time_limit>
+  <time_limit>500</time_limit>
   <!-- (seconds). Use time_limit > 0 to set a limit. If = 0, then the simulation runs indefinitely. -->
   <environment>square</environment>
   <!-- See the folder conf/environments/ for available environments. 
@@ -20,7 +20,7 @@
   <!-- Logger -->
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>conf/state_action_matrices/loop_policy_loop.txt</policy>
+  <policy>../swarmulator/conf/state_action_matrices/policy_evolved_temp.txt</policy>
   <fitness>food</fitness>
   <pr_states>30</pr_states>
   <!-- set to 0 to turn of estimator -->
