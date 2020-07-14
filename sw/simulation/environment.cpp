@@ -146,6 +146,6 @@ void Environment::eat_food(float amount)
 
 void Environment::loop()
 {
-  float rate = (0.001 / param->simulation_updatefreq()) * s.size();
-  eat_food(rate);
+  // float rate = (0.01 / param->simulation_updatefreq()) * s.size();
+  // eat_food(rate);
 }

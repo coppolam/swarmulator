@@ -88,6 +88,9 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
     v_x_ref = br;
     v_y_ref = 0.5 * wrapToPi_f(v_y_ref); // gain on control
     if (timer == 1) {choose = false;}
+    if (br < 2 * rangesensor) {
+      environment.eat_food(0.001);
+    } // eat some food to keep alive
   }
   increase_counter_to_value(timer, timelim, 1);
 
