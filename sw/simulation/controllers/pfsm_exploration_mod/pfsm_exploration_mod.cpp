@@ -6,7 +6,7 @@
 pfsm_exploration_mod::pfsm_exploration_mod(): t(4)
 {
   policy = read_matrix(param->policy());
-  timelim = 5. * param->simulation_updatefreq();
+  timelim = 2 * param->simulation_updatefreq();
   moving_timer = rg.uniform_int(0, timelim);
   vmean = 0.5; // Adjustment velocity
   moving = false;
@@ -17,7 +17,7 @@ pfsm_exploration_mod::pfsm_exploration_mod(): t(4)
 void pfsm_exploration_mod::action_motion(const int &selected_action, float r, float t, float &v_x, float &v_y)
 {
   std::vector<float> ang = {-1.0, -0.7, -0.3, -0.1, 0.1, 0.3, 0.7, 1.0};
-  v_x = vmean;
+  v_x = vmean * abs(ang[selected_action]);
   v_y = ang[selected_action];
 }
 
