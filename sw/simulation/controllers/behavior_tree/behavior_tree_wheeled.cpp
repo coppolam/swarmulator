@@ -38,8 +38,6 @@ void behavior_tree_wheeled::get_velocity_command(const uint16_t ID, float &v_x, 
   vector<float> r, b;
   o.relative_location_inrange(ID, rangesensor, r, b);
 
-  // float vmean = 1.0;
-
   /**** Step 1 of 3: Set current state according to sensors ****/
   if (r.size() > 0) {
     string name;

@@ -33,11 +33,11 @@ void pfsm_exploration::get_velocity_command(const uint16_t ID, float &v_x, float
   v_y = 0.0;
   get_lattice_motion_all(ID, v_x, v_y);
 
-  std::vector<bool> state;
+  std::vector<bool> sensor; // 4 sensors
   std::vector<int> temp;
-  t.assess_situation(ID, state, temp);
-  if (st != bool2int(state) || moving_timer == 1) { // on state change
-    st = bool2int(state);
+  t.assess_situation(ID, sensor, temp);
+  if (st != bool2int(sensor) || moving_timer == 1) { // on state change
+    st = bool2int(sensor);
 #ifdef ESTIMATOR
     uint a = 0;
     if (moving) {a = selected_action + 1;}

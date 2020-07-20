@@ -2,8 +2,8 @@
 <parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="parameters.xsd">
   <!-- Simulation -->
   <simulation_updatefreq>20</simulation_updatefreq>
-  <simulation_realtimefactor>200</simulation_realtimefactor>
-  <time_limit>100</time_limit>
+  <simulation_realtimefactor>300</simulation_realtimefactor>
+  <time_limit>200</time_limit>
   <!-- (seconds). Use time_limit > 0 to set a limit. If = 0, then the simulation runs indefinitely. -->
   <environment>square</environment>
   <!-- See the folder conf/environments/ for available environments. 
@@ -20,7 +20,7 @@
   <!-- Logger -->
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>conf/state_action_matrices/aggregation_policy_learnloop.txt</policy>
+  <policy>/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml</policy>
   <fitness>aggregation_clusters</fitness>
   <pr_states>16</pr_states>
   <!-- set to 0 to turn of estimator -->
