@@ -1,15 +1,19 @@
-#include "forage.h"
-#include "agent.h"
-#include "main.h"
-#include "randomgenerator.h"
-#include "auxiliary.h"
-#include "math.h"
+#include "behavior_tree_forage.h"
 #include "draw.h"
-
+#include "terminalinfo.h"
+#include "auxiliary.h"
+#include <algorithm>
 using namespace std;
 
-forage::forage() : Controller()
+#define SENSORS 1
+
+behavior_tree_forage::behavior_tree_forage()
 {
+  // Load and initialize the behavior tree
+  tree = loadFile(param->policy().c_str());
+  BLKB.set("sensor0", 0); // Initialize input 0
+  BLKB.set("decision", 0.); // Initialize output 0
+
   // Initial values
   timer = rg.uniform_int(0, timelim);
   choose = false;
@@ -22,18 +26,9 @@ forage::forage() : Controller()
   // Control values
   timelim = 10.0 * param->simulation_updatefreq();
   vmean = 0.5;
-
-  // Load policy
-  // if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(31, 1.0); }
-  if (!strcmp(param->policy().c_str(), "")) {
-    motion_p = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
-                0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0,
-                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-               };
-  } else { motion_p = read_array(param->policy()); }
 }
 
-void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate)
+void behavior_tree_forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate)
 {
   v_x = 0;
   psi_rate = 0;
@@ -48,21 +43,11 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
     v_y_ref = 0.5 * wrapToPi_f(v_y_ref); // gain on control
     if (br < 2 * rangesensor) { // Drop the food if you are in the vicinity of the nest
       choose = true;
-      float state_temp = environment.nest - state + 15;
-      // if (ID == 0){
-      //   cout << "back: " << environment.nest << endl;
-      //   cout << "diff: " << state_temp - 15 << endl;
-      // }
-      keepbounded(state_temp, 0, 30);
-      st = int(state_temp);
-#ifdef ESTIMATOR
-      int a;
-      if (explore) {a = 1;} else {a = 0;}
-      pr.update(ID, st, a);
-#endif
-      state = environment.nest;
-      // if (ID == 0){ cout << "leaving: " << environment.nest << endl; }
-      if (rg.bernoulli(1.0 - motion_p[st])) { explore = false;}
+      state = environment.nest - st + 15;
+      cout << state << endl;
+      BLKB.set("sensor0", state);
+      tree->tick(&BLKB);
+      if (rg.bernoulli(1.0 - BLKB.get("decision"))) { explore = false;}
       else { explore = true;}
     }
   }
@@ -105,7 +90,7 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
   wall_avoidance_turn(ID, v_x, psi_rate);
 }
 
-void forage::animation(const uint16_t ID)
+void behavior_tree_forage::animation(const uint16_t ID)
 {
   draw d;
   d.circle_loop(rangesensor);

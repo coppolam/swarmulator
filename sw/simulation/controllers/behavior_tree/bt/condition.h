@@ -7,9 +7,11 @@
 #include "settings.h"
 
 #define MAX_SIZE (size_t) - 1
-#define KCOND 6 // Total number of sensors
-#define NUMBER_OF_VARS 6 // Total number of variables = sensors!
+#define KCOND 2
 
+#ifndef NUMBER_OF_VARS
+#define NUMBER_OF_VARS 1 // Total number of variables = sensors!
+#endif
 
 /**
  * @brief Behavior tree namespace
