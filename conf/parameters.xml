@@ -3,9 +3,9 @@
   <!-- Simulation -->
   <simulation_updatefreq>20</simulation_updatefreq>
   <simulation_realtimefactor>300</simulation_realtimefactor>
-  <time_limit>200</time_limit>
+  <time_limit>500</time_limit>
   <!-- (seconds). Use time_limit > 0 to set a limit. If = 0, then the simulation runs indefinitely. -->
-  <environment>square</environment>
+  <environment>square20</environment>
   <!-- See the folder conf/environments/ for available environments. 
        Create your own or use "random" to generate a random map at runtime -->
   <!-- Animation -->

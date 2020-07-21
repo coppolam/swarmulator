@@ -12,7 +12,7 @@ BT_Status decision::update(blackboard *BLKB)
 {
   // BLKB->set("wheelSpeed0", leftWheelSpeed);
   // BLKB->set("wheelSpeed1", rightWheelSpeed);
-  BLKB->set("decision0", decision_probability);
+  BLKB->set("decision", decision_probability);
   return BH_SUCCESS;
 }
 
