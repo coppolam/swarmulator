@@ -110,7 +110,7 @@ inline static float evaluate_fitness()
   else if (!strcmp(param->fitness().c_str(), "dispersion_dist_to_all"))
   { f = mean_dist_to_all();}
   else if (!strcmp(param->fitness().c_str(), "food"))
-  { f = (float)environment.nest;}
+  { f = 1. / (float)environment.nest;}
   else if (!strcmp(param->fitness().c_str(), "connected"))
   { connectivity_check(f);}
   return f;

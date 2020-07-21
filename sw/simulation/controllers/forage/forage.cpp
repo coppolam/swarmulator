@@ -51,7 +51,7 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
       float state_temp = environment.nest - state + 15;
       // if (ID == 0){
       //   cout << "back: " << environment.nest << endl;
-      //   cout << "diff: " << state_temp - 15 << endl;
+      //   cout << "diff: " << state_temp + 15 << endl;
       // }
       keepbounded(state_temp, 0, 30);
       st = int(state_temp);

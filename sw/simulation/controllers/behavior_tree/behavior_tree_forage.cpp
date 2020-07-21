@@ -43,10 +43,9 @@ void behavior_tree_forage::get_velocity_command(const uint16_t ID, float &v_x, f
     v_y_ref = 0.5 * wrapToPi_f(v_y_ref); // gain on control
     if (br < 2 * rangesensor) { // Drop the food if you are in the vicinity of the nest
       choose = true;
-      state = environment.nest - st + 15;
-      cout << state << endl;
-      BLKB.set("sensor0", state);
+      BLKB.set("sensor0", environment.nest - state);
       tree->tick(&BLKB);
+      state = environment.nest;
       if (rg.bernoulli(1.0 - BLKB.get("decision"))) { explore = false;}
       else { explore = true;}
     }
