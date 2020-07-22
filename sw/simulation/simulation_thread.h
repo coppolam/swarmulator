@@ -83,14 +83,14 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
   // The robots operate by their own detached thread clock.
   while (program_running) {
     if (!paused) {
-#ifdef SEQUENTIAL
-      if (simtime_seconds > t_created + SEQUENTIAL && ID < nagents) {
-        vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
-        create_new_agent(ID, state); // Create agent
-        t_created = simtime_seconds;
-        ID++;
-      }
-#endif
+      #ifdef SEQUENTIAL
+            if (simtime_seconds > t_created + SEQUENTIAL && ID < nagents) {
+              vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
+              create_new_agent(ID, state); // Create agent
+              t_created = simtime_seconds;
+              ID++;
+            }
+      #endif
       // Runtime finish evolution
       if (param->time_limit() > 0.0) {
         if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time

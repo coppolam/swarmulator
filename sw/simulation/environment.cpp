@@ -28,11 +28,12 @@ void Environment::define_walls(void)
 {
   string s = param->environment();
   if (!strcmp(s.c_str(), "random")) {
-    stringstream ss("python3 scripts/python/tools/dungeon_generator.py && mv rooms.txt conf/environments/random.txt");
+    stringstream ss("python3 scripts/python/tools/dungeon_generator.py && mkdir --p ./conf/environments/random && mv rooms.txt ./conf/environments/random/walls.txt ");
+    
     system(ss.str().c_str());
     terminalinfo::info_msg("Generating random environment");
   }
-  string filename = "conf/environments/" + param->environment() + ".txt";
+  string filename = "conf/environments/" + param->environment() + "/walls.txt";
   walls = read_matrix(filename);
 }
 
