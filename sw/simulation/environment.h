@@ -33,6 +33,11 @@ public:
    * Make sure the file exists!
    */
   void define_walls(void);
+  
+  /**
+   * @brief generate a map with free space based on the walls loaded in the environment.
+   */
+  void define_free_space(void);
 
   /**
    * @brief Define the initial obstacle list according to the list in conf/environments/.txt

@@ -37,6 +37,11 @@ void Environment::define_walls(void)
   walls = read_matrix(filename);
 }
 
+void Environment::define_free_space(void)
+{
+  string filename = "conf/environments/" + param->environment() + "/walls.txt";
+}
+
 void Environment::define_food(uint64_t n)
 {
   float lim = limits();

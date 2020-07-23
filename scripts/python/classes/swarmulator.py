@@ -43,7 +43,6 @@ class swarmulator:
 	def _launch(self, n, run_id):
 		'''Launches an instance of a swarmulator simulation'''
 		cmd = "cd " + self.path + " && ./swarmulator " + str(n) + " " + str(run_id) + " &"
-		# print(cmd)
 		subprocess.call(cmd, shell=True)
 		if self.verbose: print("Launched instance of swarmulator with %s robots and pipe ID %s" % (n,run_id))
 
@@ -110,6 +109,8 @@ class swarmulator:
 	def batch_run(self,n,runs):
 		'''Runs a batch of parallel simulations in parallel. By being different processes, the simulations can run unobstructed.'''
 		self._clear_pipes()
+
+		'''Create array *robots* containing the number of robots deployed in each run, if len(n)==2, we randomly take between n[0] and n[1].'''
 		if isinstance(n,int): 
 			robots = np.repeat(n,runs)
 		elif len(n) == 2: 
