@@ -12,7 +12,7 @@ behavior_tree_forage::behavior_tree_forage()
   // Load and initialize the behavior tree
   tree = loadFile(param->policy().c_str());
   BLKB.set("sensor0", 0); // Initialize input 0
-  BLKB.set("decision", 0.1); // Initialize output 0
+  BLKB.set("decision", 0.5); // Initialize output 0
 
   // Initial values
   timer = rg.uniform_int(0, timelim);
@@ -23,6 +23,7 @@ behavior_tree_forage::behavior_tree_forage()
   state = environment.nest;
   keepbounded(state, 0, 30);
   st = int(state);
+
   // Control values
   timelim = 10.0 * param->simulation_updatefreq();
   vmean = 0.5;
@@ -43,11 +44,10 @@ void behavior_tree_forage::get_velocity_command(const uint16_t ID, float &v_x, f
     v_y_ref = 0.5 * wrapToPi_f(v_y_ref); // gain on control
     if (br < 2 * rangesensor) { // Drop the food if you are in the vicinity of the nest
       choose = true;
-      BLKB.set("sensor0", environment.nest - state);
-      cout << "sensor" << " " << environment.nest - state <<  " " << BLKB.get("sensor0") << endl;
+      float state_temp = environment.nest - state;
+      BLKB.set("sensor0", state_temp);
       tree->tick(&BLKB);
       state = environment.nest;
-      cout << BLKB.get("decision") << endl;
       if (rg.bernoulli(1.0 - BLKB.get("decision"))) { explore = false;}
       else { explore = true;}
     }

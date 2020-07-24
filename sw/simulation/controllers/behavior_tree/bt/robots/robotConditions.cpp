@@ -17,8 +17,8 @@ std::tuple<std::string, double, double, double> input(int i)
 
   if (i < KCOND) {
     sprintf(buff, "sensor%d", i);
-    lower_lim = 0.;
-    upper_lim = 1.0;
+    lower_lim = -15.;
+    upper_lim = 15.;
     // threshold = double(int(rand() % 2));
   } else if (i < NUMBER_OF_VARS) {
     sprintf(buff, "action%d", i - KCOND);
@@ -27,8 +27,8 @@ std::tuple<std::string, double, double, double> input(int i)
   } else {
     std::cerr << "Check number of variables, requested: " << i << std::endl;
     sprintf(buff, "sensor");
-    lower_lim = 0.;
-    upper_lim = 1.0;
+    lower_lim = -15.;
+    upper_lim = 15.;
     // threshold = double(int(rand() % 2));
   }
 

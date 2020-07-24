@@ -10,6 +10,10 @@ using namespace std;
 
 forage::forage() : Controller()
 {
+  // Control values
+  timelim = 10.0 * param->simulation_updatefreq();
+  vmean = 0.5;
+
   // Initial values
   timer = rg.uniform_int(0, timelim);
   choose = false;
@@ -19,9 +23,6 @@ forage::forage() : Controller()
   state = environment.nest;
   keepbounded(state, 0, 30);
   st = int(state);
-  // Control values
-  timelim = 10.0 * param->simulation_updatefreq();
-  vmean = 0.5;
 
   // Load policy
   // if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(31, 1.0); }
@@ -48,13 +49,10 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
     v_y_ref = 0.5 * wrapToPi_f(v_y_ref); // gain on control
     if (br < 2 * rangesensor) { // Drop the food if you are in the vicinity of the nest
       choose = true;
-      float state_temp = environment.nest - state + 15;
-      // if (ID == 0){
-      //   cout << "back: " << environment.nest << endl;
-      //   cout << "diff: " << state_temp + 15 << endl;
-      // }
+      float state_temp = (environment.nest - state) * 3 + 15;
       keepbounded(state_temp, 0, 30);
       st = int(state_temp);
+      // if (ID == 0){ cout << "back: " << environment.nest << endl << "diff: " << (state_temp - 15)/2 << endl << st << endl; }
 #ifdef ESTIMATOR
       int a;
       if (explore) {a = 1;} else {a = 0;}
