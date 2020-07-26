@@ -20,7 +20,7 @@
   <!-- Logger -->
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>/home/mario/repos/bt_evolution/behaviortree_temp/behaviortree.xml</policy>
+  <policy>../swarmulator/conf/state_action_matrices/policy_evolved_temp.txt</policy>
   <fitness>aggregation_clusters</fitness>
   <pr_states>0</pr_states>
   <!-- set to 0 to turn of estimator -->
