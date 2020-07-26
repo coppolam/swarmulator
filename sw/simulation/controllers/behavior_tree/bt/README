@@ -1,0 +1,14 @@
+/****************************************************************
+*								                                *
+*	------ Behaviour tree library ------			            *
+*								                                *
+*	Micro Aerial Vehicle Laboratory	MAVLAB		            	*
+*	Delft University of Technology	TU Delft	            	*
+*								                                *
+*	K.Y.W. Scheper, 14-07-14                                   	*
+*   This version was edited by M. Coppola, 25-07-20             *
+****************************************************************/
+
+This code requries Boost C++ extenstion libraries to operate.
+linux: sudo apt-get install libboost-dev 	# (precise/main)
+windows: install from http://www.boost.org/

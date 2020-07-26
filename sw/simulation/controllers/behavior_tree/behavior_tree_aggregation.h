@@ -1,5 +1,5 @@
-#ifndef BEHAVIOR_TREE_H
-#define BEHAVIOR_TREE_H
+#ifndef BEHAVIOR_TREE_AGGREGATION_H
+#define BEHAVIOR_TREE_AGGREGATION_H
 
 #include <vector>
 #include <stdio.h>
@@ -12,27 +12,19 @@
 #include "bt/btFile.h"
 using namespace BT;
 
-class behavior_tree: public Controller
+class behavior_tree_aggregation: public Controller
 {
 public:
   float v_x_ref, v_y_ref, ang;
   uint moving_timer; // Timer measuring how long a robot has been moving
   composite *tree; // Tree structure.
   blackboard BLKB; // Blackboard structure that ticks the tree during runtime.
+  float timelim;
 
   /** Initialize
    * Initialize the behavior tree
    */
-  behavior_tree();
-
-  /**
-   * Function for lattice to all robots
-   *
-   * @param closest vector of ID of all closest neighbors
-   * @param v_x
-   * @param v_y
-   */
-  void lattice_all(const int &ID, const std::vector<uint> &closest, float &v_x, float &v_y);
+  behavior_tree_aggregation();
 
   /**
    * Update the inputs and run the behavior tree command
@@ -41,4 +33,4 @@ public:
   virtual void animation(const uint16_t ID);
 };
 
-#endif /*BEHAVIOR_TREE_H*/
+#endif /*BEHAVIOR_TREE_AGGREGATION_H*/

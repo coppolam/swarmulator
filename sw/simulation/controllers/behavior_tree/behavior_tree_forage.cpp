@@ -21,8 +21,6 @@ behavior_tree_forage::behavior_tree_forage()
   v_x_ref = vmean;
   v_y_ref = wrapToPi_f(rg.gaussian_float(0., 0.2));
   state = environment.nest;
-  keepbounded(state, 0, 30);
-  st = int(state);
 
   // Control values
   timelim = 10.0 * param->simulation_updatefreq();

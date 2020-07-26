@@ -1,51 +1,32 @@
-#include "behavior_tree.h"
+#include "behavior_tree_aggregation.h"
 #include "draw.h"
 #include "terminalinfo.h"
 #include "auxiliary.h"
 
 using namespace std;
 
-void behavior_tree::lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y)
+behavior_tree_aggregation::behavior_tree_aggregation() : Controller()
 {
-  if (!closest.empty()) {
-    for (size_t i = 0; i < closest.size(); i++) {
-      get_lattice_motion(ID, closest[i], v_x, v_y);
-    }
-    v_x = v_x / (float)closest.size();
-    v_y = v_y / (float)closest.size();
-  }
-}
-
-
-behavior_tree::behavior_tree() : Controller()
-{
-  // Load the behavior tree
+  // Load and initialize the behavior tree
   tree = loadFile(param->policy().c_str());
+  BLKB.set("sensor0", 0); // Initialize input 0
+  BLKB.set("decision", 0.5); // Initialize output 0
 
   v_x_ref = rg.gaussian_float(0.0, 1.0);
   v_y_ref = rg.gaussian_float(0.0, 1.0);
-
-  // Initialize input sensors
-  BLKB.set("sensor0", 0.); // Sensor 0
-
-  // Initialize outputs
-  BLKB.set("wheelSpeed0", 0.); // Output 0
-  BLKB.set("wheelSpeed1", 0.); // Output 1
-
-  moving_timer = 0;
+  timelim = 2.0 * param->simulation_updatefreq();
+  moving_timer = rg.uniform_int(0, timelim);
 }
 
-void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
+void behavior_tree_aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
   v_x = 0;
   v_y = 0;
 
-  float timelim = 2.0 * param->simulation_updatefreq();
-
   // Get vector of all neighbors from closest to furthest
 
   vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
-  lattice_all(ID, closest, v_x, v_y);
+  get_lattice_motion_all(ID, v_x, v_y); // Repulsion from neighbors
 
   float vmean = 1.0;
 
@@ -56,17 +37,12 @@ void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v
   tree->tick(&BLKB);
 
   /**** Step 3 of 3: Set outputs (do this once, else keep!) ****/
-  float p_motion = BLKB.get("wheelSpeed0");
+  float p_motion = BLKB.get("decision");
 
   string d = "p=" + to_string(p_motion);
   terminalinfo::debug_msg(d, ID); // Debug
 
   /******** Probabilistic aggregation behavior ***********/
-  // Initialize local moving_timer with random variable
-  if (moving_timer == 0) {
-    moving_timer = rg.uniform_int(0, timelim);
-  }
-  // Behavior
   if (moving_timer == 1) {
     if (rg.bernoulli(1.0 - p_motion)) {
       v_x_ref = 0.0;
@@ -98,7 +74,7 @@ void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v
 }
 
 
-void behavior_tree::animation(const uint16_t ID)
+void behavior_tree_aggregation::animation(const uint16_t ID)
 {
   draw d;
   d.circle_loop(rangesensor);
