@@ -17,7 +17,8 @@ class SpaceFinder:
 
     def create_image(self):
         self.env_min, self.env_max = np.min(self.env_matrix), np.max(self.env_matrix)
-        self.im_size = self.arena_size =  int(np.abs(self.env_min) + np.abs(self.env_min)+1)
+        self.arena_size =  int(np.abs(self.env_min) + np.abs(self.env_min)+1)
+        self.im_size = 1000
         self.env_top_view = np.zeros((self.im_size,self.im_size,3),np.uint8)
 
     ## converts word coordinates to image coordinates
@@ -34,33 +35,11 @@ class SpaceFinder:
     def draw_image(self):
         for line in self.env_matrix:
             self.draw_line(line)
-
-    def clean_cnts(self,cnts):
-        bare_cnts = [row[0] for row in cnts]
-        remove_indices = []
-        # print(np.array(bare_cnts))
-        for i, cnt in enumerate(bare_cnts):
-            empty_cnt = []
-            if i>0:
-                for pnt in cnt:
-                    if pnt not in np.concatenate(bare_cnts[:i]).ravel().reshape((-1,2)):
-                        empty_cnt.append(pnt)
-
-                if not empty_cnt:
-                    remove_indices.append(i)
-                    print(i)
-                else:
-                    cnts[i][0] = np.array(empty_cnt)             
-                    cnts[i][1] = cv2.contourArea(cnts[i][0])
         
-        cnts = [i for j, i in enumerate(cnts) if j not in remove_indices]
-
-        return sorted(cnts,key=lambda x: x[1],reverse=True)
-
-
+        self.env_top_view = cv2.resize(self.env_top_view,(1000,1000),interpolation = cv2.INTER_AREA) # This is to make sure a wall is small compared to the total arena
 
     def find_dungeon_edge(self):
-        self.free_map = np.zeros(self.env_top_view.shape)*int(255) ## white = dangerous area
+        self.free_map = np.ones(self.env_top_view.shape)*int(255) ## white = dangerous area
         gray = cv2.cvtColor(self.env_top_view, cv2.COLOR_BGR2GRAY)
         thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)[1]
         cnts = imutils.grab_contours(cv2.findContours(thresh, cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE))
@@ -70,30 +49,16 @@ class SpaceFinder:
         for c in cnts:
             cnts_areas.append([c,cv2.contourArea(c)])
 
-        cnts_areas = sorted(cnts_areas,key=lambda x: x[1],reverse=True)
-        # print(cnts)
-        # print(cnts_areas)
-        cnts_areas = self.clean_cnts(cnts_areas)
-        # # print(cnts_areas[0][0])
-        # print(cnts_areas[:2])
-        # print(cnts_areas[2][0])
-        
-        cv2.drawContours(self.free_map, [cnts_areas[2][0]], -1, (0, 255, 0), 1)
-        # # for c in cnts[0]:
-        # #     cv2.drawContours(self.free_map, [c], -1, (0, 255, 0), -1)
-        # # cv2.fillPoly(self.free_map,[cnts_areas[1][0]],[255,255,255]) #this marks the inside of the outer area white
-        # # self.free_map += cv2.fillPoly(np.zeros(self.env_top_view.shape),[cnts_areas[1][0]],[0,0,0]) #this marks the inside of the outer area white
+        cnts_areas = sorted(cnts_areas,key=lambda x: x[1],reverse=True)      
+        cv2.drawContours(self.free_map, [cnts_areas[1][0]], -1, (0, 0, 0), -1)    # make largest internal area a safe zone
 
-        # # cv2.fillPoly(self.free_map,[cnts_areas[-1][0]],[0,0,0]) #this marks the inside of the outer area white
+        # find all smaller internal spaces and make them no-go zones.
+        for i in range(2,np.shape(cnts_areas)[0]):
+            cv2.drawContours(self.free_map, [cnts_areas[i][0]], -1, (255, 255, 255), -1)
 
-        # num_cnts = np.shape(cnts)[0]
-        # # if num_cnts > 1: # we only continue if the dungeon has inner shapes
-        # #     for cnt in cnts_areas[1:]:
-        # #         cv2.fillPoly(self.free_map,[cnt[0]],[255,255,255])
-
-        cv2.imshow('contours',cv2.resize(self.free_map,(1000,1000)))
-        cv2.imshow('original',cv2.resize(self.env_top_view,(1000,1000)))
-        cv2.waitKey(10000)
+        cv2.imshow('contours',cv2.resize(self.free_map,(1000,1000),interpolation = cv2.INTER_AREA))
+        cv2.imshow('original',cv2.resize(self.env_top_view,(1000,1000),interpolation = cv2.INTER_AREA))
+        cv2.waitKey(0)
         cv2.destroyAllWindows()  
 
 if __name__ == '__main__':
