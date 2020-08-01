@@ -1,5 +1,6 @@
 import random, sys, pickle, argparse, cv2, imutils
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 #####################
@@ -12,18 +13,22 @@ args = parser.parse_args()
 
 class SpaceFinder:
     def __init__(self):
-        self.walls_file = "conf/environments/" + args.env_name + "/walls.txt"
+        self.env_dir = "conf/environments/" + args.env_name + "/"
+        self.walls_file = self.env_dir + "walls.txt"
         self.env_matrix = np.loadtxt(self.walls_file)
 
     def create_image(self):
         self.env_min, self.env_max = np.min(self.env_matrix), np.max(self.env_matrix)
         self.arena_size =  int(np.abs(self.env_min) + np.abs(self.env_min)+1)
-        self.im_size = 1000
+        self.im_size = 100
         self.env_top_view = np.zeros((self.im_size,self.im_size,3),np.uint8)
 
     ## converts word coordinates to image coordinates
     def world2opencv_coords(self,x,y):
         return(int(self.im_size/2.+(x/self.arena_size)*self.im_size),int(self.im_size/2.-(y/self.arena_size)*self.im_size))
+
+    def imgworld_coords(self,x,y):
+        return((-self.arena_size/2.+y*(self.arena_size/self.im_size)),(self.arena_size/2-x*(self.arena_size/self.im_size)))
 
     def draw_line(self,row):
         num_segments = int(len(row)/2-1)
@@ -36,7 +41,7 @@ class SpaceFinder:
         for line in self.env_matrix:
             self.draw_line(line)
         
-        self.env_top_view = cv2.resize(self.env_top_view,(1000,1000),interpolation = cv2.INTER_AREA) # This is to make sure a wall is small compared to the total arena
+        self.env_top_view = cv2.resize(self.env_top_view,(self.im_size,self.im_size),interpolation = cv2.INTER_AREA) # This is to make sure a wall is small compared to the total arena
 
     def find_dungeon_edge(self):
         self.free_map = np.ones(self.env_top_view.shape)*int(255) ## white = dangerous area
@@ -56,14 +61,28 @@ class SpaceFinder:
         for i in range(2,np.shape(cnts_areas)[0]):
             cv2.drawContours(self.free_map, [cnts_areas[i][0]], -1, (255, 255, 255), -1)
 
-        cv2.imshow('contours',cv2.resize(self.free_map,(1000,1000),interpolation = cv2.INTER_AREA))
+        plt.imshow(cv2.resize(self.env_top_view,(1000,1000)))
+        plt.show()
+
+        cv2.imshow('contours',self.free_map)
         cv2.imshow('original',cv2.resize(self.env_top_view,(1000,1000),interpolation = cv2.INTER_AREA))
         cv2.waitKey(0)
         cv2.destroyAllWindows()  
+
+    def write_free_points(self):
+        self.free_array = []
+        for i in range(self.im_size):
+            for j in range(self.im_size):
+                print(self.free_map[i][j])
+                if np.all(self.free_map[i][j] == 0):
+                    self.free_array.append(self.imgworld_coords(i,j))
+        np.savetxt(self.env_dir+"free_pnts.txt",self.free_array)
+        # print(np.shape(self.free_map))
 
 if __name__ == '__main__':
     finder = SpaceFinder()  
     finder.create_image()
     finder.draw_image()
     finder.find_dungeon_edge()
+    finder.write_free_points()
     # print(finder.env_matrix)
