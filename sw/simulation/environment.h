@@ -9,11 +9,12 @@
 class Environment
 {
   std::vector<std::vector<float>> walls;
-  std::vector<std::vector<float>> free_points;
+  
   random_generator rg;
 public:
   std::vector<std::vector<float>> food;
   std::vector<float> beacon;
+  std::vector<std::vector<float>> free_points;
   float nest;
 
   /**

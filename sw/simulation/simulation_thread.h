@@ -38,6 +38,24 @@ void read_argv(int argc, char *argv[])
   }
 }
 
+// /**
+//   * Write x0 and y0 coordinates from free points in environment.
+//   * @param x0: x0 array
+//   * @param y0: y0 array
+//   * @param n_agents: number of agents, hence size of x0 and y0 
+
+// */
+// std::vector<float> generate_free_points(std::vector<float> x0, std::vector<float> y0, int n_agents){
+//   int pnt_idx;
+//   random_generator rg;
+//   for (int i = 0; i<n_agents;i++){
+//     pnt_idx = rg.uniform_int(0,environment.free_points.size());
+//     x0[i] = environment.free_points[pnt_idx][0];
+//     y0[i] = environment.free_points[pnt_idx][1];
+    
+//   }
+// }
+
 /**
  * This function initiates the simulation.
  * All agents in the beginning initiate randomly with a mean position around the (0,0) point.
@@ -56,14 +74,36 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
 
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
   if (nagents > 0) {
+    std::vector<float> x0(nagents);
+    std::vector<float> y0(nagents);
 #ifdef SEQUENTIAL
-    std::vector<float> st = environment.start();
-    std::vector<float> x0 = rg.uniform_float_vector(nagents, st[1] - 0.1, st[1] + 0.1);
-    std::vector<float> y0 = rg.uniform_float_vector(nagents, st[0] - 0.1, st[0] + 0.1);
+    std::vector<float> st = environment.start(); // returns a starting poitn for all agents
+    x0 = rg.uniform_float_vector(nagents, st[1] - 0.1, st[1] + 0.1);
+    y0 = rg.uniform_float_vector(nagents, st[0] - 0.1, st[0] + 0.1);
 #else
+
+  std::string s = param->agent_initialization();
+  if (!strcmp(s.c_str(), "in_area")){
+    // generate_free_points(x0.data(),y0.data(),nagents);
+    int pnt_idx;
+    random_generator rg;
+    for (uint i = 0; i<nagents;i++){
+      pnt_idx = rg.uniform_int(0,environment.free_points.size());
+      x0[i] = environment.free_points[pnt_idx][0];
+      y0[i] = environment.free_points[pnt_idx][1];
+
+      std::string ss_s;
+      ss_s = "( " + std::to_string(x0[0]) + "," + std::to_string(y0[0]) + ") , (" + std::to_string(x0[1]) + "," + std::to_string(y0[1]) + ")";
+      terminalinfo::debug_msg(ss_s);
+
+    }
+  }
+  else{
     float spread = environment.limits(); // default // TODO: Spread randomly within an arbitray arena
-    std::vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
-    std::vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
+    x0 = rg.uniform_float_vector(nagents, -spread, spread);
+    y0 = rg.uniform_float_vector(nagents, -spread, spread);
+  }
+
 #endif
     std::vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
     // Generate the agent models
@@ -77,7 +117,8 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
     }
 #endif
   }
-
+    std::vector<float> x0(nagents);
+    std::vector<float> y0(nagents);
   // Keep global clock running.
   // This is only used by the animation and the logger.
   // The robots operate by their own detached thread clock.
@@ -108,3 +149,5 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
 
 }
 #endif /*SIMULATION_THREAD_H*/
+
+

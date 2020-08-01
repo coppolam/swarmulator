@@ -48,7 +48,7 @@ void Environment::define_free_space(void)
   string s = param->agent_initialization();
   string free_points_file = "conf/environments/" + param->environment() + "/free_pnts.txt";
   
-  stringstream ss("python3 scripts/python/tools/env_free_space_finder.py");    
+  stringstream ss("python3 scripts/python/tools/env_free_space_finder.py -debug_mode=True");    
   system(ss.str().c_str());
   terminalinfo::info_msg("Locating free area");
   
@@ -73,6 +73,7 @@ void Environment::define_beacon(float x, float y)
 }
 
 // TODO: Temporary function for initialization, but the initalization should change eventually
+// only used when sequential spawning is selected
 std::vector<float> Environment::start(void)
 {
   std::vector<float> s(2);
