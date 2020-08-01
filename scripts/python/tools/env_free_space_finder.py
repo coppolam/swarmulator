@@ -7,7 +7,10 @@ import matplotlib.pyplot as plt
 #  Argument parser  #
 #####################
 parser = argparse.ArgumentParser(description='Find the spawnable locations within a (generated) environment with opencv')
-parser.add_argument('env_name', type=str, help="(str) Folder name in /conf/environments with 'walls.txt' that is used as input file")
+parser.add_argument('-env_name', type=str, help="(str) Folder name in /conf/environments with 'walls.txt' that is used as input file", default='random')
+parser.add_argument('-debug_mode', type=str, help="(str) if True, showing opencv windows with selected area",default='False')
+parser.add_argument('-grid_size', type=int, help="(int) represents the grid size used to locate free areas and eventually return free points",default=100)
+parser.add_argument('-wall_dist', type=int, help="(int) number of cells kept to the closest wall when spawning",default=5)
 args = parser.parse_args()
 
 
@@ -20,7 +23,7 @@ class SpaceFinder:
     def create_image(self):
         self.env_min, self.env_max = np.min(self.env_matrix), np.max(self.env_matrix)
         self.arena_size =  int(np.abs(self.env_min) + np.abs(self.env_min)+1)
-        self.im_size = 100
+        self.im_size = args.grid_size
         self.env_top_view = np.zeros((self.im_size,self.im_size,3),np.uint8)
 
     ## converts word coordinates to image coordinates
@@ -61,23 +64,20 @@ class SpaceFinder:
         for i in range(2,np.shape(cnts_areas)[0]):
             cv2.drawContours(self.free_map, [cnts_areas[i][0]], -1, (255, 255, 255), -1)
 
-        plt.imshow(cv2.resize(self.env_top_view,(1000,1000)))
-        plt.show()
-
-        cv2.imshow('contours',self.free_map)
-        cv2.imshow('original',cv2.resize(self.env_top_view,(1000,1000),interpolation = cv2.INTER_AREA))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()  
+        if args.debug_mode=='True':
+            cv2.imshow('contours',self.free_map)
+            cv2.imshow('original',cv2.resize(self.env_top_view,(1000,1000),interpolation = cv2.INTER_AREA))
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()  
 
     def write_free_points(self):
         self.free_array = []
-        for i in range(self.im_size):
-            for j in range(self.im_size):
-                print(self.free_map[i][j])
-                if np.all(self.free_map[i][j] == 0):
+        for i in range(args.wall_dist,self.im_size-args.wall_dist):
+            for j in range(args.wall_dist,self.im_size-args.wall_dist):
+                if np.all(self.free_map[i-args.wall_dist:i+args.wall_dist][j-args.wall_dist:j+args.wall_dist] == 0):
                     self.free_array.append(self.imgworld_coords(i,j))
-        np.savetxt(self.env_dir+"free_pnts.txt",self.free_array)
-        # print(np.shape(self.free_map))
+        
+        np.savetxt(self.env_dir+"free_pnts.txt",self.free_array,delimiter=" ", fmt='%.1f')
 
 if __name__ == '__main__':
     finder = SpaceFinder()  
@@ -85,4 +85,3 @@ if __name__ == '__main__':
     finder.draw_image()
     finder.find_dungeon_edge()
     finder.write_free_points()
-    # print(finder.env_matrix)

@@ -9,7 +9,6 @@
   <!-- See the folder conf/environments/ for available environments. 
        Create your own or use "random" to generate a random map at runtime -->
   <!-- Animation -->
-  <agent_initialization>in_area</agent_initialization>
   <window_width>800</window_width>
   <window_height>800</window_height>
   <scale>0.2</scale>

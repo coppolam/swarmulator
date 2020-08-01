@@ -15,6 +15,12 @@ using namespace std;
 Environment::Environment(void)
 {
   define_walls();
+
+  string s = param->agent_initialization();
+  
+  if (!strcmp(s.c_str(), "in_area")){
+    define_free_space();
+  }
   if (!strcmp(param->fitness().c_str(), "food")) {
     mtx_env.lock();
     environment.define_food(100);
@@ -39,7 +45,15 @@ void Environment::define_walls(void)
 
 void Environment::define_free_space(void)
 {
-  string filename = "conf/environments/" + param->environment() + "/walls.txt";
+  string s = param->agent_initialization();
+  string free_points_file = "conf/environments/" + param->environment() + "/free_pnts.txt";
+  
+  stringstream ss("python3 scripts/python/tools/env_free_space_finder.py");    
+  system(ss.str().c_str());
+  terminalinfo::info_msg("Locating free area");
+  
+  free_points = read_points(free_points_file);
+  
 }
 
 void Environment::define_food(uint64_t n)

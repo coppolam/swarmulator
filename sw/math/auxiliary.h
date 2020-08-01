@@ -180,7 +180,36 @@ inline static std::vector<std::vector<float>> read_matrix(const std::string file
         matrix[rows].push_back(value);
       }
       rows++;
-    }
+    } 
+  } else {
+    std::string msg = "Matrix file not loaded " + filename;
+    terminalinfo::error_msg(msg);
+  }
+  return matrix;
+}
+
+/**
+ * Read a matrix from a txt file
+ *
+ * @param filename = name of file
+ */
+inline static std::vector<std::vector<float>> read_points(const std::string filename)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<std::vector<float>> matrix;
+  uint rows = 0;
+  if (in.is_open()) {
+    while (!in.eof()) {
+      std::getline(in, line);
+      std::stringstream ss(line);
+      matrix.push_back(std::vector<float>());
+      float value;
+      while (ss >> value) {
+        matrix[rows].push_back(value);
+      }
+      rows++;
+    } 
   } else {
     std::string msg = "Matrix file not loaded " + filename;
     terminalinfo::error_msg(msg);
