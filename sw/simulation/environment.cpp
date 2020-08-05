@@ -48,7 +48,7 @@ void Environment::define_free_space(void)
   string s = param->agent_initialization();
   string free_points_file = "conf/environments/" + param->environment() + "/free_pnts.txt";
   
-  stringstream ss("python3 scripts/python/tools/env_free_space_finder.py -debug_mode=True");    
+  stringstream ss("python3 scripts/python/tools/env_free_space_finder.py");    
   system(ss.str().c_str());
   terminalinfo::info_msg("Locating free area");
   

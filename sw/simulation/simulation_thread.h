@@ -89,13 +89,8 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
     random_generator rg;
     for (uint i = 0; i<nagents;i++){
       pnt_idx = rg.uniform_int(0,environment.free_points.size());
-      x0[i] = environment.free_points[pnt_idx][0];
-      y0[i] = environment.free_points[pnt_idx][1];
-
-      std::string ss_s;
-      ss_s = "( " + std::to_string(x0[0]) + "," + std::to_string(y0[0]) + ") , (" + std::to_string(x0[1]) + "," + std::to_string(y0[1]) + ")";
-      terminalinfo::debug_msg(ss_s);
-
+      x0[i] = environment.free_points[pnt_idx][1];
+      y0[i] = environment.free_points[pnt_idx][0];
     }
   }
   else{
