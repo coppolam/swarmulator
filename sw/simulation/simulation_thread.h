@@ -38,23 +38,6 @@ void read_argv(int argc, char *argv[])
   }
 }
 
-// /**
-//   * Write x0 and y0 coordinates from free points in environment.
-//   * @param x0: x0 array
-//   * @param y0: y0 array
-//   * @param n_agents: number of agents, hence size of x0 and y0 
-
-// */
-// std::vector<float> generate_free_points(std::vector<float> x0, std::vector<float> y0, int n_agents){
-//   int pnt_idx;
-//   random_generator rg;
-//   for (int i = 0; i<n_agents;i++){
-//     pnt_idx = rg.uniform_int(0,environment.free_points.size());
-//     x0[i] = environment.free_points[pnt_idx][0];
-//     y0[i] = environment.free_points[pnt_idx][1];
-    
-//   }
-// }
 
 /**
  * This function initiates the simulation.
@@ -87,6 +70,7 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
     // generate_free_points(x0.data(),y0.data(),nagents);
     int pnt_idx;
     random_generator rg;
+    std::stringstream debug_stream;
     for (uint i = 0; i<nagents;i++){
       pnt_idx = rg.uniform_int(0,environment.free_points.size());
       x0[i] = environment.free_points[pnt_idx][1];
@@ -127,6 +111,7 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
               ID++;
             }
       #endif
+
       // Runtime finish evolution
       if (param->time_limit() > 0.0) {
         if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time

@@ -14,13 +14,14 @@ using namespace std;
 
 Environment::Environment(void)
 {
-  define_walls();
-
+  generate_dungeon();
   string s = param->agent_initialization();
-  
   if (!strcmp(s.c_str(), "in_area")){
-    define_free_space();
+    complete_folder();
   }
+  define_walls();
+ 
+
   if (!strcmp(param->fitness().c_str(), "food")) {
     mtx_env.lock();
     environment.define_food(100);
@@ -29,8 +30,7 @@ Environment::Environment(void)
     mtx_env.unlock();
   }
 }
-
-void Environment::define_walls(void)
+void Environment::generate_dungeon(void)
 {
   string s = param->environment();
   if (!strcmp(s.c_str(), "random")) {
@@ -39,16 +39,20 @@ void Environment::define_walls(void)
     system(ss.str().c_str());
     terminalinfo::info_msg("Generating random environment");
   }
+}
+
+void Environment::define_walls(void)
+{
   string filename = "conf/environments/" + param->environment() + "/walls.txt";
   walls = read_matrix(filename);
 }
 
-void Environment::define_free_space(void)
+void Environment::complete_folder(void)
 {
   string s = param->agent_initialization();
   string free_points_file = "conf/environments/" + param->environment() + "/free_pnts.txt";
   
-  stringstream ss("python3 scripts/python/tools/env_free_space_finder.py");    
+  stringstream ss("python3 scripts/python/tools/complete_folder.py -env_name="+param->environment());    
   system(ss.str().c_str());
   terminalinfo::info_msg("Locating free area");
   

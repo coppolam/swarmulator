@@ -29,6 +29,11 @@ public:
    */
   ~Environment() {};
 
+/**
+ * @brief run the dungeon_generator.py if environment generation is "random"
+*/
+void generate_dungeon(void);
+
   /**
    * @brief Define the initial obstacle list according to the list in conf/environments/.txt
    * You can indicate obstacle list in the conf/parameters.xml file, under <environment>
@@ -39,7 +44,7 @@ public:
   /**
    * @brief generate a map with free space based on the walls loaded in the environment.
    */
-  void define_free_space(void);
+  void complete_folder(void);
 
   /**
    * @brief Define the initial obstacle list according to the list in conf/environments/.txt
