@@ -17,6 +17,7 @@
       <xs:element name="policy" type="xs:string"/>
       <xs:element name="fitness" type="xs:string"/>
       <xs:element name="agent_initialization" type="xs:string"/>
+      <xs:element name="gas_seeking" type="xs:string"/>
       <!-- xs:element name="parameter_name" type="xs:parametertype"/-->
     </xs:sequence>
   </xs:complexType>

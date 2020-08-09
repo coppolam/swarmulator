@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include "terminalinfo.h"
 #include "fmat.h"
+#include "environment.h"
 
 /**
  * @brief Returns whether a number is positive or negative as a float +1, 0, -1
@@ -189,10 +190,74 @@ inline static std::vector<std::vector<float>> read_matrix(const std::string file
 }
 
 /**
- * Read a matrix from a txt file
+ * Read gas data points to gas object
  *
  * @param filename = name of file
+ * @param first_file = boolean, if true, we read the first few lines to get some specifics about the environment
  */
+inline static int load_gas_file(const std::string filename, const bool first_file, Gasdata &gas_obj)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<std::vector<float>> temp_matrix;
+  // uint rows = 0;
+
+  if (in.is_open()) {
+    
+      int row = 0;
+      while (!in.eof()) {
+        std::getline(in, line);
+        std::stringstream ss(line);
+        temp_matrix.push_back(std::vector<float>());
+        float value;
+        std::string temp;
+        while (!ss.eof()) {
+          ss >> temp;
+          if (std::stringstream(temp)>>value){
+            temp_matrix[row].push_back(value);
+            
+          temp = "";
+          }
+          
+        }
+        row++;
+      }
+    
+      if(first_file)
+      {
+      //we've now loaded the first 5 lines, we need to insert the values into the Gasdata object
+      gas_obj.env_min = temp_matrix[0];
+      gas_obj.env_max = temp_matrix[1];
+      gas_obj.numcells = std::vector<int>(temp_matrix[2].begin(),temp_matrix[2].end());
+      gas_obj.cell_sizes = temp_matrix[3];
+      gas_obj.source_location = temp_matrix[4];
+      }
+    
+    Timestep step;
+    step.initiate_mesh(gas_obj.numcells);
+    int last_row = row;
+    std::vector<int> current_row;
+    for (row = 7; row<last_row; row++){
+      current_row = std::vector<int>(temp_matrix[row].begin(),temp_matrix[row].end());
+      // step.mesh[current_row[0]][current_row[1]][current_row[2]] = current_row[3];
+    }
+
+    // loop over the remaining rows
+
+
+
+       
+      }
+        return 0;
+}
+
+
+
+
+
+
+
+
 inline static std::vector<std::vector<float>> read_points(const std::string filename)
 {
   std::ifstream in(filename);

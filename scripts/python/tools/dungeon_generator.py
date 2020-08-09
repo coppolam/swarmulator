@@ -325,8 +325,6 @@ class Generator():
 		# print(self.tiles_level)
 		self.tiles_level = np.asarray(self.tiles_level)
 		plt.imsave("test_img.jpg",self.tiles_level)
-		print(self.tiles_level)
-		print(np.shape(self.tiles_level))
 		c = 2
 		w_h = []
 		# Horizontal walls

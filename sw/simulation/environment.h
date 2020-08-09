@@ -6,12 +6,39 @@
 #include <mutex>
 #include "randomgenerator.h"
 
+
+class Timestep
+{
+  public:
+    int num_lines;
+    void initiate_mesh(std::vector<int> numcells)
+    {
+      int mesh[numcells[0]][numcells[1]][numcells[2]];
+    } 
+};
+
+class Gasdata
+{
+  public:
+    std::vector<float> source_location;
+    std::vector<float> env_min;
+    std::vector<float> env_max;
+    std::vector<float> cell_sizes;
+    std::vector<int> numcells;
+    std::vector<Timestep> gas_data;
+};
+
 class Environment
 {
   std::vector<std::vector<float>> walls;
   
   random_generator rg;
 public:
+  /**
+   * @brief class for storing all gas-related data of an environment
+  */
+
+  Gasdata gas_obj; //obj containing all gas information for this environment
   std::vector<std::vector<float>> food;
   std::vector<float> beacon;
   std::vector<std::vector<float>> free_points;
@@ -28,6 +55,12 @@ public:
    *
    */
   ~Environment() {};
+
+/**
+ * @brief if param->gas_seeking is True, this loads gas data from txt files (concentrations + wind velocities)
+*/
+void load_gas_data(void);
+
 
 /**
  * @brief run the dungeon_generator.py if environment generation is "random"
