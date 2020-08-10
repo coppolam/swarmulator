@@ -69,7 +69,7 @@ public:
   /**
   * Draw a small white point
   */
-  void test_point(int x, int y);
+  void test_point(float x, float y);
 
   /**
   * Draw a small white point

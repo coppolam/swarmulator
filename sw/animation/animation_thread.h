@@ -39,13 +39,8 @@ void main_loop_function()
   drawer.axes(); // Put x and y global axes
   drawer.axis_label(); // Axis label
   drawer.source(); //draw source position as red dot
-  drawer.test_point(environment.x_max,environment.y_max);
-  drawer.test_point(environment.x_min,environment.y_max);
-  drawer.test_point(environment.x_max,environment.y_min);
-  drawer.test_point(environment.x_min,environment.y_min);
   environment.animate(); // Animate the environment walls
   
-
   // Draw all robots
   uint r = s.size();
   if (r > 0) {

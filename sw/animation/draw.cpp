@@ -48,7 +48,7 @@ void draw::triangle(const float &scl)
 
 void draw::bmp_bg(const char* filename)
 {
-
+    // probably somewhere here's a bug
     GLuint texture;
     int width, height;
     unsigned char * data;
@@ -87,16 +87,17 @@ void draw::bmp_bg(const char* filename)
     glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT );
     gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,GL_RGB, GL_UNSIGNED_BYTE, data );
     free( data );
-
+    // probably somewhere here's a bug
+    
     glEnable( GL_TEXTURE_2D ); 
     glBindTexture( GL_TEXTURE_2D, texture );
  
     glColor3f(1.0f,1.0f,1.0f); // HERE!
     glBegin (GL_QUADS);
-    glTexCoord2d(0.0,0.0); glVertex2d(environment.x_min*xrat,environment.y_min*yrat);
-    glTexCoord2d(1.0,0.0); glVertex2d(environment.x_max*xrat,environment.y_min*yrat);
-    glTexCoord2d(1.0,1.0); glVertex2d(environment.x_max*xrat,environment.y_max*yrat);
-    glTexCoord2d(0.0,1.0); glVertex2d(environment.x_min*xrat,environment.y_max*yrat);
+    glTexCoord2d(0.0,0.0); glVertex3f(environment.x_min*xrat,environment.y_min*yrat,0);
+    glTexCoord2d(1.0,0.0); glVertex3f(environment.x_max*xrat,environment.y_min*yrat,0);
+    glTexCoord2d(1.0,1.0); glVertex3f(environment.x_max*xrat,environment.y_max*yrat,0);
+    glTexCoord2d(0.0,1.0); glVertex3f(environment.x_min*xrat,environment.y_max*yrat,0);
     glEnd();
  
     glDisable(GL_TEXTURE_2D);
@@ -170,11 +171,11 @@ void draw::point()
   glEnd();
 }
 
-void draw::test_point(int x, int y)
+void draw::test_point(float x, float y)
 {
   glPointSize(10.0);
   glBegin(GL_POINTS);
-  glColor3f(0.0,1.0,0);
+  glColor3ub(0,255,0);
   // glTranslatef(y * xrat, x * yrat, 0.0);
   glVertex3f(x*xrat, y*yrat, 0);
   glEnd();
