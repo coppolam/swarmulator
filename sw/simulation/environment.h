@@ -7,15 +7,6 @@
 #include "randomgenerator.h"
 
 
-class Timestep
-{
-  public:
-    int num_lines;
-    void initiate_mesh(std::vector<int> numcells)
-    {
-      int mesh[numcells[0]][numcells[1]][numcells[2]];
-    } 
-};
 
 class Gasdata
 {
@@ -25,7 +16,7 @@ class Gasdata
     std::vector<float> env_max;
     std::vector<float> cell_sizes;
     std::vector<int> numcells;
-    std::vector<Timestep> gas_data;
+    std::vector<std::vector<std::vector<int>>> gas_data;
 };
 
 class Environment

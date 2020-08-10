@@ -233,21 +233,21 @@ inline static int load_gas_file(const std::string filename, const bool first_fil
       gas_obj.source_location = temp_matrix[4];
       }
     
-    Timestep step;
-    step.initiate_mesh(gas_obj.numcells);
-    int last_row = row;
+    
+    int last_row = row-1;
+    std::vector<std::vector<int>> temp_gas_arr(gas_obj.numcells[0],std::vector<int> (gas_obj.numcells[1],0));
     std::vector<int> current_row;
     for (row = 7; row<last_row; row++){
       current_row = std::vector<int>(temp_matrix[row].begin(),temp_matrix[row].end());
-      // step.mesh[current_row[0]][current_row[1]][current_row[2]] = current_row[3];
+      if (current_row[2] == 0){
+        temp_gas_arr[current_row[0]][current_row[1]] = current_row[3];
+      }
     }
-
+    gas_obj.gas_data.push_back(temp_gas_arr);
     // loop over the remaining rows
 
-
-
-       
-      }
+  }
+  
         return 0;
 }
 

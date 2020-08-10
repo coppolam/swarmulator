@@ -38,7 +38,7 @@ void Environment::load_gas_data(void){
   if (!strcmp(s.c_str(), "True")){
     string filename = "conf/environments/" + param->environment() + "/gas_simulations/iteration_";
     load_gas_file(filename+std::to_string(0)+".txt",true,gas_obj);
-    terminalinfo::debug_msg("Testinggg:" + std::to_string(gas_obj.source_location[0]));
+    terminalinfo::debug_msg(std::to_string(gas_obj.gas_data[0][2][34]));
   }
 }
 
