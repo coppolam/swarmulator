@@ -34,10 +34,13 @@ void main_loop_function()
 
   // Draw fixed one time objects
   static draw drawer; // Drawer object
+  drawer.bmp_bg("conf/environments/image_testing/gas_simulations/test.bmp");
   drawer.data(); // Put data in corner
   drawer.axes(); // Put x and y global axes
   drawer.axis_label(); // Axis label
+  drawer.source(); //draw source position as red dot
   environment.animate(); // Animate the environment walls
+  
 
   // Draw all robots
   uint r = s.size();

@@ -25,7 +25,7 @@ def groupSequence(l):
 
 class SpaceFinder:
     def __init__(self):
-        self.rec_arena_size = 40
+        self.rec_arena_size = 10
         self.env_dir = "conf/environments/" + args.env_name + "/"
         self.walls_file = self.env_dir + "walls.txt"
         self.img_files = [file for file in glob.glob(self.env_dir+'*.png')] + [file for file in glob.glob(self.env_dir+'*.jpg')] + [file for file in glob.glob(self.env_dir+'*.jpeg')]
@@ -96,7 +96,7 @@ class SpaceFinder:
         w = np.vstack((w_h,w_v))
         
         w[:,[0,2]] = (w[:,[0,2]] - w[:,[0,2]].mean()) # Center horizontally
-        w[:,[1,3]] = (w[:,[1,3]] - w[:,[1,3]].mean()) # Center vertically
+        w[:,[1,3]] = (w[:,[1,3]] - w[:,[1,3]].mean()) # Center vertically      
 		# Center vertically
         self.env_matrix  = w.tolist()
 

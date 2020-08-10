@@ -2,6 +2,7 @@
 #include "trigonometry.h"
 #include <cmath>
 #include "fitness_functions.h"
+#include "main.h"
 
 void draw::data()
 {
@@ -43,6 +44,63 @@ void draw::triangle(const float &scl)
 
   glColor3ub(255, 255, 255); // White
   glPopMatrix();
+}
+
+void draw::bmp_bg(const char* filename)
+{
+
+    GLuint texture;
+    int width, height;
+    unsigned char * data;
+
+    FILE * file;
+    file = fopen( filename, "rb" );
+
+    if ( file == NULL ) {
+      terminalinfo::debug_msg("Couldn't find bmp file ");
+    }
+    width = 100;
+    height = 100;
+    data = (unsigned char *)malloc( width * height * 3 );
+    //int size = fseek(file,);
+    fread( data, width * height * 3, 1, file );
+    fclose( file );
+
+    for(int i = 0; i < width * height ; ++i)
+    {
+      int index = i*3;
+      unsigned char B,R;
+      B = data[index];
+      R = data[index+2];
+
+      data[index] = R;
+      data[index+2] = B;
+    }
+
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST );
+
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_REPEAT );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT );
+    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,GL_RGB, GL_UNSIGNED_BYTE, data );
+    free( data );
+
+    glEnable( GL_TEXTURE_2D ); 
+    glBindTexture( GL_TEXTURE_2D, texture );
+ 
+    glColor3f(1.0f,1.0f,1.0f); // HERE!
+    glBegin (GL_QUADS);
+    glTexCoord2d(0.0,0.0); glVertex2d(-5.0,-5.0);
+    glTexCoord2d(1.0,0.0); glVertex2d(5.0,-5.0);
+    glTexCoord2d(1.0,1.0); glVertex2d(5.0,5.0);
+    glTexCoord2d(0.0,1.0); glVertex2d(-5.0,5.0);
+    glEnd();
+ 
+    glDisable(GL_TEXTURE_2D);
+
 }
 
 void draw::circle(const float &d)
@@ -109,6 +167,26 @@ void draw::point()
   glPointSize(10.0);
   glBegin(GL_POINTS);
   glVertex3f(0, 0, 0);
+  glEnd();
+}
+
+void draw::test_point(int x, int y)
+{
+  glPointSize(1.0);
+  glBegin(GL_POINTS);
+  glColor3f(0.0,1.0,0);
+  glVertex3f(x, y, 0);
+  glEnd();
+}
+
+void draw::source()
+{
+  glPointSize(10.0);
+  glBegin(GL_POINTS);
+  glColor3ub(0,0,255);
+  std::vector<float> source_pos = environment.gas_obj.source_location;
+
+  glVertex3f(source_pos[0]-5.0, source_pos[1]-5.0, 0);
   glEnd();
 }
 

@@ -11,12 +11,14 @@
 class Gasdata
 {
   public:
+    int num_it;
     std::vector<float> source_location;
     std::vector<float> env_min;
     std::vector<float> env_max;
     std::vector<float> cell_sizes;
     std::vector<int> numcells;
     std::vector<std::vector<std::vector<int>>> gas_data;
+    std::vector<int> max_gas;
 };
 
 class Environment
