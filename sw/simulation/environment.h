@@ -30,7 +30,7 @@ public:
   /**
    * @brief class for storing all gas-related data of an environment
   */
-
+  float x_min,x_max,y_min,y_max;
   Gasdata gas_obj; //obj containing all gas information for this environment
   std::vector<std::vector<float>> food;
   std::vector<float> beacon;
@@ -55,6 +55,11 @@ public:
 void load_gas_data(void);
 
 
+/**
+ * Gets x_min, x_max, y_min, y_max for a given env
+*/
+
+void get_min_max(std::vector<std::vector<float>> walls);
 /**
  * @brief run the dungeon_generator.py if environment generation is "random"
 */

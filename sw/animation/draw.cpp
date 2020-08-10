@@ -93,10 +93,10 @@ void draw::bmp_bg(const char* filename)
  
     glColor3f(1.0f,1.0f,1.0f); // HERE!
     glBegin (GL_QUADS);
-    glTexCoord2d(0.0,0.0); glVertex2d(-5.0,-5.0);
-    glTexCoord2d(1.0,0.0); glVertex2d(5.0,-5.0);
-    glTexCoord2d(1.0,1.0); glVertex2d(5.0,5.0);
-    glTexCoord2d(0.0,1.0); glVertex2d(-5.0,5.0);
+    glTexCoord2d(0.0,0.0); glVertex2d(environment.x_min*xrat,environment.y_min*yrat);
+    glTexCoord2d(1.0,0.0); glVertex2d(environment.x_max*xrat,environment.y_min*yrat);
+    glTexCoord2d(1.0,1.0); glVertex2d(environment.x_max*xrat,environment.y_max*yrat);
+    glTexCoord2d(0.0,1.0); glVertex2d(environment.x_min*xrat,environment.y_max*yrat);
     glEnd();
  
     glDisable(GL_TEXTURE_2D);
@@ -172,10 +172,11 @@ void draw::point()
 
 void draw::test_point(int x, int y)
 {
-  glPointSize(1.0);
+  glPointSize(10.0);
   glBegin(GL_POINTS);
   glColor3f(0.0,1.0,0);
-  glVertex3f(x, y, 0);
+  // glTranslatef(y * xrat, x * yrat, 0.0);
+  glVertex3f(x*xrat, y*yrat, 0);
   glEnd();
 }
 

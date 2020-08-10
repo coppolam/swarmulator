@@ -15,6 +15,7 @@ using namespace std;
 Environment::Environment(void)
 {
   generate_dungeon();
+
   string s = param->agent_initialization();
   if (!strcmp(s.c_str(), "in_area")){
     complete_folder();
@@ -41,7 +42,6 @@ void Environment::load_gas_data(void){
     int i = 10;
     while (!last_file_found)
     {
-    terminalinfo::debug_msg(std::to_string(i)+"\n");
     if(! load_gas_file(filename+std::to_string(i)+".txt",true,gas_obj))
     {
       last_file_found = true;
@@ -54,6 +54,18 @@ void Environment::load_gas_data(void){
     save_as_bmp("conf/environments/image_testing/gas_simulations/test.bmp",gas_obj, 0);
     }    
   }
+}
+
+void Environment::get_min_max(std::vector<std::vector<float>> walls)
+{
+  for (size_t i = 0; i < walls.size(); i++) {
+    x_min = std::min({x_min,walls[i][0],walls[i][2]});
+    x_max = std::max({x_max,walls[i][0],walls[i][2]});
+
+    y_min = std::min({y_min,walls[i][1],walls[i][3]});
+    y_max = std::max({y_max,walls[i][1],walls[i][3]});
+  }
+  terminalinfo::debug_msg(std::to_string(x_min));
 }
 
 void Environment::generate_dungeon(void)
@@ -71,6 +83,7 @@ void Environment::define_walls(void)
 {
   string filename = "conf/environments/" + param->environment() + "/walls.txt";
   walls = read_matrix(filename);
+  get_min_max(walls);
 }
 
 void Environment::complete_folder(void)
