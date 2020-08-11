@@ -56,7 +56,7 @@ class SpaceFinder:
 
     ## converts image coordinates (!= opencv) to world coordinates
     def imgworld_coords(self,x,y):
-        return(int(self.x_min+np.floor(y*(self.x_dim/self.im_size))),int(self.y_max-np.floor(x*(self.y_dim/self.im_size))))
+        return(float(self.x_min+(y*(self.x_dim/self.im_size))),float(self.y_max-(x*(self.y_dim/self.im_size))))
 
     def draw_line(self,row):
         num_segments = int(len(row)/2-1)
@@ -107,8 +107,6 @@ class SpaceFinder:
             fout.seek(NEWLINE_SIZE_IN_BYTES, 2)
             fout.truncate()
 
-
-        # np.savetxt(self.walls_file, self.env_matrix, delimiter=" ", fmt='%.1f')
     def draw_image(self):
         self.env_top_view = np.zeros((self.im_size,self.im_size,3),np.uint8)
         for line in self.env_matrix:
