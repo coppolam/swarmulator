@@ -48,7 +48,6 @@ void draw::triangle(const float &scl)
 
 void draw::bmp_bg(const char* filename)
 {
-    // probably somewhere here's a bug
     GLuint texture;
     int width, height;
     unsigned char * data;
@@ -58,18 +57,15 @@ void draw::bmp_bg(const char* filename)
     file = fopen( filename, "rb" );
 
     if ( file == NULL ) {
-      terminalinfo::debug_msg("Couldn't find bmp file ");
+      terminalinfo::debug_msg("Couldn't find bmp file");
     }
     width = 100;
     height = 100;
-    header = (unsigned char *)malloc(environment.gas_obj.bmp_header_size);
+    header = (unsigned char *)malloc(environment.gas_obj.bmp_header_size); 
     data = (unsigned char *)malloc( width * height * 3  );
-    // header = ( unsigned char *)malloc(environment.gas_obj.bmp_header_size);
-    //int size = fseek(file,);
     fread( header,environment.gas_obj.bmp_header_size, 1, file ); //grab header
     fread( data, width * height * 3, 1, file ); //grab image data
     fclose( file );
-    // terminalinfo::debug_msg(std::to_string(data[0]));
     for(int i = 0; i < (width * height) ; ++i)
     {
       int index = i*3;
@@ -90,7 +86,6 @@ void draw::bmp_bg(const char* filename)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
     gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,GL_RGB, GL_UNSIGNED_BYTE, data );
     free( data );
-    // probably somewhere here's a bug
     
     glEnable( GL_TEXTURE_2D ); 
     glBindTexture( GL_TEXTURE_2D, texture );

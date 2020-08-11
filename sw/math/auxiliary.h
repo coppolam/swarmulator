@@ -263,7 +263,7 @@ inline static void save_as_bmp(const char* file_name, Gasdata &gas_obj, int inde
 {
   FILE *f;
   unsigned char *img = NULL;
-  int w = gas_obj.numcells[index], h = gas_obj.numcells[index];
+  int w = gas_obj.numcells[0], h = gas_obj.numcells[1];
   int filesize = 54 + 3*w*h;  //w is your image width, h is image height, both int
   int r,g,b,x,y;
   std::vector<std::vector<int>> data = gas_obj.gas_data[index];

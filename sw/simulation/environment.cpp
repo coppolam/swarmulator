@@ -36,10 +36,11 @@ Environment::Environment(void)
 
 void Environment::load_gas_data(void){
   string s = param->gas_seeking();
+  std::string bmp_filename;
   if (!strcmp(s.c_str(), "True")){
     string filename = "conf/environments/" + param->environment() + "/gas_simulations/iteration_";
     bool last_file_found = false;
-    int i = 10;
+    int i = 0;
     while (!last_file_found)
     {
     if(! load_gas_file(filename+std::to_string(i)+".txt",true,gas_obj))
@@ -47,11 +48,12 @@ void Environment::load_gas_data(void){
       last_file_found = true;
     }
     else{
-      last_file_found = true; //debugging line
+      bmp_filename = filename+std::to_string(i)+".bmp";
+      save_as_bmp(bmp_filename.c_str(),gas_obj, i);
       gas_obj.num_it = i;
       i++;
     }
-    save_as_bmp("conf/environments/image_testing/gas_simulations/test.bmp",gas_obj, 0);
+    
     }    
   }
 }
