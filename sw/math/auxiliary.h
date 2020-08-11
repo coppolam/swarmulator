@@ -305,7 +305,8 @@ inline static void save_as_bmp(const char* file_name, Gasdata &gas_obj, int inde
   bmpinfoheader[ 9] = (unsigned char)(       h>> 8);
   bmpinfoheader[10] = (unsigned char)(       h>>16);
   bmpinfoheader[11] = (unsigned char)(       h>>24);
-
+  
+  gas_obj.bmp_header_size = sizeof(bmpfileheader)+sizeof(bmpinfoheader);
   f = fopen(file_name,"wb");
   fwrite(bmpfileheader,1,14,f);
   fwrite(bmpinfoheader,1,40,f);

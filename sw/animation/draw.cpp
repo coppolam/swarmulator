@@ -52,6 +52,7 @@ void draw::bmp_bg(const char* filename)
     GLuint texture;
     int width, height;
     unsigned char * data;
+    unsigned char * header;
 
     FILE * file;
     file = fopen( filename, "rb" );
@@ -61,12 +62,15 @@ void draw::bmp_bg(const char* filename)
     }
     width = 100;
     height = 100;
-    data = (unsigned char *)malloc( width * height * 3 );
+    header = (unsigned char *)malloc(environment.gas_obj.bmp_header_size);
+    data = (unsigned char *)malloc( width * height * 3  );
+    // header = ( unsigned char *)malloc(environment.gas_obj.bmp_header_size);
     //int size = fseek(file,);
-    fread( data, width * height * 3, 1, file );
+    fread( header,environment.gas_obj.bmp_header_size, 1, file ); //grab header
+    fread( data, width * height * 3, 1, file ); //grab image data
     fclose( file );
-
-    for(int i = 0; i < width * height ; ++i)
+    // terminalinfo::debug_msg(std::to_string(data[0]));
+    for(int i = 0; i < (width * height) ; ++i)
     {
       int index = i*3;
       unsigned char B,R;
@@ -79,12 +83,11 @@ void draw::bmp_bg(const char* filename)
 
     glGenTextures( 1, &texture );
     glBindTexture( GL_TEXTURE_2D, texture );
-    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,GL_MODULATE );
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST );
-
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR );
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_REPEAT );
-    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_REPEAT );
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
     gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,GL_RGB, GL_UNSIGNED_BYTE, data );
     free( data );
     // probably somewhere here's a bug
@@ -94,10 +97,10 @@ void draw::bmp_bg(const char* filename)
  
     glColor3f(1.0f,1.0f,1.0f); // HERE!
     glBegin (GL_QUADS);
-    glTexCoord2d(0.0,0.0); glVertex3f(environment.x_min*xrat,environment.y_min*yrat,0);
-    glTexCoord2d(1.0,0.0); glVertex3f(environment.x_max*xrat,environment.y_min*yrat,0);
-    glTexCoord2d(1.0,1.0); glVertex3f(environment.x_max*xrat,environment.y_max*yrat,0);
-    glTexCoord2d(0.0,1.0); glVertex3f(environment.x_min*xrat,environment.y_max*yrat,0);
+    glTexCoord3d(0.0,0.0,0.0); glVertex3f(environment.x_min*xrat,environment.y_min*yrat,0);
+    glTexCoord3d(1.0,0.0,0.0); glVertex3f(environment.x_max*xrat,environment.y_min*yrat,0);
+    glTexCoord3d(1.0,1.0,0.0); glVertex3f(environment.x_max*xrat,environment.y_max*yrat,0);
+    glTexCoord3d(0.0,1.0,0.0); glVertex3f(environment.x_min*xrat,environment.y_max*yrat,0);
     glEnd();
  
     glDisable(GL_TEXTURE_2D);

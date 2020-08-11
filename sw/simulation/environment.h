@@ -12,6 +12,7 @@ class Gasdata
 {
   public:
     int num_it;
+    size_t bmp_header_size;
     std::vector<float> source_location;
     std::vector<float> env_min;
     std::vector<float> env_max;
@@ -24,6 +25,7 @@ class Gasdata
 class Environment
 {
   std::vector<std::vector<float>> walls;
+
   
   random_generator rg;
 public:
@@ -36,7 +38,6 @@ public:
   std::vector<float> beacon;
   std::vector<std::vector<float>> free_points;
   float nest;
-
   /**
   * @brief Construct a new Environment object
   *
