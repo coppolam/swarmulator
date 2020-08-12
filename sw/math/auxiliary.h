@@ -460,6 +460,37 @@ inline static bool doIntersect(Point p1, Point q1, Point p2, Point q2)
   return false; // Doesn't fall in any of the above cases
 }
 
+
+/**
+ * Returns point of intersect of two lines
+ *
+ * @param p1 Start segment 1
+ * @param q1 End segment 1
+ * @param p2 Start segment 2
+ * @param q2 End segment 2
+ * @return point
+ */
+inline static Point getIntersect(Point p1, Point q1, Point p2, Point q2)
+{
+  // make functions in the form of y = a*x + b
+  float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
+  float b_1 = q1.y-a_1*q1.x;
+  
+  float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
+  float b_2 = q2.y-a_2*q2.x;
+
+  Point output;
+  output.x = (b_2-b_1)/(a_1-a_2);
+  output.y = a_1*output.x + b_1;
+
+  return output;
+}
+
+
+
+
+
+
 /**
  * Get current date/time, format is YYYY-MM-DD-hh:mm:ss
  * Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
@@ -478,5 +509,7 @@ inline static const std::string currentDateTime()
   strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
   return buf;
 }
+
+
 
 #endif /*AUXILIARY_H*/

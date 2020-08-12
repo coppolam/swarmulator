@@ -24,7 +24,7 @@ class Gasdata
 
 class Environment
 {
-  std::vector<std::vector<float>> walls;
+  
 
   
   random_generator rg;
@@ -32,11 +32,12 @@ public:
   /**
    * @brief class for storing all gas-related data of an environment
   */
-  float x_min,x_max,y_min,y_max;
+  float x_min,x_max,y_min,y_max, env_size, env_diagonal;
   Gasdata gas_obj; //obj containing all gas information for this environment
   std::vector<std::vector<float>> food;
   std::vector<float> beacon;
   std::vector<std::vector<float>> free_points;
+  std::vector<std::vector<float>> walls;
   float nest;
   /**
   * @brief Construct a new Environment object

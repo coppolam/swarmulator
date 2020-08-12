@@ -66,8 +66,9 @@ void Environment::get_min_max(std::vector<std::vector<float>> walls)
 
     y_min = std::min({y_min,walls[i][1],walls[i][3]});
     y_max = std::max({y_max,walls[i][1],walls[i][3]});
+    env_size = std::max({(y_max-y_min),(x_max-x_min)});
+    env_diagonal = std::sqrt(env_size*env_size*2);
   }
-  terminalinfo::debug_msg(std::to_string(x_min));
 }
 
 void Environment::generate_dungeon(void)
