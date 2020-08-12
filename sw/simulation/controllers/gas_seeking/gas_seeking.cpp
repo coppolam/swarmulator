@@ -15,7 +15,7 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   for (int i =0; i<4; i++)
 	{
     laser_ray ray;
-    ray.heading = state[6] + laser_headings[6];
+    ray.heading = state[6] + laser_headings[i];
 		laser_rays.push_back(ray);
 	}
 
@@ -53,6 +53,8 @@ void gas_seeking::get_laser_reads(laser_ray ray, const uint16_t ID)
   agent_pos.x = state[1];
   agent_pos.y = state[0];
 
+
+
   for(uint i = 0; i<environment.walls.size();i++)
   {
     wall_start.x = environment.walls[i][0];
@@ -60,8 +62,18 @@ void gas_seeking::get_laser_reads(laser_ray ray, const uint16_t ID)
     wall_end.x = environment.walls[i][2];
     wall_end.y = environment.walls[i][3];
 
+    // Point intersect = getIntersect(agent_pos,laser_point,wall_start,wall_end);
+
+  // terminalinfo::debug_msg("Showing all walls:");
+  // for (uint i =0; i<environment.walls.size();i++)
+  // {
+  //   terminalinfo::debug_msg("Wall: "+std::to_string(environment.walls[i][0])+" " +std::to_string(environment.walls[i][1])+" " +std::to_string(environment.walls[i][2])+" " +std::to_string(environment.walls[i][3]));
+  // }
+
     if( doIntersect(agent_pos,laser_point,wall_start,wall_end))
+    // if (on_wall == true)
     {
+      terminalinfo::debug_msg("Wall: "+std::to_string(wall_start.x)+" "+std::to_string(wall_start.y)+" "+std::to_string(wall_end.x)+" "+std::to_string(wall_end.y));
       ray.intersection_points.push_back(getIntersect(agent_pos,laser_point,wall_start,wall_end));
     }
   }

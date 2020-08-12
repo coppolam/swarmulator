@@ -67,6 +67,11 @@ public:
   void segment(const float &x0, const float &y0, const float &x1, const float &y1);
 
   /**
+   * Draw laser segment
+  */
+  void laser(const float &x0, const float &y0, const float &x1, const float &y1);
+
+  /**
   * Draw a small white point
   */
   void test_point(float x, float y);

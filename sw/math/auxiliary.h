@@ -472,6 +472,13 @@ inline static bool doIntersect(Point p1, Point q1, Point p2, Point q2)
  */
 inline static Point getIntersect(Point p1, Point q1, Point p2, Point q2)
 {
+  Point output;
+  output.x = -1000;
+  output.y = -1000;
+
+
+  if ( (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
+  {
   // make functions in the form of y = a*x + b
   float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
   float b_1 = q1.y-a_1*q1.x;
@@ -479,9 +486,61 @@ inline static Point getIntersect(Point p1, Point q1, Point p2, Point q2)
   float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
   float b_2 = q2.y-a_2*q2.x;
 
-  Point output;
+  
   output.x = (b_2-b_1)/(a_1-a_2);
   output.y = a_1*output.x + b_1;
+  }
+  else if ((q1.y-p1.y)!=0 && (q2.y-p2.y)!=0)
+  {
+    // make functions in the form of x = a*y + b
+  float a_1 = (q1.x-p1.x)/(q1.y-p1.y);
+  float b_1 = q1.x-a_1*q1.y;
+  
+  float a_2 = (q2.x-p2.x)/(q2.y-p2.y);
+  float b_2 = q2.x-a_2*q2.y;
+
+  
+  output.y = (b_2-b_1)/(a_1-a_2);
+  output.x = a_1*output.y + b_1;
+  }
+  else if ((q1.y-p1.y)==0 && (q2.y-p2.y) !=0  && (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
+  {
+    // the first line is horizonal, find the point where the second segment is equal to that y
+    // make functions in the form of y = a*x + b
+    float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
+    float b_2 = q2.y-a_2*q2.x;
+    output.y = q1.y;
+    output.x = (q1.y-b_2)/a_2;
+  }
+  else if ((q2.y-p2.y)==0 && (q1.y-p1.y) !=0  && (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
+  {
+    // the first line is horizonal, find the point where the second segment is equal to that y
+    // make functions in the form of y = a*x + b
+    float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
+    float b_1 = q1.y-a_1*q1.x;
+    output.y = q2.y;
+    output.x = (q2.y-b_1)/a_1;
+  }
+
+
+  // else if ((q1.x-p1.x)==0 && (q2.x-p2.x) !=0  && (q1.y-p1.y)!=0 && (q2.y-p2.y)!=0)
+  // {
+  //   // the first line is vertical, find the point where the second segment is equal to that x
+  //   // make functions in the form of y = a*x + b
+  //   float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
+  //   float b_2 = q2.y-a_2*q2.x;
+  //   output.x = q1.x;
+  //   output.y = a_2*output.x+b_2;
+  // }
+  // else if ((q2.x-p2.x)==0 && (q1.x-p1.x) !=0  && (q1.y-p1.y)!=0 && (q2.y-p2.y)!=0)
+  // {
+  //   // the first line is vertical, find the point where the second segment is equal to that y
+  //   // make functions in the form of y = a*x + b
+  //   float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
+  //   float b_1 = q1.y-a_1*q1.x;
+  //   output.x = q2.x;
+  //   output.y = a_1*output.x+b_1;
+  // }
 
   return output;
 }

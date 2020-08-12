@@ -223,6 +223,16 @@ void draw::segment(const float &x0, const float &y0, const float &x1, const floa
   glEnd();
 }
 
+void draw::laser(const float &x0, const float &y0, const float &x1, const float &y1)
+{
+  glLineWidth(2);
+  glBegin(GL_LINES);
+  glColor3ub(0,255,0); // white
+  glVertex3f(x0 * xrat, y0 * yrat, 0.0);
+  glVertex3f(x1 * xrat, y1 * yrat, 0.0);
+  glEnd();
+}
+
 void draw::agent(const uint16_t &ID, const float &x, const float &y, const float &orientation)
 {
   glPushMatrix();
