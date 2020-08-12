@@ -44,13 +44,38 @@ void gas_seeking::animation(const uint16_t ID)
 void gas_seeking::get_laser_reads(laser_ray ray, const uint16_t ID)
 {
   //construct a point in the right direction that is outside of the environment
-  Point laser_point;
+  Point laser_point,wall_start, wall_end, agent_pos;
   std::vector<float> state = s.at(ID)->state;
   rotate_xy(0,environment.env_diagonal,ray.heading,laser_point.x,laser_point.y);
   laser_point.x += state[1];
   laser_point.y += state[0];
-  // std::vector<float> v = {laser_point.x,laser_point.y};
-  // s.at(ID)->laser_pnts.push_back(v);
+
+  agent_pos.x = state[1];
+  agent_pos.y = state[0];
+
+  for(uint i = 0; i<environment.walls.size();i++)
+  {
+    wall_start.x = environment.walls[i][0];
+    wall_start.y = environment.walls[i][1];
+    wall_end.x = environment.walls[i][2];
+    wall_end.y = environment.walls[i][3];
+
+    if( doIntersect(agent_pos,laser_point,wall_start,wall_end))
+    {
+      ray.intersection_points.push_back(getIntersect(agent_pos,laser_point,wall_start,wall_end));
+    }
+  }
+
+  for (uint i=0; i<ray.intersection_points.size();i++)
+  {
+    ray.distances.push_back(getDistance(agent_pos,ray.intersection_points[i]));
+  }
+
+  int idx = std::distance(ray.distances.begin(),std::min_element(ray.distances.begin(),ray.distances.end()));
+  ray.range = ray.distances[idx];
+  
+  std::vector<float> v = {ray.intersection_points[idx].x,ray.intersection_points[idx].y};
+  s.at(ID)->laser_pnts.push_back(v);
 
   // d.segment(agent_position.x,agent_position.y,laser_point.x,laser_point.y);
 }

@@ -13,9 +13,9 @@ class laser_ray
 		float heading; //heading in ENU frame
 		Point start_pos; //start position of the ray
 		std::vector<std::vector<float>> walls; //all walls that the laser ray intersects with
-		std::vector<std::vector<float>> intersection_points; //intersection points with walls
+		std::vector<Point> intersection_points; //intersection points with walls
 		std::vector<float> distances;//distances to walls of intersection
-		std::vector<float> range; //final outcome, the measured range
+		float range; //final outcome, the measured range
 };
 
 class gas_seeking: public Controller

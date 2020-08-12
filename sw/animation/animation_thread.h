@@ -52,10 +52,6 @@ void main_loop_function()
       // Input: ID, p_x global, p_y global, v_x global, v_y global
       drawer.velocity_arrow(ID,  s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->state.at(2), s[ID]->state.at(3));
       drawer.segment(s[ID]->state[1],s[ID]->state[0],s[ID]->laser_pnts[0][0],s[ID]->laser_pnts[0][1]);
-      terminalinfo::debug_msg("1:" + std::to_string(s[ID]->state[0]));
-      terminalinfo::debug_msg("2:" + std::to_string(s[ID]->state[1]));
-      terminalinfo::debug_msg("3:" + std::to_string(s[ID]->laser_pnts[0][0]));
-      terminalinfo::debug_msg("4:" + std::to_string(s[ID]->laser_pnts[0][1]));
     }
   }
 

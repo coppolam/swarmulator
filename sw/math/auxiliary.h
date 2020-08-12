@@ -486,7 +486,10 @@ inline static Point getIntersect(Point p1, Point q1, Point p2, Point q2)
   return output;
 }
 
-
+inline static float getDistance(Point p1, Point p2)
+{
+  return (std::sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y)));
+}
 
 
 
