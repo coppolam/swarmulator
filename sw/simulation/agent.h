@@ -29,7 +29,7 @@ public:
   uint16_t ID; // ID of agent
   bool activated;
   float dt;
-  std::vector<float> state; // State vector
+  std::vector<float> state,laser_ranges; // State vector
   float orientation; // Orientation
   bool moving;
   bool happy;

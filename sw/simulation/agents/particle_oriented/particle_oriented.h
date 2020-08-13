@@ -6,6 +6,7 @@
 #include <iostream>
 #include "agent.h"
 
+#define COMMAND_LOCAL 1
 /**
  * This child class of agent implements the dynamics of simple accelerated oriented vehicles using a kinematic model
  */

@@ -10,7 +10,7 @@ particle_oriented::particle_oriented(int i, vector<float> s, float tstep)
   ID = i;
   dt = tstep;
   orientation = state[6];
-  controller->set_saturation(0.5);
+  controller->set_saturation(100);
   manual = false;
 }
 

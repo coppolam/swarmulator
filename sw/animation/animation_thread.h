@@ -40,7 +40,7 @@ void main_loop_function()
   drawer.data(); // Put data in corner
   drawer.axes(); // Put x and y global axes
   drawer.axis_label(); // Axis label
-  drawer.source(); //draw source position as red dot
+  drawer.source(); //draw source position as dot
   environment.animate(); // Animate the environment walls
   
   // Draw all robots
@@ -58,12 +58,12 @@ void main_loop_function()
         drawer.test_point(s[ID]->laser_pnts[i][0],s[ID]->laser_pnts[i][1]);
         
       }
-      std::vector<float> wall;
-      for (uint i=0; i<s[ID]->intersect_walls.size();i++)
-      {
-        wall = s[ID]->intersect_walls[i];
-        drawer.laser(wall[0],wall[1],wall[2],wall[3]);
-      }
+      // std::vector<float> wall;
+      // for (uint i=0; i<s[ID]->intersect_walls.size();i++)
+      // {
+      //   wall = s[ID]->intersect_walls[i];
+      //   drawer.laser(wall[0],wall[1],wall[2],wall[3]);
+      // }
     }
   }
 
