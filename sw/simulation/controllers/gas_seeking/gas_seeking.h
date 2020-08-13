@@ -16,6 +16,8 @@ class laser_ray
 		std::vector<Point> intersection_points; //intersection points with walls
 		std::vector<float> distances;//distances to walls of intersection
 		float range; //final outcome, the measured range
+		std::vector<std::vector<float>> intersecting_walls; //the walls it's intersecting with
+		std::vector<float> intersect_wall; //the wall that it's intersecting with
 };
 
 class gas_seeking: public Controller
@@ -26,7 +28,7 @@ public:
 	virtual void animation(const uint16_t ID);
 	Point agent_pos, laser_point;
 	void get_laser_reads(laser_ray ray, const uint16_t ID);
-	float laser_headings[4] = {0,M_PI/2.,M_PI,(3./2.)*M_PI};
+	float laser_headings[4] = {-M_PI,-M_PI_2,0.0,M_PI_2};
 	std::vector<laser_ray> laser_rays;
 
 

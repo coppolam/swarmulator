@@ -36,7 +36,7 @@ public:
   float manualx, manualy;
   bool manual;
   float manualpsi_delta;
-  std::vector<std::vector<float>> laser_pnts;
+  std::vector<std::vector<float>> laser_pnts, intersect_walls;
   random_generator rg;
   Controller *controller = new CONTROLLER;
 

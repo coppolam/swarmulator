@@ -55,6 +55,14 @@ void main_loop_function()
       for (uint i = 0 ; i<s[ID]->laser_pnts.size(); i++)
       {
         drawer.laser(s[ID]->state[1],s[ID]->state[0],s[ID]->laser_pnts[i][0],s[ID]->laser_pnts[i][1]);
+        drawer.test_point(s[ID]->laser_pnts[i][0],s[ID]->laser_pnts[i][1]);
+        
+      }
+      std::vector<float> wall;
+      for (uint i=0; i<s[ID]->intersect_walls.size();i++)
+      {
+        wall = s[ID]->intersect_walls[i];
+        drawer.laser(wall[0],wall[1],wall[2],wall[3]);
       }
     }
   }

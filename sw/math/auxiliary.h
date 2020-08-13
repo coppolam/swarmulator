@@ -9,6 +9,7 @@
 #include <random>
 #include <algorithm> // std::transform
 #include <map>
+#include <tuple>
 #include <fstream>
 #include <sstream>
 #include <random>
@@ -388,8 +389,9 @@ struct Point {
  */
 inline static bool onSegment(Point p, Point q, Point r)
 {
-  if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
-      q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y)) {
+  float margin = 0.05;
+  if (q.x <= (std::max(p.x, r.x)+margin) && q.x >= (std::min(p.x, r.x)-margin) &&
+      q.y <= (std::max(p.y, r.y)+margin) && q.y >= (std::min(p.y, r.y)-margin)) {
     return true;
   }
 
@@ -419,6 +421,8 @@ inline static int orientation(Point p, Point q, Point r)
 
   return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
+
+
 
 /**
  * Returns true if line segment 'p1q1' and 'p2q2' intersect, false otherwise.
@@ -461,6 +465,7 @@ inline static bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 }
 
 
+
 /**
  * Returns point of intersect of two lines
  *
@@ -470,14 +475,23 @@ inline static bool doIntersect(Point p1, Point q1, Point p2, Point q2)
  * @param q2 End segment 2
  * @return point
  */
-inline static Point getIntersect(Point p1, Point q1, Point p2, Point q2)
+inline static std::tuple<bool,Point> getIntersect(Point p1, Point q1, Point p2, Point q2)
 {
   Point output;
+  bool on_wall = false;
   output.x = -1000;
   output.y = -1000;
 
-
-  if ( (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
+  // first filter out lines that do not intersect
+  if (((q1.x-p1.x)==0 && (q2.x-p2.x)==0) or ((q1.y-p1.y)==0 && (q2.y-p2.y)==0))
+  {
+    //points are not intersecting, so we set extreme values to make sure it's not picked as a solution
+    output.x = -1000;
+    output.y = -1000;
+    on_wall = false;
+  }
+  // case one: two lines that are not completely vertical
+  else if ( (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
   {
   // make functions in the form of y = a*x + b
   float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
@@ -485,64 +499,45 @@ inline static Point getIntersect(Point p1, Point q1, Point p2, Point q2)
   
   float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
   float b_2 = q2.y-a_2*q2.x;
-
   
   output.x = (b_2-b_1)/(a_1-a_2);
-  output.y = a_1*output.x + b_1;
+  output.y = a_1*output.x + b_1; 
+
   }
+  // case two: two lines that are not completely horizontal
   else if ((q1.y-p1.y)!=0 && (q2.y-p2.y)!=0)
   {
-    // make functions in the form of x = a*y + b
-  float a_1 = (q1.x-p1.x)/(q1.y-p1.y);
-  float b_1 = q1.x-a_1*q1.y;
-  
-  float a_2 = (q2.x-p2.x)/(q2.y-p2.y);
-  float b_2 = q2.x-a_2*q2.y;
+      // make functions in the form of x = a*y + b
+    float a_1 = (q1.x-p1.x)/(q1.y-p1.y);
+    float b_1 = q1.x-a_1*q1.y;
+    
+    float a_2 = (q2.x-p2.x)/(q2.y-p2.y);
+    float b_2 = q2.x-a_2*q2.y;
 
-  
-  output.y = (b_2-b_1)/(a_1-a_2);
-  output.x = a_1*output.y + b_1;
+    output.y = (b_2-b_1)/(a_1-a_2);
+    output.x = a_1*output.y + b_1;
   }
-  else if ((q1.y-p1.y)==0 && (q2.y-p2.y) !=0  && (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
+
+  // case three: first line is horizontal, second line is vertical
+  else if ((q1.y-p1.y)==0 && (q2.x-p2.x) ==0 )
   {
-    // the first line is horizonal, find the point where the second segment is equal to that y
-    // make functions in the form of y = a*x + b
-    float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
-    float b_2 = q2.y-a_2*q2.x;
     output.y = q1.y;
-    output.x = (q1.y-b_2)/a_2;
+    output.x = q2.x;
   }
-  else if ((q2.y-p2.y)==0 && (q1.y-p1.y) !=0  && (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
+  // case four: first line is vertical, second line is horizontal
+  else if ((q1.x-p1.x)==0 && (q2.y-p2.y) ==0 )
   {
-    // the first line is horizonal, find the point where the second segment is equal to that y
-    // make functions in the form of y = a*x + b
-    float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
-    float b_1 = q1.y-a_1*q1.x;
     output.y = q2.y;
-    output.x = (q2.y-b_1)/a_1;
+    output.x = q1.x;
   }
+  
+  if(onSegment(p2,output,q2) && onSegment(p1,output,q1))
+  {
+    on_wall = true;
+  }
+  
 
-
-  // else if ((q1.x-p1.x)==0 && (q2.x-p2.x) !=0  && (q1.y-p1.y)!=0 && (q2.y-p2.y)!=0)
-  // {
-  //   // the first line is vertical, find the point where the second segment is equal to that x
-  //   // make functions in the form of y = a*x + b
-  //   float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
-  //   float b_2 = q2.y-a_2*q2.x;
-  //   output.x = q1.x;
-  //   output.y = a_2*output.x+b_2;
-  // }
-  // else if ((q2.x-p2.x)==0 && (q1.x-p1.x) !=0  && (q1.y-p1.y)!=0 && (q2.y-p2.y)!=0)
-  // {
-  //   // the first line is vertical, find the point where the second segment is equal to that y
-  //   // make functions in the form of y = a*x + b
-  //   float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
-  //   float b_1 = q1.y-a_1*q1.x;
-  //   output.x = q2.x;
-  //   output.y = a_1*output.x+b_1;
-  // }
-
-  return output;
+  return std::make_tuple(on_wall,output);
 }
 
 inline static float getDistance(Point p1, Point p2)
