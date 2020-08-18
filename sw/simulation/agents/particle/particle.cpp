@@ -23,7 +23,6 @@ std::vector<float> particle::state_update(std::vector<float> state)
   controller->saturate(v_x);
   controller->saturate(v_y);
   moving = controller->moving;
-  happy = controller->happy;
 
   float vxr, vyr;
   rotate_xy(v_x, v_y, orientation, vxr, vyr);

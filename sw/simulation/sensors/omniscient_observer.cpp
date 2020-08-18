@@ -71,7 +71,7 @@ bool OmniscientObserver::check_happy()
 {
   bool happy = true;
   for (uint16_t ID = 0; ID < s.size(); ID++) {
-    if (!s[ID]->happy) {
+    if (!s[ID]->controller->happy) {
       return false;
     }
   }
@@ -163,7 +163,7 @@ void OmniscientObserver::relative_location(const uint16_t ID, std::vector<float>
   }
 }
 
-bool OmniscientObserver::sense_food(const uint16_t ID, uint16_t &food_ID)
+bool OmniscientObserver::sense_food(const uint16_t ID, uint16_t &food_ID, float range)
 {
   mtx_env.lock_shared();
   for (uint16_t i = 0; i < environment.food.size(); i++) {
@@ -172,7 +172,7 @@ bool OmniscientObserver::sense_food(const uint16_t ID, uint16_t &food_ID)
       float dd = s[ID]->get_position(j) - environment.food[i][j];
       u += pow(dd, 2);
     }
-    if (sqrt(u) < rangesensor) {
+    if (sqrt(u) < range) {
       food_ID = i;
       mtx_env.unlock_shared();
       return true;

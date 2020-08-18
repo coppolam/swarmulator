@@ -5,6 +5,15 @@
 #include "trigonometry.h"
 
 using namespace std;
+#define SENSORS 8
+#define SENSOR_MAX_RANGE 1.8
+
+lattice_basic::lattice_basic(): t(SENSORS, SENSOR_MAX_RANGE)
+{
+  sensor_range = SENSOR_MAX_RANGE;
+  _v_adj = 1.0;
+  d_safe = 0.9;
+};
 
 float lattice_basic::f_attraction(const float &u, const float &b_eq)
 {
@@ -72,7 +81,7 @@ void lattice_basic::get_lattice_motion(const int &ID, const int &state_ID, float
   b_eq = t.get_preferred_bearing(beta_des, beta);
   v_r = get_attraction_velocity(o.request_distance(ID, state_ID), b_eq);
   latticemotion(v_r, _v_adj, beta, b_eq, v_x, v_y);
-  // Add rotation
+  // Uncomment to add rotation (untested)
   // float b, r, px, py;
   // b = wrapToPi_f(o.request_bearing(ID,  state_ID));
   // r = o.request_distance(ID,  state_ID);

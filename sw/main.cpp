@@ -39,7 +39,6 @@ std::shared_mutex mtx; // Mutex needed to lock threads
 std::shared_mutex mtx_env; // Mutex needed to lock threads
 float realtimefactor; // Real time factor of simulation
 float simtime_seconds = 0; // Initial simulation time
-float rangesensor = 1.8; // How far each robot can sense
 bool program_running  = false; // Program running, initiated false until the beginning
 Environment environment; // Environment walls
 std::string identifier; // Log name identifier
@@ -53,11 +52,12 @@ int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
 
-  if (argc > 2) {
+  // Set FIFO identifier
+  if (argc > 2) { // If supplied by the user, use the given input
     std::string s = "";
     s += argv[2];
     identifier = s;
-  } else {
+  } else { // If not, use the current date and time
     identifier = currentDateTime();
   }
 

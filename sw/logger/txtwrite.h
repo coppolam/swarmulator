@@ -23,7 +23,12 @@
 class txtwrite
 {
 public:
-  std::string filename;
+  std::string filename; // Name of the log file
+
+  /**
+   * @brief Construct a new txtwrite object
+   *
+   */
   txtwrite();
 
   /**
@@ -39,14 +44,6 @@ public:
    * @param logfile The txt file ID (from ofstream)
    */
   void txtwrite_state(std::ofstream &logfile);
-
-  /**
-   * Write other properties. The definition of this function can be modified to different needs.
-   * TODO: Generalize how this handled.
-   *
-   * @param logfile The txt file ID (from ofstream)
-   */
-  void txtwrite_summary(std::ofstream &logfile);
 };
 
 

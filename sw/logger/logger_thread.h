@@ -13,7 +13,8 @@
 #include "txtwrite.h"
 
 bool logger_running = false;
-float simtime_seconds_old;
+float simtime_seconds_old; // Used to log at a given frequency
+
 /**
  * Run the logger
  *
@@ -33,7 +34,6 @@ void run_logger(std::ofstream &logfile, std::string filename)
   if (!paused && simtime_seconds > simtime_seconds_old + 1. / param->logger_updatefreq()) {
     mtx.lock_shared();
     writer.txtwrite_state(logfile);
-    writer.txtwrite_summary(logfile);
     simtime_seconds_old = simtime_seconds;
     mtx.unlock_shared();
   }

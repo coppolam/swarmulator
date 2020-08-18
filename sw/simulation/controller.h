@@ -33,10 +33,11 @@ public:
   float _ddes_y; // Desired equilibrium distance_y
   float _kr; // Repulsion gain
   float _ka; // Attraction gain
-  bool  saturation; // Define whether the controls are saturated
+  bool saturation; // Define whether the controls are saturated
   float saturation_limits; // Define the saturation of the controls
-  bool  moving; // Internal state of whether the robot is actively moving or not
+  bool moving; // Internal state of whether the robot is actively moving or not
   bool happy;
+  float sensor_range_max;
 
   /**
    * Set the speed saturation to true and set the saturation limits.
@@ -97,9 +98,19 @@ public:
    * @param ID
    * @param v_x
    * @param v_y
+   * @param rangesensor maximum range of the sensor
    */
-  void get_lattice_motion_all(const int &ID, float &v_x, float &v_y);
-  void get_lattice_motion_all(const int &ID, float &v_x, float &v_y, uint8_t k);
+  void get_lattice_motion_range(const int &ID, float &v_x, float &v_y, float rangesensor);
+
+  /**
+   * @brief Get the lattice motion all object
+   *
+   * @param ID
+   * @param v_x
+   * @param v_y
+   * @param k (maximum) number of nearest neighbors
+   */
+  void get_lattice_motion_k_nearest(const int &ID, float &v_x, float &v_y, uint8_t k);
 
   /**
    * @brief Get the attraction velocity object
@@ -126,9 +137,12 @@ public:
    * @param v_x The desired velocity in v_x (amended in this function)
    * @param v_y The desired velocity in v_y (amended in this function)
    */
-  bool wall_avoidance_bounce(const uint16_t ID, float &v_x, float &v_y);
-  bool wall_avoidance_turn(const uint16_t ID, float &v_x, float &v_y);
+  bool wall_avoidance_bounce(const uint16_t ID, float &v_x, float &v_y, float rangesensor);
+  bool wall_avoidance_turn(const uint16_t ID, float &v_x, float &v_y, float rangesensor);
   virtual void animation(const uint16_t ID) = 0;
+
+  float get_max_sensor_range();
+  void set_max_sensor_range(float r);
 };
 
 

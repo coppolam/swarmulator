@@ -24,7 +24,7 @@ void run_agent_simulation_step(const int &ID)
 {
   while (program_running) {
     bool sequential = (s.size() == nagents || simtime_seconds > 0.);
-#ifdef SEQUENTIAL
+#ifdef SEQUENTIAL // Agents are launched one by one, rather than all at once
     sequential = true;
 #endif
     if (sequential) {
@@ -38,7 +38,7 @@ void run_agent_simulation_step(const int &ID)
       std::vector<float> test = s_n;
       float r_temp, ang_temp, vx_temp, vy_temp;
       cart2polar(s_n[2], s_n[3], r_temp, ang_temp); // direction of velocity
-      polar2cart(r_temp, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
+      polar2cart(r_temp, ang_temp, vx_temp, vy_temp); // detect a crash by projecting the velocity
       test[0] += vx_temp;
       test[1] += vy_temp;
       if (!environment.sensor(ID, s_0, test, ang_temp)) { // No wall --> Update the dynamics

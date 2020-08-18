@@ -6,6 +6,7 @@
 #include "draw.h"
 
 using namespace std;
+#define SENSOR_MAX_RANGE 1.8
 
 lattice::lattice() : lattice_basic()
 {
@@ -31,5 +32,5 @@ void lattice::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 void lattice::animation(const uint16_t ID)
 {
   draw d;
-  d.circle_loop(rangesensor);
+  d.circle_loop(SENSOR_MAX_RANGE);
 }

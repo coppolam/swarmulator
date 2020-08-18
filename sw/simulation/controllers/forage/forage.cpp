@@ -7,6 +7,7 @@
 #include "draw.h"
 
 using namespace std;
+#define SENSOR_MAX_RANGE 1.8
 
 forage::forage() : Controller()
 {
@@ -22,7 +23,7 @@ forage::forage() : Controller()
   vmean = 0.5;
 
   // Load policy
-  if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(16, 0.5); }
+  if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(16, 1.0); }
   else { motion_p = read_array(param->policy()); }
 }
 
@@ -31,7 +32,7 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
   v_x = 0;
   psi_rate = 0;
   float temp, br;
-  get_lattice_motion_all(ID, v_x, temp); // Repulsion from neighbors
+  get_lattice_motion_range(ID, v_x, temp, SENSOR_MAX_RANGE); // Repulsion from neighbors
 
   // Make the choice. To explore or not to explore?
   if (!choose) {
@@ -55,13 +56,13 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
       o.beacon(ID, br, v_y_ref); // get distance + angle to beacon
       v_x_ref = br;
       v_y_ref = 0.5 * wrapToPi_f(v_y_ref); // gain on control
-      if (br < rangesensor) { // Drop the food if you are in the vicinity of the nest
+      if (br < SENSOR_MAX_RANGE) { // Drop the food if you are in the vicinity of the nest
         environment.drop_food();
         holds_food = false;
         choose = false;
         timer = 1; // reset timer
       }
-    } else if (o.sense_food(ID, ID_food)) {
+    } else if (o.sense_food(ID, ID_food, SENSOR_MAX_RANGE)) {
       environment.grab_food(ID_food); // Grab the food item ID_food
       holds_food = true;
     }
@@ -73,11 +74,11 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
   increase_counter_to_value(timer, timelim, 1);
   v_x += v_x_ref;
   psi_rate += v_y_ref;
-  wall_avoidance_turn(ID, v_x, psi_rate);
+  wall_avoidance_turn(ID, v_x, psi_rate, 2.5); // Can see walls at 2.5 m way
 }
 
 void forage::animation(const uint16_t ID)
 {
   draw d;
-  d.circle_loop(rangesensor);
+  d.circle_loop(SENSOR_MAX_RANGE);
 }

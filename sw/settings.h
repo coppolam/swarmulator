@@ -1,16 +1,19 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-// Options
+/**
+ * Holds some higher level settings of the simulator
+ *
+ */
+
+// Use SEQUENTIAL to launch robots one by one with the specified interval (in seconds), rather than all at once
 // #define SEQUENTIAL 5
-// #define REMAIN_CONNECTED // Check that the swarm remains connected (only if logging)
-// #define CHECK_HAPPY // Check whether the global goal is completed  (only if logging)
 
 /**
  * Noise in relative sensing
  */
 // TODO: Make runtime variable
-#define NOISE_R 0 // STDEV of noise in range
-#define NOISE_B 0 // STDEV of noise in bearing
+#define NOISE_R 0 // STDEV of noise in range, used by omniscient_observer
+#define NOISE_B 0 // STDEV of noise in bearing, used by omniscient_observer
 
 #endif /*SETTINGS_H*/

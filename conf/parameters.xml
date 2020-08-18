@@ -20,7 +20,7 @@
   <!-- Logger -->
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy></policy>
-  <fitness>aggregation_clusters</fitness>
+  <policy>conf/policies/pattern_formation/state_action_matrix_free.txt</policy>
+  <fitness>food</fitness>
   <!--new_parameter_name>default value</new_parameter_name-->
 </parameters>

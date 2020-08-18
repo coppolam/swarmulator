@@ -25,14 +25,14 @@ public:
   ~terminalinfo() {};
 
   /**
-   * Print a debug message
+   * Print a debug message, only if debug messages are turned on
    *
    * @param str Debug string to print
    */
   static void debug_msg(std::string str);
 
   /**
-   * Print a debug message
+   * Print a debug message, only if debug messages are turned on
    *
    * @param str Debug string to print
    * @param ID Robot ID
@@ -40,21 +40,21 @@ public:
   static void debug_msg(std::string str, int ID);
 
   /**
-   * Print an info message
+   * Print an info message, only if info messages are turned on
    *
    * @param str Info string to print
    */
   static void info_msg(std::string str);
 
   /**
-   * Print an info message
+   * Print an info message, only if warnings are turned on
    *
    * @param str Info string to print
    */
   static void info_msg(std::string str, int ID);
 
   /**
-  * Print a warning message
+  * Print a warning message, only if warnings are turned on
   *
   * @param str Warning string to print
   */

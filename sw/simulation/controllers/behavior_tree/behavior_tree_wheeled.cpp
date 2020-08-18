@@ -6,6 +6,7 @@
 using namespace std;
 
 #define KNEAREST 6
+#define WALL_SENSOR 2.5
 
 // Defining the binary function
 bool comp(int a, int b)
@@ -36,7 +37,7 @@ void behavior_tree_wheeled::get_velocity_command(const uint16_t ID, float &v_x, 
   v_y = 0;
 
   vector<float> r, b;
-  o.relative_location_inrange(ID, rangesensor, r, b);
+  o.relative_location_inrange(ID, WALL_SENSOR, r, b);
 
   // float vmean = 1.0;
 
@@ -66,5 +67,5 @@ void behavior_tree_wheeled::get_velocity_command(const uint16_t ID, float &v_x, 
 void behavior_tree_wheeled::animation(const uint16_t ID)
 {
   draw d;
-  d.circle_loop(rangesensor);
+  d.circle_loop(WALL_SENSOR);
 }

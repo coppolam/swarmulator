@@ -27,12 +27,11 @@ public:
   virtual ~Agent() {};
 
   uint16_t ID; // ID of agent
-  bool activated;
+  bool activated; // Set true if the agent is active
   float dt;
   std::vector<float> state; // State vector
   float orientation; // Orientation
   bool moving;
-  bool happy;
   float manualx, manualy;
   bool manual;
   float manualpsi_delta;

@@ -22,6 +22,7 @@ struct indexed_array {
 class OmniscientObserver
 {
   random_generator rg;
+  float rangesensor;
 
 public:
   /**
@@ -156,9 +157,26 @@ public:
    * @param r
    * @param b
    */
-  bool sense_food(const uint16_t ID, uint16_t &food_ID);
+  bool sense_food(const uint16_t ID, uint16_t &food_ID, float rangesensor);
 
+  /**
+   * @brief Return the location to the beacon location in the environment
+   *
+   * @param ID
+   * @param r
+   * @param b
+   */
   void beacon(const uint16_t ID, float &r, float &b);
+
+  /**
+   * @brief Set the sensor range object
+   *
+   * @param r
+   */
+  void set_sensor_range(float r)
+  {
+    rangesensor = r;
+  }
 };
 
 #endif /*OMNISCIENT_OBSERVER_H*/

@@ -3,6 +3,8 @@
 #include "terminalinfo.h"
 #include "auxiliary.h"
 
+#define SENSOR_MAX_RANGE 1.8
+#define WALL_SENSOR 2.5
 using namespace std;
 
 void behavior_tree::lattice_all(const int &ID, const vector<uint> &closest, float &v_x, float &v_y)
@@ -44,7 +46,7 @@ void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v
 
   // Get vector of all neighbors from closest to furthest
 
-  vector<uint> closest = o.request_closest_inrange(ID, rangesensor);
+  vector<uint> closest = o.request_closest_inrange(ID, SENSOR_MAX_RANGE);
   lattice_all(ID, closest, v_x, v_y);
 
   float vmean = 1.0;
@@ -88,7 +90,7 @@ void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v
   increase_counter(moving_timer, timelim);
   /*******************************************************/
 
-  wall_avoidance_bounce(ID, v_x_ref, v_y_ref);
+  wall_avoidance_bounce(ID, v_x_ref, v_y_ref, SENSOR_MAX_RANGE);
 
   v_x += v_x_ref;
   v_y += v_y_ref;
@@ -101,5 +103,5 @@ void behavior_tree::get_velocity_command(const uint16_t ID, float &v_x, float &v
 void behavior_tree::animation(const uint16_t ID)
 {
   draw d;
-  d.circle_loop(rangesensor);
+  d.circle_loop(SENSOR_MAX_RANGE);
 }

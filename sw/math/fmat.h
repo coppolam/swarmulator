@@ -121,7 +121,7 @@ void fmat<T>::normalize_larger_than_1(std::vector<T, std::allocator<T>> &matrix,
   for (uint i = 0; i < n_rows; i++) {
     float sum_of_elems = 0;
     sum_of_elems = accumulate(matrix.begin() + i * n_rows, matrix.begin() + i * n_rows + (n_cols), sum_of_elems);
-    if (sum_of_elems != 1.0 && sum_of_elems > 0) {
+    if (sum_of_elems != 1.0 && sum_of_elems > 1) {
       for (uint j = 0; j < n_cols; j++) {
         matrix[i * n_rows + j] = matrix[i * n_rows + j] / sum_of_elems;
       }
@@ -129,7 +129,6 @@ void fmat<T>::normalize_larger_than_1(std::vector<T, std::allocator<T>> &matrix,
   }
 }
 
-/* Make an identity matrix */
 template<class T>
 void fmat<T>::make_identity(std::vector<T, std::allocator<T>> &matrix, const uint &n)
 {
@@ -144,7 +143,6 @@ void fmat<T>::make_identity(std::vector<T, std::allocator<T>> &matrix, const uin
   }
 };
 
-/* Function to add two matrices to eachother */
 template<class T>
 void fmat<T>::add(const uint &n_row, const uint &n_col, std::vector<T, std::allocator<T>> &r,
                   std::vector<T, std::allocator<T>> &a,
@@ -175,7 +173,6 @@ void fmat<T>::print(const uint &n_row, const uint &n_col, std::vector<T, std::al
   std::cout << "];" << std::endl;
 }
 
-/* Multiply two matrices with eachother */
 template<class T>
 void fmat<T>::mult(const uint &n_rowa, const uint &n_cola, const uint &n_colb, std::vector<T, std::allocator<T>> &r,
                    std::vector<T, std::allocator<T>> &a, std::vector<T, std::allocator<T>> &b)
@@ -193,7 +190,6 @@ void fmat<T>::mult(const uint &n_rowa, const uint &n_cola, const uint &n_colb, s
   }
 }
 
-/* Function to multiply a matrix by a scalar value */
 template<class T>
 void fmat<T>::scal_mult(const uint &n_row, const uint &n_col, std::vector<T, std::allocator<T>> &r, float k,
                         std::vector<T, std::allocator<T>> &a)

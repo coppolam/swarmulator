@@ -14,13 +14,14 @@ class Template_Calculator
 {
   // Map of state-space index to possible action space indexes.
   OmniscientObserver o; // The omniscient observer is used to simulate sensing the other agents.
+  float range;
   std::vector<float> blink;
   uint sp;
 public:
   /**
    * Constructor
    */
-  Template_Calculator(uint segments);
+  Template_Calculator(uint segments, float rangesensor);
 
   /**
    * Destructor

@@ -49,6 +49,14 @@ public:
    * @param y y position (North)
    */
   void line(const float &x, const float &y);
+
+  /**
+   * @brief Draw a white line with a specified width from (0,0) to (x,y)
+   *
+   * @param x
+   * @param y
+   * @param width
+   */
   void line(const float &x, const float &y, const float &width);
 
   /**
@@ -107,7 +115,7 @@ public:
   void velocity_arrow(const uint16_t &ID, const float &x, const float &y, const float &v_x, const float &v_y);
 
   /**
-   * Draw a dot at the swarm food position (x,y)
+   * Draw a gray dot indicating food (or something else if you like) at position (x,y)
    *
    * @param x The x position of the food
    * @param y The y position of the food

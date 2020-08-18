@@ -76,12 +76,12 @@ void GL_Setup(int width, int height)
  */
 void main_animation_thread()
 {
-  // Initialize all variables
+  // Initialize all variables declared in drawingparams.h
   center_x = 0;
   center_y = 0;
   sx = 0;
   sy = 0;
-  zoom = param->zoom();
+  zoom = param->zoom(); // From parameters file
   zoom_scale = 0;
   pointer_x = 0;
   pointer_y = 0;
@@ -93,11 +93,11 @@ void main_animation_thread()
   int argc = 1;
   char *argv[1] = {(char *)"  "};
   glutInit(&argc, argv);
-  glutInitWindowPosition(0, 0);
-  glutInitWindowSize(param->window_width(), param->window_height());
+  glutInitWindowPosition(0, 0); // Initialize at top left corner of screen
+  glutInitWindowSize(param->window_width(), param->window_height()); // Set dimensions
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-  glutCreateWindow("Swarmulator");
-  glutIdleFunc(main_loop_function);
+  glutCreateWindow("Swarmulator"); // Set window title to Swarmulator
+  glutIdleFunc(main_loop_function); // Set main loop
   GL_Setup(param->window_width(), param->window_height()); // Set up window parameters
   glutMainLoop(); // Initiate main drawing loop
 }

@@ -31,7 +31,7 @@ void terminalinfo::info_msg(std::string str, int ID)
 
 void terminalinfo::warning_msg(std::string str)
 {
-#ifdef VERBOSE
+#ifdef VERBOSE // Defined in the makefile!
   std::cout << "\e[01;33m[WARNING]: \e[0m" << str << std::endl;
 #endif
 }

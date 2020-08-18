@@ -20,7 +20,6 @@ vector<float> wheeled::state_update(vector<float> state)
   controller->saturate(leftwheelspeed);
   controller->saturate(rightwheelspeed);
   moving = controller->moving;
-  happy = controller->happy;
 
   // Model
   float v_x = r / 2 * leftwheelspeed + r / 2 * rightwheelspeed;

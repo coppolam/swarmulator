@@ -5,9 +5,10 @@
 
 using namespace std;
 
-Template_Calculator::Template_Calculator(uint spacing)
+Template_Calculator::Template_Calculator(uint spacing, float r)
 {
   sp = spacing;
+  range = r;
   // Angles to check for neighboring links
   for (size_t i = 0; i <= sp; i++) {
     blink.push_back(2. * M_PI * (float)i / (float)sp);
@@ -123,7 +124,7 @@ void Template_Calculator::assess_situation(uint16_t ID, vector<bool> &q, vector<
     if (fill_template(q, // Vector to fill
                       wrapTo2Pi_f(o.request_bearing(ID, closest[i])), // Bearing
                       o.request_distance(ID, closest[i]), // Distance
-                      rangesensor, M_PI / (float)sp)) { // Sensor range, bearing precision
+                      range, M_PI / (float)sp)) { // Sensor range, bearing precision
       // Use higher values of bearing sensor to handle higher noise values (even if there is overlap)
       q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }

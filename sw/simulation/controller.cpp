@@ -48,13 +48,13 @@ void Controller::get_lattice_motion(const int &ID, const int &state_ID, float &v
   v_y += v_r * sin(v_b);
 }
 
-void Controller::get_lattice_motion_all(const int &ID, float &v_x, float &v_y)
+void Controller::get_lattice_motion_range(const int &ID, float &v_x, float &v_y, float rangemax)
 {
   std::vector<uint> closest = o.request_closest(ID);
   std::vector<uint> q_ID;
   q_ID.clear();
   for (uint16_t i = 0; i < s.size() - 1; i++) {
-    if (o.request_distance(ID, closest[i]) < rangesensor) {
+    if (o.request_distance(ID, closest[i]) < rangemax) {
       q_ID.push_back(closest[i]); // Log ID (for simulation purposes only, depending on assumptions)
     }
   }
@@ -67,7 +67,7 @@ void Controller::get_lattice_motion_all(const int &ID, float &v_x, float &v_y)
   }
 }
 
-void Controller::get_lattice_motion_all(const int &ID, float &v_x, float &v_y, uint8_t k)
+void Controller::get_lattice_motion_k_nearest(const int &ID, float &v_x, float &v_y, uint8_t k)
 {
   std::vector<uint> closest = o.request_closest(ID);
   if (!closest.empty()) {
@@ -97,7 +97,7 @@ void Controller::set_saturation(const float &lim)
   saturation_limits = lim;
 }
 
-bool Controller::wall_avoidance_bounce(const uint16_t ID, float &v_x, float &v_y)
+bool Controller::wall_avoidance_bounce(const uint16_t ID, float &v_x, float &v_y, float rangesensor)
 {
   // Predict what the command wants and see if it will hit a wall, then fix it.
   std::vector<float> sn = s[ID]->state;
@@ -119,14 +119,14 @@ bool Controller::wall_avoidance_bounce(const uint16_t ID, float &v_x, float &v_y
   return false;
 }
 
-bool Controller::wall_avoidance_turn(const uint16_t ID, float &v, float &dpsitheta)
+bool Controller::wall_avoidance_turn(const uint16_t ID, float &v, float &dpsitheta, float rangesensor)
 {
   // Predict what the command wants and see if it will hit a wall, then fix it.
   std::vector<float> sn = s[ID]->state;
   float r_temp, ang_temp, vx_temp, vy_temp, vx_global, vy_global, slope;
   rotate_xy(0.5, 0.5, sn[6], vx_global, vy_global);
   cart2polar(vx_global, vy_global, r_temp, ang_temp); // direction of velocity
-  polar2cart(2.5, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
+  polar2cart(rangesensor, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
   sn[0] += vx_temp;
   sn[1] += vy_temp;
   bool test1 = environment.sensor(ID, sn, s[ID]->state, slope);
@@ -134,7 +134,7 @@ bool Controller::wall_avoidance_turn(const uint16_t ID, float &v, float &dpsithe
   sn = s[ID]->state;
   rotate_xy(0.5, -0.5, sn[6], vx_global, vy_global);
   cart2polar(vx_global, vy_global, r_temp, ang_temp); // direction of velocity
-  polar2cart(2.5, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
+  polar2cart(rangesensor, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
   sn[0] += vx_temp;
   sn[1] += vy_temp;
 
@@ -145,4 +145,13 @@ bool Controller::wall_avoidance_turn(const uint16_t ID, float &v, float &dpsithe
     return true; // Wall!
   }
   return false; // No wall
+}
+
+float Controller::get_max_sensor_range()
+{
+  return sensor_range_max;
+}
+void Controller::set_max_sensor_range(float r)
+{
+  sensor_range_max = r;
 }

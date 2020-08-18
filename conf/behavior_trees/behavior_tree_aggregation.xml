@@ -1,3 +1,0 @@
-<BTtype>composite<function>selector<vars><name>selector<endl>
-	<BTtype>condition<function>greater_than<vars>0,2<name>robot<endl>
-	<BTtype>action<function>wheelSpeed<vars>0.1,0.79<name>robot<endl>

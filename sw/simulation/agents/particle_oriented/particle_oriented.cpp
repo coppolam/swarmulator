@@ -45,7 +45,6 @@ vector<float> particle_oriented::state_update(vector<float> state)
   state.at(4) = ka * (vx_global - state[2]); // Acceleration global frame
   state.at(5) = ka * (vy_global - state[3]); // Acceleration global frame
   moving = controller->moving;
-  happy = controller->happy;
 
   // Velocity
   state.at(2) += state[4] * dt; // Velocity x global frame

@@ -5,6 +5,8 @@
 #include "auxiliary.h"
 #include "draw.h"
 
+#define SENSOR_MAX_RANGE 1.8
+
 using namespace std;
 aggregation::aggregation() : Controller()
 {
@@ -13,6 +15,8 @@ aggregation::aggregation() : Controller()
   moving_timer = rg.uniform_int(0, timelim);
   v_x_ref = rg.gaussian_float(0.0, 1.0);
   v_y_ref = rg.gaussian_float(0.0, 1.0);
+
+  set_max_sensor_range(SENSOR_MAX_RANGE);
 
   // Control values
   timelim = 2.0 * param->simulation_updatefreq();
@@ -28,11 +32,11 @@ void aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   v_x = 0;
   v_y = 0;
 
-  get_lattice_motion_all(ID, v_x, v_y); // Repulsion from neighbors
+  get_lattice_motion_range(ID, v_x, v_y, SENSOR_MAX_RANGE); // Repulsion from neighbors
 
   // Sense neighbors
   vector<float> r, b;
-  o.relative_location_inrange(ID, rangesensor, r, b);
+  o.relative_location_inrange(ID, SENSOR_MAX_RANGE, r, b);
 
   if (st != r.size() || moving_timer == 1) { // state change
     // state, action
@@ -55,7 +59,7 @@ void aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
     }
   }
   increase_counter_to_value(moving_timer, timelim, 1);
-  wall_avoidance_bounce(ID, v_x_ref, v_y_ref);
+  wall_avoidance_bounce(ID, v_x_ref, v_y_ref, SENSOR_MAX_RANGE);
 
   // Final output
   v_x += v_x_ref;
@@ -65,5 +69,5 @@ void aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
 void aggregation::animation(const uint16_t ID)
 {
   draw d;
-  d.circle_loop(rangesensor);
+  d.circle_loop(SENSOR_MAX_RANGE);
 }
