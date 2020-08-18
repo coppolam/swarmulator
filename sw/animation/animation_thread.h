@@ -35,7 +35,7 @@ void main_loop_function()
 
   // Draw fixed one time objects
   static draw drawer; // Drawer object
-  bmp_loc = "conf/environments/image_testing/gas_simulations/iteration_"+std::to_string((int)(floor(simtime_seconds)))+".bmp";
+  bmp_loc = "conf/environments/"+ param->environment()+ "/gas_simulations/iteration_"+std::to_string((int)(floor(simtime_seconds)))+".bmp";
   drawer.bmp_bg(bmp_loc.c_str());
   drawer.data(); // Put data in corner
   drawer.axes(); // Put x and y global axes

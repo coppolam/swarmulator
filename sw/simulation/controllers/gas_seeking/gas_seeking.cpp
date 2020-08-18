@@ -4,31 +4,30 @@
 #include "auxiliary.h"
 #include <tuple>
 #include "randomgenerator.h"
+#include "mlp_inference.h"
 
 void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
   random_generator rg;
   /*** Put your controller here ***/
   std::vector<float> state = s.at(ID)->state;
+  std::vector<float> policy_params = load_vector(param->policy().c_str());
+  std::vector<float> policy_shape = load_vector(param->policy_shape().c_str());
+
+  std::vector<float> gas_state = s.at(ID)->laser_ranges;
+  float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][(int)((state[1]-environment.x_min)/(environment.x_max-environment.x_min)*environment.gas_obj.numcells[0])][(int)((state[0]-environment.y_min)/(environment.y_max-environment.y_min)*environment.gas_obj.numcells[1])]);
+  gas_state.push_back(gas_conc);
+  int action = float_inference(gas_state,policy_params,policy_shape);
+
   s.at(ID)->laser_ranges.clear();
   agent_pos.x = state[1];
   agent_pos.y = state[0];
-
 
   s.at(ID)->laser_pnts.clear();
   for (int i =0; i<4; i++)
 	{
     laser_ray ray;
     ray.heading = laser_headings[i];
-    // if( ray.heading < -M_PI)
-    // {
-    //   ray.heading+= M_PI*2;
-    // }
-    // else if (ray.heading>M_PI)
-    // {
-    //   ray.heading-= M_PI*2;
-    // }
-
 		laser_rays.push_back(ray);
 	}
 
@@ -36,22 +35,27 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   {
     get_laser_reads(laser_rays[i],ID);
   }
-  float threshold = 0.3;
+  float threshold = 1.0;
   std::vector<float> ranges = s.at(ID)->laser_ranges;
-  if(std::min({ranges[0],ranges[1],ranges[3]})>threshold )
+  if(action==0 )
   { 
     v_x = 1.0;
-    v_y =0;
+    v_y = 0;
     // v_x = 1.0;
     // v_y= 0.0;
-
+    
   }
-  else{
+  else if(action ==1)
+  {
     v_x = 0.0;
     v_y = 1.0;
     // s.at(ID)->state[6] = rg.uniform_float(-M_PI,M_PI);
     // s.at(ID)->state[6] += 0.1;
-    
+  }
+  else if(action ==2)
+  {
+    v_x = 0.0;
+    v_y = -1.0;
   }
 }
 void gas_seeking::animation(const uint16_t ID)

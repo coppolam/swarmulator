@@ -21,7 +21,8 @@
   <!-- Logger -->
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>conf/policies/policy_evolved_temp.txt</policy>
+  <policy>conf/policies/gas_params.txt</policy>
+  <policy_shape>conf/policies/gas_shape.txt</policy_shape>
   <fitness>aggregation_clusters</fitness>
   <gas_seeking>True</gas_seeking>
   <!--new_parameter_name>default value</new_parameter_name-->

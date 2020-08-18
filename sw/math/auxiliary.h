@@ -191,6 +191,42 @@ inline static std::vector<std::vector<float>> read_matrix(const std::string file
   return matrix;
 }
 
+// object to accomodate inference of a MLP
+struct Policy {
+  std::vector<float> params; //single array with all weights, bias add
+  std::vector<int> shape; //array with number of nodes in each layer, e.g., [3,20,20,3] means input layer with 3 nodes, 2 hidden lyaers of 20 nodes, output layer with 3 nodes
+};
+
+/**
+ * Read policy parameters from txt file
+ *
+ * @param filename = name of file
+ * @return 
+ */
+inline static std::vector<float> load_vector(const std::string filename)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<float> vector;
+  uint rows = 0;
+  if (in.is_open()) {
+    while (!in.eof()) {
+      std::getline(in, line);
+      std::stringstream ss(line);
+      float value;
+      while (ss >> value) {
+        vector.push_back(value);
+      }
+      rows++;
+    } 
+  } else {
+    std::string msg = "Matrix file not loaded " + filename;
+    terminalinfo::error_msg(msg);
+  }
+  return vector;
+}
+
+
 /**
  * Read gas data points to gas object
  *
@@ -262,6 +298,7 @@ inline static int load_gas_file(const std::string filename, const bool first_fil
 
 inline static void save_as_bmp(const char* file_name, Gasdata &gas_obj, int index)
 {
+  
   FILE *f;
   unsigned char *img = NULL;
   int w = gas_obj.numcells[0], h = gas_obj.numcells[1];
