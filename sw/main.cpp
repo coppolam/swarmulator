@@ -39,7 +39,7 @@ std::shared_mutex mtx; // Mutex needed to lock threads
 std::shared_mutex mtx_env; // Mutex needed to lock threads
 float realtimefactor; // Real time factor of simulation
 float simtime_seconds = 0; // Initial simulation time
-float rangesensor = 1.8; // How far each robot can sense
+float rangesensor = 0.3; // How far each robot can sense
 bool program_running  = false; // Program running, initiated false until the beginning
 Environment environment; // Environment walls
 std::string identifier; // Log name identifier

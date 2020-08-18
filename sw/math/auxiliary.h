@@ -3,11 +3,13 @@
 
 #include <stdlib.h> // qsort
 #include <cmath>
+#include <string.h> //memset
 #include <vector>
 #include <string>
 #include <random>
 #include <algorithm> // std::transform
 #include <map>
+#include <tuple>
 #include <fstream>
 #include <sstream>
 #include <random>
@@ -15,6 +17,7 @@
 #include <stdio.h>
 #include "terminalinfo.h"
 #include "fmat.h"
+#include "environment.h"
 
 /**
  * @brief Returns whether a number is positive or negative as a float +1, 0, -1
@@ -180,7 +183,199 @@ inline static std::vector<std::vector<float>> read_matrix(const std::string file
         matrix[rows].push_back(value);
       }
       rows++;
+    } 
+  } else {
+    std::string msg = "Matrix file not loaded " + filename;
+    terminalinfo::error_msg(msg);
+  }
+  return matrix;
+}
+
+// object to accomodate inference of a MLP
+struct Policy {
+  std::vector<float> params; //single array with all weights, bias add
+  std::vector<int> shape; //array with number of nodes in each layer, e.g., [3,20,20,3] means input layer with 3 nodes, 2 hidden lyaers of 20 nodes, output layer with 3 nodes
+};
+
+/**
+ * Read policy parameters from txt file
+ *
+ * @param filename = name of file
+ * @return 
+ */
+inline static std::vector<float> load_vector(const std::string filename)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<float> vector;
+  uint rows = 0;
+  if (in.is_open()) {
+    while (!in.eof()) {
+      std::getline(in, line);
+      std::stringstream ss(line);
+      float value;
+      while (ss >> value) {
+        vector.push_back(value);
+      }
+      rows++;
+    } 
+  } else {
+    std::string msg = "Matrix file not loaded " + filename;
+    terminalinfo::error_msg(msg);
+  }
+  return vector;
+}
+
+
+/**
+ * Read gas data points to gas object
+ *
+ * @param filename = name of file
+ * @param first_file = boolean, if true, we read the first few lines to get some specifics about the environment
+ */
+inline static int load_gas_file(const std::string filename, const bool first_file, Gasdata &gas_obj)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<std::vector<float>> temp_matrix;
+  // uint rows = 0;
+
+  if (in.is_open()) {
+    
+      int row = 0;
+      while (!in.eof()) {
+        std::getline(in, line);
+        std::stringstream ss(line);
+        temp_matrix.push_back(std::vector<float>());
+        float value;
+        std::string temp;
+        while (!ss.eof()) {
+          ss >> temp;
+          if (std::stringstream(temp)>>value){
+            temp_matrix[row].push_back(value);
+            
+          temp = "";
+          }
+          
+        }
+        row++;
+      }
+    
+      if(first_file)
+      {
+      //we've now loaded the first 5 lines, we need to insert the values into the Gasdata object
+      gas_obj.env_min = temp_matrix[0];
+      gas_obj.env_max = temp_matrix[1];
+      gas_obj.numcells = std::vector<int>(temp_matrix[2].begin(),temp_matrix[2].end());
+      gas_obj.cell_sizes = temp_matrix[3];
+      gas_obj.source_location = temp_matrix[4];
+      }
+    
+    
+    int last_row = row-1;
+    std::vector<std::vector<int>> temp_gas_arr(gas_obj.numcells[0],std::vector<int> (gas_obj.numcells[1],0));
+    std::vector<int> current_row;
+    int max = 0;
+    for (row = 7; row<last_row; row++){
+      current_row = std::vector<int>(temp_matrix[row].begin(),temp_matrix[row].end());
+      if (current_row[2] == 0){ //measuring gas concentration at ground level
+        temp_gas_arr[current_row[0]][current_row[1]] = current_row[3];
+        if (current_row[3] > max) 
+        {
+          max = current_row[3];
+        }
+      }
     }
+    gas_obj.max_gas.push_back(max); //we can use this for visualization
+    gas_obj.gas_data.push_back(temp_gas_arr); //store the array with all gas data at this hight
+
+    return 1;
+  }
+  else{
+    return 0;
+  }   
+}
+
+inline static void save_as_bmp(const char* file_name, Gasdata &gas_obj, int index)
+{
+  
+  FILE *f;
+  unsigned char *img = NULL;
+  int w = gas_obj.numcells[0], h = gas_obj.numcells[1];
+  int filesize = 54 + 3*w*h;  //w is your image width, h is image height, both int
+  int r,g,b,x,y;
+  std::vector<std::vector<int>> data = gas_obj.gas_data[index];
+  int max = gas_obj.max_gas[index];
+
+  img = (unsigned char *)malloc(3*w*h);
+  memset(img,0,3*w*h);
+
+  for(int i=0; i<w; i++)
+  {
+      for(int j=0; j<h; j++)
+      {
+          x=i; y=(h-1)-j;
+          r = (int)(data[i][j]*(255./max));
+          g = r, b = r; //white = more gass
+          if (r > 255) r=255;
+          if (g > 255) g=255;
+          if (b > 255) b=255;
+          img[(x+y*w)*3+2] = (unsigned char)(r);
+          img[(x+y*w)*3+1] = (unsigned char)(g);
+          img[(x+y*w)*3+0] = (unsigned char)(b);
+      }
+  }
+
+  unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0};
+  unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0};
+  unsigned char bmppad[3] = {0,0,0};
+
+  bmpfileheader[ 2] = (unsigned char)(filesize    );
+  bmpfileheader[ 3] = (unsigned char)(filesize>> 8);
+  bmpfileheader[ 4] = (unsigned char)(filesize>>16);
+  bmpfileheader[ 5] = (unsigned char)(filesize>>24);
+
+  bmpinfoheader[ 4] = (unsigned char)(       w    );
+  bmpinfoheader[ 5] = (unsigned char)(       w>> 8);
+  bmpinfoheader[ 6] = (unsigned char)(       w>>16);
+  bmpinfoheader[ 7] = (unsigned char)(       w>>24);
+  bmpinfoheader[ 8] = (unsigned char)(       h    );
+  bmpinfoheader[ 9] = (unsigned char)(       h>> 8);
+  bmpinfoheader[10] = (unsigned char)(       h>>16);
+  bmpinfoheader[11] = (unsigned char)(       h>>24);
+  
+  gas_obj.bmp_header_size = sizeof(bmpfileheader)+sizeof(bmpinfoheader);
+  f = fopen(file_name,"wb");
+  fwrite(bmpfileheader,1,14,f);
+  fwrite(bmpinfoheader,1,40,f);
+  for(int i=0; i<h; i++)
+  {
+      fwrite(img+(w*(h-i-1)*3),3,w,f);
+      fwrite(bmppad,1,(4-(w*3)%4)%4,f);
+  }
+
+  free(img);
+  fclose(f);
+}
+
+
+inline static std::vector<std::vector<float>> read_points(const std::string filename)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<std::vector<float>> matrix;
+  uint rows = 0;
+  if (in.is_open()) {
+    while (!in.eof()) {
+      std::getline(in, line);
+      std::stringstream ss(line);
+      matrix.push_back(std::vector<float>());
+      float value;
+      while (ss >> value) {
+        matrix[rows].push_back(value);
+      }
+      rows++;
+    } 
   } else {
     std::string msg = "Matrix file not loaded " + filename;
     terminalinfo::error_msg(msg);
@@ -231,8 +426,9 @@ struct Point {
  */
 inline static bool onSegment(Point p, Point q, Point r)
 {
-  if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
-      q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y)) {
+  float margin = 0.05;
+  if (q.x <= (std::max(p.x, r.x)+margin) && q.x >= (std::min(p.x, r.x)-margin) &&
+      q.y <= (std::max(p.y, r.y)+margin) && q.y >= (std::min(p.y, r.y)-margin)) {
     return true;
   }
 
@@ -262,6 +458,8 @@ inline static int orientation(Point p, Point q, Point r)
 
   return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
+
+
 
 /**
  * Returns true if line segment 'p1q1' and 'p2q2' intersect, false otherwise.
@@ -303,6 +501,90 @@ inline static bool doIntersect(Point p1, Point q1, Point p2, Point q2)
   return false; // Doesn't fall in any of the above cases
 }
 
+
+
+/**
+ * Returns point of intersect of two lines
+ *
+ * @param p1 Start segment 1
+ * @param q1 End segment 1
+ * @param p2 Start segment 2
+ * @param q2 End segment 2
+ * @return point
+ */
+inline static std::tuple<bool,Point> getIntersect(Point p1, Point q1, Point p2, Point q2)
+{
+  Point output;
+  bool on_wall = false;
+  output.x = -1000;
+  output.y = -1000;
+
+  // first filter out lines that do not intersect
+  if (((q1.x-p1.x)==0 && (q2.x-p2.x)==0) or ((q1.y-p1.y)==0 && (q2.y-p2.y)==0))
+  {
+    //points are not intersecting, so we set extreme values to make sure it's not picked as a solution
+    output.x = -1000;
+    output.y = -1000;
+    on_wall = false;
+  }
+  // case one: two lines that are not completely vertical
+  else if ( (q1.x-p1.x)!=0 && (q2.x-p2.x)!=0)
+  {
+  // make functions in the form of y = a*x + b
+  float a_1 = (q1.y-p1.y)/(q1.x-p1.x);
+  float b_1 = q1.y-a_1*q1.x;
+  
+  float a_2 = (q2.y-p2.y)/(q2.x-p2.x);
+  float b_2 = q2.y-a_2*q2.x;
+  
+  output.x = (b_2-b_1)/(a_1-a_2);
+  output.y = a_1*output.x + b_1; 
+
+  }
+  // case two: two lines that are not completely horizontal
+  else if ((q1.y-p1.y)!=0 && (q2.y-p2.y)!=0)
+  {
+      // make functions in the form of x = a*y + b
+    float a_1 = (q1.x-p1.x)/(q1.y-p1.y);
+    float b_1 = q1.x-a_1*q1.y;
+    
+    float a_2 = (q2.x-p2.x)/(q2.y-p2.y);
+    float b_2 = q2.x-a_2*q2.y;
+
+    output.y = (b_2-b_1)/(a_1-a_2);
+    output.x = a_1*output.y + b_1;
+  }
+
+  // case three: first line is horizontal, second line is vertical
+  else if ((q1.y-p1.y)==0 && (q2.x-p2.x) ==0 )
+  {
+    output.y = q1.y;
+    output.x = q2.x;
+  }
+  // case four: first line is vertical, second line is horizontal
+  else if ((q1.x-p1.x)==0 && (q2.y-p2.y) ==0 )
+  {
+    output.y = q2.y;
+    output.x = q1.x;
+  }
+  
+  if(onSegment(p2,output,q2) && onSegment(p1,output,q1))
+  {
+    on_wall = true;
+  }
+  
+
+  return std::make_tuple(on_wall,output);
+}
+
+inline static float getDistance(Point p1, Point p2)
+{
+  return (std::sqrt((p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y)));
+}
+
+
+
+
 /**
  * Get current date/time, format is YYYY-MM-DD-hh:mm:ss
  * Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
@@ -321,5 +603,7 @@ inline static const std::string currentDateTime()
   strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
   return buf;
 }
+
+
 
 #endif /*AUXILIARY_H*/

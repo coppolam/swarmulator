@@ -22,6 +22,7 @@ import random
 import numpy as np
 from operator import itemgetter
 import itertools
+import matplotlib.pyplot as plt
 
 CHARACTER_TILES = {'stone': 2,'floor': 1,'wall': 0}
 
@@ -322,9 +323,8 @@ class Generator():
 	
 		# [print(row) for row in self.tiles_level]
 		# print(self.tiles_level)
-		
 		self.tiles_level = np.asarray(self.tiles_level)
-
+		plt.imsave("test_img.jpg",self.tiles_level)
 		c = 2
 		w_h = []
 		# Horizontal walls
@@ -332,14 +332,12 @@ class Generator():
 			# print("***")
 			data = np.where(row == 1)[0]
 			if data.size > 0:
-					# print(data)
 					a = list(groupSequence(list(data)))
 					for item in a:
 						# if len(item) > 2:
 						w_h.append([min(item)*c,-idx*c,max(item)*c,-idx*c])
 		# print(self.wall_coordinates)
 		w_h = np.asarray(w_h)
-
 		# Vertical walls
 		w_v = []
 		for idx,row in enumerate(self.tiles_level.T):
@@ -356,7 +354,7 @@ class Generator():
 		w = np.vstack((w_h,w_v))
 		w[:,[0,2]] = w[:,[0,2]] - w[:,[0,2]].mean() # Center horizontally
 		w[:,[1,3]] = w[:,[1,3]] - w[:,[1,3]].mean() # Center vertically
-
+		
 
 		# Center vertically
 		self.wall_coordinates = w.tolist()

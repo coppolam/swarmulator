@@ -14,7 +14,17 @@ using namespace std;
 
 Environment::Environment(void)
 {
+  generate_dungeon();
+
+  string s = param->agent_initialization();
+  if (!strcmp(s.c_str(), "in_area")){
+    complete_folder();
+  }
+  load_gas_data();
+
   define_walls();
+ 
+
   if (!strcmp(param->fitness().c_str(), "food")) {
     mtx_env.lock();
     environment.define_food(100);
@@ -24,16 +34,72 @@ Environment::Environment(void)
   }
 }
 
-void Environment::define_walls(void)
+void Environment::load_gas_data(void){
+  string s = param->gas_seeking();
+  std::string bmp_filename;
+  if (!strcmp(s.c_str(), "True")){
+    string filename = "conf/environments/" + param->environment() + "/gas_simulations/iteration_";
+    bool last_file_found = false;
+    int i = 0;
+    while (!last_file_found)
+    {
+    if(! load_gas_file(filename+std::to_string(i)+".txt",true,gas_obj))
+    {
+      last_file_found = true;
+    }
+    else{
+      bmp_filename = filename+std::to_string(i)+".bmp";
+      save_as_bmp(bmp_filename.c_str(),gas_obj, i);
+      gas_obj.num_it = i;
+      i++;
+    }
+    
+    }    
+  }
+}
+
+void Environment::get_min_max(std::vector<std::vector<float>> walls)
+{
+  for (size_t i = 0; i < walls.size(); i++) {
+    x_min = std::min({x_min,walls[i][0],walls[i][2]});
+    x_max = std::max({x_max,walls[i][0],walls[i][2]});
+
+    y_min = std::min({y_min,walls[i][1],walls[i][3]});
+    y_max = std::max({y_max,walls[i][1],walls[i][3]});
+    env_size = std::max({(y_max-y_min),(x_max-x_min)});
+    env_diagonal = std::sqrt(env_size*env_size*2);
+  }
+}
+
+void Environment::generate_dungeon(void)
 {
   string s = param->environment();
   if (!strcmp(s.c_str(), "random")) {
-    stringstream ss("python3 scripts/python/tools/dungeon_generator.py && mv rooms.txt conf/environments/random.txt");
+    stringstream ss("python3 scripts/python/tools/dungeon_generator.py && mkdir --p ./conf/environments/random && mv rooms.txt ./conf/environments/random/walls.txt ");
+    
     system(ss.str().c_str());
     terminalinfo::info_msg("Generating random environment");
   }
-  string filename = "conf/environments/" + param->environment() + ".txt";
+}
+
+void Environment::define_walls(void)
+{
+  string filename = "conf/environments/" + param->environment() + "/walls.txt";
   walls = read_matrix(filename);
+  get_min_max(walls);
+}
+
+void Environment::complete_folder(void)
+{
+  string s = param->agent_initialization();
+  string free_points_file = "conf/environments/" + param->environment() + "/free_pnts.txt";
+  
+  stringstream ss("python3 scripts/python/tools/complete_folder.py -env_name="+param->environment());    
+  system(ss.str().c_str());
+  terminalinfo::info_msg("Locating free area");
+  
+  free_points = read_points(free_points_file);
+  
 }
 
 void Environment::define_food(uint64_t n)
@@ -53,6 +119,7 @@ void Environment::define_beacon(float x, float y)
 }
 
 // TODO: Temporary function for initialization, but the initalization should change eventually
+// only used when sequential spawning is selected
 std::vector<float> Environment::start(void)
 {
   std::vector<float> s(2);

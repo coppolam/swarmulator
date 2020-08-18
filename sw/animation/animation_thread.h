@@ -10,6 +10,7 @@
 #include "trigonometry.h"
 
 bool animation_running = false;
+std::string bmp_loc;
 /**
  * Main animation loop.
  * Takes care of drawing the agents in their corrective location.
@@ -34,11 +35,14 @@ void main_loop_function()
 
   // Draw fixed one time objects
   static draw drawer; // Drawer object
+  bmp_loc = "conf/environments/"+ param->environment()+ "/gas_simulations/iteration_"+std::to_string((int)(floor(simtime_seconds)))+".bmp";
+  drawer.bmp_bg(bmp_loc.c_str());
   drawer.data(); // Put data in corner
   drawer.axes(); // Put x and y global axes
   drawer.axis_label(); // Axis label
+  drawer.source(); //draw source position as dot
   environment.animate(); // Animate the environment walls
-
+  
   // Draw all robots
   uint r = s.size();
   if (r > 0) {
@@ -47,6 +51,19 @@ void main_loop_function()
       drawer.agent(ID, s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->orientation);
       // Input: ID, p_x global, p_y global, v_x global, v_y global
       drawer.velocity_arrow(ID,  s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->state.at(2), s[ID]->state.at(3));
+      
+      for (uint i = 0 ; i<s[ID]->laser_pnts.size(); i++)
+      {
+        drawer.laser(s[ID]->state[1],s[ID]->state[0],s[ID]->laser_pnts[i][0],s[ID]->laser_pnts[i][1]);
+        drawer.test_point(s[ID]->laser_pnts[i][0],s[ID]->laser_pnts[i][1]);
+        
+      }
+      // std::vector<float> wall;
+      // for (uint i=0; i<s[ID]->intersect_walls.size();i++)
+      // {
+      //   wall = s[ID]->intersect_walls[i];
+      //   drawer.laser(wall[0],wall[1],wall[2],wall[3]);
+      // }
     }
   }
 

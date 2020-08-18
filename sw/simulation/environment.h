@@ -6,15 +6,39 @@
 #include <mutex>
 #include "randomgenerator.h"
 
+
+
+class Gasdata
+{
+  public:
+    int num_it;
+    size_t bmp_header_size;
+    std::vector<float> source_location;
+    std::vector<float> env_min;
+    std::vector<float> env_max;
+    std::vector<float> cell_sizes;
+    std::vector<int> numcells;
+    std::vector<std::vector<std::vector<int>>> gas_data;
+    std::vector<int> max_gas;
+};
+
 class Environment
 {
-  std::vector<std::vector<float>> walls;
+  
+
+  
   random_generator rg;
 public:
+  /**
+   * @brief class for storing all gas-related data of an environment
+  */
+  float x_min,x_max,y_min,y_max, env_size, env_diagonal;
+  Gasdata gas_obj; //obj containing all gas information for this environment
   std::vector<std::vector<float>> food;
   std::vector<float> beacon;
+  std::vector<std::vector<float>> free_points;
+  std::vector<std::vector<float>> walls;
   float nest;
-
   /**
   * @brief Construct a new Environment object
   *
@@ -27,12 +51,33 @@ public:
    */
   ~Environment() {};
 
+/**
+ * @brief if param->gas_seeking is True, this loads gas data from txt files (concentrations + wind velocities)
+*/
+void load_gas_data(void);
+
+
+/**
+ * Gets x_min, x_max, y_min, y_max for a given env
+*/
+
+void get_min_max(std::vector<std::vector<float>> walls);
+/**
+ * @brief run the dungeon_generator.py if environment generation is "random"
+*/
+void generate_dungeon(void);
+
   /**
    * @brief Define the initial obstacle list according to the list in conf/environments/.txt
    * You can indicate obstacle list in the conf/parameters.xml file, under <environment>
    * Make sure the file exists!
    */
   void define_walls(void);
+  
+  /**
+   * @brief generate a map with free space based on the walls loaded in the environment.
+   */
+  void complete_folder(void);
 
   /**
    * @brief Define the initial obstacle list according to the list in conf/environments/.txt

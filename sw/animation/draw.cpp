@@ -2,6 +2,7 @@
 #include "trigonometry.h"
 #include <cmath>
 #include "fitness_functions.h"
+#include "main.h"
 
 void draw::data()
 {
@@ -43,6 +44,62 @@ void draw::triangle(const float &scl)
 
   glColor3ub(255, 255, 255); // White
   glPopMatrix();
+}
+
+void draw::bmp_bg(const char* filename)
+{
+    GLuint texture;
+    int width, height;
+    unsigned char * data;
+    unsigned char * header;
+
+    FILE * file;
+    file = fopen( filename, "rb" );
+
+    if ( file == NULL ) {
+      terminalinfo::debug_msg("Couldn't find bmp file");
+    }
+    width = 100;
+    height = 100;
+    header = (unsigned char *)malloc(environment.gas_obj.bmp_header_size); 
+    data = (unsigned char *)malloc( width * height * 3  );
+    fread( header,environment.gas_obj.bmp_header_size, 1, file ); //grab header
+    fread( data, width * height * 3, 1, file ); //grab image data
+    fclose( file );
+    for(int i = 0; i < (width * height) ; ++i)
+    {
+      int index = i*3;
+      unsigned char B,R;
+      B = data[index];
+      R = data[index+2];
+
+      data[index] = R;
+      data[index+2] = B;
+    }
+
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+    gluBuild2DMipmaps( GL_TEXTURE_2D, 3, width, height,GL_RGB, GL_UNSIGNED_BYTE, data );
+    free( data );
+    
+    glEnable( GL_TEXTURE_2D ); 
+    glBindTexture( GL_TEXTURE_2D, texture );
+ 
+    glColor3f(1.0f,1.0f,1.0f); // HERE!
+    glBegin (GL_QUADS);
+    glTexCoord3d(0.0,0.0,0.0); glVertex3f(environment.x_min*xrat,environment.y_min*yrat,0);
+    glTexCoord3d(1.0,0.0,0.0); glVertex3f(environment.x_max*xrat,environment.y_min*yrat,0);
+    glTexCoord3d(1.0,1.0,0.0); glVertex3f(environment.x_max*xrat,environment.y_max*yrat,0);
+    glTexCoord3d(0.0,1.0,0.0); glVertex3f(environment.x_min*xrat,environment.y_max*yrat,0);
+    glEnd();
+ 
+    glDisable(GL_TEXTURE_2D);
+
 }
 
 void draw::circle(const float &d)
@@ -112,6 +169,27 @@ void draw::point()
   glEnd();
 }
 
+void draw::test_point(float x, float y)
+{
+  glPointSize(10.0);
+  glBegin(GL_POINTS);
+  glColor3ub(0,255,0);
+  // glTranslatef(y * xrat, x * yrat, 0.0);
+  glVertex3f(x*xrat, y*yrat, 0);
+  glEnd();
+}
+
+void draw::source()
+{
+  glPointSize(10.0);
+  glBegin(GL_POINTS);
+  glColor3ub(0,0,255);
+  std::vector<float> source_pos = environment.gas_obj.source_location;
+
+  glVertex3f(source_pos[0]-5.0, source_pos[1]-5.0, 0);
+  glEnd();
+}
+
 void draw::axes()
 {
   float lineintensity = 1.0;
@@ -140,6 +218,16 @@ void draw::segment(const float &x0, const float &y0, const float &x1, const floa
   float lineintensity = 1.0;
   glBegin(GL_LINES);
   glColor3ub(128 * lineintensity, 128 * lineintensity, 128 * lineintensity); // white
+  glVertex3f(x0 * xrat, y0 * yrat, 0.0);
+  glVertex3f(x1 * xrat, y1 * yrat, 0.0);
+  glEnd();
+}
+
+void draw::laser(const float &x0, const float &y0, const float &x1, const float &y1)
+{
+  glLineWidth(2);
+  glBegin(GL_LINES);
+  glColor3ub(0,255,0); // white
   glVertex3f(x0 * xrat, y0 * yrat, 0.0);
   glVertex3f(x1 * xrat, y1 * yrat, 0.0);
   glEnd();

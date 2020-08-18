@@ -36,6 +36,11 @@ public:
   void circle(const float &r);
 
   /**
+   * @brief draws bmp image on background of sim
+  */
+  void bmp_bg(const char* filename);
+
+  /**
    * Draw a white unfilled circular loop
    *
    * @param r Radius of the circular loop
@@ -62,10 +67,25 @@ public:
   void segment(const float &x0, const float &y0, const float &x1, const float &y1);
 
   /**
+   * Draw laser segment
+  */
+  void laser(const float &x0, const float &y0, const float &x1, const float &y1);
+
+  /**
+  * Draw a small white point
+  */
+  void test_point(float x, float y);
+
+  /**
   * Draw a small white point
   */
   void point();
 
+  /**
+   * Draw source location as red dot
+  */
+
+  void source();
   /**
    * Draw relevant simulation data in the bottom left corner (like the time of simulation)
    */
