@@ -2,6 +2,7 @@
 #define FITNESS_FUNCTIONS_H
 
 #include "omniscient_observer.h"
+#include "main.h"
 
 /**
  * Mean number of neighbors
@@ -69,6 +70,24 @@ inline static void connectivity_check(float &f)
 }
 
 /**
+ * Source distance
+ *
+ * Gives a better fitness for smaller distance to source
+ */
+inline static void source_distance(float &f)
+{
+  float source_dist = 0;
+  for(int ID =0; ID<nagents; ID++)
+  {
+    source_dist += std::sqrt(pow((s.at(ID)->state[1]-environment.gas_obj.source_location[0]-environment.x_min),2)+pow((s.at(ID)->state[0]-environment.gas_obj.source_location[1]-environment.y_min),2));
+  }
+  f = source_dist/nagents;
+
+}
+
+
+
+/**
  * @brief Measures the number of clusters that are formed
  *
  * @return uint
@@ -113,6 +132,8 @@ inline static float evaluate_fitness()
   { f = (float)environment.nest;}
   else if (!strcmp(param->fitness().c_str(), "connected"))
   { connectivity_check(f);}
+  else if (!strcmp(param->fitness().c_str(), "source_distance"))
+  { source_distance(f);}
   return f;
 }
 

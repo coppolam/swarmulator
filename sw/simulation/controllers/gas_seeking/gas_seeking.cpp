@@ -15,8 +15,11 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   std::vector<float> policy_shape = load_vector(param->policy_shape().c_str());
 
   std::vector<float> gas_state = s.at(ID)->laser_ranges;
-  float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][(int)((state[1]-environment.x_min)/(environment.x_max-environment.x_min)*environment.gas_obj.numcells[0])][(int)((state[0]-environment.y_min)/(environment.y_max-environment.y_min)*environment.gas_obj.numcells[1])]);
-  gas_state.push_back(gas_conc);
+  int x_indx = clip((int)((s.at(ID)->state[1]-environment.x_min)/(environment.x_max-environment.x_min)*(float)(environment.gas_obj.numcells[0])),0,environment.gas_obj.numcells[0]);
+  int y_indx = clip((int)((s.at(ID)->state[0]-environment.y_min)/(environment.y_max-environment.y_min)*(float)(environment.gas_obj.numcells[1])),0,environment.gas_obj.numcells[1]);
+
+  float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]);
+  gas_state.push_back(gas_conc/5000.);
   int action = float_inference(gas_state,policy_params,policy_shape);
 
   s.at(ID)->laser_ranges.clear();
@@ -24,7 +27,7 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   agent_pos.y = state[0];
 
   s.at(ID)->laser_pnts.clear();
-  for (int i =0; i<4; i++)
+  for (int i = 0; i<4; i++)
 	{
     laser_ray ray;
     ray.heading = laser_headings[i];
@@ -40,19 +43,14 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   if(action==0 )
   { 
     v_x = 1.0;
-    v_y = 0;
-    // v_x = 1.0;
-    // v_y= 0.0;
-    
+    v_y = 0.0;
   }
-  else if(action ==1)
+  else if(action == 2)
   {
     v_x = 0.0;
     v_y = 1.0;
-    // s.at(ID)->state[6] = rg.uniform_float(-M_PI,M_PI);
-    // s.at(ID)->state[6] += 0.1;
   }
-  else if(action ==2)
+  else if(action == 1)
   {
     v_x = 0.0;
     v_y = -1.0;

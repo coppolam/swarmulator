@@ -383,6 +383,23 @@ inline static std::vector<std::vector<float>> read_points(const std::string file
   return matrix;
 }
 
+// clips value between min and max
+inline static int clip(int input, int min, int max)
+{
+  if (input>max)
+  {
+    return max;
+  }
+  else if (input <min)
+  {
+    return min;
+  }
+  else
+  {
+    return input;
+  }
+}
+
 /**
  * Read an array from a txt file
  *

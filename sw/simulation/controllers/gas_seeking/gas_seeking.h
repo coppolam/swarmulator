@@ -28,7 +28,7 @@ public:
 	virtual void animation(const uint16_t ID);
 	Point agent_pos;
 	void get_laser_reads(laser_ray ray, const uint16_t ID);
-	float laser_headings[4] = {0,M_PI_2,M_PI,3*M_PI_2};
+	float laser_headings[4] = {M_PI_2,0,3*M_PI_2,M_PI};
 	std::vector<laser_ray> laser_rays;
 
 

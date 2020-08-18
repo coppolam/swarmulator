@@ -23,7 +23,7 @@
   <!-- Additional parameters -->
   <policy>conf/policies/gas_params.txt</policy>
   <policy_shape>conf/policies/gas_shape.txt</policy_shape>
-  <fitness>aggregation_clusters</fitness>
+  <fitness>source_distance</fitness>
   <gas_seeking>True</gas_seeking>
   <!--new_parameter_name>default value</new_parameter_name-->
 </parameters>

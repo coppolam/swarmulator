@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description='Find the spawnable locations withi
 parser.add_argument('-env_name', type=str, help="(str) Folder name in /conf/environments with 'walls.txt' that is used as input file", default='random')
 parser.add_argument('-debug_mode', type=str, help="(str) if True, showing opencv windows with selected area",default='False')
 parser.add_argument('-grid_size', type=int, help="(int) represents the grid size used to locate free areas and eventually return free points",default=100)
-parser.add_argument('-wall_dist', type=int, help="(int) number of cells kept to the closest wall when spawning",default=5)
+parser.add_argument('-wall_dist', type=int, help="(int) number of cells kept to the closest wall when spawning",default=20)
 args = parser.parse_args()
 
 def groupSequence(l): 
