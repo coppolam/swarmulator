@@ -11,6 +11,7 @@
 
 bool animation_running = false;
 std::string bmp_loc;
+
 /**
  * Main animation loop.
  * Takes care of drawing the agents in their corrective location.
@@ -21,7 +22,7 @@ void main_loop_function()
     terminalinfo::info_msg("Animation started.");
     animation_running = true;
   }
-
+  std::string euclidean = param->gas_euclidean();
   // Add depth (used internally to block obstructed objects)
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glLoadIdentity();
@@ -35,12 +36,17 @@ void main_loop_function()
 
   // Draw fixed one time objects
   static draw drawer; // Drawer object
-  bmp_loc = "conf/environments/"+ param->environment()+ "/gas_simulations/iteration_"+std::to_string((int)(floor(simtime_seconds)))+".bmp";
-  drawer.bmp_bg(bmp_loc.c_str());
+  
+  if(!strcmp(euclidean.c_str(), "False"))
+  {
+    bmp_loc = "conf/environments/"+ param->environment()+ "/gas_simulations/iteration_"+std::to_string((int)(floor(simtime_seconds)))+".bmp";
+    drawer.bmp_bg(bmp_loc.c_str());
+  }
+  drawer.source(); //draw source position as dot
   drawer.data(); // Put data in corner
   drawer.axes(); // Put x and y global axes
   drawer.axis_label(); // Axis label
-  drawer.source(); //draw source position as dot
+
   environment.animate(); // Animate the environment walls
   
   // Draw all robots

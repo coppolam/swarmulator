@@ -13,7 +13,7 @@ gas_agent::gas_agent(int i, vector<float> s, float tstep)
 
 vector<float> gas_agent::state_update(vector<float> state)
 { 
-  float v_x, v_y, vx_global, vy_global, dpsirate;;
+  float v_x, vx_global, vy_global, dpsirate;;
   controller->get_velocity_command(ID, v_x, dpsirate);
   
   rotate_xy(v_x, 0, state[6], vx_global, vy_global);

@@ -68,7 +68,7 @@ if(bias_add):
 fh.save_to_txt(np.array(policy_shape),shape_file)
 
 # Specify the genome length and the population size
-e.setup(fitness, GENOME_LENGTH=num_params, POPULATION_SIZE=20)
+e.setup(fitness, GENOME_LENGTH=num_params, POPULATION_SIZE=5)
 
 # Do not evolve, but only plot an evolution file as specified in args.plot
 if args.plot is not None:

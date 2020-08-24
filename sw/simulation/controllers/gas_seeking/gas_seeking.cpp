@@ -15,11 +15,21 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   std::vector<float> policy_shape = load_vector(param->policy_shape().c_str());
 
   std::vector<float> gas_state = s.at(ID)->laser_ranges;
+
+  std::string euclidean = param->gas_euclidean();
+  if(!strcmp(euclidean.c_str(), "False"))
+  {
   int x_indx = clip((int)((s.at(ID)->state[1]-environment.x_min)/(environment.x_max-environment.x_min)*(float)(environment.gas_obj.numcells[0])),0,environment.gas_obj.numcells[0]);
   int y_indx = clip((int)((s.at(ID)->state[0]-environment.y_min)/(environment.y_max-environment.y_min)*(float)(environment.gas_obj.numcells[1])),0,environment.gas_obj.numcells[1]);
 
   float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]);
   gas_state.push_back(gas_conc/5000.);
+  }
+  else
+  {
+    float eucl_dist = std::sqrt(pow((s.at(ID)->state[1]-environment.gas_obj.source_location[0]-environment.x_min),2)+pow((s.at(ID)->state[0]-environment.gas_obj.source_location[1]-environment.y_min),2));
+    gas_state.push_back(eucl_dist);
+  }
   int action = float_inference(gas_state,policy_params,policy_shape);
 
   s.at(ID)->laser_ranges.clear();
@@ -38,9 +48,10 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   {
     get_laser_reads(laser_rays[i],ID);
   }
-  float threshold = 1.0;
+
   std::vector<float> ranges = s.at(ID)->laser_ranges;
-  if(action==0 )
+
+  if(action == 0)
   { 
     v_x = 1.0;
     v_y = 0.0;
@@ -50,6 +61,7 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
     v_x = 0.0;
     v_y = 1.0;
   }
+
   else if(action == 1)
   {
     v_x = 0.0;

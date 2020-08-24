@@ -14,6 +14,7 @@ using namespace std;
 
 Environment::Environment(void)
 {
+
   generate_dungeon();
 
   string s = param->agent_initialization();
@@ -36,9 +37,13 @@ Environment::Environment(void)
 
 void Environment::load_gas_data(void){
   string s = param->gas_seeking();
+  string euclidean = param->gas_euclidean();
   std::string bmp_filename;
-  if (!strcmp(s.c_str(), "True")){
-    string filename = "conf/environments/" + param->environment() + "/gas_simulations/iteration_";
+  string filename = "conf/environments/" + param->environment() + "/gas_simulations/iteration_";
+  if (!strcmp(s.c_str(), "True") && !strcmp(euclidean.c_str(), "False")){
+    
+
+    
     bool last_file_found = false;
     int i = 0;
     terminalinfo::debug_msg("loading gas data ");
@@ -57,8 +62,11 @@ void Environment::load_gas_data(void){
         i++;
       #endif
     }
-    
     }    
+  }
+  else if (!strcmp(euclidean.c_str(), "True"))
+  {
+    load_gas_file(filename+std::to_string(0),true,gas_obj);
   }
 }
 

@@ -25,5 +25,7 @@
   <policy_shape>conf/policies/gas_shape.txt</policy_shape>
   <fitness>source_distance</fitness>
   <gas_seeking>True</gas_seeking>
+  <gas_euclidean>True</gas_euclidean>
+  <!-- debug mode within the gas seeking application, feeds distance instead of gas readings, runs faster for debugging-->
   <!--new_parameter_name>default value</new_parameter_name-->
 </parameters>

@@ -77,7 +77,7 @@ inline static void connectivity_check(float &f)
 inline static void source_distance(float &f)
 {
   float source_dist = 0;
-  for(int ID =0; ID<nagents; ID++)
+  for(uint ID =0; ID<nagents; ID++)
   {
     source_dist += std::sqrt(pow((s.at(ID)->state[1]-environment.gas_obj.source_location[0]-environment.x_min),2)+pow((s.at(ID)->state[0]-environment.gas_obj.source_location[1]-environment.y_min),2));
   }

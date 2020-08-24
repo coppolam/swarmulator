@@ -52,7 +52,7 @@ std::string identifier; // Log name identifier
 int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
-
+  
   if (argc > 2) {
     std::string s = "";
     s += argv[2];
