@@ -12,8 +12,8 @@ from classes import evolution, swarmulator
 #  Argument parser  #
 #####################
 parser = argparse.ArgumentParser(description='Evolve a controller using swarmulator')
-parser.add_argument('controller', type=str, help="(str) Controller to use")
-parser.add_argument('agent', type=str, help="(str) Swramulator agent to use")
+parser.add_argument('-controller', type=str, help="(str) Controller to use", default="gas_seeking")
+parser.add_argument('-agent', type=str, help="(str) Swramulator agent to use", default="gas_agent")
 parser.add_argument('-gen', type=int, help="(int) Max number generations, default = 100", default=100)
 parser.add_argument('-batchsize', type=int, help="(int) Batch size. How many parallel tests to try, default = 5", default=5)
 parser.add_argument('-resume', type=str, help="(str) Resume after quitting from the indicated saved file, default = None", default=None)
@@ -28,10 +28,10 @@ print("Loading and building Swarmulator")
 sim = swarmulator.swarmulator(verbose=False)
 sim.make(controller=args.controller, agent=args.agent, clean=True, logger=False, verbose=False)
 # Swarmulator settings
-sim.runtime_setting("time_limit", str("100")) # Time limit of each simulation 
+sim.runtime_setting("time_limit", str("280")) # Time limit of each simulation 
 sim.runtime_setting("simulation_realtimefactor", str("300")) # Real time factor
-sim.runtime_setting("environment", "square") # Environment, leave empty for boundless
-sim.runtime_setting("fitness", "aggregation_clusters") # Fitness function to use (in sw/simulation/fitness_functions.h)
+sim.runtime_setting("environment", "image_testing") # Environment, leave empty for boundless
+sim.runtime_setting("fitness", "source_distance") # Fitness function to use (in sw/simulation/fitness_functions.h)
 filename = "evo_run_%s_%s_%i" % (args.controller, args.agent, args.id)
 print("This run will save at every new generation in the file %s.pkl" % filename)
 print("If you want to resume, please load it using the -resume input option.")
@@ -41,7 +41,7 @@ print("If you want to resume, please load it using the -resume input option.")
 ######################
 def fitness(individual):
 	### Set the policy file that swarmulator reads
-	policy_file = "conf/policies/policy_evolved_temp.txt"
+	policy_file = "conf/policies/gas_params.txt"
 	fh.save_to_txt(individual, sim.path+policy_file)
 	sim.runtime_setting("policy", policy_file) # Use random policy
 
@@ -56,8 +56,19 @@ def fitness(individual):
 #  Load evolution API  #
 ########################
 e = evolution.evolution()
+
+# Specify network topology
+shape_file = "../../conf/policies/gas_shape.txt"
+policy_shape = [5,20,20,3]
+num_params = 0
+bias_add = True
+num_params+= np.sum([policy_shape[i]*policy_shape[i+1] for i in range(len(policy_shape)-1)])
+if(bias_add):
+    num_params+= np.sum(policy_shape[1:])
+fh.save_to_txt(np.array(policy_shape),shape_file)
+
 # Specify the genome length and the population size
-e.setup(fitness, GENOME_LENGTH=8, POPULATION_SIZE=100)
+e.setup(fitness, GENOME_LENGTH=num_params, POPULATION_SIZE=20)
 
 # Do not evolve, but only plot an evolution file as specified in args.plot
 if args.plot is not None:

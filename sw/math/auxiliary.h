@@ -18,6 +18,9 @@
 #include "terminalinfo.h"
 #include "fmat.h"
 #include "environment.h"
+#include <boost/format.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
 
 /**
  * @brief Returns whether a number is positive or negative as a float +1, 0, -1
@@ -235,16 +238,20 @@ inline static std::vector<float> load_vector(const std::string filename)
  */
 inline static int load_gas_file(const std::string filename, const bool first_file, Gasdata &gas_obj)
 {
-  std::ifstream in(filename);
+  // std::ifstream in(filename);
   std::string line;
   std::vector<std::vector<float>> temp_matrix;
   // uint rows = 0;
 
+  std::ifstream in(filename.c_str(), std::ios_base::binary);
+  boost::iostreams::filtering_istream inbuf;
+  inbuf.push(boost::iostreams::zlib_decompressor());
+  inbuf.push(in);
+
   if (in.is_open()) {
     
       int row = 0;
-      while (!in.eof()) {
-        std::getline(in, line);
+      while (std::getline(inbuf, line)) {
         std::stringstream ss(line);
         temp_matrix.push_back(std::vector<float>());
         float value;
@@ -298,64 +305,66 @@ inline static int load_gas_file(const std::string filename, const bool first_fil
 
 inline static void save_as_bmp(const char* file_name, Gasdata &gas_obj, int index)
 {
-  
-  FILE *f;
-  unsigned char *img = NULL;
-  int w = gas_obj.numcells[0], h = gas_obj.numcells[1];
-  int filesize = 54 + 3*w*h;  //w is your image width, h is image height, both int
-  int r,g,b,x,y;
-  std::vector<std::vector<int>> data = gas_obj.gas_data[index];
-  int max = gas_obj.max_gas[index];
 
-  img = (unsigned char *)malloc(3*w*h);
-  memset(img,0,3*w*h);
 
-  for(int i=0; i<w; i++)
-  {
-      for(int j=0; j<h; j++)
-      {
-          x=i; y=(h-1)-j;
-          r = (int)(data[i][j]*(255./max));
-          g = r, b = r; //white = more gass
-          if (r > 255) r=255;
-          if (g > 255) g=255;
-          if (b > 255) b=255;
-          img[(x+y*w)*3+2] = (unsigned char)(r);
-          img[(x+y*w)*3+1] = (unsigned char)(g);
-          img[(x+y*w)*3+0] = (unsigned char)(b);
-      }
-  }
+    FILE *f;
+    unsigned char *img = NULL;
+    int w = gas_obj.numcells[0], h = gas_obj.numcells[1];
+    int filesize = 54 + 3*w*h;  //w is your image width, h is image height, both int
+    int r,g,b,x,y;
+    std::vector<std::vector<int>> data = gas_obj.gas_data[index];
+    int max = gas_obj.max_gas[index];
 
-  unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0};
-  unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0};
-  unsigned char bmppad[3] = {0,0,0};
+    img = (unsigned char *)malloc(3*w*h);
+    memset(img,0,3*w*h);
 
-  bmpfileheader[ 2] = (unsigned char)(filesize    );
-  bmpfileheader[ 3] = (unsigned char)(filesize>> 8);
-  bmpfileheader[ 4] = (unsigned char)(filesize>>16);
-  bmpfileheader[ 5] = (unsigned char)(filesize>>24);
+    for(int i=0; i<w; i++)
+    {
+        for(int j=0; j<h; j++)
+        {
+            x=i; y=(h-1)-j;
+            r = (int)(data[i][j]*(255./max));
+            g = r, b = r; //white = more gass
+            if (r > 255) r=255;
+            if (g > 255) g=255;
+            if (b > 255) b=255;
+            img[(x+y*w)*3+2] = (unsigned char)(r);
+            img[(x+y*w)*3+1] = (unsigned char)(g);
+            img[(x+y*w)*3+0] = (unsigned char)(b);
+        }
+    }
 
-  bmpinfoheader[ 4] = (unsigned char)(       w    );
-  bmpinfoheader[ 5] = (unsigned char)(       w>> 8);
-  bmpinfoheader[ 6] = (unsigned char)(       w>>16);
-  bmpinfoheader[ 7] = (unsigned char)(       w>>24);
-  bmpinfoheader[ 8] = (unsigned char)(       h    );
-  bmpinfoheader[ 9] = (unsigned char)(       h>> 8);
-  bmpinfoheader[10] = (unsigned char)(       h>>16);
-  bmpinfoheader[11] = (unsigned char)(       h>>24);
-  
-  gas_obj.bmp_header_size = sizeof(bmpfileheader)+sizeof(bmpinfoheader);
-  f = fopen(file_name,"wb");
-  fwrite(bmpfileheader,1,14,f);
-  fwrite(bmpinfoheader,1,40,f);
-  for(int i=0; i<h; i++)
-  {
-      fwrite(img+(w*(h-i-1)*3),3,w,f);
-      fwrite(bmppad,1,(4-(w*3)%4)%4,f);
-  }
+    unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0};
+    unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0};
+    unsigned char bmppad[3] = {0,0,0};
 
-  free(img);
-  fclose(f);
+    bmpfileheader[ 2] = (unsigned char)(filesize    );
+    bmpfileheader[ 3] = (unsigned char)(filesize>> 8);
+    bmpfileheader[ 4] = (unsigned char)(filesize>>16);
+    bmpfileheader[ 5] = (unsigned char)(filesize>>24);
+
+    bmpinfoheader[ 4] = (unsigned char)(       w    );
+    bmpinfoheader[ 5] = (unsigned char)(       w>> 8);
+    bmpinfoheader[ 6] = (unsigned char)(       w>>16);
+    bmpinfoheader[ 7] = (unsigned char)(       w>>24);
+    bmpinfoheader[ 8] = (unsigned char)(       h    );
+    bmpinfoheader[ 9] = (unsigned char)(       h>> 8);
+    bmpinfoheader[10] = (unsigned char)(       h>>16);
+    bmpinfoheader[11] = (unsigned char)(       h>>24);
+    
+    gas_obj.bmp_header_size = sizeof(bmpfileheader)+sizeof(bmpinfoheader);
+    f = fopen(file_name,"wb");
+    fwrite(bmpfileheader,1,14,f);
+    fwrite(bmpinfoheader,1,40,f);
+    for(int i=0; i<h; i++)
+    {
+        fwrite(img+(w*(h-i-1)*3),3,w,f);
+        fwrite(bmppad,1,(4-(w*3)%4)%4,f);
+    }
+
+    free(img);
+    fclose(f);
+
 }
 
 

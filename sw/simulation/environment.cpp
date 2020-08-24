@@ -41,17 +41,21 @@ void Environment::load_gas_data(void){
     string filename = "conf/environments/" + param->environment() + "/gas_simulations/iteration_";
     bool last_file_found = false;
     int i = 0;
+    terminalinfo::debug_msg("loading gas data ");
     while (!last_file_found)
     {
-    if(! load_gas_file(filename+std::to_string(i)+".txt",true,gas_obj))
+    
+    if(! load_gas_file(filename+std::to_string(i),true,gas_obj) || (i > (int)(param->time_limit())))
     {
       last_file_found = true;
     }
     else{
-      bmp_filename = filename+std::to_string(i)+".bmp";
-      save_as_bmp(bmp_filename.c_str(),gas_obj, i);
-      gas_obj.num_it = i;
-      i++;
+      #ifdef ANIMATION
+        bmp_filename = filename+std::to_string(i)+".bmp";
+        save_as_bmp(bmp_filename.c_str(),gas_obj, i);
+        gas_obj.num_it = i;
+        i++;
+      #endif
     }
     
     }    

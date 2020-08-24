@@ -17,7 +17,7 @@ AGENT_INCLUDE=\"$(AGENT).h\"
 
 CC = g++ # chosen compiler
 CFLAGS = -g -Wall -std=gnu++17 -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR -DCONTROLLER=$(CONTROLLER) -DAGENT=$(AGENT) -DAGENT_INCLUDE=$(AGENT_INCLUDE) -DCONTROLLER_INCLUDE=$(CONTROLLER_INCLUDE) -D_GLIBCXX_USE_CXX11_ABI=0
-OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions -lprotobuf
+OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions -lprotobuf -lboost_iostreams
 
 ifeq ($(VERBOSE),ON)
 CFLAGS += -DVERBOSE
