@@ -75,6 +75,9 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
       pnt_idx = rg.uniform_int(0,environment.free_points.size());
       x0[i] = environment.free_points[pnt_idx][1];
       y0[i] = environment.free_points[pnt_idx][0];
+      terminalinfo::debug_msg("Agent spawning position");
+      terminalinfo::debug_msg(std::to_string(x0[i]));
+      terminalinfo::debug_msg(std::to_string(y0[i]));
     }
   }
   else{

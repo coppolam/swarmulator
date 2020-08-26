@@ -8,30 +8,15 @@
 
 void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
+
   random_generator rg;
-  /*** Put your controller here ***/
+  // load agent state
   std::vector<float> state = s.at(ID)->state;
+  // load policy shape and params (weights/biasadd terms)
   std::vector<float> policy_params = load_vector(param->policy().c_str());
   std::vector<float> policy_shape = load_vector(param->policy_shape().c_str());
 
-  std::vector<float> gas_state = s.at(ID)->laser_ranges;
-
-  std::string euclidean = param->gas_euclidean();
-  if(!strcmp(euclidean.c_str(), "False"))
-  {
-  int x_indx = clip((int)((s.at(ID)->state[1]-environment.x_min)/(environment.x_max-environment.x_min)*(float)(environment.gas_obj.numcells[0])),0,environment.gas_obj.numcells[0]);
-  int y_indx = clip((int)((s.at(ID)->state[0]-environment.y_min)/(environment.y_max-environment.y_min)*(float)(environment.gas_obj.numcells[1])),0,environment.gas_obj.numcells[1]);
-
-  float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]);
-  gas_state.push_back(gas_conc/5000.);
-  }
-  else
-  {
-    float eucl_dist = std::sqrt(pow((s.at(ID)->state[1]-environment.gas_obj.source_location[0]-environment.x_min),2)+pow((s.at(ID)->state[0]-environment.gas_obj.source_location[1]-environment.y_min),2));
-    gas_state.push_back(eucl_dist);
-  }
-  int action = float_inference(gas_state,policy_params,policy_shape);
-
+  // load laser ranger object with laser ranges
   s.at(ID)->laser_ranges.clear();
   agent_pos.x = state[1];
   agent_pos.y = state[0];
@@ -49,6 +34,28 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
     get_laser_reads(laser_rays[i],ID);
   }
 
+  // initialize gas state with laser ranges
+  std::vector<float> gas_state = s.at(ID)->laser_ranges;
+  std::string euclidean = param->gas_euclidean(); // if True we feed distance to source [m] instead of gas concentration, for debugging purposes
+
+  if(!strcmp(euclidean.c_str(), "False")) // if using gas concentration
+  {
+  //indexes in x-y grid, starting from bottom left corner
+  int x_indx = clip((int)((s.at(ID)->state[1]-environment.x_min)/(environment.x_max-environment.x_min)*(float)(environment.gas_obj.numcells[0])),0,environment.gas_obj.numcells[0]);
+  int y_indx = clip((int)((s.at(ID)->state[0]-environment.y_min)/(environment.y_max-environment.y_min)*(float)(environment.gas_obj.numcells[1])),0,environment.gas_obj.numcells[1]);
+
+  float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]);
+  gas_state.push_back(gas_conc/5000.); //normalizing, temporary solution
+  }
+  else
+  {
+    //compute euclidean distance to source from current agent position
+    float eucl_dist = std::sqrt(pow((s.at(ID)->state[1]-environment.gas_obj.source_location[0]-environment.x_min),2)+pow((s.at(ID)->state[0]-environment.gas_obj.source_location[1]-environment.y_min),2));
+    gas_state.push_back(eucl_dist);
+  }
+
+  // ** MLP INFERENCE ** //
+  int action = float_inference(gas_state,policy_params,policy_shape);
   std::vector<float> ranges = s.at(ID)->laser_ranges;
 
   if(action == 0)
@@ -84,10 +91,13 @@ void gas_seeking::animation(const uint16_t ID)
 */
 void gas_seeking::get_laser_reads(laser_ray ray, const uint16_t ID)
 {
-  //construct a point in the right direction that is outside of the environment
+  //init
   Point laser_point,wall_start, wall_end, agent_pos;
+  
   std::vector<float> state = s.at(ID)->state;
-  float heading = s.at(ID)->get_orientation() + ray.heading;
+  float heading = s.at(ID)->get_orientation() + ray.heading; //global laser ray heading
+  
+  //construct a point in the right direction that is outside of the environment: laser_point
   rotate_xy(0,environment.env_diagonal,-heading,laser_point.x,laser_point.y);
   laser_point.x += state[1];
   laser_point.y += state[0];
@@ -95,23 +105,25 @@ void gas_seeking::get_laser_reads(laser_ray ray, const uint16_t ID)
   agent_pos.x = state[1];
   agent_pos.y = state[0];
 
-
+  // looping through all walls to check if laser ray intersects with it and find the closest wall
+  // we check if two lines intersect: (wall_start-wall_end) and (agent_pos-laser_point)
   for(uint i = 0; i<environment.walls.size();i++)
   {
+    // init points to be used later
     wall_start.x = environment.walls[i][0];
     wall_start.y = environment.walls[i][1];
     wall_end.x = environment.walls[i][2];
     wall_end.y = environment.walls[i][3];
 
-    // bool on_wall = false;
-    // Point intersect;
+
     std::tuple<bool,Point> intersect_return;
-    // if( doIntersect(agent_pos,laser_point,wall_start,wall_end))
-    // {
+    //get intersection point and a bool if it's on the wall or not
     intersect_return = getIntersect(agent_pos,laser_point,wall_start,wall_end);
+
     bool on_wall = std::get<0>(intersect_return);
     Point intersect = std::get<1>(intersect_return);
 
+    //storing intersecting walls and its intersection with the laser
     if( on_wall == true){
       ray.intersection_points.push_back(intersect);
       ray.intersecting_walls.push_back(environment.walls[i]);
@@ -119,13 +131,16 @@ void gas_seeking::get_laser_reads(laser_ray ray, const uint16_t ID)
     }
   }
 
+  // if we found some intersection points
   if ( ray.intersection_points.size() > 0 )
   {
+    // get a list of all distances to all intersection points
     for (uint i=0; i<ray.intersection_points.size();i++)
     {
       ray.distances.push_back(getDistance(agent_pos,ray.intersection_points[i]));
     }
 
+    //arg max
     int idx = std::distance(ray.distances.begin(),std::min_element(ray.distances.begin(),ray.distances.end()));
     ray.range = ray.distances[idx];
     s.at(ID)->laser_ranges.push_back(ray.range);
@@ -133,6 +148,11 @@ void gas_seeking::get_laser_reads(laser_ray ray, const uint16_t ID)
     s.at(ID)->laser_pnts.push_back(v);
     
   }
-
-  // d.segment(agent_position.x,agent_position.y,laser_point.x,laser_point.y);
+  // we didn't find anything (this should be rare if not impossible), we we return agent_pos and 0 distance
+  else
+  {
+    s.at(ID)->laser_ranges.push_back(0);
+    std::vector<float> v = {agent_pos.x,agent_pos.y};
+    s.at(ID)->laser_pnts.push_back(v);
+  }
 }

@@ -7,8 +7,8 @@ particle::particle(int i, std::vector<float> s, float tstep)
   state = s;
   ID = i;
   dt = tstep;
-  orientation = state[6];
-  controller->set_saturation(1000.0);
+  orientation = 0.0;
+  controller->set_saturation(1.0);
 }
 
 std::vector<float> particle::state_update(std::vector<float> state)
@@ -22,16 +22,12 @@ std::vector<float> particle::state_update(std::vector<float> state)
   controller->get_velocity_command(ID, v_x, v_y);
   controller->saturate(v_x);
   controller->saturate(v_y);
-  terminalinfo::debug_msg("V_x: "+std::to_string(v_x));
-  terminalinfo::debug_msg("V_y: "+std::to_string(v_y));
-  // moving = controller->moving;
-  // happy = controller->happy;
+  moving = controller->moving;
 
   float vxr, vyr;
   rotate_xy(v_x, v_y, orientation, vxr, vyr);
 
   // Acceleration
-  // p-controller
   state.at(4) = 2 * (vxr - state[2]); // Acceleration x
   state.at(5) = 2 * (vyr - state[3]); // Acceleration y
 

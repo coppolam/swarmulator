@@ -46,6 +46,5 @@ vector<float> gas_agent::state_update(vector<float> state)
 void gas_agent::animation()
 {
   draw d;
-  /*** Draw your agent here. ***/
-  d.triangle(param->scale());
+  d.circle(param->scale());
 }
