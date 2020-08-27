@@ -14,6 +14,7 @@
 #include "environment.h"
 #include "terminalinfo.h"
 #include "auxiliary.h"
+#include "main.h"
 #include AGENT_INCLUDE // from makefile
 
 /**
@@ -41,8 +42,13 @@ void run_agent_simulation_step(const int &ID)
       polar2cart(r_temp, ang_temp, vx_temp, vy_temp); // use rangesensor to sense walls
       test[0] += vx_temp;
       test[1] += vy_temp;
-      if (!environment.sensor(ID, s_0, test, ang_temp)) { // No wall --> Update the dynamics
+
+      std::vector<float> laser_vals = s.at(ID)->laser_ranges;
+      int idx = std::distance(laser_vals.begin(),std::min_element(laser_vals.begin(),laser_vals.end()));
+  
+      // if (!environment.sensor(ID, s_0, test, ang_temp)) { // No wall --> Update the dynamics
       // if (true) {
+        if(laser_vals[idx] > s.at(ID)->laser_collision_threshold) {
         mtx.lock(); //sync
         s.at(ID)->state = s_n;
         mtx.unlock();

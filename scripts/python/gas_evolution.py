@@ -28,7 +28,7 @@ print("Loading and building Swarmulator")
 sim = swarmulator.swarmulator(verbose=False)
 sim.make(controller=args.controller, agent=args.agent, clean=True, logger=False, verbose=False)
 # Swarmulator settings
-sim.runtime_setting("time_limit", str("280")) # Time limit of each simulation 
+sim.runtime_setting("time_limit", str("50")) # Time limit of each simulation 
 sim.runtime_setting("simulation_realtimefactor", str("300")) # Real time factor
 sim.runtime_setting("environment", "image_testing") # Environment, leave empty for boundless
 sim.runtime_setting("fitness", "source_distance") # Fitness function to use (in sw/simulation/fitness_functions.h)
@@ -49,7 +49,6 @@ def fitness(individual):
 	# Indicate the minimum number and the maximum number of agents to run with.
 	# In this example, a run will feature anything between 10 and 20 robots.
 	f = sim.batch_run((10,20),args.batchsize) # Run with 10-20 robots, 5 times (default args.batchsize=5)
-	print(f) # Print the fitness
 	return f.mean(), # Fitness = average (note trailing comma to cast to tuple!)
 
 ########################

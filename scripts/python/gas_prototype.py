@@ -5,7 +5,7 @@ from classes import evolution, swarmulator
 
 params_file = "conf/policies/gas_params.txt"
 shape_file = "conf/policies/gas_shape.txt"
-policy_shape = [5,20,20,3]
+policy_shape = [6,20,20,3]
 num_params = 0
 bias_add = True
 

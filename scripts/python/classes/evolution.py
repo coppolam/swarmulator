@@ -14,8 +14,8 @@ class evolution:
 
 	def __init__(self):
 		'''Itilize the DEAP wrapper'''
-		creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-		creator.create("Individual", list, fitness=creator.FitnessMax)
+		creator.create("FitnessMin", base.Fitness, weights=(1.0,))
+		creator.create("Individual", list, fitness=creator.FitnessMin)
 
 	def setup(self, fitness_function_handle, constraint=None, GENOME_LENGTH = 20, POPULATION_SIZE = 100, P_CROSSOVER = 0.5, P_MUTATION = 0.2):
 		'''Set up the parameters'''

@@ -55,11 +55,21 @@ class swarmulator:
 		return f
 
 	def run(self, n, run_id=None):
-		'''Runs swarmulator. If run_id is not specified, it will assign a random id'''
-		self.run_id = random.randrange(10000000000) if run_id is None else run_id
-		pipe = "/tmp/swarmulator_" + str(self.run_id)
-		self._launch(n,run_id=self.run_id)
-		f = self._get_fitness(pipe)
+		got_fitness = False
+		num_tries = 0
+		while (num_tries < 5 and got_fitness == False):
+			'''Runs swarmulator. If run_id is not specified, it will assign a random id'''
+			self.run_id = random.randrange(10000000000) if run_id is None else run_id
+			pipe = "/tmp/swarmulator_" + str(self.run_id)
+			self._launch(n,run_id=self.run_id)
+			f = self._get_fitness(pipe)
+			try:
+				test_float = float(f)
+				got_fitness = True
+			except:
+				print("swarmulator received a corrupted pipe message")
+			num_tries += 1
+		
 		return f
 
 	def load(self,file=None):
@@ -123,7 +133,13 @@ class swarmulator:
 		c = 0
 		with concurrent.futures.ProcessPoolExecutor() as executor:
 			for i, f in zip(robots,executor.map(self.run, robots)):
-				out[c] = float(f)
-				c += 1
+				print(f)
+				try:
+					out[c] = float(f)
+					c += 1
+				except: 
+					out[c] = 1000.
+					c+= 1
+					print("Swarmulator returned a corrupted ")
 		
 		return out

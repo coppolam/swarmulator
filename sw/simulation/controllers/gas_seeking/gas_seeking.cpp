@@ -45,13 +45,19 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   int y_indx = clip((int)((s.at(ID)->state[0]-environment.y_min)/(environment.y_max-environment.y_min)*(float)(environment.gas_obj.numcells[1])),0,environment.gas_obj.numcells[1]);
 
   float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]);
+  float delta_gas = gas_conc - s.at(ID)->gas_read;
   gas_state.push_back(gas_conc/5000.); //normalizing, temporary solution
+  gas_state.push_back(delta_gas);
+  s.at(ID)->gas_read = gas_conc;
   }
   else
   {
     //compute euclidean distance to source from current agent position
     float eucl_dist = std::sqrt(pow((s.at(ID)->state[1]-environment.gas_obj.source_location[0]-environment.x_min),2)+pow((s.at(ID)->state[0]-environment.gas_obj.source_location[1]-environment.y_min),2));
+    float delta_dist = eucl_dist - s.at(ID)->gas_read;
     gas_state.push_back(eucl_dist);
+    gas_state.push_back(delta_dist);
+    s.at(ID)->gas_read = eucl_dist;
   }
 
   // ** MLP INFERENCE ** //
