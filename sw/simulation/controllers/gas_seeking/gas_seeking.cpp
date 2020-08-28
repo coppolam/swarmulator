@@ -54,28 +54,27 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   {
     //compute euclidean distance to source from current agent position
     float eucl_dist = std::sqrt(pow((s.at(ID)->state[1]-environment.gas_obj.source_location[0]-environment.x_min),2)+pow((s.at(ID)->state[0]-environment.gas_obj.source_location[1]-environment.y_min),2));
-    float delta_dist = eucl_dist - s.at(ID)->gas_read;
+    float delta_dist = 10*(s.at(ID)->gas_read - eucl_dist);
     gas_state.push_back(eucl_dist);
     gas_state.push_back(delta_dist);
     s.at(ID)->gas_read = eucl_dist;
   }
-
   // ** MLP INFERENCE ** //
   int action = float_inference(gas_state,policy_params,policy_shape);
   std::vector<float> ranges = s.at(ID)->laser_ranges;
 
   if(action == 0)
   { 
-    v_x = 1.0;
+    v_x = 2.0;
     v_y = 0.0;
   }
-  else if(action == 2)
+  else if(action == 1)
   {
     v_x = 0.0;
     v_y = 1.0;
   }
 
-  else if(action == 1)
+  else if(action == 2)
   {
     v_x = 0.0;
     v_y = -1.0;

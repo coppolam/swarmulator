@@ -14,7 +14,7 @@ from classes import evolution, swarmulator
 parser = argparse.ArgumentParser(description='Evolve a controller using swarmulator')
 parser.add_argument('-controller', type=str, help="(str) Controller to use", default="gas_seeking")
 parser.add_argument('-agent', type=str, help="(str) Swramulator agent to use", default="gas_agent")
-parser.add_argument('-gen', type=int, help="(int) Max number generations, default = 100", default=100)
+parser.add_argument('-gen', type=int, help="(int) Max number generations, default = 100", default=400)
 parser.add_argument('-batchsize', type=int, help="(int) Batch size. How many parallel tests to try, default = 5", default=5)
 parser.add_argument('-resume', type=str, help="(str) Resume after quitting from the indicated saved file, default = None", default=None)
 parser.add_argument('-plot', type=str, help="(str) If set, it will plot the evolution from a saved run, default = None", default=None)
@@ -48,7 +48,7 @@ def fitness(individual):
 	### Run swarmulator in batches
 	# Indicate the minimum number and the maximum number of agents to run with.
 	# In this example, a run will feature anything between 10 and 20 robots.
-	f = sim.batch_run((10,20),args.batchsize) # Run with 10-20 robots, 5 times (default args.batchsize=5)
+	f = sim.batch_run((10,11),args.batchsize) # Run with 10-20 robots, 5 times (default args.batchsize=5)
 	return f.mean(), # Fitness = average (note trailing comma to cast to tuple!)
 
 ########################
@@ -58,7 +58,7 @@ e = evolution.evolution()
 
 # Specify network topology
 shape_file = "../../conf/policies/gas_shape.txt"
-policy_shape = [5,20,20,3]
+policy_shape = [6,20,20,3]
 num_params = 0
 bias_add = True
 num_params+= np.sum([policy_shape[i]*policy_shape[i+1] for i in range(len(policy_shape)-1)])
@@ -67,7 +67,7 @@ if(bias_add):
 fh.save_to_txt(np.array(policy_shape),shape_file)
 
 # Specify the genome length and the population size
-e.setup(fitness, GENOME_LENGTH=num_params, POPULATION_SIZE=5)
+e.setup(fitness, GENOME_LENGTH=num_params, POPULATION_SIZE=50)
 
 # Do not evolve, but only plot an evolution file as specified in args.plot
 if args.plot is not None:
