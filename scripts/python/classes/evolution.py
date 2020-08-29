@@ -14,7 +14,7 @@ class evolution:
 
 	def __init__(self):
 		'''Itilize the DEAP wrapper'''
-		creator.create("FitnessMin", base.Fitness, weights=(1.0,))
+		creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 		creator.create("Individual", list, fitness=creator.FitnessMin)
 
 	def setup(self, fitness_function_handle, constraint=None, GENOME_LENGTH = 20, POPULATION_SIZE = 100, P_CROSSOVER = 0.5, P_MUTATION = 0.2):
@@ -32,7 +32,7 @@ class evolution:
 		self.toolbox.register("population", tools.initRepeat, list, self.toolbox.individual)
 		self.toolbox.register("evaluate", fitness_function_handle)
 		self.toolbox.register("mate", tools.cxTwoPoint) # Mating method
-		self.toolbox.register("mutate", tools.mutFlipBit, indpb=0.05) # Mutation method
+		self.toolbox.register("mutate", tools.mutGaussian, mu=0.0,sigma=0.1,indpb=0.05) # Mutation method
 		self.toolbox.register("select", tools.selTournament, tournsize=3) # Selection method
 		if constraint is not None: self.toolbox.decorate("evaluate", tools.DeltaPenalty(constraint, 7))
 		self.stats = [] # Initialize stats vector
