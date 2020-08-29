@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from deap import base, creator, tools
 matplotlib.rc('text', usetex=True)
 
-from classes import randomize_environment
+from classes.randomize_environment import get_spawn_pos
 
 class evolution:
 	'''Wrapper around the DEAP package to run an evolutionary process with just a few commands'''
@@ -89,6 +89,7 @@ class evolution:
 		g = len(self.stats) # Number of generations
 		gmax = len(self.stats) + generations
 		while g < gmax:
+			get_spawn_pos(self.num_agents,'../../conf/environments/')
 			# Offspring
 			offspring = self.toolbox.select(pop, len(pop))
 			offspring = list(map(self.toolbox.clone, offspring))
@@ -114,8 +115,6 @@ class evolution:
 			
 			if checkpoint is not None: self.save(checkpoint, pop=pop, gen=g, stats=self.stats)
 			
-			get_spawn_pos(self.num_agents,'../../conf/environments/')
-
 			g += 1
 
 		# Store oucomes
