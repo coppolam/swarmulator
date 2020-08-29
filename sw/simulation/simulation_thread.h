@@ -93,7 +93,7 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
     float t_created = -SEQUENTIAL - 1; // so that first agent is created at time - 9,9
 #else
     for (uint16_t ID = 0; ID < nagents; ID++) {
-      std::vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
+      std::vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, environment.headings[ID], 0.0};
       create_new_agent(ID, state); // Create agent
     }
 #endif

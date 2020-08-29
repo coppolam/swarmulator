@@ -392,6 +392,31 @@ inline static std::vector<std::vector<float>> read_points(const std::string file
   return matrix;
 }
 
+
+
+inline static std::vector<float> read_vector(const std::string filename)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<float> matrix;
+  uint rows = 0;
+  if (in.is_open()) {
+    while (!in.eof()) {
+      std::getline(in, line);
+      std::stringstream ss(line);
+      float value;
+      while (ss >> value) {
+        matrix.push_back(value);
+      }
+      rows++;
+    } 
+  } else {
+    std::string msg = "Matrix file not loaded " + filename;
+    terminalinfo::error_msg(msg);
+  }
+  return matrix;
+}
+
 // clips value between min and max
 inline static int clip(int input, int min, int max)
 {

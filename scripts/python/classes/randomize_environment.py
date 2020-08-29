@@ -10,7 +10,10 @@ def get_spawn_pos(n_agents,folder='../../../conf/environments/'):
         selected_points = [all_points[i] for i in selected_points_idxs]
         
         write_file = open(folder+env_folder+'/spawn_pnts.txt',"w")
-        write_file.writelines(selected_points)        
+        write_file.writelines(selected_points)    
+
+        headings = np.random.uniform(-np.pi,np.pi,n_agents)
+        np.savetxt(folder+env_folder+'/headings.txt',headings,delimiter=" ", fmt='%.2f')    
 
 if __name__ == '__main__':
     get_spawn_pos(2)

@@ -111,7 +111,9 @@ void Environment::complete_folder(void)
   terminalinfo::info_msg("Locating free area");
   
   free_points = read_points(free_points_file);
-  
+
+  string headings_file = "conf/environments/" + param->environment() + "/headings.txt";
+  headings = read_vector(headings_file);
 }
 
 void Environment::define_food(uint64_t n)

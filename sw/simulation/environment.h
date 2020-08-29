@@ -37,6 +37,7 @@ public:
   std::vector<std::vector<float>> food;
   std::vector<float> beacon;
   std::vector<std::vector<float>> free_points;
+  std::vector<float> headings;
   std::vector<std::vector<float>> walls;
   float nest;
   /**
