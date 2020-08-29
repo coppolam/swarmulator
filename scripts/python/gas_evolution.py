@@ -8,6 +8,8 @@ from classes import evolution, swarmulator
 # Example:
 # python3 main_standard_evolution.py aggregation particle
 
+num_agents = 2
+
 #####################
 #  Argument parser  #
 #####################
@@ -48,7 +50,7 @@ def fitness(individual):
 	### Run swarmulator in batches
 	# Indicate the minimum number and the maximum number of agents to run with.
 	# In this example, a run will feature anything between 10 and 20 robots.
-	f = sim.batch_run((10,11),args.batchsize) # Run with 10-20 robots, 5 times (default args.batchsize=5)
+	f = sim.batch_run(2,args.batchsize) # Run with 10-20 robots, 5 times (default args.batchsize=5)
 	return f.mean(), # Fitness = average (note trailing comma to cast to tuple!)
 
 ########################
@@ -67,7 +69,7 @@ if(bias_add):
 fh.save_to_txt(np.array(policy_shape),shape_file)
 
 # Specify the genome length and the population size
-e.setup(fitness, GENOME_LENGTH=num_params, POPULATION_SIZE=50)
+e.setup(fitness, GENOME_LENGTH=num_params, POPULATION_SIZE=50, NUM_AGENTS=num_agents)
 
 # Do not evolve, but only plot an evolution file as specified in args.plot
 if args.plot is not None:

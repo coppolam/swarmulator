@@ -65,7 +65,7 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
 
   if(action == 0)
   { 
-    v_x = 2.0;
+    v_x = 1.0;
     v_y = 0.0;
   }
   else if(action == 1)

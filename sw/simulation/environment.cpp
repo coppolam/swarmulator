@@ -104,7 +104,7 @@ void Environment::define_walls(void)
 void Environment::complete_folder(void)
 {
   string s = param->agent_initialization();
-  string free_points_file = "conf/environments/" + param->environment() + "/free_pnts.txt";
+  string free_points_file = "conf/environments/" + param->environment() + "/spawn_pnts.txt";
   
   stringstream ss("python3 scripts/python/tools/complete_folder.py -env_name="+param->environment());    
   system(ss.str().c_str());

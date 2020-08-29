@@ -31,17 +31,19 @@ class SpaceFinder:
         self.img_files = [file for file in glob.glob(self.env_dir+'*.png')] + [file for file in glob.glob(self.env_dir+'*.jpg')] + [file for file in glob.glob(self.env_dir+'*.jpeg')]
         self.im_size = args.grid_size
         self.env_top_view = np.zeros((self.im_size,self.im_size,3),np.uint8)
+    
     def check_walls_exist(self):
         self.walls_exist = os.path.exists(self.walls_file)
+        self.free_pnts_exist = os.path.exists(self.env_dir+"free_pnts.txt")
         if self.walls_exist:
             self.env_matrix = np.loadtxt(self.walls_file)
         if self.img_files:
             self.img_exists = True
             self.env_top_view = cv2.imread(self.img_files[0])
-
             self.im_size = np.max([np.max(np.shape(self.env_top_view)),self.im_size])
         else:
             self.img_exists = False
+
 
     def create_image(self):
         self.env_min, self.env_max = np.min(self.env_matrix), np.max(self.env_matrix)
@@ -148,15 +150,19 @@ class SpaceFinder:
 if __name__ == '__main__':
     finder = SpaceFinder()  
     finder.check_walls_exist()
+    
     if finder.img_exists or finder.walls_exist:
-        if finder.walls_exist: 
+        if finder.walls_exist and not finder.img_exists: 
             finder.create_image()
             finder.draw_image()
-        elif finder.img_exists:
+        elif finder.img_exists and not finder.walls_exist:
             finder.create_walls()
-            finder.create_image()       
-        finder.find_dungeon_edge()
-        finder.write_free_points()
+            finder.create_image()
+       
+        if not finder.free_pnts_exist:
+            finder.create_image()
+            finder.find_dungeon_edge()
+            finder.write_free_points()
         
         if args.debug_mode=='True':
             finder.debug_window()

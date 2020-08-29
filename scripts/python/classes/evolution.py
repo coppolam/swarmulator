@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 from deap import base, creator, tools
 matplotlib.rc('text', usetex=True)
 
+from classes import randomize_environment
+
 class evolution:
 	'''Wrapper around the DEAP package to run an evolutionary process with just a few commands'''
 
@@ -17,9 +19,10 @@ class evolution:
 		creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 		creator.create("Individual", list, fitness=creator.FitnessMin)
 
-	def setup(self, fitness_function_handle, constraint=None, GENOME_LENGTH = 20, POPULATION_SIZE = 100, P_CROSSOVER = 0.5, P_MUTATION = 0.2):
+	def setup(self, fitness_function_handle, constraint=None, GENOME_LENGTH = 20, POPULATION_SIZE = 100, P_CROSSOVER = 0.5, P_MUTATION = 0.2, NUM_AGENTS=2):
 		'''Set up the parameters'''
 		# Set the main variables
+		self.num_agents = NUM_AGENTS
 		self.GENOME_LENGTH = GENOME_LENGTH
 		self.POPULATION_SIZE = POPULATION_SIZE
 		self.P_CROSSOVER = P_CROSSOVER
@@ -110,6 +113,8 @@ class evolution:
 			if verbose: self.disp_stats(g)
 			
 			if checkpoint is not None: self.save(checkpoint, pop=pop, gen=g, stats=self.stats)
+			
+			get_spawn_pos(self.num_agents,'../../conf/environments/')
 
 			g += 1
 

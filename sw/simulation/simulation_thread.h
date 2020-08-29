@@ -68,16 +68,15 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
   std::string s = param->agent_initialization();
   if (!strcmp(s.c_str(), "in_area")){
     // generate_free_points(x0.data(),y0.data(),nagents);
-    int pnt_idx;
+    // int pnt_idx;
     random_generator rg;
     std::stringstream debug_stream;
     for (uint i = 0; i<nagents;i++){
-      pnt_idx = rg.uniform_int(0,environment.free_points.size());
-      x0[i] = environment.free_points[pnt_idx][1];
-      y0[i] = environment.free_points[pnt_idx][0];
-      terminalinfo::debug_msg("Agent spawning position");
-      terminalinfo::debug_msg(std::to_string(x0[i]));
-      terminalinfo::debug_msg(std::to_string(y0[i]));
+      // pnt_idx = rg.uniform_int(0,environment.free_points.size()-1);
+      // x0[i] = environment.free_points[pnt_idx][1];
+      // y0[i] = environment.free_points[pnt_idx][0];
+      x0[i] = environment.free_points[i][1];
+      y0[i] = environment.free_points[i][0];
     }
   }
   else{
