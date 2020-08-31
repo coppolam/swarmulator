@@ -51,6 +51,7 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
 {
   terminalinfo::info_msg("Simulation started.");
   read_argv(argc, argv); // Read the number of agents from the argument input
+  
   random_generator rg;
   fifo f(id); // Open FIFO pipe
 

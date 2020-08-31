@@ -33,6 +33,7 @@ public:
    * @brief class for storing all gas-related data of an environment
   */
   float x_min,x_max,y_min,y_max, env_size, env_diagonal;
+  std::string env_dir;
   Gasdata gas_obj; //obj containing all gas information for this environment
   std::vector<std::vector<float>> food;
   std::vector<float> beacon;
@@ -51,6 +52,12 @@ public:
    *
    */
   ~Environment() {};
+
+/**
+ * @brief calls all loading functions
+*/
+void load(int argc, char *argv[]);
+
 
 /**
  * @brief if param->gas_seeking is True, this loads gas data from txt files (concentrations + wind velocities)

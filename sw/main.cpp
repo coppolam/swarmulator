@@ -53,7 +53,7 @@ std::string identifier; // Log name identifier
 int main(int argc, char *argv[])
 {
   program_running = true; // Program is running
-  
+  environment.load(argc, argv);
   if (argc > 2) {
     std::string s = "";
     s += argv[2];
@@ -71,7 +71,6 @@ int main(int argc, char *argv[])
   std::thread logger(main_logger_thread);
   logger.detach();
 #endif
-
   main_simulation_thread(argc, argv, identifier);
 
   // Exit
