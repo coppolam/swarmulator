@@ -23,6 +23,7 @@ class evolution:
 		'''Set up the parameters'''
 		# Set the main variables
 		self.num_agents = NUM_AGENTS
+		get_spawn_pos(self.num_agents,'../../conf/environments/')
 		self.GENOME_LENGTH = GENOME_LENGTH
 		self.POPULATION_SIZE = POPULATION_SIZE
 		self.P_CROSSOVER = P_CROSSOVER

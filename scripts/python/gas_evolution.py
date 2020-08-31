@@ -8,7 +8,7 @@ from classes import evolution, swarmulator
 # Example:
 # python3 main_standard_evolution.py aggregation particle
 
-num_agents = 2
+num_agents = 10
 
 #####################
 #  Argument parser  #
@@ -50,7 +50,7 @@ def fitness(individual):
 	### Run swarmulator in batches
 	# Indicate the minimum number and the maximum number of agents to run with.
 	# In this example, a run will feature anything between 10 and 20 robots.
-	f = sim.batch_run(2,args.batchsize) # Run with 10-20 robots, 5 times (default args.batchsize=5)
+	f = sim.batch_run(num_agents,args.batchsize) # Run with 10-20 robots, 5 times (default args.batchsize=5)
 	return f.mean(), # Fitness = average (note trailing comma to cast to tuple!)
 
 ########################

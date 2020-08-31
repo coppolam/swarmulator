@@ -133,7 +133,6 @@ class swarmulator:
 		c = 0
 		with concurrent.futures.ProcessPoolExecutor() as executor:
 			for i, f in zip(robots,executor.map(self.run, robots)):
-				print(f)
 				try:
 					out[c] = float(f)
 					c += 1
