@@ -21,13 +21,8 @@
 #include <boost/format.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
-
-#include <assert.h>
-#include <fstream>
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
-
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/vector.hpp>
 /**
  * @brief Returns whether a number is positive or negative as a float +1, 0, -1
  *
@@ -665,17 +660,51 @@ inline static const std::string currentDateTime()
   return buf;
 }
 
+//helper struct used for serialization with cereal
+
+
+CEREAL_CLASS_VERSION(SomeData, 1);
+
+struct MyType
+{
+  // int x;
+  // double y;
+  Gasdata gas_obj;
+
+  template <class Archive>
+  void serialize( Archive & ar, std::uint32_t const version )
+  {
+    // ar( x, y );
+    // ar( s );
+    ar(gas_obj);
+  }
+};
+
+
 inline static void save_gas_object(Gasdata &gas_obj,std::string env_dir)
 {
-  std::string filename = "conf/environments/"+env_dir +"/gas_data"; 
-  std::ofstream ofs(filename);
-  // {
-  boost::archive::text_oarchive oa(ofs);
-  // // write class instance to archive
-  // oa << gas_obj;
-  // // archive and stream closed when destructors are called
-  // }
+  std::string filename = "conf/environments/"+env_dir +"/gas_data.bin"; 
+  std::ofstream os(filename, std::ios::binary);
+
+  {
+    cereal::BinaryOutputArchive ar(os);
+    MyType m;
+    m.gas_obj = gas_obj;
+    ar( m );
+  }
 }
+
+inline static Gasdata load_gas_object(std::string env_dir)
+{
+  std::string filename = "conf/environments/"+env_dir +"/gas_data.bin"; 
+  std::ifstream os(filename, std::ios::binary);
+  cereal::BinaryInputArchive iarchive(os);
+  MyType output;
+  iarchive(output);
+  return output.gas_obj;
+
+}
+
 
 
 

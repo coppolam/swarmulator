@@ -54,27 +54,39 @@ void Environment::load_gas_data(void){
   string euclidean = param->gas_euclidean();
   std::string bmp_filename;
   string filename = "conf/environments/" + environment.env_dir + "/gas_simulations/iteration_";
+  string gas_obj_file = "conf/environments/" + environment.env_dir + "/gas_data.bin";
+  ifstream f(gas_obj_file.c_str());
+  bool gas_obj_exists = f.good();
+
   if (!strcmp(s.c_str(), "True") && !strcmp(euclidean.c_str(), "False")){
     
 
-    
-    bool last_file_found = false;
-    int i = 0;
-    terminalinfo::debug_msg("loading gas data ");
-    while (!last_file_found)
+    if (gas_obj_exists)
     {
-    
-    if(! load_gas_file(filename+std::to_string(i),true,gas_obj) || (i > (int)(param->time_limit())))
-    {
-      last_file_found = true;
+      gas_obj = load_gas_object(environment.env_dir);
     }
-    else{
-      #ifdef ANIMATION
-        bmp_filename = filename+std::to_string(i)+".bmp";
-        save_as_bmp(bmp_filename.c_str(),gas_obj, i);
-        gas_obj.num_it = i;
-        i++;
-      #endif
+    else
+    {
+      bool last_file_found = false;
+      int i = 0;
+      terminalinfo::debug_msg("loading gas data ");
+      while (!last_file_found)
+      {
+      
+      if(! load_gas_file(filename+std::to_string(i),true,gas_obj) || (i > (int)(param->time_limit())))
+      {
+        last_file_found = true;
+      }
+      else{
+        #ifdef ANIMATION
+          bmp_filename = filename+std::to_string(i)+".bmp";
+          save_as_bmp(bmp_filename.c_str(),gas_obj, i);
+          gas_obj.num_it = i;
+          i++;
+        #endif
+      }
+      save_gas_object(gas_obj,environment.env_dir);
+    
     }
     }    
   }

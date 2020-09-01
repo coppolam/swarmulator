@@ -10,24 +10,12 @@
 // include headers that implement a archive in simple text format
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-
-
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/vector.hpp>
 class Gasdata
 {
-  private:
-    friend class boost::serialization::access;
-    // When the class Archive corresponds to an output archive, the
-    // & operator is defined similar to <<.  Likewise, when the class Archive
-    // is a type of input archive the & operator is defined similar to >>.
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-        ar & num_ex;
-    }
-    int num_ex;
-
-
   public:
+    Gasdata() = default;
     int num_it;
     size_t bmp_header_size;
     std::vector<float> source_location;
@@ -37,6 +25,54 @@ class Gasdata
     std::vector<int> numcells;
     std::vector<std::vector<std::vector<int>>> gas_data;
     std::vector<int> max_gas;
+
+  private:
+    friend class cereal::access;
+
+    // cereal supports class versioning although it is considered
+    // optional in cereal
+    template <class Archive>
+    void save( Archive & ar, std::uint32_t const version ) const
+    {
+      ar( num_it,bmp_header_size,source_location,env_min,env_max,cell_sizes,numcells,gas_data,max_gas); // operator() is the preferred way of interfacing the archive
+    }
+
+    template <class Archive>
+    void load( Archive & ar, std::uint32_t const version )
+    {
+      ar( num_it,bmp_header_size,source_location,env_min,env_max,cell_sizes,numcells,gas_data,max_gas); // operator() is the preferred way of interfacing the archive
+    }
+
+
+
+
+
+};
+class SomeData
+{
+  public:
+    SomeData() = default;
+    int a;
+    int b;
+
+  private:
+    friend class cereal::access;
+
+    // cereal supports class versioning although it is considered
+    // optional in cereal
+    template <class Archive>
+    void save( Archive & ar, std::uint32_t const version ) const
+    {
+      ar( a, b ); // operator() is the preferred way of interfacing the archive
+    }
+
+    template <class Archive>
+    void load( Archive & ar, std::uint32_t const version )
+    {
+      ar( a, b );
+    }
+
+    // note the lack of explicitly informing cereal to use a split member load/save
 };
 
 class Environment
