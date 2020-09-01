@@ -38,6 +38,7 @@ void Environment::load(int argc, char *argv[]){
 
   define_walls();
  
+  save_gas_object(gas_obj,environment.env_dir);
 
   if (!strcmp(param->fitness().c_str(), "food")) {
     mtx_env.lock();

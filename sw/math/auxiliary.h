@@ -22,6 +22,12 @@
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 
+#include <assert.h>
+#include <fstream>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
+
 /**
  * @brief Returns whether a number is positive or negative as a float +1, 0, -1
  *
@@ -647,12 +653,28 @@ inline static const std::string currentDateTime()
 {
   time_t now = time(0); // Read in the time
   struct tm tstruct;
-  char buf[80]; // Buffer
+  char buf[80]; // Buffer#include <fstream>
+
+// include headers that implement a archive in simple text format
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
   tstruct = *localtime(&now);
 
   // Put the time on a string using the buffer
   strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
   return buf;
+}
+
+inline static void save_gas_object(Gasdata &gas_obj,std::string env_dir)
+{
+  std::string filename = "conf/environments/"+env_dir +"/gas_data"; 
+  std::ofstream ofs(filename);
+  // {
+  boost::archive::text_oarchive oa(ofs);
+  // // write class instance to archive
+  // oa << gas_obj;
+  // // archive and stream closed when destructors are called
+  // }
 }
 
 
