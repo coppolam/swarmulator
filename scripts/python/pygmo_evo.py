@@ -39,11 +39,13 @@ sim.runtime_setting("fitness", "source_distance") # Fitness function to use (in 
 shape_file = "../../conf/policies/gas_shape.txt"
 policy_file = "conf/policies/gas_params.txt"
 sim.runtime_setting("policy", policy_file) 
+environments = ['rand_env_1','rand_env_2','rand_env_3','rand_env_4','rand_env_5']
 
 policy_shape = [6,20,20,3]
 num_params = 0
 bias_add = True
 num_agents = 10
+sim.set_n_agents(num_agents)
 num_params+= np.sum([policy_shape[i]*policy_shape[i+1] for i in range(len(policy_shape)-1)])
 if(bias_add):
     num_params+= np.sum(policy_shape[1:])
@@ -57,8 +59,8 @@ class prob_bart:
     
     def fitness(self,x):
         fh.save_to_txt(x, sim.path+policy_file)
-        f = sim.run(num_agents) # Run with 10-20 robots, 5 times (default args.batchsize=5)
-        return [f]
+        f = sim.batch_run_envs(environments) # Run with 10-20 robots, 5 times (default args.batchsize=5)
+        return [f.mean()]
 
     def get_bounds(self):
         return([-20]*num_params,[20]*num_params)

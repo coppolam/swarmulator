@@ -142,3 +142,48 @@ class swarmulator:
 					print("Swarmulator returned a corrupted ")
 		
 		return out
+
+	def set_n_agents(self,n_agents):
+		self.n_agents = n_agents
+
+	def _launch_envs(self, env, run_id):
+		'''Launches an instance of a swarmulator simulation'''
+		cmd = "cd " + self.path + " && ./swarmulator " + str(self.n_agents) + " " + str(run_id) + " " + env +  " &"
+		subprocess.call(cmd, shell=True)
+		if self.verbose: print("Launched instance of swarmulator with %s robots and pipe ID %s" % (self.n_agents,run_id))
+
+	def run_envs(self, env, run_id=None):
+		got_fitness = False
+		num_tries = 0
+		while (num_tries < 5 and got_fitness == False):
+			'''Runs swarmulator. If run_id is not specified, it will assign a random id'''
+			self.run_id = random.randrange(10000000000) if run_id is None else run_id
+			pipe = "/tmp/swarmulator_" + str(self.run_id)
+			self._launch_envs(env,run_id=self.run_id)
+			f = self._get_fitness(pipe)
+			try:
+				test_float = float(f)
+				got_fitness = True
+			except:
+				print("swarmulator received a corrupted pipe message")
+			num_tries += 1
+		
+		return f
+
+	def batch_run_envs(self,envs):
+		'''Runs a batch of parallel simulations in parallel. By being different processes, the simulations can run unobstructed.'''
+		self._clear_pipes()
+
+		out = np.zeros(len(envs))
+		c = 0
+		with concurrent.futures.ProcessPoolExecutor() as executor:
+			for i, f in zip(envs,executor.map(self.run_envs, envs)):
+				try:
+					out[c] = float(f)
+					c += 1
+				except: 
+					out[c] = 1000.
+					c+= 1
+					print("Swarmulator returned a corrupted ")
+		
+		return out

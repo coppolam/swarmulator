@@ -39,7 +39,7 @@ void main_loop_function()
   
   if(!strcmp(euclidean.c_str(), "False"))
   {
-    bmp_loc = "conf/environments/"+ param->environment()+ "/gas_simulations/iteration_"+std::to_string((int)(floor(simtime_seconds)))+".bmp";
+    bmp_loc = "conf/environments/"+ environment.env_dir+ "/gas_simulations/iteration_"+std::to_string((int)(floor(simtime_seconds)))+".bmp";
     drawer.bmp_bg(bmp_loc.c_str());
   }
   drawer.source(); //draw source position as dot
