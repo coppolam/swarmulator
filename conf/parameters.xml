@@ -2,7 +2,7 @@
 <parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="parameters.xsd">
   <!-- Simulation -->
   <simulation_updatefreq>10</simulation_updatefreq>
-  <simulation_realtimefactor>5</simulation_realtimefactor>
+  <simulation_realtimefactor>300</simulation_realtimefactor>
   <time_limit>50</time_limit>
   <!-- (seconds). Use time_limit > 0 to set a limit. If = 0, then the simulation runs indefinitely. -->
   <environment>image_testing</environment>
