@@ -44,11 +44,11 @@ void gas_seeking::get_velocity_command(const uint16_t ID, float &v_x, float &v_y
   int x_indx = clip((int)((s.at(ID)->state[1]-environment.x_min)/(environment.x_max-environment.x_min)*(float)(environment.gas_obj.numcells[0])),0,environment.gas_obj.numcells[0]);
   int y_indx = clip((int)((s.at(ID)->state[0]-environment.y_min)/(environment.y_max-environment.y_min)*(float)(environment.gas_obj.numcells[1])),0,environment.gas_obj.numcells[1]);
 
-  float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]);
-  float delta_gas = gas_conc - s.at(ID)->gas_read;
-  gas_state.push_back(gas_conc/5000.); //normalizing, temporary solution
-  gas_state.push_back(delta_gas);
-  s.at(ID)->gas_read = gas_conc;
+  float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]/5000.);
+  float gas_conc_lp = s.at(ID)->gas_read_lp*0.9 + 0.1*gas_conc;
+  gas_state.push_back((gas_conc-gas_conc_lp)/(gas_conc_lp)); //normalizing, temporary solution
+  gas_state.push_back(2*gas_conc_lp-1.);
+  s.at(ID)->gas_read_lp = gas_conc_lp;
   }
   else
   {
