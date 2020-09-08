@@ -52,14 +52,12 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
       float state_temp = (environment.nest - state) * 3 + 15;
       keepbounded(state_temp, 0, 30);
       st = int(state_temp);
-      // if (ID == 0){ cout << "back: " << environment.nest << endl << "diff: " << (state_temp - 15)/2 << endl << st << endl; }
 #ifdef ESTIMATOR
       int a;
       if (explore) {a = 1;} else {a = 0;}
       pr.update(ID, st, a);
 #endif
       state = environment.nest;
-      // if (ID == 0){ cout << "leaving: " << environment.nest << endl; }
       if (rg.bernoulli(1.0 - motion_p[st])) { explore = false;}
       else { explore = true;}
     }
