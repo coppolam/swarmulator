@@ -56,10 +56,10 @@ And access the documentation using
 ## Running Swarmulator
 Swarmulator can be launched from the terminal. To run Swarmulator, use the following command: 
 
-    .\swarmulator <nagents>
+    ./swarmulator <nagents>
 
 Where <nagents> is the number of agents you would like to have at the start of the simulation.
-    .\swarmulator 10
+    ./swarmulator 10
 
 #### Setting up the runtime parameters
 Swarmulator uses a configuration file called `parameters.xml` in order to load run-time parameters. These are loaded when Swarmulator starts, without having to re-build!
