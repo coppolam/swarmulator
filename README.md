@@ -44,6 +44,8 @@ To find which agents and controllers are available in the branch, check the fold
 
 (Pro tip: If you want it to build fast, use `make -j` instead of just `make`, but this will take up more memory. On a virtual machine, where memory is limited, using `-j` may cause it to fail to build.)
 
+For other controllers, please note that you may have to indicate a correct policy in the XML file `conf/parameters.xml`. Read the controller specific READMEs to find out more about what they do. Also, note that not all provided controllers work with all agents (because they control different variables). This is also detailed in the controller specific READMEs.
+
 #### Extra: Generate the doxygen documetation
 Swarmulator was commented using the doxygen format. To generate the doxygen documentation, use
 
