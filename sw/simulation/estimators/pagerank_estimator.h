@@ -1,13 +1,15 @@
 #ifndef PAGERANK_ESTIMATOR_H
 #define PAGERANK_ESTIMATOR_H
 #include <stdio.h>
-#include <eigen3/Eigen/Sparse>
+// #define ARMA_DONT_USE_CXX11
+#include <armadillo>
 
 class pagerank_estimator
 {
 public:
-  std::vector<uint> H, E, s_k, s_kp1;
-  std::vector<std::vector<uint>> A;
+  arma::mat H, E;
+  std::vector<uint> s_k, s_kp1;
+  std::vector<arma::mat> A;
   uint n_states;
   float fitness, fitness_max;
   bool estimator_active;

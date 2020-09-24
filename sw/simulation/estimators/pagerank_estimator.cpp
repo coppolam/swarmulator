@@ -17,8 +17,8 @@ pagerank_estimator::pagerank_estimator(uint s_size, uint n_actions)
   if (s_size > 0 && n_actions > 0) {
     estimator_active = true;
     n_states = s_size;
-    H.assign(pow(n_states, 2), 0);
-    E.assign(pow(n_states, 2), 0);
+    H.zeros(n_states, n_states);
+    E.zeros(n_states, n_states);
     for (size_t i = 0; i < n_actions; i++) {
       A.push_back(H);
     }
@@ -28,7 +28,7 @@ pagerank_estimator::pagerank_estimator(uint s_size, uint n_actions)
 void pagerank_estimator::init(bool all)
 {
   int n;
-  if (!all) {
+  if (all) {
     n = nagents;
   } else {
     n = 1;
@@ -56,7 +56,7 @@ void pagerank_estimator::extend(void)
 void pagerank_estimator::update(const uint &ID, const int &st, const uint &a)
 {
   if (estimator_active) {
-    s_kp1[ID] = st; // update state
+    s_kp1[ID] = st; // new state
     update_G(ID, a); // update G = f(H,E,A) estimate
     s_k[ID] = st; // update state
   }
@@ -67,10 +67,10 @@ void pagerank_estimator::update_G(const uint &ID, const uint &action)
   if (estimator_active) {
     // Update H or E depending on whether the change was your own
     if (action > 0) {
-      H[s_kp1[ID] + s_k[ID] * n_states] += 1; // col + row * row_length
-      A[action - 1][s_kp1[ID] + s_k[ID] * n_states] += 1;
+      H(s_kp1[ID], s_k[ID]) += 1;
+      A[action - 1](s_kp1[ID], s_k[ID]) += 1;
     } else {
-      E[s_kp1[ID] + s_k[ID] * n_states] += 1; // col + row * row_length
+      E(s_kp1[ID], s_k[ID]) += 1;
     }
   }
 }
@@ -78,11 +78,13 @@ void pagerank_estimator::update_G(const uint &ID, const uint &action)
 void pagerank_estimator::print(void)
 {
   if (estimator_active) {
-    cout << "********************" << endl;
-    fmat<uint>::print(n_states, n_states, H, "H");
-    fmat<uint>::print(n_states, n_states, E, "E");
+    cout << "H" << endl;
+    H.print();
+    cout << "E" << endl;
+    E.print();
     for (size_t i = 0; i < A.size(); i++) {
-      fmat<uint>::print(n_states, n_states, A[i], "A");
+      cout << "A" << i << endl;
+      A[i].print();
     }
   }
 }
@@ -90,10 +92,10 @@ void pagerank_estimator::print(void)
 void pagerank_estimator::save(void)
 {
   if (estimator_active) {
-    fmat<uint>::write_to_csv("logs/E_" + identifier + ".csv", E, n_states, n_states);
-    fmat<uint>::write_to_csv("logs/H_" + identifier + ".csv", H, n_states, n_states);
+    H.save("logs/H_" + identifier + ".csv", arma::raw_ascii);
+    E.save("logs/E_" + identifier + ".csv", arma::csv_ascii);
     for (size_t i = 0; i < A.size(); i++) {
-      fmat<uint>::write_to_csv("logs/A_" + identifier + "_" + to_string(i) + ".csv", A[i], n_states, n_states);
+      A[i].save("logs/A_" + identifier + "_" + to_string(i) + ".csv", arma::csv_ascii);
     }
   }
 }
