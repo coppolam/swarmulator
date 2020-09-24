@@ -16,8 +16,8 @@ AGENT_INCLUDE=\"$(AGENT).h\"
 #  -Wall turns on most, but not all, compiler warnings
 
 CC = g++ # chosen compiler
-CFLAGS = -g -Wall -std=gnu++17 -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR -DCONTROLLER=$(CONTROLLER) -DAGENT=$(AGENT) -DAGENT_INCLUDE=$(AGENT_INCLUDE) -DCONTROLLER_INCLUDE=$(CONTROLLER_INCLUDE) -D_GLIBCXX_USE_CXX11_ABI=0
-OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions -lprotobuf
+CFLAGS = -g -Wall -std=gnu++17 -D_GLIBCXX_USE_NANOSLEEP -DSWARMULATOR -DCONTROLLER=$(CONTROLLER) -DAGENT=$(AGENT) -DAGENT_INCLUDE=$(AGENT_INCLUDE) -DCONTROLLER_INCLUDE=$(CONTROLLER_INCLUDE) -D_GLIBCXX_USE_CXX11_ABI=0 -march=native -ffp-contract=fast
+OPT=-lglut -lGLU -lGL -lpthread -lxerces-c -Wno-deprecated-declarations -fno-inline-functions -lprotobuf -loptim
 
 ifeq ($(VERBOSE),ON)
 CFLAGS += -DVERBOSE
@@ -37,22 +37,25 @@ AGNT_FOLDER = sw/simulation/agents
 # General parameters to include all relevant cpp files and all subfolders
 # INC_DIRS = $(shell find $(SRC_FOLDER) -path $(CTRL_FOLDER) -prune -o -type d)
 INC_DIRS = $(shell find $(SRC_FOLDER) -type d)
-SOURCES_CPP = $(shell find $(SRC_FOLDER) -path $(CTRL_FOLDER) -prune -o -path $(AGNT_FOLDER) -prune -o -name *.cpp -print) # Recursively find all cpp/c files
-SOURCES_C = $(shell find $(SRC_FOLDER) -path $(CTRL_FOLDER) -prune -o -path $(AGNT_FOLDER) -prune -o -name *.c -print) # Recursively find all cpp/c files
+SOURCES_CPP = $(shell find $(SRC_FOLDER) -path $(CTRL_FOLDER) -prune -o -path $(AGNT_FOLDER) -prune -o -name *.cpp -print) # Recursively find all cpp files
+SOURCES_C = $(shell find $(SRC_FOLDER) -path $(CTRL_FOLDER) -prune -o -path $(AGNT_FOLDER) -prune -o -name *.c -print) # Recursively find all c files
 
 ### Select controller files
 CTRL_INC = $(shell find $(SRC_FOLDER) -name $(CONTROLLER).cpp -printf '%h\n')
-SOURCES_CPP +=  $(shell find $(CTRL_INC) -type f -name *.cpp -print)
-SOURCES_C +=  $(shell find $(CTRL_INC) -type f -name *.c -print)
+SOURCES_CPP += $(shell find $(CTRL_INC) -type f -name *.cpp -print)
+SOURCES_C += $(shell find $(CTRL_INC) -type f -name *.c -print)
 INC_DIRS += $(shell find $(CTRL_INC) -type d)
 
 ### Select agent files
 AGNT_INC = $(shell find $(SRC_FOLDER) -name $(AGENT).cpp -printf '%h\n')
-SOURCES_CPP +=  $(shell find $(AGNT_INC) -name *.cpp -print)
-SOURCES_C +=  $(shell find $(AGNT_INC) -name *.c -print)
+SOURCES_CPP += $(shell find $(AGNT_INC) -name *.cpp -print)
+SOURCES_C += $(shell find $(AGNT_INC) -name *.c -print)
 INC_DIRS += $(shell find $(AGNT_INC) -type d)
 
 ### External libraries
+### Eigen library
+INC_DIRS += /usr/include/eigen3/
+
 # If using pytorch, load the library!
 ifeq ($(CONTROLLER),pytorch)
 OPT += -L $(TORCH_LIB_HOME)/lib -lc10 -L $(TORCH_LIB_HOME)/lib -ltorch_cpu
@@ -89,7 +92,6 @@ $(BUILD_FOLDER)/%.o: %.c # This rule defines how to go from C file to Object fil
 	# Compiling $<
 	@mkdir -p $(@D)
 	@gcc -g -Wall -DDEBUG -DINFO -D_GLIBCXX_USE_NANOSLEEP -std=c11 $(INC) -c $< -o $@;
-
 
 clean:
 	# Cleaning $(TARGET)...

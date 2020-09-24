@@ -54,7 +54,7 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
   fifo f(id); // Open FIFO pipe
 
 #ifdef ESTIMATOR
-  pr.init();
+  pr.init(true);
 #endif
 
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation

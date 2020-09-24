@@ -29,7 +29,7 @@ public:
    *
    * @param s_size Discrete size of the state-space
    */
-  void init();
+  void init(bool all);
 
   /**
    * Extend the state vector by 1.

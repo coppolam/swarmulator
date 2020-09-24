@@ -9,6 +9,8 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 pagerank_estimator::pagerank_estimator(uint s_size, uint n_actions)
 {
   estimator_active = false;
@@ -23,11 +25,18 @@ pagerank_estimator::pagerank_estimator(uint s_size, uint n_actions)
   }
 };
 
-void pagerank_estimator::init()
+void pagerank_estimator::init(bool all)
 {
+  int n;
+  if (!all) {
+    n = nagents;
+  } else {
+    n = 1;
+  }
+
   if (estimator_active) {
-    s_k.assign(nagents, 0);
-    s_kp1.assign(nagents, 0);
+    s_k.assign(n, 0);
+    s_kp1.assign(n, 0);
     fitness = 0;
   }
 }
@@ -69,7 +78,7 @@ void pagerank_estimator::update_G(const uint &ID, const uint &action)
 void pagerank_estimator::print(void)
 {
   if (estimator_active) {
-    std::cout << "********************" << std::endl;
+    cout << "********************" << endl;
     fmat<uint>::print(n_states, n_states, H, "H");
     fmat<uint>::print(n_states, n_states, E, "E");
     for (size_t i = 0; i < A.size(); i++) {
@@ -84,7 +93,7 @@ void pagerank_estimator::save(void)
     fmat<uint>::write_to_csv("logs/E_" + identifier + ".csv", E, n_states, n_states);
     fmat<uint>::write_to_csv("logs/H_" + identifier + ".csv", H, n_states, n_states);
     for (size_t i = 0; i < A.size(); i++) {
-      fmat<uint>::write_to_csv("logs/A_" + identifier + "_" + std::to_string(i) + ".csv", A[i], n_states, n_states);
+      fmat<uint>::write_to_csv("logs/A_" + identifier + "_" + to_string(i) + ".csv", A[i], n_states, n_states);
     }
   }
 }
