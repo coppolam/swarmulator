@@ -109,7 +109,7 @@ void onlinelearning::get_velocity_command(const uint16_t ID, float &v_x, float &
     // Onboard estimator
     int a;
     if (moving) {a = 1;} else {a = 0;}
-    pr.update(ID, st, a); // pr update
+    p.update(0, st, a); // pr update
 
     if (rg.bernoulli(1.0 - pol[st])) {
       v_x_ref = 0.0;
@@ -139,7 +139,7 @@ void onlinelearning::get_velocity_command(const uint16_t ID, float &v_x, float &
     settings.upper_bounds = arma::ones(motion_p.size(), 1);
     settings.lower_bounds = arma::zeros(motion_p.size(), 1);
     // vec x = ones(motion_p.size(), 1)/2.;
-    bool success = optim::nm(pol, fitness, &pr, settings);
+    bool success = optim::nm(pol, fitness, &p, settings);
     if (success) {cout << "pol" << endl; pol.t().raw_print();} // debug
   }
   // Final output
