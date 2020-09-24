@@ -32,72 +32,44 @@ onlinelearning::onlinelearning(): Controller(), p(8, 1)
   p.init(false);
 }
 
-// Pagerank
-// def pagerank(G, pr=None, tol=1e-8, maxiter=5000):
-//  '''Iterative procedure to solve for the PageRank vector'''
+arma::mat pagerank(const arma::mat &G)
+{
+  // Define parameters
+  uint maxiter = 1000;
+  float tol = 0.01;
 
-//  # Normalize the rows of the Google Matrix
-//  G = normalize_rows(G)
+  // Initialize
+  uint i = 0;
+  float residual = 1;
+  arma::mat pr = arma::randu(1, G.n_rows);
+  arma::mat pr_prev;
 
-//  # If the pagerank vector is not specified, initialize it
-//  if pr is None:
-//    n = G.shape[0]
-//    pr = 1 / n * np.ones((1, n))
+  // PageRank iteration routine
+  while (residual >= tol && i < maxiter) {
+    pr_prev = pr;
+    pr = pr * G;
+    residual = arma::norm(pr - pr_prev);
+    i++;
+  }
 
-//  # Initialize residual
-//  residual = 1
-
-//  # Run the PageRank iteration for a maximum number of iterations
-//  # or until the residual is smaller than the tolerance value tol
-
-//  i = 0
-//  while residual >= tol and i < maxiter:
-//    # Update pagerank vector
-//    pr_previous = pr
-
-//    # Pagerank formula
-//    pr = np.matmul(pr,G)
-
-//    # Calculate residual
-//    residual = np.linalg.norm(np.subtract(pr,pr_previous))
-//    i += 1
-
-//  # Return the normalized pagerank vector
-//  return normalize_rows(np.asarray(pr))
-
-
-// float pagerank(const vector<float> &G){
-//   float residual = 1;
-//   i = 0;
-//   while (residual >= tol && i < maxiter){
-//     pr_previous = pr;
-//     pr = fmat<float>::mult(pr,G);
-//     residual = abs(fmat<float>::add(pr-pr_previous));
-//     i++;
-//   }
-//   return pr;
-// }
+  // Return
+  return pr;
+}
 
 float fitness(const arma::vec &inputs, arma::vec *grad_out, void *opt_data)
 {
+  // Load up pagerank estimator as pointer
   pagerank_estimator *p = reinterpret_cast<pagerank_estimator *>(opt_data);
-  // p->print();
 
-  // static void normalize(p.H, rows, cols);
+  // Determine pagerank
+  arma::mat pr = pagerank(arma::normalise(p->H));
 
-  // // Google matrix
-  // std::vector<uint> H, E, s_k, s_kp1;
-
-  // fmat<float>::mult(rowa,cola,colb,Hw,p.alpha,p.H)
-  // fmat<float>::mult(rowa,cola,colb,Ew,p.alpha_neg,p.E)
-  // fmat<float>::add(rows,cols,G,Hw,Ew);
-  // pagerank(p,G)
-
-  // // Score
-  // return ;
-  // vector<float> a = {1,2,3};
-  // arma::mat m(a);
-  return 1;
+  // Calculate fitness
+  arma::mat des(8, 1);
+  des[2] = 1;
+  float f = (float)arma::dot(pr, des);
+  cout << f << endl;
+  return f;
 }
 
 void onlinelearning::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
@@ -147,7 +119,8 @@ void onlinelearning::get_velocity_command(const uint16_t ID, float &v_x, float &
   // Every 10 seconds of new data, optimize
   if (moving_timer == 1) {
     arma::vec x = arma::ones(motion_p.size(), 1);
-    optim::de(x, fitness, &p);
+    optim::bfgs(x, fitness, &p);
+    // x.print();
   }
   // Final output
   v_x += v_x_ref;
