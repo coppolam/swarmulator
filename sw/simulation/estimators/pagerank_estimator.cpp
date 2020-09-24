@@ -92,7 +92,7 @@ void pagerank_estimator::print(void)
 void pagerank_estimator::save(void)
 {
   if (estimator_active) {
-    H.save("logs/H_" + identifier + ".csv", arma::raw_ascii);
+    H.save("logs/H_" + identifier + ".csv", arma::csv_ascii);
     E.save("logs/E_" + identifier + ".csv", arma::csv_ascii);
     for (size_t i = 0; i < A.size(); i++) {
       A[i].save("logs/A_" + identifier + "_" + to_string(i) + ".csv", arma::csv_ascii);

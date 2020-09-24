@@ -7,11 +7,13 @@
 #include "pagerank_estimator.h"
 #include "randomgenerator.h"
 #include "trigonometry.h"
+#include <armadillo>
 
 class onlinelearning: public Controller
 {
   pagerank_estimator p;
-  std::vector<float> motion_p; // Probability of motion
+  std::vector<double> motion_p; // Probability of motion
+  arma::vec pol;
   uint moving_timer; // Timer measuring how long a robot has been moving
   float vmean;
   float timelim;

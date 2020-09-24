@@ -212,6 +212,29 @@ inline static std::vector<float> read_array(const std::string filename)
 }
 
 /**
+ * Read an array from a txt file
+ *
+ * @param filename = name of file
+ */
+inline static std::vector<double> read_array_double(const std::string filename)
+{
+  std::ifstream in(filename);
+  std::string line;
+  std::vector<double> array;
+  if (in.is_open()) {
+    std::getline(in, line);
+    std::stringstream ss(line);
+    double value;
+    while (ss >> value) {
+      array.push_back(value);
+    }
+  } else {
+    terminalinfo::error_msg("Array file not loaded: " + filename);
+  }
+  return array;
+}
+
+/**
  * 2D Point class use for the functions below
  *
  */
