@@ -22,7 +22,8 @@
  * @param x
  * @return float
  */
-inline static float sign(float x)
+template<class T>
+inline static T sign(T x)
 {
   if (x > 0) { return 1; }
   if (x < 0) { return -1; }
@@ -84,7 +85,8 @@ inline static uint bool2int(std::vector<bool> t)
  * @param min Minimum bound
  * @param max Maximum bound
  */
-inline static void keepbounded(float &value, float min, float max)
+template<class T>
+inline static void keepbounded(T &value, T min, T max)
 {
   if (value < min) { value = min; }
   else if (value > max) { value = max; }
@@ -95,7 +97,8 @@ inline static void keepbounded(float &value, float min, float max)
  * For instance if min = 1 and max = 8, and x = 10, then the function returns 2. Because it loops 8+2=10
  * TODO: this works only if min = 1 so adjust it
  */
-inline static int wraptosequence(int x, int min, int max)
+template<class T>
+inline static T wraptosequence(T x, T min, T max)
 {
   if (x > max) {
     while (x > max) {
@@ -140,7 +143,8 @@ inline static Iter select_randomly(Iter start, Iter end)
  *
  * @param v std::vector holding the values
  */
-inline static float vector_mean(const std::vector<float> &v)
+template<class T>
+inline static float vector_mean(const std::vector<T> &v)
 {
   float sum = std::accumulate(v.begin(), v.end(), 0.0);
   return sum / v.size();
@@ -151,7 +155,8 @@ inline static float vector_mean(const std::vector<float> &v)
  *
  * @param v std::vector holding the values
  */
-inline static float get_vector_std(const std::vector<float> &v)
+template<class T>
+inline static float get_vector_std(const std::vector<T> &v)
 {
   std::vector<double> diff(v.size());
   transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), vector_mean(v)));
@@ -164,18 +169,19 @@ inline static float get_vector_std(const std::vector<float> &v)
  *
  * @param filename = name of file
  */
-inline static std::vector<std::vector<float>> read_matrix(const std::string filename)
+template<class T>
+inline static std::vector<std::vector<T>> read_matrix(const std::string filename)
 {
   std::ifstream in(filename);
   std::string line;
-  std::vector<std::vector<float>> matrix;
+  std::vector<std::vector<T>> matrix;
   uint rows = 0;
   if (in.is_open()) {
     while (!in.eof()) {
       std::getline(in, line);
       std::stringstream ss(line);
-      matrix.push_back(std::vector<float>());
-      float value;
+      matrix.push_back(std::vector<T>());
+      T value;
       while (ss >> value) {
         matrix[rows].push_back(value);
       }
@@ -193,38 +199,16 @@ inline static std::vector<std::vector<float>> read_matrix(const std::string file
  *
  * @param filename = name of file
  */
-inline static std::vector<float> read_array(const std::string filename)
+template<class T>
+inline static std::vector<T> read_array(const std::string filename)
 {
   std::ifstream in(filename);
   std::string line;
-  std::vector<float> array;
+  std::vector<T> array;
   if (in.is_open()) {
     std::getline(in, line);
     std::stringstream ss(line);
-    float value;
-    while (ss >> value) {
-      array.push_back(value);
-    }
-  } else {
-    terminalinfo::error_msg("Array file not loaded: " + filename);
-  }
-  return array;
-}
-
-/**
- * Read an array from a txt file
- *
- * @param filename = name of file
- */
-inline static std::vector<double> read_array_double(const std::string filename)
-{
-  std::ifstream in(filename);
-  std::string line;
-  std::vector<double> array;
-  if (in.is_open()) {
-    std::getline(in, line);
-    std::stringstream ss(line);
-    double value;
+    T value;
     while (ss >> value) {
       array.push_back(value);
     }

@@ -33,7 +33,7 @@ void Environment::define_walls(void)
     terminalinfo::info_msg("Generating random environment");
   }
   string filename = "conf/environments/" + param->environment() + ".txt";
-  walls = read_matrix(filename);
+  walls = read_matrix<float>(filename);
 }
 
 void Environment::define_food(uint64_t n)

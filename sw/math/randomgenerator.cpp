@@ -33,7 +33,6 @@ bool random_generator::bernoulli(float p)
   return dist(generator);
 }
 
-
 int random_generator::discrete_int(std::vector<float> &d)
 {
   std::discrete_distribution<int> dist(d.begin(), d.end());

@@ -31,7 +31,7 @@ forage::forage() : Controller()
                 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0,
                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
                };
-  } else { motion_p = read_array(param->policy()); }
+  } else { motion_p = read_array<float>(param->policy()); }
 }
 
 void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate)

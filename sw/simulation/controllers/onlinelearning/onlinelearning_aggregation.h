@@ -1,5 +1,5 @@
-#ifndef ONLINELEARNING_H
-#define ONLINELEARNING_H
+#ifndef ONLINELEARNING_AGGREGATION_H
+#define ONLINELEARNING_AGGREGATION_H
 
 #include <stdio.h>
 #include <iostream>
@@ -9,7 +9,7 @@
 #include "trigonometry.h"
 #include <armadillo>
 
-class onlinelearning: public Controller
+class onlinelearning_aggregation: public Controller
 {
   pagerank_estimator p;
   std::vector<double> motion_p; // Probability of motion
@@ -22,9 +22,10 @@ class onlinelearning: public Controller
 
 public:
 
-  onlinelearning();
+  onlinelearning_aggregation();
+  static double fitness(const arma::vec &inputs, arma::vec *grad_out, void *opt_data);
   virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y);
   virtual void animation(const uint16_t ID);
 };
 
-#endif /*ONLINELEARNING_H*/
+#endif /*ONLINELEARNING_AGGREGATION_H*/
