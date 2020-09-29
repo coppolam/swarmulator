@@ -1,4 +1,5 @@
 #include "agent.h"
+#include "randomgenerator.h"
 
 Agent::Agent()
 {

@@ -179,6 +179,25 @@ void draw::test_point(float x, float y)
   glEnd();
 }
 
+void draw::red_point(float x, float y)
+{
+  glPointSize(10.0);
+  glBegin(GL_POINTS);
+  glColor3ub(255,0,0);
+  // glTranslatef(y * xrat, x * yrat, 0.0);
+  glVertex3f(x*xrat, y*yrat, 0);
+  glEnd();
+}
+void draw::yellow_point(float x, float y)
+{
+  glPointSize(10.0);
+  glBegin(GL_POINTS);
+  glColor3ub(255,255,0);
+  // glTranslatef(y * xrat, x * yrat, 0.0);
+  glVertex3f(x*xrat, y*yrat, 0);
+  glEnd();
+}
+
 void draw::source()
 {
   glPointSize(10.0);

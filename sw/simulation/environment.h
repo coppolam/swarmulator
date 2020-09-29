@@ -6,12 +6,12 @@
 #include <mutex>
 #include "randomgenerator.h"
 #include <fstream>
-
 // include headers that implement a archive in simple text format
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/vector.hpp>
+
 class Gasdata
 {
   public:
@@ -42,10 +42,6 @@ class Gasdata
     {
       ar( num_it,bmp_header_size,source_location,env_min,env_max,cell_sizes,numcells,gas_data,max_gas); // operator() is the preferred way of interfacing the archive
     }
-
-
-
-
 
 };
 class SomeData
@@ -94,6 +90,9 @@ public:
   std::vector<float> headings;
   std::vector<std::vector<float>> walls;
   float nest;
+  float best_gas = -1.0; //best seen gas concentration in environment
+  float best_gas_pos_x = 0.0;
+  float best_gas_pos_y = 0.0;
   /**
   * @brief Construct a new Environment object
   *

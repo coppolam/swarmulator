@@ -72,6 +72,16 @@ public:
   void laser(const float &x0, const float &y0, const float &x1, const float &y1);
 
   /**
+   * draw red dot
+  */
+  void red_point(float x, float y);
+
+  /**
+   * draw yellow dot
+  */
+  void yellow_point(float x, float y);
+
+  /**
   * Draw a small white point
   */
   void test_point(float x, float y);

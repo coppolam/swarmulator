@@ -48,7 +48,7 @@ void run_agent_simulation_step(const int &ID)
   
       // if (!environment.sensor(ID, s_0, test, ang_temp)) { // No wall --> Update the dynamics
       // if (true) {
-        if(laser_vals[idx] > s.at(ID)->laser_collision_threshold) {
+      if(laser_vals[idx] > s.at(ID)->laser_collision_threshold) {
         mtx.lock(); //sync
         s.at(ID)->state = s_n;
         mtx.unlock();

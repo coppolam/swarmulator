@@ -9,6 +9,7 @@
 #include "settings.h"
 #include "terminalinfo.h"
 #include CONTROLLER_INCLUDE
+#include "auxiliary.h"
 
 /**
  * Parent class defining an agent. The dynamic implementation is handled in children classes.
@@ -38,10 +39,13 @@ public:
   float manualpsi_delta;
   float gas_read = 0; //either gas concentration or distance to source
   float gas_read_lp = 1.0;
-  float laser_collision_threshold = 0.1; //if one of the laser rangers detects < 0.1 [m], we count it as a collision
+  float laser_collision_threshold = 0.01; //if one of the laser rangers detects < 0.1 [m], we count it as a collision
   std::vector<std::vector<float>> laser_pnts, intersect_walls;
   random_generator rg;
   Controller *controller = new CONTROLLER;
+  Point best_agent_pos = {.x = 0.0,.y = 0.0}; // position of best position agent has seen 
+  Point goal = {.x= 0.0,.y=0.0}; // goal position in PSO
+  float best_agent_gas = -1.0; // best found gas concentration
 
   /**
    * Returns the position of the agent along a certain dimension (i.e., North(0) and East(1))
