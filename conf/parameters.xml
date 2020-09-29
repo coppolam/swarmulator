@@ -21,10 +21,10 @@
   <logger_updatefreq>2</logger_updatefreq>
   <!-- Additional parameters -->
   <policy>conf/policies/temp.txt</policy>
-  <fitness>aggregation_clusters</fitness>
-  <pr_states>16</pr_states>
+  <fitness>food</fitness>
+  <pr_states>30</pr_states>
   <!-- set to 0 to turn of estimator -->
-  <pr_actions>8</pr_actions>
+  <pr_actions>1</pr_actions>
   <!-- set to 0 to turn of estimator -->
   <!--new_parameter_name>default value</new_parameter_name-->
 </parameters>

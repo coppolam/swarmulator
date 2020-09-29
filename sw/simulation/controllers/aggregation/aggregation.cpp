@@ -19,8 +19,11 @@ aggregation::aggregation() : Controller()
   vmean = 0.5;
 
   // Policy
-  if (!strcmp(param->policy().c_str(), "")) { motion_p.assign(7, 0.5); }
-  else { motion_p = read_array<float>(param->policy()); }
+  if (!strcmp(param->policy().c_str(), "")) {
+    motion_p.assign(7, 0.5);
+  } else {
+    motion_p = read_array<float>(param->policy());
+  }
 }
 
 void aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)

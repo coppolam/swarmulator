@@ -21,7 +21,7 @@ forage::forage() : Controller()
   v_x_ref = vmean;
   v_y_ref = wrapToPi_f(rg.gaussian_float(0., 0.2));
   state = environment.nest;
-  keepbounded(state, 0, 30);
+  keepbounded<float>(state, 0., 29.);
   st = int(state);
 
   // Load policy
@@ -31,7 +31,9 @@ forage::forage() : Controller()
                 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0,
                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
                };
-  } else { motion_p = read_array<float>(param->policy()); }
+  } else {
+    motion_p = read_array<float>(param->policy());
+  }
 }
 
 void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate)
@@ -50,7 +52,7 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
     if (br < 2 * rangesensor) { // Drop the food if you are in the vicinity of the nest
       choose = true;
       float state_temp = (environment.nest - state) * 3 + 15;
-      keepbounded(state_temp, 0, 30);
+      keepbounded<float>(state_temp, 0., 29.);
       st = int(state_temp);
 #ifdef ESTIMATOR
       int a;
@@ -58,8 +60,13 @@ void forage::get_velocity_command(const uint16_t ID, float &v_x, float &psi_rate
       pr.update(ID, st, a);
 #endif
       state = environment.nest;
-      if (rg.bernoulli(1.0 - motion_p[st])) { explore = false;}
-      else { explore = true;}
+
+      // Decide whether to explore or not based on policy
+      if (rg.bernoulli(motion_p[st])) {
+        explore = true;
+      } else {
+        explore = false;
+      }
     }
   }
 
