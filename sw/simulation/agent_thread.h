@@ -61,6 +61,7 @@ void run_agent_simulation_step(const int &ID)
       if (param->simulation_realtimefactor() > 0) {
         /*** Sleep. Set param->simulation_realtimefactor()=0 in parameters.xml to avoid sleep and run at full speed! ***/
         int t_wait = (int)1e6 / (param->simulation_updatefreq() * param->simulation_realtimefactor());
+        // std::this_thread::yield();
         std::this_thread::sleep_for(std::chrono::microseconds(t_wait));
       }
     }

@@ -66,18 +66,22 @@ int main(int argc, char *argv[])
 
 #ifdef ANIMATION
   std::thread animation(main_animation_thread);
-  animation.detach();
 #endif
 
 #ifdef LOG
   std::thread logger(main_logger_thread);
-  logger.detach();
 #endif
 
   main_simulation_thread(argc, argv, identifier);
 
-  // Exit
-  terminalinfo::info_msg("Swarmulator exiting");
+#ifdef ANIMATION
+  animation.join();
+#endif
 
+#ifdef LOG
+  logger.join();
+#endif
+
+  terminalinfo::info_msg("Swarmulator exiting");
   return 0;
 }

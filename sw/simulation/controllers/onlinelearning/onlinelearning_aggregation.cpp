@@ -26,11 +26,7 @@ onlinelearning_aggregation::onlinelearning_aggregation(): Controller(), p(8, 1)
   vmean = 0.5;
 
   // Policy
-  if (!strcmp(param->policy().c_str(), "")) {
-    motion_p.assign(7, 0.5);
-  } else {
-    motion_p = read_array<double>(param->policy());
-  }
+  motion_p.assign(8, 0.5);
 
   vec temp(motion_p);
   pol = temp;
@@ -47,7 +43,7 @@ double onlinelearning_aggregation::fitness(const vec &inputs, vec *grad_out, voi
   // Determine pagerank
   mat m(inputs);
   mat G = normalise(p->H, 1, 1);
-  G.each_row() %= m.t();
+  G.each_col() %= m;
   mat pr = pagerank(normalise(G + p->E, 1, 1)); // assume alpha=0.5
 
   // Calculate fitness
@@ -106,7 +102,7 @@ void onlinelearning_aggregation::get_velocity_command(const uint16_t ID, float &
     settings.upper_bounds = arma::ones(motion_p.size(), 1);
     settings.lower_bounds = arma::zeros(motion_p.size(), 1);
     optim::nm(pol, onlinelearning_aggregation::fitness, &p, settings);
-    // pol.t().print(); //debug
+    pol.t().print(); //debug
   }
 
   // Final output

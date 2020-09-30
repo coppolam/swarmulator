@@ -16,45 +16,48 @@ bool animation_running = false;
  */
 void main_loop_function()
 {
-  if (!animation_running) {
-    terminalinfo::info_msg("Animation started.");
-    animation_running = true;
-  }
-
-  // Add depth (used internally to block obstructed objects)
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glLoadIdentity();
-
-  // Get current window size w.r.t. beginning
-  xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
-  yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
-
-  zoom_scale = -(float)10 / (-(float)10 + (float)zoom);
-  glTranslatef(center_x, center_y, -10 + zoom);
-
-  // Draw fixed one time objects
-  static draw drawer; // Drawer object
-  drawer.data(); // Put data in corner
-  drawer.axes(); // Put x and y global axes
-  drawer.axis_label(); // Axis label
-  environment.animate(); // Animate the environment walls
-
-  // Draw all robots
-  uint r = s.size();
-  if (r > 0) {
-    for (uint16_t ID = 0; ID < r; ID++) {
-      // Input: ID, p_x global, p_y global, orientation global
-      drawer.agent(ID, s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->orientation);
-      // Input: ID, p_x global, p_y global, v_x global, v_y global
-      drawer.velocity_arrow(ID,  s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->state.at(2), s[ID]->state.at(3));
+  if (program_running) {
+    if (!animation_running) {
+      terminalinfo::info_msg("Animation started.");
+      animation_running = true;
     }
+
+    // Add depth (used internally to block obstructed objects)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity();
+
+    // Get current window size w.r.t. beginning
+    xrat = (float)param->window_width() / (float)glutGet(GLUT_WINDOW_WIDTH);
+    yrat = (float)param->window_height() / (float)glutGet(GLUT_WINDOW_HEIGHT);
+
+    zoom_scale = -(float)10 / (-(float)10 + (float)zoom);
+    glTranslatef(center_x, center_y, -10 + zoom);
+
+    // Draw fixed one time objects
+    static draw drawer; // Drawer object
+    drawer.data(); // Put data in corner
+    drawer.axes(); // Put x and y global axes
+    drawer.axis_label(); // Axis label
+    environment.animate(); // Animate the environment walls
+
+    // Draw all robots
+    uint r = s.size();
+    if (r > 0) {
+      for (uint16_t ID = 0; ID < r; ID++) {
+        // Input: ID, p_x global, p_y global, orientation global
+        drawer.agent(ID, s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->orientation);
+        // Input: ID, p_x global, p_y global, v_x global, v_y global
+        drawer.velocity_arrow(ID,  s[ID]->state.at(0), s[ID]->state.at(1), s[ID]->state.at(2), s[ID]->state.at(3));
+      }
+    }
+
+    // Swap buffers (color buffers, makes previous render visible)
+    glutSwapBuffers();
+
+    user_interaction(); // Activate interactive functions (mouse + keyboard), important: use this before draw functions!
+  } else { // Close window
+    glutDestroyWindow(glutGetWindow());
   }
-
-  // Swap buffers (color buffers, makes previous render visible)
-  glutSwapBuffers();
-
-  user_interaction(); // Activate interactive functions (mouse + keyboard), important: use this before draw functions!
-  if (!program_running) {std::terminate();}
 }
 
 /**

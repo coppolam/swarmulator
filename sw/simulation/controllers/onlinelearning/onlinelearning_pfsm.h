@@ -9,6 +9,7 @@
 #include "trigonometry.h"
 #include "template_calculator.h"
 #include <armadillo>
+#include <future>
 #define COMMAND_LOCAL 1  // Local frame
 
 class onlinelearning_pfsm: public Controller
@@ -23,7 +24,9 @@ class onlinelearning_pfsm: public Controller
   float vx_ref, vy_ref;
   arma::mat pol;
   pagerank_estimator p;
-
+  bool done;
+  // std::future<arma::mat> w;
+  // std::thread thr;
 public:
 
   onlinelearning_pfsm();
