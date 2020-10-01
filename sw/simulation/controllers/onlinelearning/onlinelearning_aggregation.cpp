@@ -49,7 +49,9 @@ double onlinelearning_aggregation::fitness(const vec &inputs, vec *grad_out, voi
   // Calculate fitness
   mat des = ones(8, 1);
   des[0] = 0;
-  return (dot(pr.t(), des) / mean(mean(des))) / mean(mean(pr));
+  double f = (dot(pr.t(), des) / mean(mean(des))) / mean(mean(pr));
+  // cout << f << endl;
+  return -f;
 }
 
 void onlinelearning_aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
@@ -99,10 +101,9 @@ void onlinelearning_aggregation::get_velocity_command(const uint16_t ID, float &
   if (moving_timer == 1) {
     optim::algo_settings_t settings;
     settings.vals_bound = true;
-    settings.upper_bounds = arma::ones(motion_p.size(), 1);
-    settings.lower_bounds = arma::zeros(motion_p.size(), 1);
+    settings.upper_bounds = ones(motion_p.size(), 1);
+    settings.lower_bounds = zeros(motion_p.size(), 1);
     optim::nm(pol, onlinelearning_aggregation::fitness, &p, settings);
-    pol.t().print(); //debug
   }
 
   // Final output

@@ -10,7 +10,7 @@
 #define OPTIM_ENABLE_ARMA_WRAPPERS
 #include "optim.hpp"
 #include "tools.h"
-
+#define NON_BLOCKING TRUE
 using namespace std;
 using namespace arma;
 
@@ -18,11 +18,13 @@ void optimization_routine_ref(pagerank_estimator p, mat &policy, bool &f)
 {
   optim::algo_settings_t settings;
   settings.vals_bound = true;
-  settings.lower_bounds = arma::zeros(16 * 8, 1);
-  settings.upper_bounds = arma::ones(16 * 8, 1);
-  arma::vec temp = arma::vectorise(policy); // Flatten policy
-  optim::nm(temp, onlinelearning_pfsm::fitness, &p, settings); // Optimization
-  policy = arma::normalise(reshape(temp, 16, 8), 1, 1); // Reshape
+  settings.lower_bounds = zeros(16 * 8, 1);
+  settings.upper_bounds = ones(16 * 8, 1);
+  vec temp = vectorise(policy); // Flatten policy
+  if (any(any(p.H))) {
+    optim::nm(temp, onlinelearning_pfsm::fitness, &p, settings); // Optimization
+  }
+  policy = normalise(reshape(temp, 16, 8), 1, 1); // Reshape
   f = true;
 }
 
@@ -30,14 +32,15 @@ mat optimization_routine(pagerank_estimator p, mat policy)
 {
   optim::algo_settings_t settings;
   settings.vals_bound = true;
-  settings.lower_bounds = arma::zeros(16 * 8, 1);
-  settings.upper_bounds = arma::ones(16 * 8, 1);
-  arma::vec temp = arma::vectorise(policy); // Flatten policy
-  if (any(any(p.H))) {
-    optim::lbfgs(temp, onlinelearning_pfsm::fitness, &p, settings); // Optimization
+  settings.lower_bounds = zeros(16 * 8, 1);
+  settings.upper_bounds = ones(16 * 8, 1);
+  // settings.gd_settings.method = 1;
+  // settings.gd_settings.par_step_size = 0.001;
+  vec temp = vectorise(policy); // Flatten policy
+  if (any(any(p.H))) { // Don't bother otherwise
+    optim::nm(temp, onlinelearning_pfsm::fitness, &p, settings); // Optimization
   }
-  return arma::normalise(reshape(temp, 16, 8), 1, 1); // Reshape and return policy
-
+  return normalise(reshape(temp, 16, 8), 1, 1); // Reshape and return policy
 }
 
 onlinelearning_pfsm::onlinelearning_pfsm():
@@ -51,11 +54,12 @@ onlinelearning_pfsm::onlinelearning_pfsm():
   st = 100; // Init
 
   // Get policy
-  policy.load(param->policy());
+  policy = ones(16, 8) / 8;
   // policy.print();
   moving_timer = rg.uniform_int(0, timelim);
   moving = false;
   done = true;
+
   // Initialize individual
   p.init(false);
 }
@@ -67,29 +71,33 @@ double onlinelearning_pfsm::fitness(const vec &inputs, vec *grad_out, void *opt_
   pagerank_estimator *p = reinterpret_cast<pagerank_estimator *>(opt_data);
 
   // Determine pagerank
-  arma::mat policy(inputs); // Get into matrix form
+  mat policy(inputs); // Get into matrix form
   policy.reshape(16, 8); // Reshape to correct dimensions
-  policy = arma::normalise(policy, 1, 1); // Normalize rows
-
-  arma::mat H = arma::zeros(16, 16);
+  policy = normalise(policy, 1, 1); // Normalize rows
+  // cout << "p->H" << endl; normalise(p->H,1,1).print();
+  // cout << "policy" << endl; policy.print();
+  mat H = zeros(16, 16);
   for (uint m = 0; m < 8; m++) {
     if (any(any(p->A[m]))) {
-      arma::mat temp = arma::normalise(p->A[m], 1, 1);
-      // cout << " " << endl; temp.print();
-      // cout << " " << endl; policy.print();
+      // cout << "p->A" <<m << endl; p->A[m].print();
+      mat temp = normalise(p->A[m], 1, 1);
       temp.each_col() %= policy.col(m);
-      // cout << " " << endl; temp.print();
+      // cout << "temp" << endl; temp.print();
       H += temp;
+      // cout << "H" << endl; normalise(H,1,1).print();
     }
   }
 
   // Get pagerank (assume alpha=1.0 for now)
-  arma::mat pr = pagerank(arma::normalise(H, 1, 1));
+  mat pr = pagerank(normalise(H, 1, 1));
 
   // Calculate fitness
-  arma::mat des = arma::ones(16, 1);
+  mat des = ones(16, 1);
   des[0] = 0;
-  return (arma::dot(pr.t(), des) / arma::mean(arma::mean(des))) / arma::mean(arma::mean(pr));
+  // pr.print();
+  double f = (dot(pr.t(), des) / mean(mean(des))) / mean(mean(pr));
+  // cout << f << endl;
+  return -f;
 }
 
 
@@ -126,9 +134,10 @@ void onlinelearning_pfsm::get_velocity_command(const uint16_t ID, float &v_x, fl
     st = bool2int(sensor);
 
     // Onboard estimator
-    int a;
-    if (moving) {a = 1;} else {a = 0;}
-    p.update(0, st, a); // Update model
+    uint a = 0;
+    if (moving) {a = selected_action + 1;}
+    p.update(0, st, a);
+    // pr.update(ID, st, a);
 
     state_action_lookup(ID, st);
     float r, t;
@@ -155,15 +164,17 @@ void onlinelearning_pfsm::get_velocity_command(const uint16_t ID, float &v_x, fl
 #else
   // Optimize policy (blocking version)
   if (moving_timer == 1) {
-    std::future<arma::mat> w = std::async(optimization_routine, p, policy);
+    // if (ID == 0) {
+    std::future<mat> w = std::async(optimization_routine, p, policy);
     policy = w.get(); // blocking call
-    if (ID == 0) {
-      cout << ID << endl;
-      policy.print();
-    }
+    // if (ID == 0) {
+    // }
   }
 #endif
-
+  if (moving_timer == 1) {
+    cout << ID << endl;
+    policy.print();
+  }
   v_x += vx_ref;
   v_y += vy_ref;
   wall_avoidance_turn(ID, v_x, v_y);
