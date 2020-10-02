@@ -13,7 +13,7 @@
       <xs:element name="mouse_zoom_speed" type="xs:float"/>
       <xs:element name="zoom" type="xs:integer"/>
       <xs:element name="animation_updatefreq" type="xs:float"/>
-      <xs:element name="logger_updatefreq" type="xs:integer"/>
+      <xs:element name="logger_updatefreq" type="xs:float"/>
       <xs:element name="policy" type="xs:string"/>
       <xs:element name="fitness" type="xs:string"/>
       <xs:element name="pr_states" type="xs:integer"/>

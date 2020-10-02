@@ -3,7 +3,7 @@
   <!-- Simulation -->
   <simulation_updatefreq>20</simulation_updatefreq>
   <simulation_realtimefactor>300</simulation_realtimefactor>
-  <time_limit>500</time_limit>
+  <time_limit>50000</time_limit>
   <!-- (seconds). Use time_limit > 0 to set a limit. If = 0, then the simulation runs indefinitely. -->
   <environment>square20</environment>
   <!-- See the folder conf/environments/ for available environments. 
@@ -18,10 +18,10 @@
   <!-- Start up zoom, bounded -90 and 9 -->
   <animation_updatefreq>25</animation_updatefreq>
   <!-- Logger -->
-  <logger_updatefreq>2</logger_updatefreq>
+  <logger_updatefreq>0.1</logger_updatefreq>
   <!-- Additional parameters -->
   <policy>conf/policies/temp.txt</policy>
-  <fitness>food</fitness>
+  <fitness>aggregation_clusters</fitness>
   <pr_states>16</pr_states>
   <!-- set to 0 to turn of estimator -->
   <pr_actions>8</pr_actions>

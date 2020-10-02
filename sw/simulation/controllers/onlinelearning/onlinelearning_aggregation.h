@@ -19,6 +19,7 @@ class onlinelearning_aggregation: public Controller
   float timelim;
   float v_x_ref, v_y_ref;
   uint st;
+  bool done;
 
 public:
 
@@ -26,6 +27,8 @@ public:
   static double fitness(const arma::vec &inputs, arma::vec *grad_out, void *opt_data);
   virtual void get_velocity_command(const uint16_t ID, float &v_x, float &v_y);
   virtual void animation(const uint16_t ID);
+  static void optimization_routine_ref(pagerank_estimator p, arma::vec &policy, bool &f);
+  static arma::vec optimization_routine(pagerank_estimator p, arma::vec policy);
 };
 
 #endif /*ONLINELEARNING_AGGREGATION_H*/

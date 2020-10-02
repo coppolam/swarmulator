@@ -2,11 +2,17 @@
 #define TOOLS_H
 #include <armadillo>
 
+// Enable the Armadillo library for matrix operations
+// and load the optim package header
+#define OPTIM_ENABLE_ARMA_WRAPPERS
+#include "optim.hpp"
+#include "main.h"
+
 static arma::mat pagerank(const arma::mat &G)
 {
   // Define parameters
-  uint maxiter = 1000;
-  float tol = 0.00001;
+  uint maxiter = 10000;
+  float tol = 1e-8;
 
   // Initialize
   uint i = 0;
@@ -24,6 +30,13 @@ static arma::mat pagerank(const arma::mat &G)
 
   // Return
   return arma::normalise(pr, 1, 1);
+}
+
+static void optimization_settings(optim::algo_settings_t &settings)
+{
+  settings.vals_bound = true;
+  settings.lower_bounds = arma::zeros(param->pr_states() * param->pr_actions(), 1);
+  settings.upper_bounds = arma::ones(param->pr_states() * param->pr_actions(), 1);
 }
 
 #endif /*TOOLS*/

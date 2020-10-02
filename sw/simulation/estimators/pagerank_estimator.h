@@ -10,7 +10,7 @@ public:
   arma::mat H, E;
   std::vector<uint> s_k, s_kp1;
   std::vector<arma::mat> A;
-  uint n_states;
+  uint n_states, n_actions;
   float fitness, fitness_max;
   bool estimator_active;
 

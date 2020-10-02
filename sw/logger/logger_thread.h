@@ -30,16 +30,15 @@ void run_logger(std::ofstream &logfile, std::string filename)
   }
 
   // Write the logfile
-  if (!paused && simtime_seconds > simtime_seconds_old + 1. / param->logger_updatefreq()) {
+  if (!paused &&
+      simtime_seconds > simtime_seconds_old + 1. / (float)param->logger_updatefreq()) {
     mtx.lock_shared();
     writer.txtwrite_state(logfile);
     writer.txtwrite_summary(logfile);
     simtime_seconds_old = simtime_seconds;
     mtx.unlock_shared();
-  } else {
-    std::this_thread::yield();
   }
-
+  std::this_thread::yield();
 }
 
 /**

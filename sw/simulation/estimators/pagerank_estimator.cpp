@@ -17,6 +17,7 @@ pagerank_estimator::pagerank_estimator(uint s_size, uint n_actions)
   if (s_size > 0 && n_actions > 0) {
     estimator_active = true;
     n_states = s_size;
+    n_actions = a_size;
     H.zeros(n_states, n_states);
     E.zeros(n_states, n_states);
     for (size_t i = 0; i < n_actions; i++) {
