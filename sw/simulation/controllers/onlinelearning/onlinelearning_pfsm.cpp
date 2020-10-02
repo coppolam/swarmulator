@@ -116,7 +116,7 @@ void onlinelearning_pfsm::optimization_routine_ref(
     temp.for_each([](mat::elem_type & x) { x = pow(x, BOOST); });
 
     // Reshape and normalize
-    policy = normalise(reshape(temp, this->states, this->actions), 1, 1);
+    policy = normalise(reshape(temp, p.n_states, p.n_actions), 1, 1);
   }
 
   // Set optimization done flag to true
@@ -143,7 +143,7 @@ mat onlinelearning_pfsm::optimization_routine(pagerank_estimator p, mat policy)
     temp.for_each([](mat::elem_type & x) { x = pow(x, BOOST); });
 
     // Reshape and normalize
-    policy = normalise(reshape(temp, states, actions), 1, 1);
+    policy = normalise(reshape(temp, p.n_states, p.n_actions), 1, 1);
   }
 
   return policy;
@@ -159,11 +159,11 @@ double onlinelearning_pfsm::fitness(const vec &inputs,
   // Determine pagerank
   mat policy(inputs); // Get policy vector back into matrix form
   policy.for_each([](mat::elem_type & x) { x = pow(x, BOOST); }); // Boost
-  policy = normalise(reshape(policy, states, actions), 1, 1); // Normalize rows
+  policy = normalise(reshape(policy, p->n_states, p->n_actions), 1, 1); // Normalize rows
 
   // Update model based on policy
-  mat H = zeros(states, actions);
-  for (uint m = 0; m < actions; m++) {
+  mat H = zeros(p->n_states, p->n_states);
+  for (uint m = 0; m < p->n_actions; m++) {
     // If we have a model for the effects of the action, we update
     // Else we skip, just to save some time;
     if (any(any(p->A[m]))) {
@@ -179,7 +179,7 @@ double onlinelearning_pfsm::fitness(const vec &inputs,
   // Calculate fitness
 
   // Desired states
-  mat des = ones(states, 1);
+  mat des = ones(p->n_states, 1);
   des[0] = 0;
 
   // Pagerank fitness (negative to maximize instead of minimize)
