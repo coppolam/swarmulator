@@ -11,10 +11,10 @@
 
 using namespace std;
 
-pagerank_estimator::pagerank_estimator(uint s_size, uint n_actions)
+pagerank_estimator::pagerank_estimator(uint s_size, uint a_size)
 {
   estimator_active = false;
-  if (s_size > 0 && n_actions > 0) {
+  if (s_size > 0 && a_size > 0) {
     estimator_active = true;
     n_states = s_size;
     n_actions = a_size;
