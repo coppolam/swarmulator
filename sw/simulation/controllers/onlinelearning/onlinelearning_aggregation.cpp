@@ -1,46 +1,77 @@
 #include "onlinelearning_aggregation.h"
+#include <future>
 #include "agent.h"
 #include "main.h"
 #include "randomgenerator.h"
 #include "auxiliary.h"
 #include "draw.h"
-#include <future>
-
-// Enable the Armadillo library for matrix operations
-#define OPTIM_ENABLE_ARMA_WRAPPERS
-// Load the optim package header
-#include "optim.hpp"
 
 // Load optimization specific tools (pagerank function)
 #include "tools.h"
+
 // Load up namespaces
 using namespace std;
 using namespace arma;
 
+/***********************************
+ * SETTINGS
+ * *********************************/
+
 // Define settings of the optimization of
 // 4 key simulation/optimization parameters
 
-/* If this is set, then the optimization runs on a separate thread independently of the simulation, this means that the simulation will not wait for the optimization to finish within this time step, but rather continue and update the reference to the value at a later time
-    If this is false, then the optimization will run within the time step
-    */
+/**
+ * NON_BLOCKING (boolean parameter)
+ *
+ *  - If true: the optimization runs on a separate thread independently of
+ *             the simulation, this means that the simulation will not wait
+ *             for the optimization to finish within this time step, but
+ *             rather continue and update the reference to the value at
+ *             a later time.
+ *
+ *  - If false: the optimization will run within the time step
+ *
+ */
 #define NON_BLOCKING true
 
-/* If this is true, then the agents will share a single model to optimize their controllers. If false, then each agent maintains and optimizes based on an individual model
-*/
+/**
+ * SHARED_MODEL (boolean parameter)
+ *
+ * - If true: the agents will share a single model to optimize
+ *            their Controllers.
+ *
+ * - If false: each agent maintains and optimizes based on an
+ *             individual model
+ *
+ */
 #define SHARED_MODEL false
 
-/* The maximum number of nealder-mead iteration steps for a given time steps.
-  Since we pick up where we left off at the next time-step, this works quite well
-  */
-#define ITER_MAX 10
+/**
+ * ITER_MAX (integer)
+ *
+ * The maximum number of nealder-mead iteration steps for a given time steps.
+ *
+ * Since we pick up where we left off at the next time-step,
+ * a low value like 10 will work quite well
+ */
+#define ITER_MAX 20
 
-/*This boosts the learning by amplyfing higher probabilities, enabling faster convergence to a solution.
-Use 1 for no boost, at the cost of slower learning
-*/
-#define BOOST 2.
+/**
+ * BOOST (float)
+ *
+ * This boosts the learning by amplyfing higher probabilities,
+ * enabling faster convergence to a solution.
+ *
+ * Use 1.0 for no boost (will be slower learning)
+ */
+#define BOOST 1.
+
+/*****************************************************************************/
 
 
-onlinelearning_aggregation::onlinelearning_aggregation(): Controller(), p(8, 1)
+onlinelearning_aggregation::onlinelearning_aggregation():
+  Controller(),
+  p(param->pr_states(), param->pr_actions())
 {
   // Initial values
   moving = false;
@@ -53,10 +84,9 @@ onlinelearning_aggregation::onlinelearning_aggregation(): Controller(), p(8, 1)
   vmean = 0.5;
 
   // Policy
-  motion_p.assign(8, 0.5);
-
-  vec temp(motion_p);
-  pol = temp;
+  states = param->pr_states();
+  actions = param->pr_actions();
+  policy = ones(states) / (float)actions;
 
   // Initialize individual
   p.init(false);
@@ -64,38 +94,54 @@ onlinelearning_aggregation::onlinelearning_aggregation(): Controller(), p(8, 1)
 }
 
 
-void onlinelearning_aggregation::optimization_routine_ref(pagerank_estimator p, vec &policy, bool &f)
+void onlinelearning_aggregation::optimization_routine_ref(
+  pagerank_estimator p, // Data
+  vec &policy, // Policy reference
+  bool &f) // Flag indicating completion
 {
+  // Set up optimization settings
   optim::algo_settings_t settings;
-  settings.vals_bound = true;
-  settings.lower_bounds = zeros(8, 1);
-  settings.upper_bounds = ones(8, 1);
-  // If we have already recorded some data into our model, then run the optimization routine
+  optimization_settings(settings);
+  settings.iter_max = ITER_MAX;
+
+  // If we have some data in our model, run the optimization
   if (any(any(p.H))) {
+
+    // Nealder-Mead optimization routine
     optim::nm(policy, onlinelearning_aggregation::fitness, &p, settings);
+
+    // Apply boost
+    policy.for_each([](vec::elem_type & x) { x = pow(x, BOOST); });
   }
+
+  // Set optimization done flag to true
   f = true;
 }
 
 vec onlinelearning_aggregation::optimization_routine(pagerank_estimator p, vec policy)
 {
+  // Set up optimization settings
   optim::algo_settings_t settings;
-  settings.vals_bound = true;
-  settings.lower_bounds = zeros(8, 1);
-  settings.upper_bounds = ones(8, 1);
-  // settings.gd_settings.method = 1;
-  // settings.gd_settings.par_step_size = 0.001;
-  // vec temp = vectorise(policy); // Flatten policy
-  if (any(any(p.H))) { // Don't bother otherwise
-    optim::nm(policy, onlinelearning_aggregation::fitness, &p, settings); // Optimization
+  optimization_settings(settings);
+  settings.iter_max = ITER_MAX;
+
+  // If we have some data in our model, run the optimization
+  if (any(any(p.H))) {
+
+    // Nealder-Mead optimization routine
+    optim::nm(policy, onlinelearning_aggregation::fitness, &p, settings);
+
+    // Apply boost
+    policy.for_each([](vec::elem_type & x) { x = pow(x, BOOST); });
   }
+
   return policy;
 }
 
-double onlinelearning_aggregation::fitness(const vec &inputs, vec *grad_out, void *opt_data)
+double onlinelearning_aggregation::fitness(const vec &inputs, vec *grad_out, void *data)
 {
   // Load up pagerank estimator as pointer
-  pagerank_estimator *p = reinterpret_cast<pagerank_estimator *>(opt_data);
+  pagerank_estimator *p = reinterpret_cast<pagerank_estimator *>(data);
 
   // Determine pagerank
   mat m(inputs);
@@ -104,20 +150,32 @@ double onlinelearning_aggregation::fitness(const vec &inputs, vec *grad_out, voi
   mat pr = pagerank(normalise(G + p->E, 1, 1)); // assume alpha=0.5
 
   // Calculate fitness
-  mat des = ones(8, 1);
+
+  // Desired states
+  mat des = ones(p->n_states, 1);
   des[0] = 0;
-  double f = (dot(pr.t(), des) / mean(mean(des))) / mean(mean(pr));
-  // cout << f << endl;
-  return -f;
+
+  // Pagerank fitness (negative to maximize instead of minimize)
+  return -(dot(pr.t(), des) / mean(mean(des))) / mean(mean(pr));
 }
 
 void onlinelearning_aggregation::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
+
+#ifdef LOG
+  // Initialize policy logfile (st=100 is a dummy initial state)
+  // Set up a unique name for the file and open it for writing.
+  if (st == 100) {
+    stringstream s;
+    s << ID;
+    filename = "logs/policy_" + identifier + "_" + s.str() + ".txt";
+    writer.setfilename(filename); // Set the filename
+    logfile.open(filename.c_str()); // Open for writing
+  }
+#endif
+
   v_x = 0;
   v_y = 0;
-
-  vector<double> a = {1, 2, 3, 4};
-  mat m(&a.front(), 2, 2);
 
   get_lattice_motion_all(ID, v_x, v_y); // Repulsion from neighbors
 
@@ -127,14 +185,18 @@ void onlinelearning_aggregation::get_velocity_command(const uint16_t ID, float &
 
   if (st != r.size() || moving_timer == 1) { // state change
     // state, action
-    st = std::min(r.size(), motion_p.size());
+    st = std::min<int>(r.size(), states);
 
     // Onboard estimator
     int a;
     if (moving) {a = 1;} else {a = 0;}
-    p.update(0, st, a); // Update model
+#if SHARED_MODEL
+    pr.update(ID, st, a); // Use the individual model
+#else
+    p.update(0, st, a); // Use the shared model
+#endif
 
-    if (rg.bernoulli(1.0 - pol[st])) {
+    if (rg.bernoulli(1.0 - policy[st])) {
       v_x_ref = 0.0;
       v_y_ref = 0.0;
       moving = false;
@@ -152,36 +214,57 @@ void onlinelearning_aggregation::get_velocity_command(const uint16_t ID, float &
     }
   }
   increase_counter_to_value(moving_timer, timelim, 1);
-  wall_avoidance_bounce(ID, v_x_ref, v_y_ref);
 
   // Optimize policy (non-blocking version)
 #ifdef NON_BLOCKING
   if (moving_timer == 1 && done) {
     done = false;
 
-    // Set up a detached thread to run in the background
-    std::thread thr(this->optimization_routine_ref, p, std::ref(pol), std::ref(done));
+    // Set up a thread to run the optimization
+#if SHARED_MODEL
+    std::thread thr(this->optimization_routine_ref, pr,
+                    std::ref(policy),
+                    std::ref(done));
+#else
+    std::thread thr(this->optimization_routine_ref, p,
+                    std::ref(policy),
+                    std::ref(done));
+#endif
 
     // Detach it
     thr.detach();
 
-    cout << ID << endl; pol.t().print();
-  }
-#else
-  // Optimize policy (blocking version)
-  if (moving_timer == 1) {
-    // if (ID == 0) {
-    std::future<mat> w = std::async(optimization_routine, p, pol);
-    pol = w.get(); // blocking call
+    // // Update the policy to most recent value.
+    cout << ID << endl; policy.t().print();
 
+#ifdef LOG
+    // Open the logfile for writing
+    for (uint16_t i = 0; i < states * actions; i++) {
+      logfile << policy[i] << " ";
+    }
+    logfile << endl;
+#endif
+  }
+
+#else
+  // Optimize policy (blocking version with async)
+  if (moving_timer == 1) {
+    std::future<mat> w = std::async(optimization_routine, p, policy);
+    policy = w.get(); // Blocking call
+#ifdef LOG
+    // Open the logfile for writing
+    for (uint16_t i = 0; i < states * actions; i++) {
+      logfile << policy[i] << " ";
+    }
+    logfile << endl;
+#endif
   }
 #endif
-  // if (ID == 0) {
-  // pol.t().print();
-  // }
+
   // Final output
   v_x += v_x_ref;
   v_y += v_y_ref;
+  wall_avoidance_bounce(ID, v_x_ref, v_y_ref);
 }
 
 void onlinelearning_aggregation::animation(const uint16_t ID)

@@ -268,8 +268,8 @@ void onlinelearning_pfsm::get_velocity_command(const uint16_t ID, float &v_x, fl
     // Detach it
     thr.detach();
 
-    // Update the policy to most recent value.
-    cout << ID << endl; policy.print();
+    // // Update the policy to most recent value.
+    // cout << ID << endl; policy.print();
 
 #ifdef LOG
     // Open the logfile for writing

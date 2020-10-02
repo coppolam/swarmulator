@@ -23,7 +23,6 @@ class onlinelearning_pfsm: public Controller
   arma::mat policy;
   uint st; // current state
   float vx_ref, vy_ref;
-  arma::mat pol;
   pagerank_estimator p;
   bool done;
   uint states, actions;

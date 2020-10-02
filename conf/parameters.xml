@@ -20,7 +20,7 @@
   <!-- Logger -->
   <logger_updatefreq>0.1</logger_updatefreq>
   <!-- Additional parameters -->
-  <policy>conf/policies/temp.txt</policy>
+  <policy></policy>
   <fitness>aggregation_clusters</fitness>
   <pr_states>16</pr_states>
   <!-- set to 0 to turn of estimator -->
