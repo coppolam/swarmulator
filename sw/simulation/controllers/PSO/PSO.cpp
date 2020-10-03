@@ -5,6 +5,7 @@
 #include "main.h"
 #include <math.h>
 #include "auxiliary.h"
+#include "omniscient_observer.h"
 
 // main PSO logic
 // PSO with constant heading, changing the particle's heading by modifying vx and vy
@@ -19,6 +20,7 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
   s.at(ID)->laser_pnts.clear(); // laser points (where the lasers intersect with the environment)
   agent_pos.x = state[1]; // loading agent pos struct Point
   agent_pos.y = state[0];
+  local_psi = get_heading_to_point(agent_pos,goal);
   laser_rays.clear();
   // create ray objects
   for (int i = 0; i<4; i++)
@@ -51,6 +53,18 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
     }
   }
 
+if (get_safe_direction(s.at(ID)->laser_ranges,local_psi,laser_rays[0].desired_laser_distance,s.at(ID)->get_orientation()))
+{
+  reset_wall_following = true;
+}
+
+if (reset_wall_following)
+{
+  wall_following = false;
+
+  determine_direction = false;
+}
+
 if (determine_direction)
 {
   if(get_follow_direction(s.at(ID)->laser_ranges,local_psi))
@@ -62,12 +76,6 @@ if (determine_direction)
     follow_left = false;
   }
   determine_direction = false;
-}
-
-if (reset_wall_following)
-{
-  wall_following = false;
-  local_psi = get_heading_to_point(agent_pos,goal);
 }
 
   // load gas concentration at current position
@@ -125,7 +133,6 @@ if (reset_wall_following)
     
   else if (wall_following == true)
   {
-    terminalinfo::debug_msg("accumulator added");
     if (follow_left)
     {
       heading_accumulator = -heading_accumulator;
@@ -135,6 +142,15 @@ if (reset_wall_following)
     local_vy = sinf(local_psi)*desired_velocity;
   }
   
+  std::vector<uint> closest_ids = o.request_closest(ID);
+  if ( closest_ids.size() > 0 )
+  {
+    if (get_agent_dist(ID,closest_ids[0]) < swarm_avoidance_thres)
+    {
+      local_vx = 0.0;
+      local_vy = 0.0;
+    }
+  }
 
   v_x = local_vx;
   v_y = local_vy;
@@ -144,6 +160,11 @@ void PSO::animation(const uint16_t ID)
   /*** Put the animation of the controller/sensors here ***/
   draw d;
   d.circle_loop(rangesensor);
+}
+
+float PSO::get_agent_dist(const uint16_t ID1, const uint16_t ID2)
+{
+  return(sqrtf(pow(s.at(ID1)->state[0]-s.at(ID2)->state[0],2)+pow(s.at(ID1)->state[1]-s.at(ID2)->state[1],2)));
 }
 
 /**
@@ -185,16 +206,9 @@ float PSO::get_ray_control(laser_ray ray, float dt)
   ray.heading_error = ray.desired_laser_distance - ray.range;
   ray.heading_error_d = (ray.heading_error-ray.old_heading_error)/dt;
   ray.heading_error_i = 0.5*(ray.heading_error+ray.old_heading_error)*dt;
-  terminalinfo::debug_msg("start \n");
-  terminalinfo::debug_msg(std::to_string(dt));
-  terminalinfo::debug_msg(std::to_string(ray.range));
-  terminalinfo::debug_msg(std::to_string(ray.heading_error));
-  terminalinfo::debug_msg(std::to_string(ray.heading_error_d));
-  terminalinfo::debug_msg(std::to_string(ray.heading_error_i));
 
   ray.old_heading_error = ray.heading_error;
   float final_control = ray.heading_kp*ray.heading_error + ray.heading_kd*ray.heading_error_d + ray.heading_ki*ray.heading_error_i;
-  terminalinfo::debug_msg(std::to_string(final_control));
   return(final_control);
 }
 
@@ -213,6 +227,39 @@ bool PSO::get_follow_direction(std::vector<float> ranges, float desired_heading)
   }
   float heading_diff = desired_heading - laser_headings[min_laser_idx];
   if (heading_diff < 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+// returns if going in a desired direction is safe
+bool PSO::get_safe_direction(std::vector<float> ranges, float desired_heading, float threshold, float agent_heading)
+{
+  if( desired_heading < 0)
+  {
+    desired_heading += M_PI*2;
+  }
+  if (agent_heading < 0)
+  {
+    agent_heading += M_PI*2;
+  }
+  if ( desired_heading< agent_heading)
+  {
+    desired_heading += M_PI*2;
+  }
+  int lower_idx = (int)((desired_heading-agent_heading)/M_PI_2); //the quadrant in which the desired heading lies
+  int upper_idx = lower_idx + 1;
+  if (upper_idx == 4)
+  {
+    upper_idx = 0;
+  }
+ 
+
+  if (ranges[lower_idx] > threshold && ranges[upper_idx] > threshold)
   {
     return true;
   }
@@ -289,7 +336,6 @@ laser_ray PSO::get_laser_reads(laser_ray ray, const uint16_t ID)
     std::vector<float> v = {laser_point.x,laser_point.y};
     s.at(ID)->laser_pnts.push_back(v);
   }
-  terminalinfo::debug_msg("from calculations:");
-  terminalinfo::debug_msg(std::to_string(ray.range));
+
   return ray;
 }

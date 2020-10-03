@@ -5,7 +5,7 @@
 #include <iostream>
 #include "controller.h"
 #include "auxiliary.h"
-
+#include "omniscient_observer.h"
 class laser_ray
 {
 	public:
@@ -45,22 +45,26 @@ public:
 	float get_ray_control(laser_ray ray, float dt);
 	float get_heading_to_point(Point agent, Point goal);
 	bool get_follow_direction(std::vector<float> ranges, float desired_heading);
+	bool get_safe_direction(std::vector<float> ranges, float desired_heading, float threshold, float agent_heading);
+	float get_agent_dist(const uint16_t ID1, const uint16_t ID2);
 	float laser_headings[4] = {0,M_PI_2,M_PI,3*M_PI_2};
-	
+	OmniscientObserver o;
+
 	float iteration_start_time = 0.0;
 	float local_vx, local_vy;
 	float local_psi = 0.0;
 
 	// configuration parameters for PSO
 	float rand_p = 1.4;
-	float omega = 0.2;
+	float omega = 0.1;
 	float phi_p = 0.5;
 	float phi_g = 3.5;
 	float yaw_incr = 0.1;
-	float update_time = 30.0;
+	float update_time = 15.0;
 	float dist_reached_goal = 0.5;
 	bool follow_left = false; 
 
+	float swarm_avoidance_thres = 1.0;
 	// // wall following params
 	// float heading_kp = 3.0;
 	// float heading_kd = 30.0;
