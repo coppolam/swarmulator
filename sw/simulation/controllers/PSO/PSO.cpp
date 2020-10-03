@@ -6,17 +6,21 @@
 #include <math.h>
 #include "auxiliary.h"
 
-void PSO::get_velocity_command(const uint16_t ID, float &psi, float &v_x)
+// main PSO logic
+// PSO with constant heading, changing the particle's heading by modifying vx and vy
+// this in order to maintain constant yaw for better UWB estimates
+void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
 {
   /*** Put your controller here ***/
+  float dt = s.at(ID)->dt;
   random_generator rg;
-  // load agent state
-  std::vector<float> state = s.at(ID)->state;
-  s.at(ID)->laser_ranges.clear();
-  agent_pos.x = state[1];
+  std::vector<float> state = s.at(ID)->state; // load agent state
+  s.at(ID)->laser_ranges.clear(); // laser ranges are emptied as they need to be reloaded
+  s.at(ID)->laser_pnts.clear(); // laser points (where the lasers intersect with the environment)
+  agent_pos.x = state[1]; // loading agent pos struct Point
   agent_pos.y = state[0];
-  s.at(ID)->laser_pnts.clear();
-
+  laser_rays.clear();
+  // create ray objects
   for (int i = 0; i<4; i++)
 	{
     laser_ray ray;
@@ -24,21 +28,54 @@ void PSO::get_velocity_command(const uint16_t ID, float &psi, float &v_x)
 		laser_rays.push_back(ray);
 	}
 
+  heading_accumulator = 0.0;
+  // load laser range values 1 by one and check if they are below threshold (i.e., we need to avoid something)
+  bool reset_wall_following = true;
+  bool determine_direction = false;
   for (int i = 0; i<4; i++)
   {
-    get_laser_reads(laser_rays[i],ID);
+    laser_rays[i] = get_laser_reads(laser_rays[i],ID);
     
-    if(s.at(ID)->laser_ranges[i] < ranger_threshold)
-    { 
-      wall_following = true;
+    if ( s.at(ID)->laser_ranges[i] < laser_rays[i].engage_laser_distance)
+    {
+      reset_wall_following = false;
+      heading_accumulator += get_ray_control(laser_rays[i],dt);
+      if(s.at(ID)->laser_ranges[i] < laser_rays[i].desired_laser_distance)
+      {
+        if (!wall_following)
+        {
+          determine_direction = true;
+          wall_following = true;
+        }
+      }
     }
   }
 
+if (determine_direction)
+{
+  if(get_follow_direction(s.at(ID)->laser_ranges,local_psi))
+  {
+    follow_left = true;
+  }
+  else
+  {
+    follow_left = false;
+  }
+  determine_direction = false;
+}
+
+if (reset_wall_following)
+{
+  wall_following = false;
+  local_psi = get_heading_to_point(agent_pos,goal);
+}
+
+  // load gas concentration at current position
   int x_indx = clip((int)((s.at(ID)->state[1]-environment.x_min)/(environment.x_max-environment.x_min)*(float)(environment.gas_obj.numcells[0])),0,environment.gas_obj.numcells[0]);
   int y_indx = clip((int)((s.at(ID)->state[0]-environment.y_min)/(environment.y_max-environment.y_min)*(float)(environment.gas_obj.numcells[1])),0,environment.gas_obj.numcells[1]);
-
-  // update best found positions
   float gas_conc = (float)(environment.gas_obj.gas_data[(int)(floor(simtime_seconds))][x_indx][y_indx]);
+
+  // update best found agent position and best found swarm position if required
   if( gas_conc>s.at(ID)->best_agent_gas)
   {
     s.at(ID)->best_agent_gas = gas_conc;
@@ -51,7 +88,8 @@ void PSO::get_velocity_command(const uint16_t ID, float &psi, float &v_x)
     }
   }
 
-  if ( simtime_seconds-iteration_start_time >= update_time)
+  // new goal is computed every 'update_time' [sec]
+  if ( simtime_seconds-iteration_start_time >= update_time || getDistance(goal,agent_pos) < dist_reached_goal )
   {
     iteration_start_time = simtime_seconds;
     float r_p = rg.uniform_float(0,1);
@@ -65,13 +103,8 @@ void PSO::get_velocity_command(const uint16_t ID, float &psi, float &v_x)
     s.at(ID)->goal = goal;
     local_psi = get_heading_to_point(agent_pos,goal);
 
-    local_vx = 1.0;
-    
-
-    moving_wall_follow = false;
-    rotating_wall_follow = true;
-    rotation_dir_decided = false;
-    rotate_right = true;
+    local_vx = cosf(local_psi)*desired_velocity;
+    local_vy = sinf(local_psi)*desired_velocity;
     wall_following = false;
   }
   else if (simtime_seconds == 0.0)
@@ -79,88 +112,32 @@ void PSO::get_velocity_command(const uint16_t ID, float &psi, float &v_x)
     // initial velocity for everyone
     goal = {.x = rg.uniform_float(environment.x_min,environment.x_max), .y=rg.uniform_float(environment.y_min,environment.y_max)};
     local_psi = get_heading_to_point(agent_pos,goal);
-    local_vx = 1.0;
+    local_vx = cosf(local_psi)*desired_velocity;
+    local_vy = sinf(local_psi)*desired_velocity;
+  }
+  // float dist_to_goal = getDistance(goal,agent_pos);   
+  // if (dist_to_goal<dist_reached_goal)
+  // {
+  //   local_vx = 0.0;
+  //   local_vy = 0.0;
+
+  // }
+    
+  else if (wall_following == true)
+  {
+    terminalinfo::debug_msg("accumulator added");
+    if (follow_left)
+    {
+      heading_accumulator = -heading_accumulator;
+    }
+    local_psi = get_heading_to_point(agent_pos,goal) + heading_accumulator;
+    local_vx = cosf(local_psi)*desired_velocity;
+    local_vy = sinf(local_psi)*desired_velocity;
   }
   
-  if (wall_following == true)
-  {
-    if (rotating_wall_follow)
-    {
-      if (rotation_dir_decided == false)
-      {
-        if (s.at(ID)->laser_ranges[0] <= s.at(ID)->laser_ranges[2])
-        {
-          rotate_right = false;
-          rotation_dir_decided = true;
-        }
-        else 
-        {
-          rotate_right = true;
-        }
-      }
 
-      if (s.at(ID)->laser_ranges[1] > ranger_threshold)
-      {
-        rotating_wall_follow = false;
-        moving_wall_follow = true;
-      }
-      else
-      {
-        local_vx = 0.0;
-        if(rotate_right)
-        {
-          local_psi += yaw_incr;
-        }
-        else
-        {
-          local_psi -= yaw_incr;
-        }
-      }
-        
-      
-    }
-    if (moving_wall_follow)
-    {
-      local_vx = 1.0;
-      wall_following = false;
-      if (s.at(ID)->laser_ranges[1]<ranger_threshold)
-      {
-        moving_wall_follow = false;
-        rotating_wall_follow = true;
-        rotation_dir_decided = false;
-	      rotate_right = true;
-      }
-      else if (s.at(ID)->laser_ranges[0]>0.5*ranger_threshold && s.at(ID)->laser_ranges[1]>0.5*ranger_threshold && s.at(ID)->laser_ranges[2]>0.5*ranger_threshold &&s.at(ID)->laser_ranges[3]>0.5*ranger_threshold )
-      {
-        moving_wall_follow = false;
-        rotating_wall_follow = true;
-        rotation_dir_decided = false;
-	      rotate_right = true;
-        wall_following = false;
-        local_psi = get_heading_to_point(agent_pos,goal);
-      }
-      else 
-      {
-        if (s.at(ID)->laser_ranges[0] < ranger_threshold)
-        {
-          local_psi -= yaw_incr;
-        }
-        else if (s.at(ID)->laser_ranges[2] < ranger_threshold)
-        {
-          local_psi += yaw_incr;
-        }
-      }
-    }
-  }
-  
-  float dist_to_goal = getDistance(goal,agent_pos);   
-  if (dist_to_goal<dist_reached_goal)
-  {
-    local_vx = 0.0;
-  }
-
-  psi = local_psi;
   v_x = local_vx;
+  v_y = local_vy;
   }
 void PSO::animation(const uint16_t ID)
 {
@@ -202,7 +179,50 @@ float PSO::get_heading_to_point(Point agent, Point goal)
  * @param (Point) wall_1: first point on the wall
  * @param (Point) wall_2: second point on the wall
 */
-void PSO::get_laser_reads(laser_ray ray, const uint16_t ID)
+
+float PSO::get_ray_control(laser_ray ray, float dt)
+{
+  ray.heading_error = ray.desired_laser_distance - ray.range;
+  ray.heading_error_d = (ray.heading_error-ray.old_heading_error)/dt;
+  ray.heading_error_i = 0.5*(ray.heading_error+ray.old_heading_error)*dt;
+  terminalinfo::debug_msg("start \n");
+  terminalinfo::debug_msg(std::to_string(dt));
+  terminalinfo::debug_msg(std::to_string(ray.range));
+  terminalinfo::debug_msg(std::to_string(ray.heading_error));
+  terminalinfo::debug_msg(std::to_string(ray.heading_error_d));
+  terminalinfo::debug_msg(std::to_string(ray.heading_error_i));
+
+  ray.old_heading_error = ray.heading_error;
+  float final_control = ray.heading_kp*ray.heading_error + ray.heading_kd*ray.heading_error_d + ray.heading_ki*ray.heading_error_i;
+  terminalinfo::debug_msg(std::to_string(final_control));
+  return(final_control);
+}
+
+bool PSO::get_follow_direction(std::vector<float> ranges, float desired_heading)
+{
+  float min_laser = 1000.0;
+  int min_laser_idx = 0;
+
+  for (int i = 0; i<4; i++)
+  {
+    if ( ranges[i]<min_laser)
+    {
+      min_laser = ranges[i];
+      min_laser_idx = i;
+    }
+  }
+  float heading_diff = desired_heading - laser_headings[min_laser_idx];
+  if (heading_diff < 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+laser_ray PSO::get_laser_reads(laser_ray ray, const uint16_t ID)
 {
   //init
   Point laser_point,wall_start, wall_end, agent_pos;
@@ -264,8 +284,12 @@ void PSO::get_laser_reads(laser_ray ray, const uint16_t ID)
   // we didn't find anything (this should be rare if not impossible), we we return the end of the projected laser beams and their size
   else
   {
+    ray.range = environment.env_diagonal;
     s.at(ID)->laser_ranges.push_back(environment.env_diagonal);
     std::vector<float> v = {laser_point.x,laser_point.y};
     s.at(ID)->laser_pnts.push_back(v);
   }
+  terminalinfo::debug_msg("from calculations:");
+  terminalinfo::debug_msg(std::to_string(ray.range));
+  return ray;
 }
