@@ -22,6 +22,10 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
   agent_pos.y = state[0];
   local_psi = get_heading_to_point(agent_pos,goal);
   laser_rays.clear();
+
+  local_psi = get_heading_to_point(agent_pos,goal);
+  local_vx = cosf(local_psi)*desired_velocity;
+  local_vy = sinf(local_psi)*desired_velocity;
   // create ray objects
   for (int i = 0; i<4; i++)
 	{
@@ -110,7 +114,6 @@ if (determine_direction)
 
     s.at(ID)->goal = goal;
     local_psi = get_heading_to_point(agent_pos,goal);
-
     local_vx = cosf(local_psi)*desired_velocity;
     local_vy = sinf(local_psi)*desired_velocity;
     wall_following = false;
@@ -147,8 +150,18 @@ if (determine_direction)
   {
     if (get_agent_dist(ID,closest_ids[0]) < swarm_avoidance_thres)
     {
-      local_vx = 0.0;
-      local_vy = 0.0;
+      other_agent_pos.x = s.at(closest_ids[0])->state[1];
+      other_agent_pos.y = s.at(closest_ids[0])->state[0];
+      float heading_to_other_agent = get_heading_to_point(agent_pos,other_agent_pos);
+      float heading_away_from_agent = heading_to_other_agent - M_PI;
+      if (get_safe_direction(s.at(ID)->laser_ranges,heading_away_from_agent,laser_rays[0].desired_laser_distance,s.at(ID)->get_orientation()))
+      {
+        local_vx += cosf(heading_away_from_agent)*0.5;
+        local_vy += sinf(heading_away_from_agent)*0.5;
+        float vector_size = sqrtf(powf(local_vx,2)+powf(local_vy,2));
+        local_vx = local_vx/vector_size;
+        local_vy = local_vy/vector_size;
+      }
     }
   }
 

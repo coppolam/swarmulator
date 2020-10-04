@@ -20,8 +20,8 @@ class laser_ray
 		float range = 0.0 ; //final outcome, the measured range
 		bool wall_following = false;
 		// wall following params
-		float heading_kp = 5.0;
-		float heading_kd = 0.0;
+		float heading_kp = 7.0;
+		float heading_kd = 1.0;
 		float heading_ki = 0.05;
 
 		float heading_error = 0.0;
@@ -87,7 +87,7 @@ public:
 	float heading_accumulator = 0.0;
 
 	bool wall_following = false;
-	Point agent_pos, goal, random_point;
+	Point agent_pos, goal, random_point, other_agent_pos;
 	std::vector<laser_ray> laser_rays;
 	
 };
