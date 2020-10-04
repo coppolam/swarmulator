@@ -23,6 +23,8 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
   local_psi = get_heading_to_point(agent_pos,goal);
   laser_rays.clear();
 
+  
+
   local_psi = get_heading_to_point(agent_pos,goal);
   local_vx = cosf(local_psi)*desired_velocity;
   local_vy = sinf(local_psi)*desired_velocity;
@@ -38,6 +40,7 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
   // load laser range values 1 by one and check if they are below threshold (i.e., we need to avoid something)
   bool reset_wall_following = true;
   bool determine_direction = false;
+  float min_laser = 100;
   for (int i = 0; i<4; i++)
   {
     laser_rays[i] = get_laser_reads(laser_rays[i],ID);
@@ -45,7 +48,10 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
     if ( s.at(ID)->laser_ranges[i] < laser_rays[i].engage_laser_distance)
     {
       reset_wall_following = false;
+
       heading_accumulator += get_ray_control(laser_rays[i],dt);
+
+      
       if(s.at(ID)->laser_ranges[i] < laser_rays[i].desired_laser_distance)
       {
         if (!wall_following)
@@ -55,7 +61,30 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
         }
       }
     }
+    
   }
+  diff_accumulator = heading_accumulator - old_accumulator;
+  if (diff_accumulator > max_accumulator_increase)
+  {
+    heading_accumulator = old_accumulator + max_accumulator_increase;
+  }
+  else if (diff_accumulator < - max_accumulator_increase)
+  {
+    heading_accumulator = old_accumulator - max_accumulator_increase;
+  }
+  if (wall_following)
+  {
+    old_accumulator = heading_accumulator;
+  }
+  else
+  {
+    old_accumulator = 0.0;
+  }
+  
+  
+
+
+  terminalinfo::debug_msg(std::to_string(heading_accumulator));
 
 // terminalinfo::debug_msg(std::to_string(get_safe_direction(s.at(ID)->laser_ranges,local_psi,laser_rays[0].desired_laser_distance,s.at(ID)->get_orientation())));
 if (get_safe_direction(s.at(ID)->laser_ranges,local_psi,laser_rays[0].desired_laser_distance,s.at(ID)->get_orientation()))
@@ -151,6 +180,12 @@ if (determine_direction)
   {
     if (get_agent_dist(ID,closest_ids[0]) < swarm_avoidance_thres)
     {
+      if (started_agent_avoid == false)
+      {
+        started_agent_avoid = true;
+        started_swarm_avoid_time = simtime_seconds;
+      }
+
       other_agent_pos.x = s.at(closest_ids[0])->state[1];
       other_agent_pos.y = s.at(closest_ids[0])->state[0];
       float heading_to_other_agent = get_heading_to_point(agent_pos,other_agent_pos);
@@ -160,11 +195,35 @@ if (determine_direction)
         local_vx += cosf(heading_away_from_agent)*0.5;
         local_vy += sinf(heading_away_from_agent)*0.5;
         float vector_size = sqrtf(powf(local_vx,2)+powf(local_vy,2));
-        local_vx = local_vx/vector_size;
-        local_vy = local_vy/vector_size;
+        local_vx = local_vx/vector_size*desired_velocity;
+        local_vy = local_vy/vector_size*desired_velocity;
+      }
+      if ((simtime_seconds-started_swarm_avoid_time)> swarm_rerout_time)
+      {
+        started_swarm_avoid_time = simtime_seconds;
+        iteration_start_time = simtime_seconds;
+        float r_p = rg.uniform_float(0,1);
+        float r_g = rg.uniform_float(0,1);
+        
+        random_point = {.x = rg.uniform_float(environment.x_min,environment.x_max),.y = rg.uniform_float(environment.y_min,environment.y_max)};
+        float v_x = rand_p*(random_point.x-agent_pos.x)+omega*(goal.x-agent_pos.x)+phi_p*r_p*(s.at(ID)->best_agent_pos.x-agent_pos.x)+phi_g*r_g*(environment.best_gas_pos_x-agent_pos.x);
+        float v_y = rand_p*(random_point.y-agent_pos.y)+omega*(goal.y-agent_pos.y)+phi_p*r_p*(s.at(ID)->best_agent_pos.y-agent_pos.y)+phi_g*r_g*(environment.best_gas_pos_y-agent_pos.y);
+        goal = {.x = agent_pos.x + v_x,.y = agent_pos.y+v_y}; 
+
+        s.at(ID)->goal = goal;
+        local_psi = get_heading_to_point(agent_pos,goal);
+        local_vx = cosf(local_psi)*desired_velocity;
+        local_vy = sinf(local_psi)*desired_velocity;
+        wall_following = false;
       }
     }
+    else
+    {
+    started_agent_avoid = false;
+    }
   }
+
+  
 
   v_x = local_vx;
   v_y = local_vy;
@@ -223,6 +282,17 @@ float PSO::get_ray_control(laser_ray ray, float dt)
 
   ray.old_heading_error = ray.heading_error;
   float final_control = ray.heading_kp*ray.heading_error + ray.heading_kd*ray.heading_error_d + ray.heading_ki*ray.heading_error_i;
+  // float diff_control = final_control - old_accumulator;
+
+  // if (diff_control > ray.max_accumulator_increase)
+  // {
+  //   final_control = old_accumulator + ray.max_accumulator_increase;
+  // }
+  // else if (diff_control < -ray.max_accumulator_increase)
+  // {
+  //   final_control = old_accumulator - ray.max_accumulator_increase;
+  // }
+  // old_accumulator = final_control;
   return(final_control);
 }
 
