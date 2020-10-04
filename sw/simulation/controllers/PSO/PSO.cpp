@@ -57,6 +57,7 @@ void PSO::get_velocity_command(const uint16_t ID, float &v_x, float &v_y)
     }
   }
 
+// terminalinfo::debug_msg(std::to_string(get_safe_direction(s.at(ID)->laser_ranges,local_psi,laser_rays[0].desired_laser_distance,s.at(ID)->get_orientation())));
 if (get_safe_direction(s.at(ID)->laser_ranges,local_psi,laser_rays[0].desired_laser_distance,s.at(ID)->get_orientation()))
 {
   reset_wall_following = true;
@@ -71,7 +72,7 @@ if (reset_wall_following)
 
 if (determine_direction)
 {
-  if(get_follow_direction(s.at(ID)->laser_ranges,local_psi))
+  if(get_follow_direction(s.at(ID)->laser_ranges,local_psi,s.at(ID)->get_orientation()))
   {
     follow_left = true;
   }
@@ -225,21 +226,28 @@ float PSO::get_ray_control(laser_ray ray, float dt)
   return(final_control);
 }
 
-bool PSO::get_follow_direction(std::vector<float> ranges, float desired_heading)
+bool PSO::get_follow_direction(std::vector<float> ranges, float desired_heading, float agent_heading)
 {
-  float min_laser = 1000.0;
-  int min_laser_idx = 0;
-
-  for (int i = 0; i<4; i++)
+  if( desired_heading < 0)
   {
-    if ( ranges[i]<min_laser)
-    {
-      min_laser = ranges[i];
-      min_laser_idx = i;
-    }
+    desired_heading += M_PI*2;
   }
-  float heading_diff = desired_heading - laser_headings[min_laser_idx];
-  if (heading_diff < 0)
+  if (agent_heading < 0)
+  {
+    agent_heading += M_PI*2;
+  }
+  if ( desired_heading< agent_heading)
+  {
+    desired_heading += M_PI*2;
+  }
+  int lower_idx = (int)((desired_heading-agent_heading)/M_PI_2); //the quadrant in which the desired heading lies
+  int upper_idx = lower_idx + 1;
+  if (upper_idx == 4)
+  {
+    upper_idx = 0;
+  }
+
+  if (ranges[lower_idx] > ranges[upper_idx])
   {
     return true;
   }

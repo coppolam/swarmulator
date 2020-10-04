@@ -20,8 +20,8 @@ class laser_ray
 		float range = 0.0 ; //final outcome, the measured range
 		bool wall_following = false;
 		// wall following params
-		float heading_kp = 7.0;
-		float heading_kd = 1.0;
+		float heading_kp = 4.0;
+		float heading_kd = 0.0;
 		float heading_ki = 0.05;
 
 		float heading_error = 0.0;
@@ -30,9 +30,9 @@ class laser_ray
 		float heading_error_i = 0.0;
 		
 		float heading_accumulator = 0.0; // what is finally added to heading
-		float desired_laser_distance = 2.0; // desired minimal laser distance when following a wall
+		float desired_laser_distance = 1.5; // desired minimal laser distance when following a wall
 		float critical_laser_distance = 0.5; // when this point is reached we should be really really careful
-		float engage_laser_distance = 3.0; // the end of the wall following zone, get more than this clearance to get out
+		float engage_laser_distance = 2.5; // the end of the wall following zone, get more than this clearance to get out
 };
 
 class PSO: public Controller
@@ -44,7 +44,7 @@ public:
 	laser_ray get_laser_reads(laser_ray ray, const uint16_t ID);
 	float get_ray_control(laser_ray ray, float dt);
 	float get_heading_to_point(Point agent, Point goal);
-	bool get_follow_direction(std::vector<float> ranges, float desired_heading);
+	bool get_follow_direction(std::vector<float> ranges, float desired_heading, float agent_heading);
 	bool get_safe_direction(std::vector<float> ranges, float desired_heading, float threshold, float agent_heading);
 	float get_agent_dist(const uint16_t ID1, const uint16_t ID2);
 	float laser_headings[4] = {0,M_PI_2,M_PI,3*M_PI_2};
@@ -60,7 +60,7 @@ public:
 	float phi_p = 0.5;
 	float phi_g = 3.5;
 	float yaw_incr = 0.1;
-	float update_time = 15.0;
+	float update_time = 30.0;
 	float dist_reached_goal = 0.5;
 	bool follow_left = false; 
 
