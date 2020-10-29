@@ -34,7 +34,7 @@ static arma::mat pagerank(const arma::mat &G)
 
 static void optimization_settings(optim::algo_settings_t &settings)
 {
-  settings.vals_bound = true;
+  settings.vals_bound = false;
   settings.lower_bounds = arma::zeros(param->pr_states() * param->pr_actions(), 1);
   settings.upper_bounds = arma::ones(param->pr_states() * param->pr_actions(), 1);
 }

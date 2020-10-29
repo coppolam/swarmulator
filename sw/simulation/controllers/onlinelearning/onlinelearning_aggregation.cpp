@@ -21,7 +21,7 @@ using namespace arma;
 // 4 key simulation/optimization parameters
 
 /**
- * NON_BLOCKING (boolean parameter)
+ * DETACH (boolean parameter)
  *
  *  - If true: the optimization runs on a separate thread independently of
  *             the simulation, this means that the simulation will not wait
@@ -32,7 +32,7 @@ using namespace arma;
  *  - If false: the optimization will run within the time step
  *
  */
-#define NON_BLOCKING true
+#define DETACH false
 
 /**
  * SHARED_MODEL (boolean parameter)
@@ -54,7 +54,7 @@ using namespace arma;
  * Since we pick up where we left off at the next time-step,
  * a low value like 10 will work quite well
  */
-#define ITER_MAX 20
+#define ITER_MAX 10
 
 /**
  * BOOST (float)
@@ -84,9 +84,10 @@ onlinelearning_aggregation::onlinelearning_aggregation():
   vmean = 0.5;
 
   // Policy
+  st = 100;
   states = param->pr_states();
   actions = param->pr_actions();
-  policy = ones(states) / (float)actions;
+  policy = ones(states) / 2.;
 
   // Initialize individual
   p.init(false);
@@ -105,7 +106,7 @@ void onlinelearning_aggregation::optimization_routine_ref(
   settings.iter_max = ITER_MAX;
 
   // If we have some data in our model, run the optimization
-  if (any(any(p.H))) {
+  if (any(any(p.H)) && any(any(p.E))) {
 
     // Nealder-Mead optimization routine
     optim::nm(policy, onlinelearning_aggregation::fitness, &p, settings);
@@ -113,6 +114,9 @@ void onlinelearning_aggregation::optimization_routine_ref(
     // Apply boost
     policy.for_each([](vec::elem_type & x) { x = pow(x, BOOST); });
   }
+
+  // Done because the optimizer otherwise brings instability due to bounds
+  policy = clamp(policy, 0.0, 1.0);
 
   // Set optimization done flag to true
   f = true;
@@ -145,10 +149,10 @@ double onlinelearning_aggregation::fitness(const vec &inputs, vec *grad_out, voi
 
   // Determine pagerank
   mat m(inputs);
-  mat G = normalise(p->H, 1, 1);
-  G.each_col() %= m;
-  mat pr = pagerank(normalise(G + p->E, 1, 1)); // assume alpha=0.5
-
+  mat H = normalise(p->H, 1, 1);
+  H.each_col() %= m;
+  mat E = normalise(p->E, 1, 1);
+  mat pr = pagerank(normalise(H + E, 1, 1));
   // Calculate fitness
 
   // Desired states
@@ -216,49 +220,32 @@ void onlinelearning_aggregation::get_velocity_command(const uint16_t ID, float &
   increase_counter_to_value(moving_timer, timelim, 1);
 
   // Optimize policy (non-blocking version)
-#ifdef NON_BLOCKING
   if (moving_timer == 1 && done) {
     done = false;
-
     // Set up a thread to run the optimization
 #if SHARED_MODEL
     std::thread thr(this->optimization_routine_ref, pr,
-                    std::ref(policy),
-                    std::ref(done));
+                    std::ref(policy), std::ref(done));
 #else
     std::thread thr(this->optimization_routine_ref, p,
                     std::ref(policy),
                     std::ref(done));
 #endif
 
-    // Detach it
+#if DETACH
     thr.detach();
-
-    // // Update the policy to most recent value.
-    cout << ID << endl; policy.t().print();
-
-#ifdef LOG
-    // Open the logfile for writing
-    for (uint16_t i = 0; i < states * actions; i++) {
-      logfile << policy[i] << " ";
-    }
-    logfile << endl;
-#endif
-  }
-
 #else
-  // Optimize policy (blocking version with async)
-  if (moving_timer == 1) {
-    std::future<mat> w = std::async(optimization_routine, p, policy);
-    policy = w.get(); // Blocking call
-#ifdef LOG
-    // Open the logfile for writing
-    for (uint16_t i = 0; i < states * actions; i++) {
-      logfile << policy[i] << " ";
-    }
-    logfile << endl;
+    thr.join();
 #endif
+
   }
+
+#ifdef LOG
+  // Open the logfile for writing
+  for (uint16_t i = 0; i < states * actions; i++) {
+    logfile << policy[i] << " ";
+  }
+  logfile << endl;
 #endif
 
   // Final output

@@ -11,6 +11,8 @@
 
 using namespace std;
 
+#define DISCOUNT 1.0
+
 pagerank_estimator::pagerank_estimator(uint s_size, uint a_size)
 {
   estimator_active = false;
@@ -68,10 +70,10 @@ void pagerank_estimator::update_G(const uint &ID, const uint &action)
   if (estimator_active) {
     // Update H or E depending on whether the change was your own
     if (action > 0) {
-      H(s_kp1[ID], s_k[ID]) += 1;
-      A[action - 1](s_kp1[ID], s_k[ID]) += 1;
+      H(s_kp1[ID], s_k[ID]) = DISCOUNT * H(s_kp1[ID], s_k[ID]) + 1;
+      A[action - 1](s_kp1[ID], s_k[ID]) = DISCOUNT * A[action - 1](s_kp1[ID], s_k[ID]) + 1;
     } else {
-      E(s_kp1[ID], s_k[ID]) += 1;
+      E(s_kp1[ID], s_k[ID]) = DISCOUNT * E(s_kp1[ID], s_k[ID]) + 1;
     }
   }
 }

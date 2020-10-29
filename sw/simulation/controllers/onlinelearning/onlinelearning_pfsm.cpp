@@ -21,7 +21,7 @@ using namespace arma;
 // 4 key simulation/optimization parameters
 
 /**
- * NON_BLOCKING (boolean parameter)
+ * DETACH (boolean parameter)
  *
  *  - If true: the optimization runs on a separate thread independently of
  *             the simulation, this means that the simulation will not wait
@@ -32,7 +32,7 @@ using namespace arma;
  *  - If false: the optimization will run within the time step
  *
  */
-#define NON_BLOCKING true
+#define DETACH false
 
 /**
  * SHARED_MODEL (boolean parameter)
@@ -44,7 +44,7 @@ using namespace arma;
  *             individual model
  *
  */
-#define SHARED_MODEL false
+#define SHARED_MODEL true
 
 /**
  * ITER_MAX (integer)
@@ -64,7 +64,7 @@ using namespace arma;
  *
  * Use 1.0 for no boost (will be slower learning)
  */
-#define BOOST 2.
+#define BOOST 1.
 
 /*****************************************************************************/
 
@@ -212,13 +212,13 @@ void onlinelearning_pfsm::get_velocity_command(const uint16_t ID, float &v_x, fl
 #ifdef LOG
   // Initialize policy logfile (st=100 is a dummy initial state)
   // Set up a unique name for the file and open it for writing.
-  if (st == 100) {
-    stringstream s;
-    s << ID;
-    filename = "logs/policy_" + identifier + "_" + s.str() + ".txt";
-    writer.setfilename(filename); // Set the filename
-    logfile.open(filename.c_str()); // Open for writing
-  }
+  // if (st == 100) {
+  //   stringstream s;
+  //   s << ID;
+  //   filename = "logs/policy_" + identifier + "_" + s.str() + ".txt";
+  //   writer.setfilename(filename); // Set the filename
+  //   logfile.open(filename.c_str()); // Open for writing
+  // }
 #endif
 
   v_x = 0.0;
@@ -250,10 +250,8 @@ void onlinelearning_pfsm::get_velocity_command(const uint16_t ID, float &v_x, fl
   increase_counter_to_value(moving_timer, timelim, 1);
 
   // Optimize policy (non-blocking version)
-#ifdef NON_BLOCKING
   if (moving_timer == 1 && done) {
     done = false;
-
     // Set up a thread to run the optimization
 #if SHARED_MODEL
     std::thread thr(this->optimization_routine_ref, pr,
@@ -265,36 +263,20 @@ void onlinelearning_pfsm::get_velocity_command(const uint16_t ID, float &v_x, fl
                     std::ref(done));
 #endif
 
-    // Detach it
+#if DETACH
     thr.detach();
-
-    // // Update the policy to most recent value.
-    // cout << ID << endl; policy.print();
-
-#ifdef LOG
-    // Open the logfile for writing
-    vec v = vectorise(policy);
-    for (uint16_t i = 0; i < states * actions; i++) {
-      logfile << v[i] << " ";
-    }
-    logfile << endl;
-#endif
-  }
-
 #else
-  // Optimize policy (blocking version with async)
-  if (moving_timer == 1) {
-    std::future<mat> w = std::async(optimization_routine, p, policy);
-    policy = w.get(); // Blocking call
-#ifdef LOG
-    // Open the logfile for writing
-    vec v = vectorise(policy);
-    for (uint16_t i = 0; i < states * action; i++) {
-      logfile << v[i] << " ";
-    }
-    logfile << endl;
+    thr.join();
 #endif
   }
+
+#ifdef LOG
+  // Open the logfile for writing
+  // vec v = vectorise(policy);
+  // for (uint16_t i = 0; i < states * actions; i++) {
+  //   logfile << v[i] << " ";
+  // }
+  // logfile << endl;
 #endif
 
   v_x += vx_ref;

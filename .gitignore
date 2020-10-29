@@ -25,3 +25,5 @@ logo_small.png
 mat/
 conf/state_action_matrices
 conf/policies/temp*.txt
+temp.sh
+
