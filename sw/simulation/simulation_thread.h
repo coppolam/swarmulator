@@ -69,6 +69,34 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
     std::vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
 #endif
     std::vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
+
+    // Check whether the robot is in the area, else fix
+    std::vector<std::vector<float>> d(4);
+    d[0] = {0., spread * 1.3};
+    d[1] = {0., -spread * 1.3};
+    d[2] = { spread * 1.3, 0.};
+    d[3] = { -spread * 1.3, 0.};
+
+    uint16_t ID = 0;
+    while (ID < nagents) {
+      bool fix = false;
+      for (uint16_t dir = 0; dir < d.size(); dir++) {
+        std::vector<float> s_n = {x0[ID], y0[ID]};
+        if (environment.valid(ID, s_n, d[dir])) {
+          fix = true;
+          break; // ISSUE FOUND.
+        }
+      }
+      if (fix) {
+        x0[ID] = rg.uniform_float(-spread, spread);
+        y0[ID] = rg.uniform_float(-spread, spread);
+      } else { // move on
+        ID++;
+      }
+    }
+
+
+
     // Generate the agent models
 #ifdef SEQUENTIAL
     uint ID = 0;
