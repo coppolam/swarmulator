@@ -44,7 +44,7 @@ using namespace arma;
  *             individual model
  *
  */
-#define SHARED_MODEL true
+#define SHARED_MODEL false
 
 /**
  * ITER_MAX (integer)
