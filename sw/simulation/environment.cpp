@@ -105,6 +105,31 @@ bool Environment::sensor(const uint16_t ID, std::vector<float> s_n, std::vector<
   return false;
 }
 
+bool Environment::valid(const uint16_t ID, std::vector<float> s_n, std::vector<float> s)
+{
+  Point p1, q1, p2, q2;
+  p1.y = s[0]; // Flip axis
+  p1.x = s[1];
+  q1.y = s_n[0];
+  q1.x = s_n[1];
+  uint v = 0;
+  for (size_t i = 0; i < walls.size(); i++) {
+    p2.x = walls[i][0];
+    p2.y = walls[i][1];
+    q2.x = walls[i][2];
+    q2.y = walls[i][3];
+    if (doIntersect(p1, q1, p2, q2)) {
+      v += 1;
+    }
+  }
+  // Hits an even number of walls, incl 0
+  if (v % 2 == 0) {
+    return true;
+  }
+
+  return false;
+}
+
 void Environment::animate(void)
 {
   draw d;

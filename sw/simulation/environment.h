@@ -80,6 +80,7 @@ public:
    * @return false if the lines do not intersect, so that the robot will not go through a wall and can act normally.
    */
   bool sensor(const uint16_t ID, std::vector<float> s_n, std::vector<float> s, float &angle);
+  bool valid(const uint16_t ID, std::vector<float> s_n, std::vector<float> s);
 
   void grab_food(uint64_t food_ID);
   void drop_food();

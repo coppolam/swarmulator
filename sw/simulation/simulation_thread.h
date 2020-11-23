@@ -56,51 +56,71 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
 
   // Generate the random initial positions with (0,0) mean and 0.5 standard deviation
   if (nagents > 0) {
-#ifdef SEQUENTIAL
-    std::vector<float> st = environment.start();
-    std::vector<float> x0 = rg.uniform_float_vector(nagents, st[1] - 0.1, st[1] + 0.1);
-    std::vector<float> y0 = rg.uniform_float_vector(nagents, st[0] - 0.1, st[0] + 0.1);
-#else
-    float spread = environment.limits(); // default // TODO: Spread randomly within an arbitray arena
+    float spread = environment.limits(); // Default
     std::vector<float> x0 = rg.uniform_float_vector(nagents, -spread, spread);
     std::vector<float> y0 = rg.uniform_float_vector(nagents, -spread, spread);
-#endif
     std::vector<float> t0 = rg.uniform_float_vector(nagents, -M_PI, M_PI);
-    // Generate the agent models
-#ifdef SEQUENTIAL
-    uint ID = 0;
-    float t_created = -SEQUENTIAL - 1; // so that first agent is created at time - 9,9
-#else
-    for (uint16_t ID = 0; ID < nagents; ID++) {
-      std::vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
-      create_new_agent(ID, state); // Create agent
-    }
-#endif
-  }
 
-  // Keep global clock running.
-  // This is only used by the animation and the logger.
-  // The robots operate by their own detached thread clock.
-  while (program_running) {
-    if (!paused) {
-#ifdef SEQUENTIAL
-      if (simtime_seconds > t_created + SEQUENTIAL && ID < nagents) {
-        vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
-        create_new_agent(ID, state); // Create agent
-        t_created = simtime_seconds;
+    // Check whether the robot is in the area, else fix.
+    // Define rays extending beyond the maximum limits of the area (d) in all 4 directions, and use this to check whether the area is valid.
+    std::vector<std::vector<float>> d(4);
+    d[0] = {0., spread * 1.3f}; // 1.3 is arbitrary, just something > 1.0
+    d[1] = {0., -spread * 1.3f};
+    d[2] = { spread * 1.3f, 0.};
+    d[3] = { -spread * 1.3f, 0.};
+
+    uint16_t ID = 0;
+    while (ID < nagents) {
+      bool location_invalid = false;
+      for (uint16_t dir = 0; dir < d.size(); dir++) {
+        std::vector<float> s_n = {x0[ID], y0[ID]};
+        if (environment.valid(ID, s_n, d[dir])) {
+          location_invalid = true;
+          break; // An agent initialized outside of valid area was found. Proceed to fix it.
+        }
+      }
+
+      // Get a new location if invalid, else move on to test the next agent.
+      if (location_invalid) {
+        x0[ID] = rg.uniform_float(-spread, spread);
+        y0[ID] = rg.uniform_float(-spread, spread);
+      } else {
         ID++;
       }
-#endif
+    }
+
+    // Generate the agents in the initial positions
+    for (uint16_t ID = 0; ID < nagents; ID++) {
+      // Initial state vector
+      // [position_x, position y, vel_x=0, vel_y=0, acc_x=0, acc_y=0, psi, psi_rate]
+      std::vector<float> state = {x0[ID], y0[ID], 0.0, 0.0, 0.0, 0.0, t0[ID], 0.0};
+      create_new_agent(ID, state); // Create a new agent
+    }
+  }
+
+  // Keep global clock running until swarmulator quits.
+  // The clock is only used by the animation and the logger,
+  // which use the clock of the first robot as a reference.
+  // Robots to do not share this clock and operate in a detached manner.
+  while (program_running) {
+    if (!paused) {
       // Runtime finish evolution
+
+      // If the parameter time_limit is set to 0 (in conf/parameters.xml) then the simulation runs indefinitely
+      // Otherwise the simulation will quit after that time has passed, using the clock of the 0th robot as a reference.
       if (param->time_limit() > 0.0) {
-        if (simtime_seconds > param->time_limit()) { // Quit after a certain amount of time
-          mtx.lock(); // Done
-          mtx_env.lock();
+
+        // Quit after a certain amount of time
+        if (simtime_seconds > param->time_limit()) {
+
+          mtx.lock(); // Lock main mutex
+          mtx_env.lock(); // Lock environment mutex
           terminalinfo::debug_msg("Sending message");
-          f.send(evaluate_fitness());
-          mtx_env.unlock();
-          mtx.unlock();
-          program_running = false;
+          f.send(evaluate_fitness()); // Send FIFO message
+          mtx_env.unlock(); // Unlock environment mutex
+          mtx.unlock(); // Unlock main mutex
+
+          program_running = false; // Get ready to quit
         }
       }
     }

@@ -61,11 +61,13 @@ int main(int argc, char *argv[])
     identifier = currentDateTime();
   }
 
+  // Launch animation thread
 #ifdef ANIMATION
   std::thread animation(main_animation_thread);
   animation.detach();
 #endif
 
+  // Launch log thread
 #ifdef LOG
   std::thread logger(main_logger_thread);
   logger.detach();
@@ -74,7 +76,7 @@ int main(int argc, char *argv[])
   main_simulation_thread(argc, argv, identifier);
 
   // Exit
-  terminalinfo::info_msg("Swarmulator exiting");
+  terminalinfo::info_msg("Swarmulator exiting.");
 
   return 0;
 }
