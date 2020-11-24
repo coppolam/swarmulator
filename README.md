@@ -7,6 +7,9 @@ Swarmulator offers a simple platform to prototype swarm behaviors.
 
 ## Install Instructions
 _Note: Swarmulator was tested on Ubuntu 16.04 and 18.04._
+_Swarmulator also works on Windows 10 using the Ubuntu for Windows, which you can download it
+	https://ubuntu.com/tutorials/ubuntu-on-windows#4-install-ubuntu-for-windows-10
+And then follow the steps below as if you were on Ubuntu. (Unfortunately for now, the ANIMATION may not work, but everything else will!)_
 
 #### Download the repository
 Download/clone the repository.
@@ -18,7 +21,7 @@ Download/clone the repository.
 Swarmulator runs using OpenGL and XML parsing.
 You will need the following packages. Run the following to make sure you have everything you need, installed in order:
 
-    sudo apt-get install make g++ freeglut3-dev libxerces-c-dev xsdcxx libeigen3-dev libprotobuf-dev xmlstarlet
+	sudo apt-get install make g++ freeglut3-dev libxerces-c-dev xsdcxx libeigen3-dev libprotobuf-dev xmlstarlet
 
 #### Build instructions
 Once you have all the packages needed to build Swarmulator, you can build it with:
