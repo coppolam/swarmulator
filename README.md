@@ -9,7 +9,7 @@ Swarmulator offers a simple platform to prototype swarm behaviors.
 _Note: Swarmulator was tested on Ubuntu 16.04, 18.04, and 20.04_
 _Swarmulator was also tested successfully on Windows 10 using the Ubuntu for Windows, which you can download here: 
 https://ubuntu.com/tutorials/ubuntu-on-windows#4-install-ubuntu-for-windows-10
-And then follow the steps below as if you were on Ubuntu. (Unfortunately for now, the ANIMATION may not work, but everything else will!)_
+And then follow the steps below as if you were on Ubuntu. (Unfortunately for now, the animation may not work, but everything else will!)_
 
 #### Download the repository
 Download/clone the repository.
