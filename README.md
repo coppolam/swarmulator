@@ -25,7 +25,7 @@ Once you have all the packages needed to build Swarmulator, you can build it wit
 
 	make clean && make ANIMATION=ON LOG=ON VERBOSE=ON
 
-If you don't want the animation, just don't type the `ANIMATION=ON` part, same for `LOGGER`, which logs data, or `VERBOSE` which outputs information to the console
+If you don't want the animation, just don't type the `ANIMATION=ON` part, same for `LOG`, which logs data, or `VERBOSE` which outputs information to the console
 
 Swarmulator is designed to be modular, so that you can compile for any combination of controller and robot dynamics that you wish. By default, the `aggregation` controller and the `particle` agent will be used. To use another one, speficity this in the make command, as follows:
 
