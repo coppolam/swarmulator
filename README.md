@@ -23,7 +23,7 @@ You will need the following packages. Run the following to make sure you have ev
 #### Build instructions
 Once you have all the packages needed to build Swarmulator, you can build it with:
 
-	make clean && make ANIMATION=ON LOGGER=ON VERBOSE=ON
+	make clean && make ANIMATION=ON LOG=ON VERBOSE=ON
 
 If you don't want the animation, just don't type the `ANIMATION=ON` part, same for `LOGGER`, which logs data, or `VERBOSE` which outputs information to the console
 
