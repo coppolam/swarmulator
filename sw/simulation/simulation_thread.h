@@ -72,10 +72,10 @@ void main_simulation_thread(int argc, char *argv[], std::string id)
 
     // Check whether the robot is in the area, else fix
     std::vector<std::vector<float>> d(4);
-    d[0] = {0., (float)spread * 1.3f};
-    d[1] = {0., float(-spread) * 1.3f};
-    d[2] = { (float)spread * 1.3f, 0.f};
-    d[3] = { -(float)spread * 1.3f, 0.f};
+    d[0] = {0., (float)spread * 2.5f};
+    d[1] = {0., float(-spread) * 2.5f};
+    d[2] = { (float)spread * 2.5f, 0.f};
+    d[3] = { -(float)spread * 2.5f, 0.f};
 
     uint16_t ID = 0;
     while (ID < nagents) {

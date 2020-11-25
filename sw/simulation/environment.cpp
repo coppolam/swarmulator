@@ -44,6 +44,33 @@ void Environment::define_food(uint64_t n)
     food[i].push_back(rg.uniform_float(-lim, lim));
     food[i].push_back(rg.uniform_float(-lim, lim));
   }
+
+  // Check whether the robot is in the area, else fix
+  std::vector<std::vector<float>> d(4);
+  d[0] = {0., lim * 2.5f};
+  d[1] = {0., -lim * 2.5f};
+  d[2] = { lim * 2.5f, 0.f};
+  d[3] = { -lim * 2.5f, 0.f};
+
+  // Check that food is in the area
+  uint16_t i = 0;
+  while (i < food.size()) {
+    bool fix = false;
+    for (uint16_t dir = 0; dir < d.size(); dir++) {
+      std::vector<float> s_n = food[i];
+      if (environment.valid(i, s_n, d[dir])) {
+        fix = true;
+        break; // ISSUE FOUND.
+      }
+    }
+    if (fix) {
+      food[i][0] = rg.uniform_float(-lim, lim);
+      food[i][1] = rg.uniform_float(-lim, lim);
+    } else { // move on
+      i++;
+    }
+  }
+
 }
 
 void Environment::define_beacon(float x, float y)
@@ -122,6 +149,12 @@ bool Environment::valid(const uint16_t ID, std::vector<float> s_n, std::vector<f
       v += 1;
     }
   }
+
+  // No wall detected on one side
+  if (v == 0) {
+    return false;
+  }
+
   // Hits an even number of walls, incl 0
   if (v % 2 == 0) {
     return true;
@@ -150,6 +183,30 @@ void Environment::grab_food(uint64_t food_ID)
   // uncomment one of the two line below
   // food.erase(food.begin() + food_ID); // Use this to grab without replacement
   food[food_ID] = {rg.uniform_float(-lim, lim), rg.uniform_float(-lim, lim)}; // Use this to grab with replacement
+
+  // Check whether the robot is in the area, else fix
+  std::vector<std::vector<float>> d(4);
+  d[0] = {0., lim * 2.5f};
+  d[1] = {0., -lim * 2.5f};
+  d[2] = { lim * 2.5f, 0.f};
+  d[3] = { -lim * 2.5f, 0.f};
+
+  bool fix = true;
+  while (fix) {
+    fix = false;
+    for (uint16_t dir = 0; dir < d.size(); dir++) {
+      std::vector<float> s_n = food[food_ID];
+      if (environment.valid(food_ID, s_n, d[dir])) {
+        fix = true;
+        break; // ISSUE FOUND.
+      }
+    }
+    if (fix) {
+      food[food_ID][0] = rg.uniform_float(-lim, lim);
+      food[food_ID][1] = rg.uniform_float(-lim, lim);
+    }
+  }
+
   mtx_env.unlock();
 }
 

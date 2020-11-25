@@ -387,8 +387,8 @@ class Generator():
 		# 	# 		print(map(itemgetter(1), g))
 
 if __name__ == '__main__':
-	gen = Generator(max_rooms=5, width=30, height=30, min_room_xy=2,
-					max_room_xy=10, rooms_overlap=True)
+	gen = Generator(max_rooms=5, width=30, height=30, min_room_xy=5,
+					max_room_xy=20, rooms_overlap=True)
 	gen.gen_level()
 	gen.gen_tiles_level()
 	# np.savetxt("test",gen.wall_coordinates,fmt='%.1f')
